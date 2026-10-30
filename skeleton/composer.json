@@ -1,0 +1,13 @@
+{
+    "name": "frootbox/skeleton",
+    "description": "Starting point for a new Frootbox website",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.5",
+        "frootbox/core": "^0.1@dev"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

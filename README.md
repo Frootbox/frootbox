@@ -27,6 +27,10 @@ composer check
 `composer check` runs PHP-CS-Fixer, PHPStan and PHPUnit. Single tools:
 `composer cs`, `composer cs:fix`, `composer stan`, `composer test`.
 
+`composer sandbox` creates `sandbox/`, a local test installation that loads
+the packages from `packages/`. Point a web server with PHP 8.5 to
+`sandbox/public`, or run `composer serve` and open http://localhost:8000.
+
 ## License
 
 Frootbox is licensed under the GNU Lesser General Public License v3.0 only

@@ -8,3 +8,6 @@
 # Composer und Caches der Werkzeuge
 /vendor/
 /.cache/
+
+# Lokale Testinstallation (Entscheidung 0076)
+/sandbox/

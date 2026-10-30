@@ -11,7 +11,7 @@ use PhpCsFixer\Finder;
 
 // Themes, the skeleton and examples are MIT licensed and get their own header later.
 $finder = Finder::create()
-    ->in(__DIR__ . '/packages')
+    ->in([__DIR__ . '/packages', __DIR__ . '/tools'])
     ->exclude('themes')
     ->append([__FILE__]);
 

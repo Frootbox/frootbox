@@ -31,6 +31,7 @@
     </source>
 
     <php>
+        <ini name="error_log" value="/dev/null"/>
         <env name="DATABASE_URL" value="pdo-sqlite:///:memory:" force="false"/>
     </php>
 </phpunit>

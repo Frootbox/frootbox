@@ -20,6 +20,11 @@
         "cs:fix": "@php vendor/bin/php-cs-fixer fix",
         "stan": "@php vendor/bin/phpstan analyse --memory-limit=1G",
         "test": "@php vendor/bin/phpunit",
+        "sandbox": "@php tools/sandbox.php",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php -S localhost:8000 -t sandbox/public"
+        ],
         "check": [
             "@cs",
             "@stan",

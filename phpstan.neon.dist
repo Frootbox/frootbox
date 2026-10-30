@@ -3,6 +3,7 @@ parameters:
     tmpDir: .cache/phpstan
     paths:
         - packages
+        - tools
         - .php-cs-fixer.dist.php
     excludePaths:
         - packages/*/vendor/*
