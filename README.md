@@ -51,6 +51,31 @@ Everything is an extension: a Composer package with a `frootbox.yaml`.
 after one `composer require acme/website` every change shows up directly.
 `bin/frootbox extensions` lists the installed ones.
 
+Data changes only through actions. An action is a class whose constructor
+is the input; the JSON schema for validation, REST, MCP and the AI is built
+from its types. Repositories read and write the rows of a table as typed
+entities:
+
+```php
+#[AsAction('news.publish', 'Publishes an article')]
+final readonly class PublishArticle implements Action
+{
+    public function __construct(public int $id) {}
+
+    public function handle(Articles $articles): Article
+    {
+        return $articles->update($this->id, ['status' => 'published']);
+    }
+}
+
+$articles->fetch(['where' => ['status' => 'published', 'date <=' => $now], 'order' => 'date desc', 'limit' => 10]);
+```
+
+Register it with `$registry->action(PublishArticle::class)`. Every run is
+checked, logged and can be undone with `action.undo`, unless the action
+writes past the repositories or is marked `undoable: false`.
+`bin/frootbox actions`, `call` and `actions:log` help along the way.
+
 Tests run against in-memory SQLite. Set `DATABASE_URL` to run them against
 MySQL or MariaDB, as the CI does.
 
