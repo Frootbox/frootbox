@@ -30,6 +30,24 @@ composer check
 `composer sandbox` creates `sandbox/`, a local test installation that loads
 the packages from `packages/`. Point a web server with PHP 8.5 to
 `sandbox/public`, or run `composer serve` and open http://localhost:8000.
+The sandbox uses SQLite in `sandbox/storage/` and runs its migrations on
+creation. Its console is `sandbox/bin/frootbox`, for example
+`php sandbox/bin/frootbox about` or `php sandbox/bin/frootbox migrate`.
+
+Migrations extend `Frootbox\Core\Database\Migration` and describe tables
+with a short schema builder:
+
+```php
+$this->createTable('news', function (Blueprint $table): void {
+    $table->id();
+    $table->string('title');
+    $table->json('content')->nullable();
+    $table->timestamps();
+});
+```
+
+Tests run against in-memory SQLite. Set `DATABASE_URL` to run them against
+MySQL or MariaDB, as the CI does.
 
 ## License
 

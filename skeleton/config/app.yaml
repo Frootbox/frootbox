@@ -1,2 +1,5 @@
 app:
   name: Meine Website
+
+database:
+  url: '%env(DATABASE_URL)%'

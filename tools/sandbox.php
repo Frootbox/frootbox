@@ -51,7 +51,8 @@ file_put_contents(
     json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . "\n",
 );
 
-file_put_contents($sandbox . '/.env', "APP_ENV=dev\n");
+$dotenv = (string) file_get_contents($skeleton . '/.env.example');
+file_put_contents($sandbox . '/.env', (string) preg_replace('/^APP_ENV=.*$/m', 'APP_ENV=dev', $dotenv));
 
 $composerBinary = getenv('COMPOSER_BINARY');
 
@@ -70,6 +71,12 @@ passthru(
     ),
     $exitCode,
 );
+
+if (0 !== $exitCode) {
+    exit($exitCode);
+}
+
+passthru(sprintf('%s %s migrate --no-interaction', escapeshellarg(PHP_BINARY), escapeshellarg($sandbox . '/bin/frootbox')), $exitCode);
 
 if (0 !== $exitCode) {
     exit($exitCode);
@@ -105,7 +112,14 @@ function copyDirectory(string $from, string $to): void
         $source = $from . '/' . $entry;
         $target = $to . '/' . $entry;
 
-        is_dir($source) ? copyDirectory($source, $target) : copy($source, $target);
+        if (is_dir($source)) {
+            copyDirectory($source, $target);
+
+            continue;
+        }
+
+        copy($source, $target);
+        chmod($target, (int) fileperms($source) & 0o777);
     }
 }
 
