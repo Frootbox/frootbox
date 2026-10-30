@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Frootbox\Core\Database\Schema;
+namespace Frootbox\Database\Schema;
 
 use Doctrine\DBAL\Schema\Column;
 

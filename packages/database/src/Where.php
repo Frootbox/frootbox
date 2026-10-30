@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Frootbox\Core\Database;
+namespace Frootbox\Database;
 
 /**
  * Alternatives in a where clause: at least one group must match.

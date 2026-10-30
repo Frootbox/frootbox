@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Frootbox\Core\Database;
+namespace Frootbox\Database;
 
 use BackedEnum;
 use DateTimeInterface;

@@ -6,15 +6,15 @@
 
 declare(strict_types=1);
 
-namespace Frootbox\Core\Database\Query;
+namespace Frootbox\Database\Query;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Frootbox\Core\Database\RepositoryException;
-use Frootbox\Core\Database\Values;
-use Frootbox\Core\Database\Where;
+use Frootbox\Database\RepositoryException;
+use Frootbox\Database\Values;
+use Frootbox\Database\Where;
 
 /**
  * Translates the options of Repository::fetch() into a query.

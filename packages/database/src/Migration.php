@@ -6,12 +6,12 @@
 
 declare(strict_types=1);
 
-namespace Frootbox\Core\Database;
+namespace Frootbox\Database;
 
 use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\Migrations\AbstractMigration;
-use Frootbox\Core\Database\Schema\Blueprint;
-use Frootbox\Core\Database\Schema\SchemaException;
+use Frootbox\Database\Schema\Blueprint;
+use Frootbox\Database\Schema\SchemaException;
 
 /**
  * Base class for all Frootbox migrations.

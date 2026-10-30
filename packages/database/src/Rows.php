@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Frootbox\Core\Database;
+namespace Frootbox\Database;
 
 /**
  * Compares rows independent of how the driver returns values: 5, "5" and

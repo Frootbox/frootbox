@@ -22,11 +22,15 @@
         <testsuite name="core">
             <directory>packages/core/tests</directory>
         </testsuite>
+        <testsuite name="database">
+            <directory>packages/database/tests</directory>
+        </testsuite>
     </testsuites>
 
     <source>
         <include>
             <directory>packages/core/src</directory>
+            <directory>packages/database/src</directory>
         </include>
     </source>
 

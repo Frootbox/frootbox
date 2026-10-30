@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Frootbox\Core\Database;
+namespace Frootbox\Database;
 
 /**
  * A row as a typed, read-only object. Columns map to constructor
@@ -22,7 +22,7 @@ namespace Frootbox\Core\Database;
  *         ) {}
  *     }
  *
- * Changes go through actions and the repository, never through the entity.
+ * Changes go through the repository, never through the entity.
  */
 abstract readonly class Entity
 {

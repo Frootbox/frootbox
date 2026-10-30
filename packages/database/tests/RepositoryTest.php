@@ -6,25 +6,29 @@
 
 declare(strict_types=1);
 
-namespace Frootbox\Core\Tests\Database;
+namespace Frootbox\Database\Tests;
 
 use DateTimeImmutable;
-use Frootbox\Core\Database\Entity;
-use Frootbox\Core\Database\EntityMapper;
-use Frootbox\Core\Database\EntityNotFoundException;
-use Frootbox\Core\Database\Paginated;
-use Frootbox\Core\Database\Query\Criteria;
-use Frootbox\Core\Database\Repository;
-use Frootbox\Core\Database\RepositoryException;
-use Frootbox\Core\Database\Result;
-use Frootbox\Core\Database\Values;
-use Frootbox\Core\Database\Where;
-use Frootbox\Core\Tests\Fixtures\Notes\CreateNote;
-use Frootbox\Core\Tests\Fixtures\Notes\Note;
-use Frootbox\Core\Tests\Fixtures\Notes\NoteStatus;
-use Frootbox\Core\Tests\Fixtures\Notes\RenameNote;
-use Frootbox\Core\Tests\Support\NotesTestCase;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Tools\DsnParser;
+use Frootbox\Database\DirectWriter;
+use Frootbox\Database\Entity;
+use Frootbox\Database\EntityMapper;
+use Frootbox\Database\EntityNotFoundException;
+use Frootbox\Database\Paginated;
+use Frootbox\Database\Query\Criteria;
+use Frootbox\Database\Repository;
+use Frootbox\Database\RepositoryException;
+use Frootbox\Database\Result;
+use Frootbox\Database\Tests\Fixtures\Article;
+use Frootbox\Database\Tests\Fixtures\Articles;
+use Frootbox\Database\Tests\Fixtures\ArticleStatus;
+use Frootbox\Database\Tests\Support\TestDatabase;
+use Frootbox\Database\Values;
+use Frootbox\Database\Where;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Repository::class)]
 #[CoversClass(Criteria::class)]
@@ -34,25 +38,38 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(Paginated::class)]
 #[CoversClass(Values::class)]
 #[CoversClass(Where::class)]
-final class RepositoryTest extends NotesTestCase
+#[CoversClass(DirectWriter::class)]
+final class RepositoryTest extends TestCase
 {
+    private Connection $connection;
+
+    private Articles $articles;
+
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->connection = DriverManager::getConnection(new DsnParser()->parse(TestDatabase::url()));
+        Articles::createTable($this->connection);
+        $this->articles = new Articles($this->connection, new DirectWriter($this->connection));
 
-        $this->create('Alpha', priority: 1, status: NoteStatus::Published, tags: ['red']);
+        $this->create('Alpha', priority: 1, status: ArticleStatus::Published, tags: ['red']);
         $this->create('Beta', priority: 5, publishedAt: new DateTimeImmutable('2026-01-01 10:00:00'));
-        $this->create('Gamma', priority: 5, status: NoteStatus::Published);
+        $this->create('Gamma', priority: 5, status: ArticleStatus::Published);
         $this->create('Delta', priority: 9, body: 'Text');
+    }
+
+    protected function tearDown(): void
+    {
+        TestDatabase::dropTables($this->connection, Articles::TABLE);
+        $this->connection->close();
     }
 
     public function testFetchesTypedEntities(): void
     {
-        $alpha = $this->notes()->fetchOne(['where' => ['title' => 'Alpha']]);
+        $alpha = $this->articles->fetchOne(['where' => ['title' => 'Alpha']]);
 
-        self::assertInstanceOf(Note::class, $alpha);
+        self::assertInstanceOf(Article::class, $alpha);
         self::assertSame(1, $alpha->priority);
-        self::assertSame(NoteStatus::Published, $alpha->status);
+        self::assertSame(ArticleStatus::Published, $alpha->status);
         self::assertSame(['red'], $alpha->tags);
         self::assertFalse($alpha->pinned);
         self::assertNull($alpha->body);
@@ -63,7 +80,7 @@ final class RepositoryTest extends NotesTestCase
     public function testWhereConditions(): void
     {
         self::assertSame(['Beta', 'Gamma'], $this->titles(['where' => ['priority' => 5]]));
-        self::assertSame(['Alpha', 'Gamma'], $this->titles(['where' => ['status' => NoteStatus::Published]]));
+        self::assertSame(['Alpha', 'Gamma'], $this->titles(['where' => ['status' => ArticleStatus::Published]]));
         self::assertSame(['Beta', 'Gamma', 'Delta'], $this->titles(['where' => ['priority >=' => 5]]));
         self::assertSame(['Alpha', 'Delta'], $this->titles(['where' => ['priority !=' => 5]]));
         self::assertSame(['Alpha', 'Delta'], $this->titles(['where' => ['title' => ['Alpha', 'Delta', 'Omega']]]));
@@ -84,7 +101,7 @@ final class RepositoryTest extends NotesTestCase
 
     public function testPaginates(): void
     {
-        $page = $this->notes()->paginate(['order' => 'title'], page: 2, perPage: 3);
+        $page = $this->articles->paginate(['order' => 'title'], page: 2, perPage: 3);
 
         self::assertSame(4, $page->total);
         self::assertSame(2, $page->pages());
@@ -97,24 +114,24 @@ final class RepositoryTest extends NotesTestCase
 
     public function testCountsAndFindsById(): void
     {
-        self::assertSame(4, $this->notes()->count());
-        self::assertSame(2, $this->notes()->count(['priority' => 5]));
+        self::assertSame(4, $this->articles->count());
+        self::assertSame(2, $this->articles->count(['priority' => 5]));
 
-        $id = $this->notes()->fetchOne(['where' => ['title' => 'Delta']])->id ?? 0;
-        self::assertSame('Delta', $this->notes()->getById($id)->title);
-        self::assertNull($this->notes()->fetchById(999999));
+        $id = $this->articles->fetchOne(['where' => ['title' => 'Delta']])->id ?? 0;
+        self::assertSame('Delta', $this->articles->getById($id)->title);
+        self::assertNull($this->articles->fetchById(999999));
 
         $this->expectException(EntityNotFoundException::class);
-        $this->notes()->getById(999999);
+        $this->articles->getById(999999);
     }
 
     public function testFillsTimestamps(): void
     {
-        $note = $this->notes()->fetchOne(['where' => ['title' => 'Alpha']]);
+        $note = $this->articles->fetchOne(['where' => ['title' => 'Alpha']]);
         self::assertNotNull($note);
         self::assertNotNull($note->updatedAt);
 
-        $renamed = $this->runner()->run(new RenameNote($note->id, 'Alpha 2'));
+        $renamed = $this->articles->update($note->id, ['title' => 'Alpha 2']);
 
         self::assertSame('Alpha 2', $renamed->title);
         self::assertEquals($note->createdAt, $renamed->createdAt);
@@ -126,25 +143,37 @@ final class RepositoryTest extends NotesTestCase
         $this->expectException(RepositoryException::class);
         $this->expectExceptionMessage('Unknown option "orderBy"');
 
-        $this->notes()->fetch(['orderBy' => 'title']);
+        $this->articles->fetch(['orderBy' => 'title']);
     }
 
     public function testRejectsInjectedColumnNames(): void
     {
         $this->expectException(RepositoryException::class);
 
-        $this->notes()->fetch(['where' => ['title; DROP TABLE notes' => 'x']]);
+        $this->articles->fetch(['where' => ['title; DROP TABLE notes' => 'x']]);
     }
 
     public function testResultHelpers(): void
     {
-        $result = $this->notes()->fetch(['order' => 'title']);
+        $result = $this->articles->fetch(['order' => 'title']);
 
         self::assertFalse($result->isEmpty());
         self::assertSame('Alpha', $result->first()?->title);
         self::assertCount(4, $result->all());
         self::assertSame('Alpha', $result->jsonSerialize()[0]['title'] ?? null);
-        self::assertTrue($this->notes()->fetch(['where' => ['title' => 'Zeta']])->isEmpty());
+        self::assertTrue($this->articles->fetch(['where' => ['title' => 'Zeta']])->isEmpty());
+    }
+
+    public function testWritesDirectly(): void
+    {
+        $id = $this->articles->insert(['title' => 'Epsilon'])->id;
+
+        self::assertSame('Epsilon 2', $this->articles->update($id, ['title' => 'Epsilon 2'])->title);
+        self::assertTrue($this->articles->delete($id));
+        self::assertFalse($this->articles->delete($id));
+
+        $this->expectException(EntityNotFoundException::class);
+        $this->articles->update($id, ['title' => 'Gone']);
     }
 
     public function testColumnNames(): void
@@ -161,14 +190,14 @@ final class RepositoryTest extends NotesTestCase
      */
     private function titles(array $options): array
     {
-        return $this->notes()->fetch($options + ['order' => 'id'])->map(static fn(Note $note): string => $note->title);
+        return $this->articles->fetch($options + ['order' => 'id'])->map(static fn(Article $article): string => $article->title);
     }
 
     /**
      * @param list<string> $tags
      */
-    private function create(string $title, int $priority = 0, NoteStatus $status = NoteStatus::Draft, array $tags = [], ?string $body = null, ?DateTimeImmutable $publishedAt = null): void
+    private function create(string $title, int $priority = 0, ArticleStatus $status = ArticleStatus::Draft, array $tags = [], ?string $body = null, ?DateTimeImmutable $publishedAt = null): void
     {
-        $this->runner()->run(new CreateNote($title, $body, $priority, $status, $tags, $publishedAt));
+        $this->articles->insert(['title' => $title, 'body' => $body, 'priority' => $priority, 'status' => $status, 'tags' => $tags, 'publishedAt' => $publishedAt]);
     }
 }

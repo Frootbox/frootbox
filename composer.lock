@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f25e26522e78842da0fde2d96cdb4ce",
+    "content-hash": "58340163accb87fb986685b011de915d",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -360,11 +360,12 @@
             "dist": {
                 "type": "path",
                 "url": "packages/core",
-                "reference": "1ee26e861b8221f205f7c297352ea3ba47d38578"
+                "reference": "47fd545b27cbff5434050c9f73a49884809c1f13"
             },
             "require": {
                 "doctrine/dbal": "^4.5",
                 "doctrine/migrations": "^3.9",
+                "frootbox/database": "^0.1",
                 "monolog/monolog": "^3.9",
                 "nikic/fast-route": "^1.3",
                 "nyholm/psr7": "^1.8",
@@ -407,6 +408,51 @@
             "keywords": [
                 "cms",
                 "frootbox"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "frootbox/database",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/database",
+                "reference": "f2123255e2317cebd2c4bf43d8a16632a3bfb67f"
+            },
+            "require": {
+                "doctrine/dbal": "^4.5",
+                "doctrine/migrations": "^3.9",
+                "php": ">=8.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\Database\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Frootbox\\Database\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "LGPL-3.0-only"
+            ],
+            "description": "Repositories, typed entities and a schema builder for migrations on top of Doctrine DBAL",
+            "keywords": [
+                "database",
+                "dbal",
+                "frootbox",
+                "migrations",
+                "repository"
             ],
             "transport-options": {
                 "symlink": true,
@@ -6534,7 +6580,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "frootbox/core": 20
+        "frootbox/core": 20,
+        "frootbox/database": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

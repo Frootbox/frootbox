@@ -34,7 +34,9 @@ The sandbox uses SQLite in `sandbox/storage/` and runs its migrations on
 creation. Its console is `sandbox/bin/frootbox`, for example
 `php sandbox/bin/frootbox about` or `php sandbox/bin/frootbox migrate`.
 
-Migrations extend `Frootbox\Core\Database\Migration` and describe tables
+The database layer is its own package, `frootbox/database`, usable in any
+PHP project (see [its README](packages/database/README.md)).
+Migrations extend `Frootbox\Database\Migration` and describe tables
 with a short schema builder:
 
 ```php

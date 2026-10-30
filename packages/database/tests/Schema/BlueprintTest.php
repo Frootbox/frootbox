@@ -6,15 +6,15 @@
 
 declare(strict_types=1);
 
-namespace Frootbox\Core\Tests\Database\Schema;
+namespace Frootbox\Database\Tests\Schema;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Doctrine\DBAL\Platforms\MySQL80Platform;
 use Doctrine\DBAL\Platforms\SQLitePlatform;
-use Frootbox\Core\Database\Schema\Blueprint;
-use Frootbox\Core\Database\Schema\ColumnDefinition;
-use Frootbox\Core\Database\Schema\SchemaException;
+use Frootbox\Database\Schema\Blueprint;
+use Frootbox\Database\Schema\ColumnDefinition;
+use Frootbox\Database\Schema\SchemaException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

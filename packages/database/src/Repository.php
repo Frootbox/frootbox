@@ -6,11 +6,11 @@
 
 declare(strict_types=1);
 
-namespace Frootbox\Core\Database;
+namespace Frootbox\Database;
 
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
-use Frootbox\Core\Database\Query\Criteria;
+use Frootbox\Database\Query\Criteria;
 
 /**
  * Reads and writes the rows of one table as entities. A subclass names
@@ -30,11 +30,13 @@ use Frootbox\Core\Database\Query\Criteria;
  *         }
  *     }
  *
+ *     $pages = new Pages($connection, new DirectWriter($connection));
  *     $pages->fetch(['where' => ['parentId' => 5], 'order' => 'title', 'limit' => 10]);
  *
- * Writing (insert, update, delete) only works inside an action; every
- * change is recorded so the action can be undone. Columns created_at and
- * updated_at are filled automatically when the entity has them.
+ * Writing (insert, update, delete) goes through the Writer. The Frootbox
+ * CMS uses one that only writes inside actions and records every change.
+ * Columns created_at and updated_at are filled automatically when the
+ * entity has them.
  *
  * @template T of Entity
  */
@@ -42,7 +44,7 @@ abstract class Repository
 {
     public function __construct(
         protected readonly Connection $connection,
-        protected readonly TableWriter $writer,
+        protected readonly Writer $writer,
     ) {}
 
     abstract protected function table(): string;
