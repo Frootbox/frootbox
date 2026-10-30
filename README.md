@@ -46,6 +46,11 @@ $this->createTable('news', function (Blueprint $table): void {
 });
 ```
 
+Everything is an extension: a Composer package with a `frootbox.yaml`.
+`bin/frootbox make:extension acme/website` creates one in `extensions/`;
+after one `composer require acme/website` every change shows up directly.
+`bin/frootbox extensions` lists the installed ones.
+
 Tests run against in-memory SQLite. Set `DATABASE_URL` to run them against
 MySQL or MariaDB, as the CI does.
 
