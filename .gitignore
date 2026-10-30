@@ -4,3 +4,7 @@
 
 # IDE
 /.idea/
+
+# Composer und Caches der Werkzeuge
+/vendor/
+/.cache/

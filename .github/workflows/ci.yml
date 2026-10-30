@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PHP_VERSION: '8.5'
+
+jobs:
+  coding-standards:
+    name: Coding standards
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          coverage: none
+      - name: Validate composer.json files
+        run: |
+          composer validate --strict
+          for file in packages/*/composer.json; do
+            composer validate --strict --no-check-lock "$file"
+          done
+      - uses: ramsey/composer-install@v3
+      - run: composer cs
+
+  static-analysis:
+    name: Static analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          coverage: none
+      - uses: ramsey/composer-install@v3
+      - run: composer stan
+
+  tests-sqlite:
+    name: Tests (SQLite)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: pdo_sqlite
+          coverage: none
+      - uses: ramsey/composer-install@v3
+      - run: composer test
+        env:
+          DATABASE_URL: 'pdo-sqlite:///:memory:'
+
+  tests-server:
+    name: Tests (${{ matrix.database.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        database:
+          - name: MySQL 8.4
+            image: mysql:8.4
+            health: mysqladmin ping -h 127.0.0.1 -proot
+          - name: MariaDB 10.11
+            image: mariadb:10.11
+            health: healthcheck.sh --connect --innodb_initialized
+    services:
+      database:
+        image: ${{ matrix.database.image }}
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: frootbox
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="${{ matrix.database.health }}"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: pdo_mysql
+          coverage: none
+      - uses: ramsey/composer-install@v3
+      - run: composer test
+        env:
+          DATABASE_URL: 'pdo-mysql://root:root@127.0.0.1:3306/frootbox'

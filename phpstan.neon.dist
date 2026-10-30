@@ -1,0 +1,9 @@
+parameters:
+    level: max
+    tmpDir: .cache/phpstan
+    paths:
+        - packages
+        - .php-cs-fixer.dist.php
+    excludePaths:
+        - packages/*/vendor/*
+        - packages/*/*/vendor/*
