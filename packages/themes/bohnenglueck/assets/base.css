@@ -1,0 +1,11 @@
+html { scroll-behavior: smooth; scroll-padding-block-start: 5rem; }
+body {
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { font-family: var(--font-heading); line-height: 1.15; text-wrap: balance; }
+a { color: var(--color-primary); }
+.wrap { inline-size: min(100% - 2.5rem, var(--width)); margin-inline: auto; }

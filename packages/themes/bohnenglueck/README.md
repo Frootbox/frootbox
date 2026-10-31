@@ -20,26 +20,33 @@ complete theme.
 | `blocks/Quote` | Testimonial |
 | `blocks/Faq` | Questions with rich text answers, option `open` |
 | `blocks/Cta` | Call to action |
-| `demo/onepager.json` | Demo content in German |
+| `assets/reset.css`, `assets/base.css` | Reset and base styles for every page |
+| `demo/onepager.json` | Demo content in German, as input for `page.create` |
 
 Every block has an `anchor` option for links within the page.
 
 ## Try it
 
-Until Frootbox has pages, the theme renders `demo/onepager.json` at `/demo`.
-
 ```bash
 composer require frootbox/theme-bohnenglueck
 ```
 
-Then make it the active theme in `config/app.yaml`:
+Make it the active theme in `config/app.yaml`:
 
 ```yaml
 theme: frootbox/theme-bohnenglueck
 ```
 
-and open `/demo`. In development mode every change to the content, the
-templates, the CSS or the tokens shows up on the next reload.
+Create the demo as the start page and publish it, with the id that
+`page.create` prints:
+
+```bash
+php bin/frootbox call page.create "$(cat vendor/frootbox/theme-bohnenglueck/demo/onepager.json)"
+php bin/frootbox call page.publish '{"ids": ["<id>"]}'
+```
+
+Then open `/`. In development mode every change to the templates, the CSS
+or the tokens shows up on the next reload.
 
 ## License
 

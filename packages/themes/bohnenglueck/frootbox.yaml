@@ -1,6 +1,5 @@
 title: 'Bohnenglück'
 description: 'Demo-Theme: One-Pager für eine kleine Kaffeerösterei'
-extension: Frootbox\ThemeBohnenglueck\BohnenglueckExtension
 theme:
   tokens:
     color:

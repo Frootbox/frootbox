@@ -1,7 +1,5 @@
-@layer blocks {
-  .quote { background: var(--color-surface); border-radius: var(--radius); padding: 2rem; border: 1px solid var(--color-line); position: relative; }
-  .quote::before { content: "“"; position: absolute; inset-block-start: -.5rem; inset-inline-start: 1.25rem; font: 700 5rem/1 var(--font-heading); color: var(--color-accent); }
-  .quote blockquote { font-family: var(--font-heading); font-size: 1.35rem; line-height: 1.4; margin-block-start: 1rem; }
-  .quote figcaption { margin-block-start: 1.25rem; display: grid; }
-  .quote figcaption span { color: var(--color-muted); font-size: .9rem; }
-}
+.quote { background: var(--color-surface); border-radius: var(--radius); padding: 2rem; border: 1px solid var(--color-line); position: relative; }
+.quote::before { content: "“"; position: absolute; inset-block-start: -.5rem; inset-inline-start: 1.25rem; font: 700 5rem/1 var(--font-heading); color: var(--color-accent); }
+.quote blockquote { font-family: var(--font-heading); font-size: 1.35rem; line-height: 1.4; margin-block-start: 1rem; }
+.quote figcaption { margin-block-start: 1.25rem; display: grid; }
+.quote figcaption span { color: var(--color-muted); font-size: .9rem; }

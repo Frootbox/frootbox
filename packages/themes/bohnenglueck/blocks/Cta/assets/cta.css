@@ -1,6 +1,4 @@
-@layer blocks {
-  .cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; padding: clamp(2rem, 5vw, 3.5rem); border-radius: calc(var(--radius) * 1.5); background: linear-gradient(135deg, var(--color-primary), color-mix(in srgb, var(--color-primary) 60%, var(--color-accent))); color: var(--color-primary-contrast); }
-  .cta h2 { font-size: clamp(1.6rem, 3.5vw, 2.3rem); }
-  .cta p { opacity: .85; margin-block-start: .4rem; }
-  .cta .button { background: var(--color-surface); color: var(--color-primary); }
-}
+.cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; padding: clamp(2rem, 5vw, 3.5rem); border-radius: calc(var(--radius) * 1.5); background: linear-gradient(135deg, var(--color-primary), color-mix(in srgb, var(--color-primary) 60%, var(--color-accent))); color: var(--color-primary-contrast); }
+.cta h2 { font-size: clamp(1.6rem, 3.5vw, 2.3rem); }
+.cta p { opacity: .85; margin-block-start: .4rem; }
+.cta .button { background: var(--color-surface); color: var(--color-primary); }

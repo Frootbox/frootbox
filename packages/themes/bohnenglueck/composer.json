@@ -12,11 +12,6 @@
         "php": ">=8.5",
         "frootbox/core": "^0.1"
     },
-    "autoload": {
-        "psr-4": {
-            "Frootbox\\ThemeBohnenglueck\\": "src/"
-        }
-    },
     "extra": {
         "branch-alias": {
             "dev-main": "0.1.x-dev"

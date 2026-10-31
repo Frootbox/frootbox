@@ -511,7 +511,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/themes/bohnenglueck",
-                "reference": "c12d1ab5fb66bb139ab1d835745723c1f3dc1f7f"
+                "reference": "00cbc3b0736072b7f3c77447ba70f00254e38243"
             },
             "require": {
                 "frootbox/core": "^0.1",
@@ -521,11 +521,6 @@
             "extra": {
                 "branch-alias": {
                     "dev-main": "0.1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Frootbox\\ThemeBohnenglueck\\": "src/"
                 }
             },
             "license": [
