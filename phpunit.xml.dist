@@ -25,6 +25,10 @@
         <testsuite name="database">
             <directory>packages/database/tests</directory>
         </testsuite>
+        <testsuite name="tools">
+            <directory>tools/phpstan/tests</directory>
+            <exclude>tools/phpstan/tests/data</exclude>
+        </testsuite>
     </testsuites>
 
     <source>

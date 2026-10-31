@@ -6,5 +6,15 @@ parameters:
         - tools
         - .php-cs-fixer.dist.php
     excludePaths:
+        - tools/phpstan/tests/data/*
         - packages/*/vendor/*
         - packages/*/*/vendor/*
+
+rules:
+    - Frootbox\Tools\PHPStan\ClassNameRule
+    - Frootbox\Tools\PHPStan\EnumCaseNameRule
+    - Frootbox\Tools\PHPStan\ConstantNameRule
+    - Frootbox\Tools\PHPStan\FunctionNameRule
+    - Frootbox\Tools\PHPStan\PropertyNameRule
+    - Frootbox\Tools\PHPStan\VariableNameRule
+    - Frootbox\Tools\PHPStan\ParameterNameRule

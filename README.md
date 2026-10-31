@@ -26,6 +26,10 @@ composer check
 
 `composer check` runs PHP-CS-Fixer, PHPStan and PHPUnit. Single tools:
 `composer cs`, `composer cs:fix`, `composer stan`, `composer test`.
+PHPStan also enforces the naming rules of PSR-1 and PER Coding Style with
+the rules in `tools/phpstan/`: PascalCase for classes and enum cases,
+camelCase for methods, properties and variables, UPPER_SNAKE_CASE for
+constants. New tables and columns must be snake_case.
 
 `composer sandbox` creates `sandbox/`, a local test installation that loads
 the packages from `packages/`. Point a web server with PHP 8.5 to

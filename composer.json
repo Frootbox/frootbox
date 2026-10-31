@@ -14,7 +14,9 @@
     "autoload-dev": {
         "psr-4": {
             "Frootbox\\Core\\Tests\\": "packages/core/tests/",
-            "Frootbox\\Database\\Tests\\": "packages/database/tests/"
+            "Frootbox\\Database\\Tests\\": "packages/database/tests/",
+            "Frootbox\\Tools\\PHPStan\\": "tools/phpstan/src/",
+            "Frootbox\\Tools\\PHPStan\\Tests\\": "tools/phpstan/tests/"
         }
     },
     "scripts": {

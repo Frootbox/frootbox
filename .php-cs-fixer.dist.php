@@ -13,6 +13,7 @@ use PhpCsFixer\Finder;
 $finder = Finder::create()
     ->in([__DIR__ . '/packages', __DIR__ . '/tools'])
     ->exclude('themes')
+    ->notPath('phpstan/tests/data')
     ->append([__FILE__]);
 
 return new Config()
