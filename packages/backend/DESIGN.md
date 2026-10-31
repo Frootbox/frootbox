@@ -610,6 +610,10 @@ a dialog.
 - `data-fixed` keeps a row in place (the start page), `data-leaf` takes
   no children, `roots` allows the top level, `depth="2"` limits the
   levels.
+- A row that is only shown, e.g. a page above the own branch (decision
+  0118), has `data-fixed data-leaf data-outside` and a
+  `<span class="fb-tree__link">` instead of a link: muted text, regular
+  weight, no status, skipped by the arrow keys.
 
 Put a hint like "Drag to move, or Alt and the arrow keys." in the
 header and link it with `aria-describedby` from the movable links.

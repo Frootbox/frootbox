@@ -39,7 +39,7 @@ final readonly class NewPageHandler implements RequestHandlerInterface
 
         $tree = PageTree::of($this->runner->ask(new ShowPageTree()), $this->languages);
         $parent = $request->getQueryParams()['parent'] ?? null;
-        $parent = \is_string($parent) && $tree->has($parent) ? $parent : $tree->first();
+        $parent = \is_string($parent) && $tree->inside($parent) ? $parent : $tree->first();
         $layouts = $this->runner->ask(new ListLayouts());
         $language = $this->languages->default();
         $uri = $request->getUri();

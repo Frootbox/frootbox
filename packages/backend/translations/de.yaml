@@ -206,7 +206,6 @@ Roles: Rollen
 The roles are saved.: Die Rollen sind gespeichert.
 Save the roles: Rollen speichern
 No roles: Keine Rollen
-Only within a part of the website: Nur in einem Teil der Website
 Set the password: Passwort setzen
 The password is set. The user is signed out everywhere.: Das Passwort ist gesetzt. Der Benutzer ist überall abgemeldet.
 Delete the user: Benutzer löschen
@@ -415,3 +414,16 @@ Lock: Sperren
 "{count} visit":
   one: "{count} Aufruf"
   other: "{count} Aufrufe"
+
+# Roles within branches (decision 0118)
+Outside your pages: Außerhalb Deiner Seiten
+Roles within branches: Rollen in Seitenzweigen
+A role here applies only to the page and everything below it. Media, navigations and the like need a role above.: Eine Rolle hier gilt nur für die Seite und alles darunter. Für Medien, Navigationen und Ähnliches braucht es eine Rolle oben.
+The role is taken away.: Die Rolle ist entzogen.
+Take away: Entziehen
+The role is given.: Die Rolle ist vergeben.
+Role: Rolle
+With all pages below it.: Mit allen Seiten darunter.
+Give the role: Rolle vergeben
+There is no kind of scope "{scope}".: Für „{scope}“ lassen sich keine Rollen vergeben.
+There is nothing for the scope "{scope}".: „{scope}“ gibt es nicht.

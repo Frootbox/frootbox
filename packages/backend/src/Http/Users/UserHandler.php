@@ -8,9 +8,14 @@ declare(strict_types=1);
 
 namespace Frootbox\Backend\Http\Users;
 
+use Frootbox\Backend\Http\Pages\PageTree;
 use Frootbox\Backend\View\BackendView;
+use Frootbox\Core\Action\AccessDeniedException;
 use Frootbox\Core\Action\CurrentContext;
 use Frootbox\Core\Action\Runner;
+use Frootbox\Core\Auth\Scope;
+use Frootbox\Core\Language\Languages;
+use Frootbox\Core\Page\ShowPageTree;
 use Frootbox\Core\User\ListRoles;
 use Frootbox\Core\User\ShowUser;
 use Psr\Http\Message\ResponseInterface;
@@ -18,8 +23,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * A new user or one to edit: name, email, status, roles, password and
- * deleting (decision 0115). Every form runs its own action.
+ * A new user or one to edit: name, email, status, roles, roles within
+ * branches of the page tree (decision 0118), password and deleting
+ * (decision 0115). Every form runs its own action.
  */
 final readonly class UserHandler implements RequestHandlerInterface
 {
@@ -27,6 +33,7 @@ final readonly class UserHandler implements RequestHandlerInterface
         private BackendView $view,
         private Runner $runner,
         private CurrentContext $context,
+        private Languages $languages,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -46,12 +53,19 @@ final readonly class UserHandler implements RequestHandlerInterface
         $global = [];
         $scoped = [];
 
+        $tree = $this->tree();
+
         foreach ($profile->roles as $assignment) {
             if (null === $assignment['scope']) {
                 $global[] = $assignment['role'];
-            } else {
-                $scoped[] = $assignment;
+
+                continue;
             }
+
+            // The title of the page, null if it is gone or of another kind.
+            $scope = Scope::fromString($assignment['scope']);
+            $page = null !== $scope && 'page' === $scope->kind && null !== $tree && $tree->has($scope->id) ? $tree->row($scope->id) : null;
+            $scoped[] = [...$assignment, 'page' => null === $page ? null : ['title' => $page['title'], 'path' => $page['path']]];
         }
 
         return $this->view->render($request, '@backend/users/edit.twig', [
@@ -60,7 +74,20 @@ final readonly class UserHandler implements RequestHandlerInterface
             'titles' => RoleTitles::of($roles),
             'assigned' => $global,
             'scoped' => $scoped,
+            'pages' => null === $tree ? [] : array_map(static fn(array $option): array => [...$option, 'value' => 'page:' . $option['value']], $tree->options()),
             'yourself' => $this->context->get()->actor->id === $profile->user->id,
         ]);
+    }
+
+    /**
+     * The pages to give roles for, null without the right to see them.
+     */
+    private function tree(): ?PageTree
+    {
+        try {
+            return PageTree::of($this->runner->ask(new ShowPageTree()), $this->languages);
+        } catch (AccessDeniedException) {
+            return null;
+        }
     }
 }

@@ -43,7 +43,9 @@ final readonly class PagesHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        if (null === $this->view->user()) {
+        $user = $this->view->user();
+
+        if (null === $user) {
             return $this->view->requireUser($request) ?? $this->view->redirect('/');
         }
 
@@ -57,6 +59,10 @@ final readonly class PagesHandler implements RequestHandlerInterface
 
         if (!$tree->has($id)) {
             throw EntityNotFoundException::for('pages', $id);
+        }
+
+        if (!$tree->inside($id)) {
+            throw AccessDeniedException::forPermission('page.show', $user);
         }
 
         $detailOnly = $request->hasHeader('HX-Request') && self::DETAIL === $request->getHeaderLine('HX-Target');

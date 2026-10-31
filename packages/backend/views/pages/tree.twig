@@ -3,15 +3,25 @@
 {% macro rows(rows, current, movable) %}
     {% import '@backend/ui.twig' as ui %}
     {%- for row in rows %}
-    <li class="fb-tree__item" data-id="{{ row.id }}" data-title="{{ row.title }}"{% if row.fixed %} data-fixed{% endif %}>
+    <li class="fb-tree__item" data-id="{{ row.id }}" data-title="{{ row.title }}"{% if row.fixed or row.outside %} data-fixed{% endif %}{% if row.outside %} data-leaf data-outside{% endif %}>
         <div class="fb-tree__row" data-depth="{{ min(row.depth, 6) }}">
             <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
+            {% if row.outside %}
+            {#- Only the way to a branch of the user (decision 0118). -#}
+            <span class="fb-tree__link">
+                <span class="fb-tree__title">{{ row.title }}</span>
+                <span class="fb-tree__meta">{{ row.path }} · {{ t('Outside your pages') }}</span>
+            </span>
+            {% else %}
             <a class="fb-tree__link" href="{{ path('backend.pages.show', {id: row.id}) }}" hx-get="{{ path('backend.pages.show', {id: row.id}) }}" hx-target="#page-detail" hx-select="#page-detail" hx-swap="outerHTML" hx-push-url="true"{% if row.id == current %} aria-current="page"{% endif %}{% if movable and not row.fixed %} aria-describedby="page-tree-hint"{% endif %}>
                 <span class="fb-tree__title">{{ row.title }}</span>
                 <span class="fb-tree__meta">{{ row.path }} · {{ row.languages|join(', ') }}</span>
             </a>
+            {% endif %}
+            {% if not row.outside %}
             {% if row.locked %}{{ ui.badge('danger', t('Locked')) }}{% endif %}
             {{ ui.status(row.status) }}
+            {% endif %}
         </div>
         {%- if row.children is not empty %}
         <ul class="fb-tree__group">{{ _self.rows(row.children, current, movable) }}</ul>

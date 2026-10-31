@@ -83,6 +83,15 @@
     overflow-wrap: anywhere;
 }
 
+/* Only shown, e.g. a page above the own branch (decision 0118). */
+.fb-tree__item[data-outside] > .fb-tree__row .fb-tree__link {
+    color: var(--fb-text-muted);
+}
+
+.fb-tree__item[data-outside] > .fb-tree__row .fb-tree__title {
+    font-weight: var(--fb-weight-regular);
+}
+
 .fb-tree__meta {
     color: var(--fb-text-muted);
     font-size: var(--fb-text-sm);

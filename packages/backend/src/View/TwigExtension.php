@@ -12,9 +12,11 @@ use Frootbox\Backend\BackendExtension;
 use Frootbox\Backend\I18n\Translator;
 use Frootbox\Core\Action\Catalog;
 use Frootbox\Core\Action\CurrentContext;
+use Frootbox\Core\Action\Schema\InputMapper;
 use Frootbox\Core\Auth\Gate;
 use Frootbox\Core\Routing\Router;
 use Frootbox\RichText\Html;
+use Throwable;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -54,11 +56,32 @@ final class TwigExtension extends AbstractExtension
 
     /**
      * Whether the user may run an action or query, so a screen shows only
-     * the controls that work (decision 0115). The action checks again.
+     * the controls that work (decision 0115). With input, e.g.
+     * can('page.update', {id: page.id}), its targets count, too, for
+     * roles within branches (decision 0118). The action checks again.
+     *
+     * @param array<string, mixed>|null $input
      */
-    public function can(string $name): bool
+    public function can(string $name, ?array $input = null): bool
     {
-        return $this->catalog->has($name) && $this->gate->allows($this->context->get()->actor, $this->catalog->get($name));
+        if (!$this->catalog->has($name)) {
+            return false;
+        }
+
+        $descriptor = $this->catalog->get($name);
+        $actor = $this->context->get()->actor;
+
+        if (null === $input) {
+            return $this->gate->allows($actor, $descriptor);
+        }
+
+        try {
+            $object = InputMapper::toObject($descriptor->class, $input);
+        } catch (Throwable) {
+            return false;
+        }
+
+        return $this->gate->allowsFor($actor, $descriptor, $object);
     }
 
     /**

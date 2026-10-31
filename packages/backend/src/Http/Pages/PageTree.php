@@ -16,9 +16,11 @@ use Frootbox\Core\Page\PageTreeNode;
 /**
  * The result of page.tree as the backend shows it (decision 0116): a
  * title in the default language, the path of the draft and a status,
- * "scheduled" for a draft with a time.
+ * "scheduled" for a draft with a time. With a role only within branches
+ * the pages above them are "outside": shown, but not opened or moved
+ * (decision 0118).
  *
- * @phpstan-type Row array{id: string, title: string, path: string, languages: list<string>, status: string, layout: string, depth: int, fixed: bool, online: bool, locked: bool, children: list<mixed>}
+ * @phpstan-type Row array{id: string, title: string, path: string, languages: list<string>, status: string, layout: string, depth: int, start: bool, fixed: bool, online: bool, locked: bool, outside: bool, children: list<mixed>}
  */
 final readonly class PageTree
 {
@@ -47,9 +49,27 @@ final readonly class PageTree
         return isset($this->pages[$id]);
     }
 
+    /**
+     * Whether the page is there and may be opened, not only the way to a
+     * branch.
+     */
+    public function inside(string $id): bool
+    {
+        return isset($this->pages[$id]) && !$this->pages[$id]['row']['outside'];
+    }
+
+    /**
+     * The first page that may be opened, from the top.
+     */
     public function first(): ?string
     {
-        return $this->rows[0]['id'] ?? null;
+        foreach ($this->pages as $id => $page) {
+            if (!$page['row']['outside']) {
+                return $id;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -108,7 +128,8 @@ final readonly class PageTree
 
     /**
      * Pages for a select: every page with dashes by depth, without the
-     * page and its subpages if one is given.
+     * ones outside the branches and without the page and its subpages if
+     * one is given.
      *
      * @return list<array{value: string, label: string}>
      */
@@ -117,7 +138,7 @@ final readonly class PageTree
         $options = [];
 
         foreach ($this->pages as $id => $page) {
-            if (null !== $without && ($id === $without || \in_array($without, $page['ancestors'], true))) {
+            if ($page['row']['outside'] || (null !== $without && ($id === $without || \in_array($without, $page['ancestors'], true)))) {
                 continue;
             }
 
@@ -159,10 +180,13 @@ final readonly class PageTree
                 'status' => null !== $node->publishAt && PageStatus::Published !== $node->status ? 'scheduled' : $node->status->value,
                 'layout' => $node->layout,
                 'depth' => $depth,
-                'fixed' => null === $parentId,
+                'start' => null === $parentId,
+                // The start page and the top of a branch stay in place.
+                'fixed' => null === $parentId || $pages[$parentId]['row']['outside'],
                 'online' => PageStatus::Draft !== $node->status,
                 // Locked by itself or a page above (decision 0117).
                 'locked' => null !== $node->visibility->lockedBy,
+                'outside' => $node->outside,
                 'children' => [],
             ];
             $pages[$node->id] = ['row' => $row, 'parentId' => $parentId, 'ancestors' => $ancestors, 'paths' => $paths, 'children' => \count($node->children)];

@@ -10,7 +10,7 @@
         <div class="fb-page-header__text">
             <h1 class="fb-heading-1">{{ t('Pages') }}</h1>
         </div>
-        {% if can('page.create') %}{{ ui.button({label: t('New page'), href: path('backend.pages.new') ~ '?parent=' ~ page.id, icon: 'plus'}) }}{% endif %}
+        {% if can('page.create', {layout: '', translations: [], parentId: page.id}) %}{{ ui.button({label: t('New page'), href: path('backend.pages.new') ~ '?parent=' ~ page.id, icon: 'plus'}) }}{% endif %}
     </header>
 
     <div class="fb-split">

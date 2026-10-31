@@ -10,7 +10,9 @@ namespace Frootbox\Backend\View;
 
 use Frootbox\Backend\I18n\Translator;
 use Frootbox\Backend\Screen;
+use Frootbox\Core\Action\Catalog;
 use Frootbox\Core\Auth\Actor;
+use Frootbox\Core\Auth\Gate;
 use Frootbox\Core\Auth\Permissions;
 use Frootbox\Core\Config\Environment;
 use Frootbox\Core\Extension\Registry;
@@ -25,6 +27,8 @@ final readonly class Menu
     public function __construct(
         private Registry $registry,
         private Permissions $permissions,
+        private Catalog $catalog,
+        private Gate $gate,
         private Environment $environment,
         private Router $router,
         private Translator $translator,
@@ -64,6 +68,10 @@ final readonly class Menu
 
         return null === $screen->permission
             || ($screen->development && $this->environment->isDevelopment())
-            || $this->permissions->allows($actor, $screen->permission);
+            // A screen named after a query shows when the query may run,
+            // e.g. pages with a role only within a branch (decision 0118).
+            || ($this->catalog->has($screen->permission)
+                ? $this->gate->allows($actor, $this->catalog->get($screen->permission))
+                : $this->permissions->allows($actor, $screen->permission));
     }
 }

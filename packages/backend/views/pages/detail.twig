@@ -29,7 +29,7 @@
 
         <div class="fb-cluster">
             {% if page.url %}{{ ui.button({label: t('View on the website'), href: page.url, variant: 'secondary', icon: 'external', attrs: {target: '_blank', rel: 'noopener'}}) }}{% endif %}
-            {% if has_draft and can('page.publish') %}
+            {% if has_draft and can('page.publish', {ids: page.publish}) %}
                 {% if page.offline_parents is empty %}
                 <fb-form action="page.publish" refresh="{{ refresh }}" done="{{ t('The page is published.') }}">
                     <form novalidate>
@@ -41,7 +41,7 @@
                 {{ ui.button({label: t('Publish'), attrs: {commandfor: 'page-publish', command: 'show-modal'}}) }}
                 {% endif %}
             {% endif %}
-            {% if has_draft and can('page.discard') %}
+            {% if has_draft and can('page.discard', {id: page.id}) %}
                 {{ ui.button({label: t('Discard the draft'), variant: 'danger', attrs: {commandfor: 'page-discard', command: 'show-modal'}}) }}
             {% endif %}
         </div>
@@ -56,13 +56,13 @@
 
     <div class="fb-card__body fb-stack">
         {% set translation = page.translation %}
-        {% set editable = can('page.update') %}
+        {% set editable = can('page.update', {id: page.id}) %}
         {% if translation %}
         <fb-form action="page.update" refresh="{{ refresh }}" done="{{ t('Saved') }}">
             <form class="fb-stack" novalidate>
                 <input type="hidden" name="id" value="{{ page.id }}">
                 {{ ui.field({label: t('Title'), name: 'translations.' ~ page.language.code ~ '.title', id: 'page-title', value: translation.title, required: true, disabled: not editable}) }}
-                {% if row.fixed %}
+                {% if row.start %}
                     {{ ui.field({label: t('Address'), name: '', id: 'page-slug', value: page.prefix, disabled: true, hint: t('The start page has no address of its own.')}) }}
                 {% else %}
                     {{ ui.field({label: t('Address'), name: 'translations.' ~ page.language.code ~ '.slug', id: 'page-slug', value: translation.slug, prefix: page.prefix, required: true, disabled: not editable, hint: t('If the address changes, the old one redirects to the new one.')}) }}
@@ -97,7 +97,7 @@
         {% endif %}
     </div>
 
-    {% if can('page.schedule') %}
+    {% if can('page.schedule', {id: page.id}) %}
     <section class="fb-section" aria-labelledby="page-schedule-title">
         <h3 class="fb-heading-4" id="page-schedule-title">{{ t('Times') }}</h3>
         <fb-form action="page.schedule" refresh="{{ refresh }}" done="{{ t('Saved') }}">
@@ -112,13 +112,13 @@
     {% endif %}
 
     {% set locked = details.locked.value %}
-    {% set can_lock = published and locked == 'none' and not page.inherited.locked and can('page.lock') %}
+    {% set can_lock = published and locked == 'none' and not page.inherited.locked and can('page.lock', {id: page.id}) %}
     <section class="fb-section" aria-labelledby="page-visibility-title">
         <h3 class="fb-heading-4" id="page-visibility-title">{{ t('Visibility') }}</h3>
         <div class="fb-stack">
             {% if locked != 'none' %}
                 {{ ui.alert({tone: 'warning', title: t('Locked for visitors'), text: locked == 'branch' ? t('Visitors get a notice instead of this page and its subpages.') : t('Visitors get a notice instead of this page.'), live: 'none'}) }}
-                {% if can('page.unlock') %}
+                {% if can('page.unlock', {id: page.id}) %}
                 <fb-form action="page.unlock" refresh="{{ refresh }}" done="{{ t('The page is unlocked.') }}">
                     <form novalidate>
                         <input type="hidden" name="id" value="{{ page.id }}">
@@ -131,7 +131,7 @@
             {% elseif can_lock %}
                 <p class="fb-muted">{{ t('A locked page stays published, visitors get a notice instead. It works right away.') }}</p>
                 <div class="fb-cluster">{{ ui.button({label: t('Lock for visitors'), variant: 'secondary', icon: 'lock', attrs: {commandfor: 'page-lock', command: 'show-modal'}}) }}</div>
-            {% elseif not published and can('page.lock') %}
+            {% elseif not published and can('page.lock', {id: page.id}) %}
                 <p class="fb-muted">{{ t('Only a published page can be locked.') }}</p>
             {% endif %}
 
@@ -171,7 +171,7 @@
                 </span>
                 {% if version.current %}
                     {{ ui.badge('neutral', t('Online')) }}
-                {% elseif can('page.restore') %}
+                {% elseif can('page.restore', {id: page.id, version: 1}) %}
                 <fb-form action="page.restore" refresh="{{ refresh }}" done="{{ t('Version {number} is in the draft now.', {number: version.version}) }}">
                     <form novalidate>
                         <input type="hidden" name="id" value="{{ page.id }}">
@@ -187,8 +187,8 @@
     </section>
     {% endif %}
 
-    {% set can_unpublish = published and can('page.unpublish') %}
-    {% set can_delete = not row.fixed and not page.has_children and can('page.delete') %}
+    {% set can_unpublish = published and can('page.unpublish', {id: page.id}) %}
+    {% set can_delete = not row.start and not page.has_children and can('page.delete', {id: page.id}) %}
     {% if can_unpublish or can_delete %}
     <section class="fb-section" aria-labelledby="page-more-title">
         <h3 class="fb-heading-4" id="page-more-title">{{ t('Offline and delete') }}</h3>
@@ -196,11 +196,11 @@
             {% if can_unpublish %}{{ ui.button({label: t('Take offline'), variant: 'secondary', attrs: {commandfor: 'page-unpublish', command: 'show-modal'}}) }}{% endif %}
             {% if can_delete %}{{ ui.button({label: t('Delete the page'), variant: 'danger', attrs: {commandfor: 'page-delete', command: 'show-modal'}}) }}{% endif %}
         </div>
-        {% if not row.fixed and page.has_children and can('page.delete') %}<p class="fb-muted">{{ t('A page with subpages cannot be deleted. Move or delete them first.') }}</p>{% endif %}
+        {% if not row.start and page.has_children and can('page.delete', {id: page.id}) %}<p class="fb-muted">{{ t('A page with subpages cannot be deleted. Move or delete them first.') }}</p>{% endif %}
     </section>
     {% endif %}
 
-    {% if has_draft and can('page.publish') and page.offline_parents is not empty %}
+    {% if has_draft and can('page.publish', {ids: page.publish}) and page.offline_parents is not empty %}
     <dialog class="fb-dialog" id="page-publish" aria-labelledby="page-publish-title">
         <fb-form action="page.publish" refresh="{{ refresh }}" done="{{ t('The pages are published.') }}">
             <form novalidate>
@@ -218,7 +218,7 @@
     </dialog>
     {% endif %}
 
-    {% if has_draft and can('page.discard') %}
+    {% if has_draft and can('page.discard', {id: page.id}) %}
     <dialog class="fb-dialog" id="page-discard" aria-labelledby="page-discard-title">
         <fb-form action="page.discard" {% if published %}refresh="{{ refresh }}"{% else %}next="{{ path('backend.pages') }}"{% endif %} done="{{ t('The draft is discarded.') }}">
             <form novalidate>

@@ -89,6 +89,40 @@ final class ContentScreensTest extends BackendTestCase
         self::assertSame(2, substr_count($html, 'data-status="danger"'), 'Tree and details mark the page; the draft below was never published.');
     }
 
+    public function testShowsOnlyTheBranchOfAnEditor(): void
+    {
+        $editor = $this->createUser('jane@example.org', []);
+        $this->action('user.assign-role', ['userId' => $editor, 'role' => 'editor', 'scope' => 'page:' . $this->about], $this->session);
+        $session = $this->signIn('jane@example.org');
+
+        $html = $this->html($this->request('GET', '/cms/pages', session: $session));
+        self::assertMatchesRegularExpression('/data-id="' . $this->start . '" data-title="Start" data-fixed data-leaf data-outside/', $html, 'The start page is only the way to the branch.');
+        self::assertStringNotContainsString('href="/cms/pages/' . $this->start . '"', $html);
+        self::assertStringContainsString('data-id="' . $this->about . '" data-title="Über uns" data-fixed', $html, 'The top of the branch stays in place.');
+        self::assertStringContainsString('aria-current="page"', $html, 'The first page of the branch is open.');
+        self::assertStringContainsString('href="/cms/pages"', $html, 'The menu has the pages.');
+        self::assertStringNotContainsString('href="/cms/navigations"', $html, 'Navigations need a role above.');
+
+        $about = $this->html($this->request('GET', '/cms/pages/' . $this->about, session: $session));
+        self::assertStringContainsString('<fb-form action="page.update"', $about);
+        self::assertStringContainsString('name="translations.de.slug"', $about, 'The top of the branch is no start page.');
+        self::assertStringNotContainsString('commandfor="page-delete"', $about, 'The top of the branch is deleted only from above.');
+
+        $team = $this->html($this->request('GET', '/cms/pages/' . $this->team, session: $session));
+        self::assertStringContainsString('commandfor="page-delete"', $team);
+
+        self::assertSame(403, $this->request('GET', '/cms/pages/' . $this->start, session: $session)->getStatusCode());
+        $this->action('page.update', ['id' => $this->start, 'layout' => 'acme/base/Page'], $session, 403);
+
+        $new = $this->html($this->request('GET', '/cms/pages/new', session: $session));
+        self::assertStringNotContainsString('value="' . $this->start . '"', $new, 'New pages go into the branch only.');
+
+        $user = $this->html($this->request('GET', '/cms/users/' . $editor, session: $this->session));
+        self::assertStringContainsString('id="user-branches"', $user);
+        self::assertStringContainsString('Über uns · /ueber-uns', $user);
+        self::assertStringContainsString('value="page:' . $this->team . '"', $user);
+    }
+
     public function testCreatesPagesBelowTheChosenOne(): void
     {
         $html = $this->html($this->request('GET', '/cms/pages/new?parent=' . $this->about, session: $this->session));

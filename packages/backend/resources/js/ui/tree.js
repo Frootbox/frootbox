@@ -31,6 +31,8 @@ const ALERT = '<svg class="fb-icon fb-icon--small" aria-hidden="true" focusable=
  * - roots: items can stand at the top level, parentId is null there
  * - depth: the most levels, e.g. 2 for items with one level below
  * - data-leaf: the item takes no children
+ * - <span class="fb-tree__link"> instead of a link: the row is only
+ *   shown, e.g. a page above the own branch (decision 0118)
  *
  * Keys on a link: arrow up and down go to the next link, Home and End to
  * the first and last. With Alt, up and down move the item among its
@@ -39,6 +41,8 @@ const ALERT = '<svg class="fb-icon fb-icon--small" aria-hidden="true" focusable=
  * aria-current, htmx loads what it points to.
  */
 export class Tree extends LitElement {
+    static LINK = ':is(a, button).fb-tree__link';
+
     static properties = {
         action: {},
         refresh: {},
@@ -112,12 +116,13 @@ export class Tree extends LitElement {
         return [...this.querySelectorAll('.fb-tree__item')];
     }
 
+    /** Links and buttons; a span is a row that cannot be opened, e.g. outside the own pages. */
     links() {
-        return [...this.querySelectorAll('.fb-tree__link')];
+        return [...this.querySelectorAll(Tree.LINK)];
     }
 
     onClick(event) {
-        const link = event.target.closest?.('.fb-tree__link');
+        const link = event.target.closest?.(Tree.LINK);
 
         if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
             return;

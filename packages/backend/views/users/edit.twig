@@ -49,18 +49,54 @@
             {% else %}
                 <p>{{ assigned is empty ? t('No roles') : assigned|map(name => titles[name] ?? name)|join(', ') }}</p>
             {% endif %}
-            {% if scoped is not empty %}
-            <div class="fb-stack fb-stack--sm">
-                <p class="fb-label">{{ t('Only within a part of the website') }}</p>
-                <ul class="fb-muted">
-                    {%- for assignment in scoped %}
-                    <li>{{ titles[assignment.role] ?? assignment.role }} · <code>{{ assignment.scope }}</code></li>
-                    {%- endfor %}
-                </ul>
-            </div>
-            {% endif %}
         </div>
     </section>
+
+    {% set may_assign = can('user.assign-role') and pages is not empty %}
+    {% if scoped is not empty or may_assign %}
+    <section class="fb-card" id="user-branches" aria-labelledby="user-branches-title">
+        <div class="fb-card__header">
+            <div class="fb-stack fb-stack--sm">
+                <h2 class="fb-heading-4" id="user-branches-title" tabindex="-1" data-fb-focus>{{ t('Roles within branches') }}</h2>
+                <p class="fb-muted">{{ t('A role here applies only to the page and everything below it. Media, navigations and the like need a role above.') }}</p>
+            </div>
+        </div>
+        {% if scoped is not empty %}
+        <ul class="fb-list">
+            {%- for assignment in scoped %}
+            <li class="fb-list__item">
+                <div class="fb-list__main">
+                    <span class="fb-list__title">{{ titles[assignment.role] ?? assignment.role }}</span>
+                    <span class="fb-list__meta">{{ assignment.page ? assignment.page.title ~ ' · ' ~ assignment.page.path : t('The page is gone.') }}</span>
+                </div>
+                {% if can('user.remove-role') %}
+                <fb-form action="user.remove-role" refresh="user-branches" done="{{ t('The role is taken away.') }}">
+                    <form novalidate>
+                        <input type="hidden" name="userId" value="{{ user.id }}" data-type="number">
+                        <input type="hidden" name="role" value="{{ assignment.role }}">
+                        <input type="hidden" name="scope" value="{{ assignment.scope }}">
+                        {{ ui.button({label: t('Take away'), type: 'submit', variant: 'ghost', small: true}) }}
+                    </form>
+                </fb-form>
+                {% endif %}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+        {% if may_assign %}
+        <div class="fb-card__body">
+            <fb-form action="user.assign-role" refresh="user-branches" done="{{ t('The role is given.') }}">
+                <form class="fb-stack" novalidate>
+                    <input type="hidden" name="userId" value="{{ user.id }}" data-type="number">
+                    {{ ui.select({label: t('Role'), name: 'role', id: 'user-branch-role', options: roles|map(role => {value: role.name, label: role.title})}) }}
+                    {{ ui.select({label: t('Page'), name: 'scope', id: 'user-branch-page', options: pages, hint: t('With all pages below it.')}) }}
+                    <div class="fb-form__actions">{{ ui.button({label: t('Give the role'), type: 'submit', variant: 'secondary'}) }}</div>
+                </form>
+            </fb-form>
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
 
     {% if can('user.set-password') %}
     <section class="fb-card" aria-labelledby="fb-set-password-title">
