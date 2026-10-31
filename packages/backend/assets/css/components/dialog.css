@@ -1,0 +1,45 @@
+/* Dialogs on the native <dialog>: a title, text, actions on the right,
+   the safe choice first. */
+
+.fb-dialog {
+    width: min(var(--fb-size-dialog), calc(100% - var(--fb-space-8)));
+    padding: 0;
+    border: var(--fb-size-border) solid var(--fb-border);
+    border-radius: var(--fb-radius-lg);
+    background: var(--fb-surface);
+    color: var(--fb-text);
+    box-shadow: var(--fb-shadow-lg);
+}
+
+.fb-dialog::backdrop {
+    background: var(--fb-backdrop);
+}
+
+.fb-dialog--static {
+    position: static;
+    display: block;
+    width: 100%;
+    max-width: var(--fb-size-dialog);
+}
+
+.fb-dialog__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fb-space-3);
+    padding: var(--fb-space-6);
+}
+
+.fb-dialog__title {
+    font-size: var(--fb-text-xl);
+    font-weight: var(--fb-weight-bold);
+    line-height: var(--fb-leading-snug);
+}
+
+.fb-dialog__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fb-space-3);
+    justify-content: flex-end;
+    padding: var(--fb-space-4) var(--fb-space-6);
+    border-top: var(--fb-size-border) solid var(--fb-border);
+}

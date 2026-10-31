@@ -1,0 +1,3 @@
+title: Backend
+description: The screens behind backend.path (default /cms) and the user interface of the edit mode
+extension: Frootbox\Backend\BackendExtension

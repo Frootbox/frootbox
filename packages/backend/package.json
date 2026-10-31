@@ -1,0 +1,20 @@
+{
+  "name": "@frootbox/backend",
+  "private": true,
+  "description": "Scripts of the Frootbox backend, built with Vite into assets/build",
+  "license": "LGPL-3.0-only",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "watch": "vite build --watch",
+    "lint:css": "stylelint \"assets/css/**/*.css\""
+  },
+  "dependencies": {
+    "htmx.org": "^2.0.11",
+    "lit": "^3.3.3"
+  },
+  "devDependencies": {
+    "stylelint": "^17.16.0",
+    "vite": "^8.3.4"
+  }
+}

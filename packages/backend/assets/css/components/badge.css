@@ -1,0 +1,49 @@
+/* The status of a page or an entry, with a dot in its color. */
+
+.fb-badge {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: var(--fb-space-2);
+    padding: var(--fb-space-0) var(--fb-space-3);
+    border-radius: var(--fb-radius-full);
+    background: var(--fb-surface-2);
+    color: var(--fb-text-muted);
+    font-size: var(--fb-text-xs);
+    font-weight: var(--fb-weight-semibold);
+    line-height: var(--fb-leading-normal);
+    white-space: nowrap;
+}
+
+.fb-badge::before {
+    width: var(--fb-size-dot);
+    height: var(--fb-size-dot);
+    border-radius: var(--fb-radius-full);
+    background: currentcolor;
+    content: "";
+}
+
+.fb-badge[data-status="neutral"]::before {
+    display: none;
+}
+
+.fb-badge[data-status="published"] {
+    background: var(--fb-success-bg);
+    color: var(--fb-success-text);
+}
+
+.fb-badge[data-status="draft"],
+.fb-badge[data-status="changed"] {
+    background: var(--fb-warning-bg);
+    color: var(--fb-warning-text);
+}
+
+.fb-badge[data-status="scheduled"] {
+    background: var(--fb-info-bg);
+    color: var(--fb-info-text);
+}
+
+.fb-badge[data-status="danger"] {
+    background: var(--fb-danger-bg);
+    color: var(--fb-danger-text);
+}

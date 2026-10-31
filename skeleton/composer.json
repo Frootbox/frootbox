@@ -5,6 +5,7 @@
     "license": "MIT",
     "require": {
         "php": ">=8.5",
+        "frootbox/backend": "^0.1@dev",
         "frootbox/core": "^0.1@dev"
     },
     "minimum-stability": "dev",

@@ -1,0 +1,111 @@
+# German texts of the backend. The key is the English text (decision 0114).
+# Address the user with "Du", keep labels short, say what to do in errors.
+
+# Frame and menu
+Content: Inhalte
+Website: Website
+Administration: Verwaltung
+Dashboard: Übersicht
+Design system: Design-System
+Main menu: Hauptmenü
+Skip to the content: Zum Inhalt springen
+View {site}: "{site} ansehen"
+View the website: Website ansehen
+Appearance: Darstellung
+Like the system: Wie das System
+Light: Hell
+Dark: Dunkel
+Sign out: Abmelden
+
+# Sign-in
+Sign in: Anmelden
+Email: E-Mail
+Password: Passwort
+The email or the password is wrong.: E-Mail oder Passwort ist falsch.
+You are signed out.: Du bist abgemeldet.
+Go to the website: Zur Website
+
+# Dashboard
+"Hello, {name}": "Hallo, {name}"
+You edit content right on the website: Inhalte bearbeitest Du direkt auf der Website
+You change texts, images and blocks where they are. Here you manage pages, media and settings.: Texte, Bilder und Blöcke änderst Du dort, wo sie stehen. Hier im CMS verwaltest Du Seiten, Medien und Einstellungen.
+Open the website: Website öffnen
+Waiting to be published: Wartet auf Veröffentlichung
+Everything is published. New changes show up here until you publish them.: Alles ist veröffentlicht. Neue Änderungen erscheinen hier, bis Du sie veröffentlichst.
+
+# Status
+Published: Veröffentlicht
+Draft: Entwurf
+Changed: Geändert
+Scheduled: Geplant
+Error: Fehler
+
+# Building blocks
+optional: optional
+Save: Speichern
+Saved: Gespeichert
+Cancel: Abbrechen
+Delete: Löschen
+Delete for good: Endgültig löschen
+Discard: Verwerfen
+Edit: Bearbeiten
+Open: Öffnen
+Preview: Vorschau
+Publish: Veröffentlichen
+Publish all: Alle veröffentlichen
+Publish now: Jetzt veröffentlichen
+Keep as a draft: Als Entwurf behalten
+Upload: Hochladen
+New page: Neue Seite
+Pages: Seiten
+Title: Titel
+Address: Adresse
+Description: Beschreibung
+Layout: Layout
+Languages: Sprachen
+Versions: Versionen
+Menu: Menü
+
+# Design page
+Every token and every building block, made from the real components. The rules are in DESIGN.md of the backend.: Jedes Token und jeder Baustein, aus den echten Komponenten. Die Regeln stehen in DESIGN.md des Backends.
+Too little contrast: Zu wenig Kontrast
+"{count} pair of colors is below 4.5:1. Choose other brand colors.":
+  one: "{count} Farbpaar liegt unter 4,5:1. Wähle andere Markenfarben."
+  other: "{count} Farbpaare liegen unter 4,5:1. Wähle andere Markenfarben."
+Building blocks: Bausteine
+Brand tokens: Tokens der Marke
+System tokens: Tokens des Systems
+Token: Token
+Value: Wert
+Use: Verwendung
+Contrast: Kontrast
+Text: Text
+Background: Hintergrund
+Mode: Modus
+Ratio: Verhältnis
+Status: Status
+Too low: Zu gering
+Buttons: Buttons
+Fields: Felder
+Choices: Auswahl
+Messages: Meldungen
+List in a card: Liste in einer Karte
+Tabs: Tabs
+Dialog: Dialog
+Empty state: Leerzustand
+Shown in the browser tab and in search results.: Erscheint im Browser-Tab und in Suchergebnissen.
+This address is reserved. Choose another one.: Diese Adresse ist reserviert. Wähle eine andere.
+Show in the main menu: Im Hauptmenü zeigen
+Open in a new window: In neuem Fenster öffnen
+Only for links to other websites.: Nur für Links auf andere Websites.
+Visitors see the page at once.: Besucher sehen die Seite sofort.
+Only you and your team see it.: Nur Du und Dein Team sehen sie.
+The page has a draft with changes.: Die Seite hat einen Entwurf mit Änderungen.
+The page is published.: Die Seite ist veröffentlicht.
+Not translated yet: Noch nicht übersetzt
+Visitors see the German text.: Besucher sehen den deutschen Text.
+Discard the draft?: Entwurf verwerfen?
+Your changes to this page are lost. The published version stays.: Deine Änderungen an dieser Seite gehen verloren. Die veröffentlichte Fassung bleibt.
+Keep the draft: Entwurf behalten
+No media yet: Noch keine Medien
+Upload images and files to use them on your pages.: Lade Bilder und Dateien hoch, um sie auf Deinen Seiten zu nutzen.

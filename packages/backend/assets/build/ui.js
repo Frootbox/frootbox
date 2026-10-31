@@ -1,0 +1,9 @@
+import{LitElement as e,html as t,svg as n}from"lit";var r=`fb-theme`,i=[`system`,`light`,`dark`],a={system:n`<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/><path d="M12 16v4"/>`,light:n`<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m4.9 19.1 1.4-1.4"/><path d="m17.7 6.3 1.4-1.4"/>`,dark:n`<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>`};function o(){try{let e=localStorage.getItem(r);return i.includes(e)?e:`system`}catch{return`system`}}var s=class extends e{static properties={label:{},labels:{type:Object},theme:{state:!0}};constructor(){super(),this.label=`Appearance`,this.labels={system:`Like the system`,light:`Light`,dark:`Dark`},this.theme=o()}createRenderRoot(){return this}render(){return t`<div class="fb-segmented" role="group" aria-label=${this.label}>
+            ${i.map(e=>t`<button type="button" class="fb-segmented__item"
+                aria-pressed=${e===this.theme?`true`:`false`}
+                title=${this.labels[e]??e}
+                @click=${()=>this.choose(e)}>
+                <svg class="fb-icon fb-icon--small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${a[e]}</svg>
+                <span class="fb-visually-hidden">${this.labels[e]??e}</span>
+            </button>`)}
+        </div>`}choose(e){this.theme=e;try{e===`system`?localStorage.removeItem(r):localStorage.setItem(r,e)}catch{}e===`system`?delete document.documentElement.dataset.theme:document.documentElement.dataset.theme=e,this.dispatchEvent(new CustomEvent(`fb-theme-change`,{detail:{theme:e},bubbles:!0}))}};customElements.define(`fb-theme-switch`,s);export{s as ThemeSwitch};

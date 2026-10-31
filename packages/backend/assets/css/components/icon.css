@@ -1,0 +1,12 @@
+/* Icons from assets/icons, drawn with the text color. */
+
+.fb-icon {
+    flex: none;
+    width: var(--fb-size-icon);
+    height: var(--fb-size-icon);
+}
+
+.fb-icon--small {
+    width: var(--fb-size-icon-sm);
+    height: var(--fb-size-icon-sm);
+}

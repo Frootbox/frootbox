@@ -1,0 +1,28 @@
+/* Lists of entries in a card: a title, a line below, a status and
+   actions at the end. */
+
+.fb-list__item {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fb-space-2) var(--fb-space-4);
+    align-items: center;
+    min-height: var(--fb-size-row);
+    padding: var(--fb-space-3) var(--fb-space-5);
+    border-top: var(--fb-size-border) solid var(--fb-border);
+}
+
+.fb-list__main {
+    display: flex;
+    flex: 1 1 calc(var(--fb-space-16) * 2.5);
+    flex-direction: column;
+    min-width: 0;
+}
+
+.fb-list__title {
+    font-weight: var(--fb-weight-semibold);
+}
+
+.fb-list__meta {
+    color: var(--fb-text-muted);
+    font-size: var(--fb-text-sm);
+}

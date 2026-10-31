@@ -1,0 +1,35 @@
+/* Messages in the page: info, success, warning, danger. */
+
+.fb-alert {
+    display: flex;
+    gap: var(--fb-space-3);
+    align-items: flex-start;
+    padding: var(--fb-space-3) var(--fb-space-4);
+    border-radius: var(--fb-radius-md);
+    background: var(--fb-info-bg);
+    color: var(--fb-info-text);
+    font-size: var(--fb-text-md);
+}
+
+.fb-alert .fb-icon {
+    margin-top: var(--fb-space-0);
+}
+
+.fb-alert__title {
+    font-weight: var(--fb-weight-semibold);
+}
+
+.fb-alert[data-tone="success"] {
+    background: var(--fb-success-bg);
+    color: var(--fb-success-text);
+}
+
+.fb-alert[data-tone="warning"] {
+    background: var(--fb-warning-bg);
+    color: var(--fb-warning-text);
+}
+
+.fb-alert[data-tone="danger"] {
+    background: var(--fb-danger-bg);
+    color: var(--fb-danger-text);
+}

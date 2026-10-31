@@ -1,0 +1,51 @@
+/* Checkboxes, radio buttons and choices as cards. */
+
+.fb-check {
+    display: flex;
+    gap: var(--fb-space-3);
+    align-items: flex-start;
+    min-height: var(--fb-size-control);
+    padding: var(--fb-space-3) 0;
+    cursor: pointer;
+}
+
+.fb-check input,
+.fb-choice input {
+    flex: none;
+    width: var(--fb-size-check);
+    height: var(--fb-size-check);
+    margin-top: var(--fb-space-0);
+    accent-color: var(--fb-accent);
+}
+
+.fb-check__text,
+.fb-choice__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fb-space-1);
+}
+
+.fb-choice {
+    display: flex;
+    gap: var(--fb-space-3);
+    padding: var(--fb-space-4);
+    border: var(--fb-size-border) solid var(--fb-border-strong);
+    border-radius: var(--fb-radius-md);
+    background: var(--fb-input-bg);
+    cursor: pointer;
+}
+
+.fb-choice:has(input:checked) {
+    border-color: var(--fb-accent);
+    background: var(--fb-accent-soft);
+    box-shadow: 0 0 0 var(--fb-size-border) var(--fb-accent);
+}
+
+.fb-choice:has(input:focus-visible) {
+    outline: var(--fb-size-focus) solid var(--fb-focus);
+    outline-offset: var(--fb-size-focus-offset);
+}
+
+.fb-choice__title {
+    font-weight: var(--fb-weight-semibold);
+}

@@ -18,6 +18,14 @@ languages:
 # The active theme: an installed extension with "theme:" in its frootbox.yaml.
 # theme: acme/website
 
+# The backend. path is where it lives (its first segment cannot be a page
+# slug), language the language of its user interface; by default the
+# first language of the website if the backend has texts for it, else
+# English.
+# backend:
+#   path: /cms
+#   language: de
+
 # Logs are written to var/log/. Uncomment to change the level:
 # debug, info, notice, warning, error, critical, alert, emergency.
 # Defaults: debug in dev, warning in prod.

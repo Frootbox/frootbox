@@ -1,0 +1,15 @@
+/* The initials of a user. */
+
+.fb-avatar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--fb-size-avatar);
+    height: var(--fb-size-avatar);
+    border-radius: var(--fb-radius-full);
+    background: var(--fb-accent-soft);
+    color: var(--fb-accent-text);
+    font-size: var(--fb-text-sm);
+    font-weight: var(--fb-weight-bold);
+}

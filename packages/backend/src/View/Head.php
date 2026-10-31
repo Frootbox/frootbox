@@ -1,0 +1,108 @@
+<?php
+
+/*
+ * SPDX-License-Identifier: LGPL-3.0-only
+ */
+
+declare(strict_types=1);
+
+namespace Frootbox\Backend\View;
+
+use Frootbox\Backend\BackendExtension;
+use Frootbox\Backend\Design\Design;
+use Frootbox\Core\Asset\AssetList;
+use Frootbox\Core\Asset\AssetTags;
+use Frootbox\Core\Asset\ImportMap;
+use Frootbox\Core\Extension\Registry;
+use Frootbox\RichText\Html;
+
+/**
+ * The tags in the head of every backend page: the order of the layers,
+ * the tokens of the active brand, the styles, the import map and the
+ * scripts (decisions 0111, 0114).
+ *
+ * CSS of the backend goes into layers by its folder in assets/css:
+ * reset.css, base.css, components/, screens/. Files that extensions add
+ * with $registry->asset(…, 'backend') go into "extensions".
+ */
+final readonly class Head
+{
+    public const array LAYERS = ['reset', 'tokens', 'base', 'components', 'screens', 'extensions'];
+
+    public const string AREA = 'backend';
+
+    public const string CSS = BackendExtension::ROOT . '/assets/css';
+
+    public const string SCRIPT = BackendExtension::ROOT . '/assets/build/backend.js';
+
+    /** Sets the appearance chosen in the browser before anything is drawn. */
+    private const string THEME_SCRIPT = 'try{var t=localStorage.getItem("fb-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}';
+
+    public function __construct(
+        private Design $design,
+        private AssetTags $tags,
+        private ImportMap $imports,
+        private Registry $registry,
+    ) {}
+
+    public function html(?string $csrf): string
+    {
+        $assets = $this->assets();
+        $favicon = $this->design->favicon();
+        $lines = [
+            '<meta charset="utf-8">',
+            '<meta name="viewport" content="width=device-width, initial-scale=1">',
+            '<meta name="robots" content="noindex, nofollow">',
+            null === $favicon ? '' : '<link rel="icon" href="' . Html::escape($favicon) . '">',
+            null === $csrf ? '' : '<meta name="fb-csrf" content="' . Html::escape($csrf) . '">',
+            '<script>' . self::THEME_SCRIPT . '</script>',
+            '<style>' . $assets->layerOrder() . '</style>',
+            '<style>@layer tokens{' . $this->design->css() . '}</style>',
+            $this->tags->styles($assets),
+            $this->imports->tag(),
+            $this->imports->module(self::SCRIPT),
+            $this->tags->scripts($assets),
+        ];
+
+        return implode("\n", array_filter($lines, static fn(string $line): bool => '' !== $line));
+    }
+
+    public function assets(): AssetList
+    {
+        $assets = new AssetList(self::LAYERS);
+
+        foreach (['reset', 'base'] as $layer) {
+            if (is_file(self::CSS . '/' . $layer . '.css')) {
+                $assets->add(self::CSS . '/' . $layer . '.css', $layer);
+            }
+        }
+
+        foreach (['components', 'screens'] as $layer) {
+            foreach (self::files(self::CSS . '/' . $layer) as $file) {
+                $assets->add($file, $layer);
+            }
+        }
+
+        foreach ($this->registry->assets(self::AREA) as $file) {
+            $assets->add($file, 'extensions');
+        }
+
+        return $assets;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private static function files(string $directory): array
+    {
+        $files = glob($directory . '/*.css');
+
+        if (false === $files) {
+            return [];
+        }
+
+        sort($files);
+
+        return $files;
+    }
+}

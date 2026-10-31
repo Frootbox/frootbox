@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eae44b3f7fb0faef9ffddcb64c43d73c",
+    "content-hash": "feb06920003bc5456558c8ec755786f6",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -355,6 +355,54 @@
             "time": "2026-10-04T12:35:58+00:00"
         },
         {
+            "name": "frootbox/backend",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/backend",
+                "reference": "e4ac8add741305193e6b90e3c45e329c2e0d052a"
+            },
+            "require": {
+                "frootbox/core": "^0.1",
+                "php": ">=8.5",
+                "psr/container": "^2.0",
+                "psr/http-factory": "^1.1",
+                "psr/http-message": "^2.0",
+                "psr/http-server-handler": "^1.0",
+                "symfony/yaml": "^8.1",
+                "twig/twig": "^3.30"
+            },
+            "type": "frootbox-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\Backend\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Frootbox\\Backend\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "LGPL-3.0-only"
+            ],
+            "description": "Backend of the Frootbox CMS: the screens behind backend.path and the user interface of the edit mode",
+            "keywords": [
+                "backend",
+                "cms",
+                "frootbox"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "frootbox/core",
             "version": "dev-main",
             "dist": {
@@ -511,7 +559,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/themes/bohnenglueck",
-                "reference": "00cbc3b0736072b7f3c77447ba70f00254e38243"
+                "reference": "aaa4b20aa03e70d805df62ba0add927b8415b8b3"
             },
             "require": {
                 "frootbox/core": "^0.1",
@@ -526,7 +574,7 @@
             "license": [
                 "MIT"
             ],
-            "description": "Bohnenglück, a demo theme for Frootbox: a one-pager for a small coffee roastery",
+            "description": "Bohnenglück, a demo theme for Frootbox: the website of a small coffee roastery",
             "keywords": [
                 "demo",
                 "frootbox",
@@ -6738,6 +6786,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "frootbox/backend": 20,
         "frootbox/core": 20,
         "frootbox/database": 20,
         "frootbox/rich-text": 20,

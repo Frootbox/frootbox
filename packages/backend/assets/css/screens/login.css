@@ -1,0 +1,44 @@
+/* The sign-in: the brand above one card, centered. */
+
+.fb-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    padding: var(--fb-space-6) var(--fb-space-4);
+}
+
+.fb-login__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fb-space-6);
+    width: 100%;
+    max-width: var(--fb-size-narrow);
+}
+
+.fb-login__brand {
+    display: flex;
+    justify-content: center;
+}
+
+.fb-login__brand .fb-brand__logo {
+    height: var(--fb-space-8);
+}
+
+.fb-login__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fb-space-5);
+    padding: var(--fb-space-8);
+}
+
+.fb-login__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fb-space-1);
+}
+
+.fb-login__back {
+    font-size: var(--fb-text-md);
+    text-align: center;
+}

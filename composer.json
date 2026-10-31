@@ -5,6 +5,7 @@
     "license": "LGPL-3.0-only",
     "require": {
         "php": ">=8.5",
+        "frootbox/backend": "^0.1@dev",
         "frootbox/core": "^0.1@dev",
         "frootbox/database": "^0.1@dev",
         "frootbox/rich-text": "^0.1@dev",
@@ -16,6 +17,7 @@
     ],
     "autoload-dev": {
         "psr-4": {
+            "Frootbox\\Backend\\Tests\\": "packages/backend/tests/",
             "Frootbox\\Core\\Tests\\": "packages/core/tests/",
             "Frootbox\\Database\\Tests\\": "packages/database/tests/",
             "Frootbox\\RichText\\Tests\\": "packages/rich-text/tests/",
@@ -35,6 +37,7 @@
         "stan": "@php vendor/bin/phpstan analyse --memory-limit=1G",
         "test": "@php vendor/bin/phpunit",
         "sandbox": "@php tools/sandbox.php",
+        "design-doc": "@php tools/design-doc.php",
         "serve": [
             "Composer\\Config::disableProcessTimeout",
             "@php -S localhost:8000 -t sandbox/public"

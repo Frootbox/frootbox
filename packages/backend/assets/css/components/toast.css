@@ -1,0 +1,23 @@
+/* A short confirmation at the bottom right, e.g. after saving. */
+
+.fb-toast {
+    position: fixed;
+    right: var(--fb-space-6);
+    bottom: var(--fb-space-6);
+    z-index: var(--fb-layer-toast);
+    display: flex;
+    gap: var(--fb-space-3);
+    align-items: center;
+    max-width: min(var(--fb-size-narrow), calc(100% - var(--fb-space-8)));
+    padding: var(--fb-space-3) var(--fb-space-4);
+    border-radius: var(--fb-radius-md);
+    background: var(--fb-inverse-bg);
+    color: var(--fb-inverse-text);
+    font-size: var(--fb-text-md);
+    font-weight: var(--fb-weight-medium);
+    box-shadow: var(--fb-shadow-lg);
+}
+
+.fb-toast--static {
+    position: static;
+}

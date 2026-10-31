@@ -1,0 +1,3 @@
+title: Acme brand
+description: A brand for the tests of the backend
+extension: Frootbox\Backend\Tests\Fixtures\Brand\BrandExtension

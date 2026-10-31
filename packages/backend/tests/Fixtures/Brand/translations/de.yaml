@@ -1,0 +1,3 @@
+# Later packages win: this replaces a text of the backend.
+Sign in: Einloggen
+"{count} order": { one: "{count} Bestellung", other: "{count} Bestellungen" }

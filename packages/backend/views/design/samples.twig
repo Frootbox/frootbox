@@ -1,0 +1,110 @@
+{#- Every building block in all variants, for one mode of the design page. -#}
+{% import '@backend/ui.twig' as ui %}
+{% set id = 'design-' ~ mode %}
+
+<div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Buttons') }}</p>
+    <div class="fb-cluster">
+        {{ ui.button({label: t('Publish')}) }}
+        {{ ui.button({label: t('Preview'), variant: 'secondary'}) }}
+        {{ ui.button({label: t('Cancel'), variant: 'ghost'}) }}
+        {{ ui.button({label: t('Delete'), variant: 'danger'}) }}
+        {{ ui.button({label: t('Delete for good'), variant: 'danger-solid'}) }}
+    </div>
+    <div class="fb-cluster">
+        {{ ui.button({label: t('New page'), icon: 'plus', variant: 'secondary', small: true}) }}
+        {{ ui.button({label: t('Edit'), icon: 'pencil', variant: 'ghost', icon_only: true}) }}
+        {{ ui.button({label: t('Publish'), disabled: true}) }}
+    </div>
+</div>
+
+<div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Fields') }}</p>
+    {{ ui.field({label: t('Title'), name: 'title', id: id ~ '-title', value: 'Über uns', hint: t('Shown in the browser tab and in search results.')}) }}
+    {{ ui.field({label: t('Address'), name: 'slug', id: id ~ '-slug', value: 'ueber-uns', prefix: 'bohnenglueck.de/'}) }}
+    {{ ui.field({label: t('Address'), name: 'slug', id: id ~ '-slug-error', value: 'cms', prefix: 'bohnenglueck.de/', error: t('This address is reserved. Choose another one.')}) }}
+    {{ ui.field({label: t('Description'), name: 'description', id: id ~ '-description', optional: true, multiline: true}) }}
+    {{ ui.field({label: t('Email'), name: 'email', id: id ~ '-email', value: 'jan@bohnenglueck.de', disabled: true}) }}
+    {{ ui.select({label: t('Layout'), name: 'layout', id: id ~ '-layout', value: 'page', options: [{value: 'one-page', label: 'OnePage'}, {value: 'page', label: 'Page'}]}) }}
+</div>
+
+<div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Choices') }}</p>
+    {{ ui.check({label: t('Show in the main menu'), name: 'menu', id: id ~ '-menu', checked: true}) }}
+    {{ ui.check({label: t('Open in a new window'), name: 'window', id: id ~ '-window', hint: t('Only for links to other websites.')}) }}
+    <div class="fb-stack fb-stack--sm" role="radiogroup" aria-label="{{ t('Publish') }}">
+        {{ ui.choice({title: t('Publish now'), text: t('Visitors see the page at once.'), name: id ~ '-when', value: 'now', checked: true}) }}
+        {{ ui.choice({title: t('Keep as a draft'), text: t('Only you and your team see it.'), name: id ~ '-when', value: 'draft'}) }}
+    </div>
+</div>
+
+<div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Status') }}</p>
+    <div class="fb-cluster">
+        {{ ui.status('published') }}
+        {{ ui.status('draft') }}
+        {{ ui.status('changed') }}
+        {{ ui.status('scheduled') }}
+        {{ ui.badge('danger', t('Error')) }}
+        {{ ui.badge('neutral', '12') }}
+    </div>
+</div>
+
+<div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Messages') }}</p>
+    {{ ui.alert({tone: 'info', text: t('The page has a draft with changes.'), live: 'none'}) }}
+    {{ ui.alert({tone: 'success', text: t('The page is published.'), live: 'none'}) }}
+    {{ ui.alert({tone: 'warning', title: t('Not translated yet'), text: t('Visitors see the German text.'), live: 'none'}) }}
+    {{ ui.alert({tone: 'danger', text: t('The email or the password is wrong.'), live: 'none'}) }}
+    {{ ui.toast(t('Saved'), true) }}
+</div>
+
+<div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('List in a card') }}</p>
+    <section class="fb-card">
+        <div class="fb-card__header"><h3 class="fb-heading-4">{{ t('Waiting to be published') }}</h3>{{ ui.badge('neutral', '2') }}</div>
+        <ul>
+            <li class="fb-list__item"><span class="fb-list__main"><span class="fb-list__title">Kaffee</span><span class="fb-list__meta">/kaffee</span></span>{{ ui.status('changed') }}{{ ui.button({label: t('Open'), variant: 'secondary', small: true}) }}</li>
+            <li class="fb-list__item"><span class="fb-list__main"><span class="fb-list__title">Rösterei</span><span class="fb-list__meta">/roesterei</span></span>{{ ui.status('draft') }}{{ ui.button({label: t('Open'), variant: 'secondary', small: true}) }}</li>
+        </ul>
+        <div class="fb-card__footer">{{ ui.button({label: t('Publish all')}) }}</div>
+    </section>
+</div>
+
+<div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Tabs') }}</p>
+    {{ ui.tabs(t('Languages'), [{label: 'Deutsch', href: '#', current: true}, {label: 'English', href: '#'}, {label: t('Versions'), href: '#'}]) }}
+</div>
+
+<div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Dialog') }}</p>
+    <div class="fb-dialog fb-dialog--static" role="dialog" aria-labelledby="{{ id }}-dialog-title" aria-modal="false">
+        <div class="fb-dialog__body">
+            <h3 class="fb-dialog__title" id="{{ id }}-dialog-title">{{ t('Discard the draft?') }}</h3>
+            <p class="fb-muted">{{ t('Your changes to this page are lost. The published version stays.') }}</p>
+        </div>
+        <div class="fb-dialog__actions">
+            {{ ui.button({label: t('Keep the draft'), variant: 'secondary'}) }}
+            {{ ui.button({label: t('Discard'), variant: 'danger-solid'}) }}
+        </div>
+    </div>
+</div>
+
+<div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Empty state') }}</p>
+    {{ ui.empty({icon: 'image', title: t('No media yet'), text: t('Upload images and files to use them on your pages.'), action: {label: t('Upload'), icon: 'plus'}}) }}
+</div>
+
+<div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Menu') }}</p>
+    <ul class="fb-nav__list">
+        <li><a class="fb-nav__item" href="#" aria-current="page">{{ icon('dashboard') }}<span>{{ t('Dashboard') }}</span></a></li>
+        <li><a class="fb-nav__item" href="#">{{ icon('pages') }}<span>{{ t('Pages') }}</span></a></li>
+    </ul>
+    <div class="fb-segmented" role="group" aria-label="{{ t('Appearance') }}">
+        <button class="fb-segmented__item" type="button" aria-pressed="true">{{ t('Like the system') }}</button>
+        <button class="fb-segmented__item" type="button" aria-pressed="false">{{ t('Light') }}</button>
+        <button class="fb-segmented__item" type="button" aria-pressed="false">{{ t('Dark') }}</button>
+    </div>
+    <div class="fb-account">{{ ui.avatar('JB') }}<span class="fb-account__name">Jan Brüning</span></div>
+</div>

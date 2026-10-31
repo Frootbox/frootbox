@@ -19,6 +19,9 @@
          failOnRisky="true"
          failOnWarning="true">
     <testsuites>
+        <testsuite name="backend">
+            <directory>packages/backend/tests</directory>
+        </testsuite>
         <testsuite name="core">
             <directory>packages/core/tests</directory>
         </testsuite>
@@ -36,6 +39,7 @@
 
     <source>
         <include>
+            <directory>packages/backend/src</directory>
             <directory>packages/core/src</directory>
             <directory>packages/database/src</directory>
             <directory>packages/rich-text/src</directory>

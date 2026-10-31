@@ -1,0 +1,89 @@
+{#- The design page (decision 0113): tokens and every building block. -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Design system') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <p class="fb-muted">{{ brand.name }}</p>
+            <h1 class="fb-heading-1">{{ t('Design system') }}</h1>
+            <p class="fb-muted">{{ t('Every token and every building block, made from the real components. The rules are in DESIGN.md of the backend.') }}</p>
+        </div>
+    </header>
+
+    {% set failing = contrasts|filter(c => not c.passes) %}
+    {% if failing is not empty %}
+        {{ ui.alert({tone: 'warning', title: t('Too little contrast'), text: t(['{count} pair of colors is below 4.5:1. Choose other brand colors.', '{count} pairs of colors are below 4.5:1. Choose other brand colors.'], {count: failing|length})}) }}
+    {% endif %}
+
+    <section class="fb-stack" aria-labelledby="fb-design-components">
+        <h2 class="fb-heading-3" id="fb-design-components">{{ t('Building blocks') }}</h2>
+        <div class="fb-design-modes">
+            {% for mode in ['light', 'dark'] %}
+            <div class="fb-design-mode" data-theme="{{ mode }}" data-design-mode="{{ mode }}">
+                <p class="fb-design-sample__title">{{ mode == 'light' ? t('Light') : t('Dark') }}</p>
+                {% include '@backend/design/samples.twig' with {mode: mode} only %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% for group, categories in {brand: brand_tokens, system: system_tokens} %}
+    <section class="fb-card" aria-labelledby="fb-design-{{ group }}">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-3" id="fb-design-{{ group }}">{{ group == 'brand' ? t('Brand tokens') : t('System tokens') }}</h2>
+        </div>
+        <div class="fb-card__body fb-stack">
+            {% for category, tokens in categories %}
+            <div class="fb-design-scroll">
+                <table class="fb-design-table">
+                    <caption class="fb-design-sample__title">{{ category }}</caption>
+                    <thead><tr><th scope="col">{{ t('Token') }}</th>{% if tokens[0].isThemed %}<th scope="col">{{ t('Light') }}</th><th scope="col">{{ t('Dark') }}</th>{% else %}<th scope="col">{{ t('Value') }}</th>{% endif %}<th scope="col">{{ t('Use') }}</th></tr></thead>
+                    <tbody>
+                    {% for token in tokens %}
+                        <tr>
+                            <td><code>{{ token.variable }}</code></td>
+                            {% if token.isThemed %}
+                                {% for mode in ['light', 'dark'] %}
+                                <td>{% if category == 'color' %}<span class="fb-design-swatch" data-theme="{{ mode }}" style="background: var({{ token.variable }})"></span> {% endif %}<code>{{ token.in(mode) }}</code></td>
+                                {% endfor %}
+                            {% else %}
+                                <td>{% if category == 'space' %}<span class="fb-design-bar" style="width: var({{ token.variable }})"></span> {% endif %}<code>{{ token.value }}</code></td>
+                            {% endif %}
+                            <td>{{ token.use }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+
+    <section class="fb-card" aria-labelledby="fb-design-contrast">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-3" id="fb-design-contrast">{{ t('Contrast') }}</h2>
+        </div>
+        <div class="fb-card__body fb-design-scroll">
+            <table class="fb-design-table">
+                <thead><tr><th scope="col">{{ t('Text') }}</th><th scope="col">{{ t('Background') }}</th><th scope="col">{{ t('Mode') }}</th><th scope="col">{{ t('Ratio') }}</th><th scope="col">{{ t('Status') }}</th></tr></thead>
+                <tbody>
+                {% for contrast in contrasts %}
+                    <tr>
+                        <td><code>{{ contrast.foreground }}</code></td>
+                        <td><code>{{ contrast.background }}</code></td>
+                        <td>{{ contrast.mode == 'light' ? t('Light') : t('Dark') }}</td>
+                        <td>{{ contrast.ratio|number_format(2) }}:1</td>
+                        <td>{{ contrast.passes ? ui.badge('published', 'AA') : ui.badge('danger', t('Too low')) }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

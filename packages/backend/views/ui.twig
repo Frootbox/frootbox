@@ -1,0 +1,180 @@
+{#
+    The building blocks of the backend as macros (decision 0113). Every
+    screen uses these, never its own markup for the same thing. DESIGN.md
+    describes each one with its options.
+
+        {% import '@backend/ui.twig' as ui %}
+        {{ ui.button({label: t('Save'), type: 'submit'}) }}
+#}
+
+{# Extra attributes: true writes the name only, false and null nothing. #}
+{% macro attributes(attrs) -%}
+    {%- for name, value in attrs -%}
+        {%- if value is same as(true) %} {{ name }}{% elseif value is not same as(false) and value is not null %} {{ name }}="{{ value }}"{% endif -%}
+    {%- endfor -%}
+{%- endmacro %}
+
+{#
+    variant: primary (one per screen), secondary, ghost, danger, danger-solid
+    type: button, submit; href makes it a link
+    icon: name in assets/icons; icon_only hides the label visually
+#}
+{% macro button(options) -%}
+    {%- set o = {label: '', variant: 'primary', type: 'button', href: null, icon: null, icon_only: false, small: false, block: false, disabled: false, attrs: {}}|merge(options) -%}
+    {%- set classes = ['fb-button', 'fb-button--' ~ o.variant]
+        |merge(o.small ? ['fb-button--small'] : [])
+        |merge(o.block ? ['fb-button--block'] : [])
+        |merge(o.icon_only ? ['fb-button--icon'] : []) -%}
+    {%- set content -%}
+        {%- if o.icon %}{{ icon(o.icon) }}{% endif -%}
+        <span{% if o.icon_only %} class="fb-visually-hidden"{% endif %}>{{ o.label }}</span>
+    {%- endset -%}
+    {%- if o.href is not null -%}
+        <a class="{{ classes|join(' ') }}" href="{{ o.href }}"{% if o.icon_only %} title="{{ o.label }}"{% endif %}{% if o.disabled %} aria-disabled="true"{% endif %}{{ _self.attributes(o.attrs) }}>{{ content }}</a>
+    {%- else -%}
+        <button class="{{ classes|join(' ') }}" type="{{ o.type }}"{% if o.icon_only %} title="{{ o.label }}"{% endif %}{% if o.disabled %} disabled{% endif %}{{ _self.attributes(o.attrs) }}>{{ content }}</button>
+    {%- endif -%}
+{%- endmacro %}
+
+{# Label, hint and error belong to the field and are linked by id. #}
+{% macro field(options) -%}
+    {%- set o = {label: '', name: '', id: null, type: 'text', value: '', hint: null, error: null, prefix: null, required: false, optional: false, disabled: false, placeholder: null, autocomplete: null, autofocus: false, multiline: false, attrs: {}}|merge(options) -%}
+    {%- set id = o.id ?? 'field-' ~ o.name -%}
+    {%- set described = [o.hint ? id ~ '-hint' : null, o.error ? id ~ '-error' : null]|filter(v => v) -%}
+    {%- set attrs = {
+        id: id,
+        name: o.name,
+        required: o.required,
+        disabled: o.disabled,
+        placeholder: o.placeholder,
+        autocomplete: o.autocomplete,
+        autofocus: o.autofocus,
+        'aria-invalid': o.error ? 'true' : null,
+        'aria-describedby': described ? described|join(' ') : null,
+    }|merge(o.attrs) -%}
+    <div class="fb-field">
+        <label class="fb-label" for="{{ id }}">{{ o.label }}{% if o.optional %} <span class="fb-label__optional">({{ t('optional') }})</span>{% endif %}</label>
+        {%- set input -%}
+            {%- if o.multiline -%}
+                <textarea class="fb-input"{{ _self.attributes(attrs) }}>{{ o.value }}</textarea>
+            {%- else -%}
+                <input class="fb-input" type="{{ o.type }}"{% if o.type != 'password' %} value="{{ o.value }}"{% endif %}{{ _self.attributes(attrs) }}>
+            {%- endif -%}
+        {%- endset -%}
+        {%- if o.prefix is not null -%}
+            <div class="fb-affix"><span class="fb-affix__text">{{ o.prefix }}</span>{{ input }}</div>
+        {%- else -%}
+            {{ input }}
+        {%- endif -%}
+        {%- if o.hint %}<p class="fb-hint" id="{{ id }}-hint">{{ o.hint }}</p>{% endif -%}
+        {%- if o.error %}<p class="fb-error" id="{{ id }}-error">{{ icon('alert', 'fb-icon fb-icon--small') }}<span>{{ o.error }}</span></p>{% endif -%}
+    </div>
+{%- endmacro %}
+
+{# options: list of {value, label}. #}
+{% macro select(options) -%}
+    {%- set o = {label: '', name: '', id: null, options: [], value: null, hint: null, error: null, disabled: false, attrs: {}}|merge(options) -%}
+    {%- set id = o.id ?? 'field-' ~ o.name -%}
+    {%- set described = [o.hint ? id ~ '-hint' : null, o.error ? id ~ '-error' : null]|filter(v => v) -%}
+    <div class="fb-field">
+        <label class="fb-label" for="{{ id }}">{{ o.label }}</label>
+        <div class="fb-select">
+            <select class="fb-input"{{ _self.attributes({id: id, name: o.name, disabled: o.disabled, 'aria-invalid': o.error ? 'true' : null, 'aria-describedby': described ? described|join(' ') : null}|merge(o.attrs)) }}>
+                {%- for option in o.options -%}
+                    <option value="{{ option.value }}"{% if option.value == o.value %} selected{% endif %}>{{ option.label }}</option>
+                {%- endfor -%}
+            </select>
+            {{ icon('chevron-down') }}
+        </div>
+        {%- if o.hint %}<p class="fb-hint" id="{{ id }}-hint">{{ o.hint }}</p>{% endif -%}
+        {%- if o.error %}<p class="fb-error" id="{{ id }}-error">{{ icon('alert', 'fb-icon fb-icon--small') }}<span>{{ o.error }}</span></p>{% endif -%}
+    </div>
+{%- endmacro %}
+
+{# A checkbox or, with type radio, a radio button with its label on the right. #}
+{% macro check(options) -%}
+    {%- set o = {label: '', name: '', id: null, type: 'checkbox', value: '1', checked: false, hint: null, disabled: false, attrs: {}}|merge(options) -%}
+    {%- set id = o.id ?? 'field-' ~ o.name ~ '-' ~ o.value -%}
+    <label class="fb-check" for="{{ id }}">
+        <input type="{{ o.type }}"{{ _self.attributes({id: id, name: o.name, value: o.value, checked: o.checked, disabled: o.disabled}|merge(o.attrs)) }}>
+        <span class="fb-check__text"><span>{{ o.label }}</span>{% if o.hint %}<span class="fb-hint">{{ o.hint }}</span>{% endif %}</span>
+    </label>
+{%- endmacro %}
+
+{# A radio button as a card with a title and a description. #}
+{% macro choice(options) -%}
+    {%- set o = {title: '', text: null, name: '', id: null, value: '', checked: false, attrs: {}}|merge(options) -%}
+    {%- set id = o.id ?? 'field-' ~ o.name ~ '-' ~ o.value -%}
+    <label class="fb-choice" for="{{ id }}">
+        <input type="radio"{{ _self.attributes({id: id, name: o.name, value: o.value, checked: o.checked}|merge(o.attrs)) }}>
+        <span class="fb-choice__text"><span class="fb-choice__title">{{ o.title }}</span>{% if o.text %}<span class="fb-hint">{{ o.text }}</span>{% endif %}</span>
+    </label>
+{%- endmacro %}
+
+{# status: published, draft, changed, scheduled, danger or neutral (no dot). #}
+{% macro badge(status, label) -%}
+    <span class="fb-badge" data-status="{{ status }}">{{ label }}</span>
+{%- endmacro %}
+
+{# The status of a page with its usual label. #}
+{% macro status(status) -%}
+    {%- set labels = {published: t('Published'), draft: t('Draft'), changed: t('Changed'), scheduled: t('Scheduled')} -%}
+    {{ _self.badge(status, labels[status] ?? status) }}
+{%- endmacro %}
+
+{# tone: info, success, warning, danger. Danger is read out at once. #}
+{% macro alert(options) -%}
+    {%- set o = {tone: 'info', title: null, text: '', live: null}|merge(options) -%}
+    {%- set icons = {info: 'info', success: 'check', warning: 'warning', danger: 'alert'} -%}
+    <div class="fb-alert" data-tone="{{ o.tone }}" role="{{ o.live ?? (o.tone == 'danger' ? 'alert' : 'status') }}">
+        {{ icon(icons[o.tone] ?? 'info') }}
+        <div>{% if o.title %}<p class="fb-alert__title">{{ o.title }}</p>{% endif %}<p>{{ o.text }}</p></div>
+    </div>
+{%- endmacro %}
+
+{# A confirmation that goes away by itself; static shows it in the page. #}
+{% macro toast(text, static = false) -%}
+    <div class="fb-toast{% if static %} fb-toast--static{% endif %}" role="status">{{ icon('check') }}<span>{{ text }}</span></div>
+{%- endmacro %}
+
+{# tabs: list of {label, href, current}. #}
+{% macro tabs(label, tabs) -%}
+    <nav class="fb-tabs" aria-label="{{ label }}">
+        {%- for tab in tabs -%}
+            <a class="fb-tabs__tab" href="{{ tab.href }}"{% if tab.current ?? false %} aria-current="page"{% endif %}>{{ tab.label }}</a>
+        {%- endfor -%}
+    </nav>
+{%- endmacro %}
+
+{# What is missing and the way to the first entry. action: options of button(). #}
+{% macro empty(options) -%}
+    {%- set o = {icon: 'inbox', title: '', text: null, action: null}|merge(options) -%}
+    <div class="fb-empty">
+        <span class="fb-empty__icon">{{ icon(o.icon) }}</span>
+        <p class="fb-empty__title">{{ o.title }}</p>
+        {% if o.text %}<p class="fb-empty__text">{{ o.text }}</p>{% endif %}
+        {% if o.action %}{{ _self.button(o.action) }}{% endif %}
+    </div>
+{%- endmacro %}
+
+{# The initials of a user, hidden from screen readers: the name is next to them. #}
+{% macro avatar(initials) -%}
+    <span class="fb-avatar" aria-hidden="true">{{ initials }}</span>
+{%- endmacro %}
+
+{# The logo of the active brand for light and dark, else its name. #}
+{% macro brand(fb, href = null) -%}
+    {%- set inner -%}
+        {%- if fb.logo -%}
+            <img class="fb-brand__logo fb-brand__logo--light" src="{{ fb.logo }}" alt="{{ fb.brand }}">
+            <img class="fb-brand__logo fb-brand__logo--dark" src="{{ fb.logoDark ?? fb.logo }}" alt="{{ fb.brand }}">
+        {%- else -%}
+            <span>{{ fb.brand }}</span>
+        {%- endif -%}
+    {%- endset -%}
+    {%- if href -%}
+        <a class="fb-brand" href="{{ href }}">{{ inner }}</a>
+    {%- else -%}
+        <span class="fb-brand">{{ inner }}</span>
+    {%- endif -%}
+{%- endmacro %}

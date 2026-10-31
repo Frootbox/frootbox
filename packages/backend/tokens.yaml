@@ -1,0 +1,148 @@
+# Design tokens of the backend (decisions 0113, 0114).
+#
+# The only source of these values. The CSS variables --fb-… and the tables
+# in DESIGN.md are made from this file: colors become --fb-<name>, all
+# others --fb-<group>-<name>, e.g. --fb-accent, --fb-space-4.
+#
+# "brand" may be replaced by an extension (white label), "system" may not.
+# Colors and shadows have a light and a dark value, everything else one.
+# "use" says what a token is for and goes into DESIGN.md.
+
+brand:
+  name: Frootbox
+  logo: assets/images/logo.svg
+  logo-dark: assets/images/logo-dark.svg
+  favicon: assets/images/favicon.svg
+  color:
+    accent: { light: '#8637ff', dark: '#a57cff', use: "Primary buttons, selected items, tab and tree markers" }
+    accent-hover: { light: '#6f1ff0', dark: '#b996ff', use: "Primary buttons on hover" }
+    accent-soft: { light: '#f1e9ff', dark: '#261d4a', use: "Background of the current menu item and of hints" }
+    accent-text: { light: '#5b17c6', dark: '#cfb9ff', use: "Links and text in the accent color" }
+    on-accent: { light: '#ffffff', dark: '#0a1621', use: "Text on accent" }
+    focus: { light: '#8637ff', dark: '#b996ff', use: "Focus ring" }
+
+system:
+  color:
+    bg: { light: '#f4f6f9', dark: '#0a1621', use: "Page background" }
+    surface: { light: '#ffffff', dark: '#102131', use: "Cards, dialogs, sidebar" }
+    surface-2: { light: '#eef1f6', dark: '#172c40', use: "Hover, segmented controls, disabled fields" }
+    input-bg: { light: '#ffffff', dark: '#0d1c2a', use: "Background of fields" }
+    border: { light: '#dce2ea', dark: '#233a50', use: "Dividers and card borders" }
+    border-strong: { light: '#b4bfcc', dark: '#3a5671', use: "Borders of fields and secondary buttons" }
+    text: { light: '#002337', dark: '#e6edf4', use: "Text" }
+    text-muted: { light: '#4f6273', dark: '#a1b2c3', use: "Secondary text, hints, section labels" }
+    success-bg: { light: '#e2f5ea', dark: '#11372a', use: "Status \"published\"" }
+    success-text: { light: '#0f5f33', dark: '#86e0b0', use: "Text on success-bg" }
+    warning-bg: { light: '#fff2cc', dark: '#3a2c0c', use: "Status \"draft\"" }
+    warning-text: { light: '#734600', dark: '#f3cc72', use: "Text on warning-bg" }
+    info-bg: { light: '#e0f3fa', dark: '#0e3343', use: "Status \"scheduled\", info messages" }
+    info-text: { light: '#065770', dark: '#86d6ee', use: "Text on info-bg" }
+    danger: { light: '#c42a3a', dark: '#ff6b7a', use: "Borders of invalid fields, dangerous buttons" }
+    danger-bg: { light: '#fde8ea', dark: '#3d1820', use: "Error messages, dangerous buttons on hover" }
+    danger-text: { light: '#a11d2c', dark: '#ff9ca7', use: "Error text" }
+    on-danger: { light: '#ffffff', dark: '#0a1621', use: "Text on danger" }
+    inverse-bg: { light: '#002337', dark: '#e6edf4', use: "Toasts" }
+    inverse-text: { light: '#ffffff', dark: '#0a1621', use: "Text on inverse-bg" }
+    backdrop: { light: '#00142373', dark: '#00000099', use: "Behind dialogs" }
+
+  font:
+    family: { value: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', use: "All text" }
+    mono: { value: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace', use: "Code, paths, tokens" }
+
+  text:
+    2xs: { value: 12px, use: "Section labels in capitals" }
+    xs: { value: 13px, use: "Status, secondary lines in lists" }
+    sm: { value: 14px, use: "Hints, errors, small buttons" }
+    md: { value: 15px, use: "Buttons, menu, labels, body of cards" }
+    base: { value: 16px, use: "Page text and fields (no zoom on phones)" }
+    lg: { value: 18px, use: "Headings of cards" }
+    xl: { value: 20px, use: "Headings of sections" }
+    2xl: { value: 24px, use: "Headings of dialogs and the sign-in" }
+    3xl: { value: 30px, use: "Heading of a screen" }
+
+  leading:
+    tight: { value: '1.2', use: "Headings, buttons" }
+    snug: { value: '1.3', use: "Two-line items" }
+    normal: { value: '1.5', use: "Text" }
+
+  weight:
+    regular: { value: '400', use: "Text" }
+    medium: { value: '500', use: "Menu, toasts" }
+    semibold: { value: '600', use: "Buttons, labels, status" }
+    bold: { value: '700', use: "Headings" }
+
+  tracking:
+    caps: { value: 0.06em, use: "Section labels in capitals" }
+
+  space:
+    '0': { value: 2px, use: "Gaps inside small parts" }
+    '1': { value: 4px }
+    '2': { value: 8px }
+    '3': { value: 12px }
+    '4': { value: 16px }
+    '5': { value: 20px }
+    '6': { value: 24px }
+    '8': { value: 32px }
+    '10': { value: 40px }
+    '12': { value: 48px }
+    '14': { value: 56px }
+    '16': { value: 64px }
+
+  radius:
+    sm: { value: 6px, use: "Inner parts, segments" }
+    md: { value: 10px, use: "Buttons, fields, menu items, messages" }
+    lg: { value: 14px, use: "Cards and dialogs" }
+    full: { value: 999px, use: "Status, avatars" }
+
+  size:
+    control: { value: 44px, use: "Least height of everything you can click" }
+    control-sm: { value: 36px, use: "Small buttons in lists and toolbars" }
+    tab: { value: 48px, use: "Height of tabs" }
+    row: { value: 56px, use: "Least height of tree rows" }
+    icon: { value: 20px, use: "Icons in the menu and in buttons" }
+    icon-sm: { value: 18px, use: "Small icons" }
+    avatar: { value: 36px, use: "Initials of the user" }
+    dot: { value: 8px, use: "Dot of a status" }
+    check: { value: 18px, use: "Checkboxes and radio buttons" }
+    sidebar: { value: 264px, use: "Width of the sidebar" }
+    content: { value: 1120px, use: "Widest content" }
+    form: { value: 640px, use: "Widest form" }
+    narrow: { value: 420px, use: "Sign-in, small dialogs" }
+    dialog: { value: 560px, use: "Dialogs" }
+    border: { value: 1px, use: "All borders" }
+    focus: { value: 2px, use: "Width of the focus ring" }
+    focus-offset: { value: 2px, use: "Gap between element and focus ring" }
+    indicator: { value: 3px, use: "Marker of the selected tab or tree row" }
+
+  shadow:
+    sm: { light: '0 1px 2px #0023370d, 0 2px 6px #0023370f', dark: '0 1px 2px #0000004d', use: "Cards, selected segment" }
+    lg: { light: '0 8px 24px #00142340', dark: '0 8px 24px #00000080', use: "Toasts, dialogs" }
+
+  motion:
+    fast: { value: 120ms, use: "Hover and focus" }
+    normal: { value: 200ms, use: "Dialogs and toasts" }
+
+  layer:
+    toast: { value: '20', use: "Toasts above the page" }
+    dialog: { value: '30', use: "Dialogs above everything" }
+
+# Pairs of text and background that need a contrast of at least 4.5:1
+# (WCAG AA) in both modes. The design page shows them, a test checks them,
+# and a brand of an extension is warned when it falls below.
+contrast:
+  - [text, bg]
+  - [text, surface]
+  - [text-muted, bg]
+  - [text-muted, surface]
+  - [text-muted, surface-2]
+  - [accent-text, surface]
+  - [accent-text, accent-soft]
+  - [on-accent, accent]
+  - [on-accent, accent-hover]
+  - [success-text, success-bg]
+  - [warning-text, warning-bg]
+  - [info-text, info-bg]
+  - [danger-text, danger-bg]
+  - [danger-text, surface]
+  - [on-danger, danger]
+  - [inverse-text, inverse-bg]

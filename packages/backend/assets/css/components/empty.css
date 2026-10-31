@@ -1,0 +1,34 @@
+/* What a screen shows while it has nothing yet: what is missing and
+   the way to the first entry. */
+
+.fb-empty {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fb-space-3);
+    align-items: center;
+    padding: var(--fb-space-14) var(--fb-space-6);
+    border: calc(var(--fb-size-border) * 2) dashed var(--fb-border-strong);
+    border-radius: var(--fb-radius-lg);
+    text-align: center;
+}
+
+.fb-empty__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--fb-size-row);
+    height: var(--fb-size-row);
+    border-radius: var(--fb-radius-full);
+    background: var(--fb-accent-soft);
+    color: var(--fb-accent-text);
+}
+
+.fb-empty__title {
+    font-size: var(--fb-text-lg);
+    font-weight: var(--fb-weight-bold);
+}
+
+.fb-empty__text {
+    max-width: var(--fb-size-narrow);
+    color: var(--fb-text-muted);
+}

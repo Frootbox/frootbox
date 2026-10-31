@@ -1,0 +1,41 @@
+{#- The frame of a screen: sidebar with brand, menu, appearance and account. -#}
+{% extends '@backend/frame.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block body %}
+<a class="fb-skip" href="#main">{{ t('Skip to the content') }}</a>
+<div class="fb-app">
+    <aside class="fb-sidebar">
+        {{ ui.brand(fb, path('backend.dashboard')) }}
+        <a class="fb-nav__item fb-nav__item--small" href="/">{{ icon('external', 'fb-icon fb-icon--small') }}<span>{{ fb.site ? t('View {site}', {site: fb.site}) : t('View the website') }}</span></a>
+        <nav class="fb-nav" aria-label="{{ t('Main menu') }}">
+            {%- for group in fb.menu %}
+            <p class="fb-nav__label" id="fb-nav-{{ loop.index }}">{{ group.label }}</p>
+            <ul class="fb-nav__list" aria-labelledby="fb-nav-{{ loop.index }}">
+                {%- for entry in group.entries %}
+                <li><a class="fb-nav__item" href="{{ entry.url }}"{% if entry.current %} aria-current="page"{% endif %}>{{ icon(entry.icon) }}<span>{{ entry.label }}</span></a></li>
+                {%- endfor %}
+            </ul>
+            {%- endfor %}
+        </nav>
+        <div class="fb-sidebar__footer">
+            <fb-theme-switch label="{{ t('Appearance') }}" labels="{{ {system: t('Like the system'), light: t('Light'), dark: t('Dark')}|json_encode }}"></fb-theme-switch>
+            {%- if fb.user %}
+            <div class="fb-account">
+                {{- ui.avatar(fb.user.initials) -}}
+                <span class="fb-account__name">{{ fb.user.name }}</span>
+                <form method="post" action="{{ path('backend.logout') }}">
+                    <input type="hidden" name="_csrf" value="{{ fb.csrf }}">
+                    {{ ui.button({label: t('Sign out'), variant: 'ghost', type: 'submit', icon: 'sign-out', icon_only: true}) }}
+                </form>
+            </div>
+            {%- endif %}
+        </div>
+    </aside>
+    <main class="fb-main" id="main" tabindex="-1">
+        <div class="fb-main__inner">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</div>
+{% endblock %}

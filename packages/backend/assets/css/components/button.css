@@ -1,0 +1,88 @@
+/* Buttons: primary (one per screen), secondary, ghost, danger and
+   danger-solid; small and block as modifiers. */
+
+.fb-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--fb-space-2);
+    min-height: var(--fb-size-control);
+    padding: 0 var(--fb-space-4);
+    border: var(--fb-size-border) solid transparent;
+    border-radius: var(--fb-radius-md);
+    background: transparent;
+    color: var(--fb-text);
+    font-size: var(--fb-text-md);
+    font-weight: var(--fb-weight-semibold);
+    line-height: var(--fb-leading-tight);
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color var(--fb-motion-fast), border-color var(--fb-motion-fast), color var(--fb-motion-fast);
+}
+
+.fb-button:disabled,
+.fb-button[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.fb-button--primary {
+    background: var(--fb-accent);
+    color: var(--fb-on-accent);
+}
+
+.fb-button--primary:hover:not(:disabled) {
+    background: var(--fb-accent-hover);
+    color: var(--fb-on-accent);
+}
+
+.fb-button--secondary {
+    border-color: var(--fb-border-strong);
+    background: var(--fb-surface);
+}
+
+.fb-button--secondary:hover:not(:disabled),
+.fb-button--ghost:hover:not(:disabled) {
+    background: var(--fb-surface-2);
+    color: var(--fb-text);
+}
+
+.fb-button--danger {
+    border-color: var(--fb-border-strong);
+    color: var(--fb-danger-text);
+}
+
+.fb-button--danger:hover:not(:disabled) {
+    background: var(--fb-danger-bg);
+    color: var(--fb-danger-text);
+}
+
+.fb-button--danger-solid {
+    background: var(--fb-danger);
+    color: var(--fb-on-danger);
+}
+
+.fb-button--danger-solid:hover:not(:disabled) {
+    color: var(--fb-on-danger);
+    filter: brightness(0.92);
+}
+
+.fb-button--small {
+    min-height: var(--fb-size-control-sm);
+    padding: 0 var(--fb-space-3);
+    font-size: var(--fb-text-sm);
+}
+
+.fb-button--block {
+    width: 100%;
+}
+
+.fb-button--icon {
+    width: var(--fb-size-control);
+    padding: 0;
+}
+
+.fb-button--icon.fb-button--small {
+    width: var(--fb-size-control-sm);
+}

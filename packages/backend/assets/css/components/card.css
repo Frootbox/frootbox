@@ -1,0 +1,44 @@
+/* Cards group what belongs together. The accent variant points to the
+   main way forward, at most once per screen. */
+
+.fb-card {
+    border: var(--fb-size-border) solid var(--fb-border);
+    border-radius: var(--fb-radius-lg);
+    background: var(--fb-surface);
+    box-shadow: var(--fb-shadow-sm);
+}
+
+.fb-card--accent {
+    border-color: transparent;
+    background: var(--fb-accent-soft);
+    box-shadow: none;
+}
+
+.fb-card__header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fb-space-3);
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--fb-space-5);
+}
+
+.fb-card__body {
+    padding: 0 var(--fb-space-5) var(--fb-space-5);
+}
+
+.fb-card__header + .fb-card__body {
+    padding-top: 0;
+}
+
+.fb-card__footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fb-space-3);
+    padding: var(--fb-space-4) var(--fb-space-5);
+    border-top: var(--fb-size-border) solid var(--fb-border);
+}
+
+.fb-card--padded {
+    padding: var(--fb-space-6);
+}

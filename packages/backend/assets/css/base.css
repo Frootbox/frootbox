@@ -1,0 +1,113 @@
+/* Page, text and the small helpers every screen uses. */
+
+body {
+    background: var(--fb-bg);
+    color: var(--fb-text);
+    font-family: var(--fb-font-family);
+    font-size: var(--fb-text-base);
+    line-height: var(--fb-leading-normal);
+}
+
+a {
+    color: var(--fb-accent-text);
+    text-underline-offset: var(--fb-space-1);
+}
+
+a:hover {
+    color: var(--fb-text);
+}
+
+:focus-visible {
+    outline: var(--fb-size-focus) solid var(--fb-focus);
+    outline-offset: var(--fb-size-focus-offset);
+}
+
+code,
+kbd {
+    font-family: var(--fb-font-mono);
+    font-size: var(--fb-text-sm);
+}
+
+.fb-heading-1 {
+    font-size: var(--fb-text-3xl);
+    font-weight: var(--fb-weight-bold);
+    line-height: var(--fb-leading-tight);
+}
+
+.fb-heading-2 {
+    font-size: var(--fb-text-2xl);
+    font-weight: var(--fb-weight-bold);
+    line-height: var(--fb-leading-tight);
+}
+
+.fb-heading-3 {
+    font-size: var(--fb-text-xl);
+    font-weight: var(--fb-weight-bold);
+    line-height: var(--fb-leading-snug);
+}
+
+.fb-heading-4 {
+    font-size: var(--fb-text-lg);
+    font-weight: var(--fb-weight-bold);
+    line-height: var(--fb-leading-snug);
+}
+
+.fb-muted {
+    color: var(--fb-text-muted);
+    font-size: var(--fb-text-md);
+}
+
+.fb-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fb-space-5);
+}
+
+.fb-stack--sm {
+    gap: var(--fb-space-2);
+}
+
+.fb-stack--lg {
+    gap: var(--fb-space-8);
+}
+
+.fb-cluster {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--fb-space-3);
+}
+
+.fb-visually-hidden {
+    position: absolute;
+    width: var(--fb-size-border);
+    height: var(--fb-size-border);
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.fb-skip {
+    position: absolute;
+    top: var(--fb-space-2);
+    left: var(--fb-space-2);
+    z-index: var(--fb-layer-dialog);
+    padding: var(--fb-space-3) var(--fb-space-4);
+    border-radius: var(--fb-radius-md);
+    background: var(--fb-surface);
+    font-weight: var(--fb-weight-semibold);
+    transform: translateY(-200%);
+}
+
+.fb-skip:focus {
+    transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0s !important;
+        animation-duration: 0s !important;
+    }
+}

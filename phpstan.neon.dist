@@ -19,3 +19,4 @@ rules:
     - Frootbox\Tools\PHPStan\PropertyNameRule
     - Frootbox\Tools\PHPStan\VariableNameRule
     - Frootbox\Tools\PHPStan\ParameterNameRule
+    - Frootbox\Tools\PHPStan\BackendDataAccessRule

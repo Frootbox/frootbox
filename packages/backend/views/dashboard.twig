@@ -1,0 +1,42 @@
+{#- The first screen after signing in. -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Dashboard') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            {% if fb.site %}<p class="fb-muted">{{ fb.site }}</p>{% endif %}
+            <h1 class="fb-heading-1">{{ t('Hello, {name}', {name: name}) }}</h1>
+        </div>
+    </header>
+
+    <section class="fb-card fb-card--accent fb-callout" aria-labelledby="fb-edit-title">
+        <div class="fb-callout__text">
+            <h2 class="fb-heading-3" id="fb-edit-title">{{ t('You edit content right on the website') }}</h2>
+            <p class="fb-muted">{{ t('You change texts, images and blocks where they are. Here you manage pages, media and settings.') }}</p>
+        </div>
+        {{ ui.button({label: t('Open the website'), href: '/', icon: 'external'}) }}
+    </section>
+
+    {% if pending is not null %}
+    <section class="fb-card" aria-labelledby="fb-pending-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="fb-pending-title">{{ t('Waiting to be published') }}</h2>
+            {{ ui.badge('neutral', pending|length) }}
+        </div>
+        {% if pending is empty %}
+            <p class="fb-card__body fb-muted">{{ t('Everything is published. New changes show up here until you publish them.') }}</p>
+        {% else %}
+            <ul>
+                {%- for page in pending %}
+                <li class="fb-list__item"><span class="fb-list__main"><span class="fb-list__title">{{ page.title }}</span></span>{{ ui.status(page.status) }}</li>
+                {%- endfor %}
+            </ul>
+        {% endif %}
+    </section>
+    {% endif %}
+</div>
+{% endblock %}
