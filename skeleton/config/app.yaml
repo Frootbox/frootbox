@@ -4,6 +4,10 @@ app:
 database:
   url: '%env(DATABASE_URL)%'
 
+# Languages of the website by code, the first one is the default.
+languages:
+  de: { title: Deutsch }
+
 # The active theme: an installed extension with "theme:" in its frootbox.yaml.
 # theme: acme/website
 
