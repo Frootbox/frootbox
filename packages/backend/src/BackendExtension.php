@@ -18,6 +18,7 @@ use Frootbox\Backend\Http\LogoutHandler;
 use Frootbox\Backend\Http\Navigations\NavigationsHandler;
 use Frootbox\Backend\Http\Pages\NewPageHandler;
 use Frootbox\Backend\Http\Pages\PagesHandler;
+use Frootbox\Backend\Http\QueryHandler;
 use Frootbox\Backend\Http\Redirects\RedirectsHandler;
 use Frootbox\Backend\Http\Users\RoleHandler;
 use Frootbox\Backend\Http\Users\RolesHandler;
@@ -48,6 +49,7 @@ final class BackendExtension implements Extension
             ->route(['GET', 'POST'], '/login', LoginHandler::class, 'backend.login')
             ->post('/logout', LogoutHandler::class, 'backend.logout')
             ->post('/actions/' . ApiHandler::NAME, ActionHandler::class, 'backend.action')
+            ->get('/queries/' . ApiHandler::NAME, QueryHandler::class, 'backend.query')
             ->post('/edit-mode', EditModeHandler::class, 'backend.edit-mode')
             ->get('/design', DesignHandler::class, 'backend.design')
             ->get('/account', AccountHandler::class, 'backend.account')

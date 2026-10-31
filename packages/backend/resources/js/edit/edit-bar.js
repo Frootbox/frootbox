@@ -1,7 +1,9 @@
 import { LitElement, css, html, nothing, svg } from 'lit';
+import { Editing } from './editing.js';
 
 const COLLAPSED = 'fb-edit-bar-collapsed';
 const THEME = 'fb-theme';
+const UNDO = 'fb-edit-undo:';
 
 /** What the bar marks: fields, blocks and empty areas (decision 0119). */
 const MARKED = '[data-fb-field], [data-fb-block], fb-area[data-fb-area]';
@@ -11,6 +13,15 @@ const ICONS = {
     external: svg`<path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/>`,
     collapse: svg`<path d="m6 9 6 6 6-6"/>`,
     lock: svg`<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>`,
+    undo: svg`<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>`,
+    bold: svg`<path d="M7 5h6a3.5 3.5 0 0 1 0 7H7z"/><path d="M7 12h7a3.5 3.5 0 0 1 0 7H7z"/>`,
+    italic: svg`<path d="M19 4h-9"/><path d="M14 20H5"/><path d="M15 4 9 20"/>`,
+    heading: svg`<path d="M6 4v16"/><path d="M18 4v16"/><path d="M6 12h12"/>`,
+    list: svg`<path d="M9 6h11"/><path d="M9 12h11"/><path d="M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>`,
+    ordered: svg`<path d="M10 6h10"/><path d="M10 12h10"/><path d="M10 18h10"/><path d="M4 4h1v4"/><path d="M4 14h2l-2 4h2"/>`,
+    quote: svg`<path d="M5 11h4v6H5zM5 11a5 5 0 0 1 4-5"/><path d="M14 11h4v6h-4zM14 11a5 5 0 0 1 4-5"/>`,
+    link: svg`<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>`,
+    close: svg`<path d="M6 6l12 12"/><path d="M18 6 6 18"/>`,
     places: svg`<rect x="3" y="4" width="18" height="6" rx="1.5" stroke-dasharray="3 2"/><rect x="3" y="14" width="18" height="6" rx="1.5" stroke-dasharray="3 2"/>`,
 };
 
@@ -43,6 +54,48 @@ function labelOf(element) {
     return element.dataset.fbLabel ?? element.dataset.fbTitle ?? element.dataset.fbArea ?? '';
 }
 
+/** All pages of page.tree as a flat list with title and path. */
+function flatten(nodes, language, parents = [], list = []) {
+    for (const node of nodes) {
+        const slug = node.slugs?.[language] ?? Object.values(node.slugs ?? {})[0] ?? '';
+        const segments = slug ? [...parents, slug] : parents;
+        const title = node.titles?.[language] ?? Object.values(node.titles ?? {})[0] ?? node.id;
+        list.push({ id: node.id, title, path: '/' + segments.join('/') });
+        flatten(node.children ?? [], language, segments, list);
+    }
+
+    return list;
+}
+
+/** Whether the input of the link dialog is an address rather than a search. */
+function isAddress(text) {
+    return /^([a-z][a-z0-9+.-]*:|\/|#|\?)/i.test(text) || isDomain(text);
+}
+
+function isDomain(text) {
+    return /^[\w-]+(\.[\w-]+)+(\/\S*)?$/.test(text);
+}
+
+function readSession(key) {
+    try {
+        return JSON.parse(sessionStorage.getItem(key) ?? '[]');
+    } catch {
+        return [];
+    }
+}
+
+function writeSession(key, list) {
+    try {
+        if (list.length === 0) {
+            sessionStorage.removeItem(key);
+        } else {
+            sessionStorage.setItem(key, JSON.stringify(list));
+        }
+    } catch {
+        // Undo then lasts until the page is loaded again.
+    }
+}
+
 function kindOf(element) {
     if (element.hasAttribute('data-fb-field')) {
         return 'field';
@@ -67,6 +120,9 @@ export class EditBar extends LitElement {
         confirming: { state: true },
         showAll: { state: true },
         current: { state: true },
+        undo: { state: true },
+        link: { state: true },
+        toolbar: { state: true },
     };
 
     static styles = css`
@@ -270,6 +326,105 @@ export class EditBar extends LitElement {
             white-space: nowrap;
         }
 
+        .message button { display: inline-flex; margin-inline-start: var(--fb-space-2); }
+
+        .toolbar {
+            position: absolute;
+            display: flex;
+            gap: var(--fb-space-1);
+            padding: var(--fb-space-1);
+            pointer-events: auto;
+            background: var(--fb-surface);
+            border: var(--fb-size-border) solid var(--fb-border);
+            border-radius: var(--fb-radius-md);
+            box-shadow: var(--fb-shadow-sm);
+            translate: 0 calc(-100% - var(--fb-space-2));
+        }
+
+        .toolbar.below { translate: 0 var(--fb-space-2); }
+
+        .toolbar button {
+            justify-content: center;
+            min-inline-size: var(--fb-size-control-sm);
+            padding-inline: var(--fb-space-1);
+        }
+
+        dialog {
+            pointer-events: auto;
+            inline-size: min(calc(100vw - 2 * var(--fb-space-4)), var(--fb-size-dialog));
+            padding: var(--fb-space-5);
+            border: var(--fb-size-border) solid var(--fb-border);
+            border-radius: var(--fb-radius-lg);
+            background: var(--fb-surface);
+            color: var(--fb-text);
+            box-shadow: var(--fb-shadow-lg);
+            font: inherit;
+        }
+
+        dialog::backdrop { background: var(--fb-backdrop); }
+
+        dialog form { display: grid; gap: var(--fb-space-3); }
+
+        dialog h2 {
+            margin: 0;
+            font-size: var(--fb-text-lg);
+            font-weight: var(--fb-weight-bold);
+        }
+
+        dialog label { display: grid; gap: var(--fb-space-1); font-weight: var(--fb-weight-semibold); }
+
+        dialog input:not([type]), dialog input[type="text"] {
+            min-block-size: var(--fb-size-control);
+            padding-inline: var(--fb-space-3);
+            border: var(--fb-size-border) solid var(--fb-border-strong);
+            border-radius: var(--fb-radius-md);
+            background: var(--fb-surface);
+            color: inherit;
+            font: inherit;
+            font-weight: var(--fb-weight-regular);
+        }
+
+        dialog input:focus-visible {
+            outline: var(--fb-size-focus) solid var(--fb-focus);
+            outline-offset: var(--fb-size-focus-offset);
+        }
+
+        dialog .check { display: flex; align-items: center; gap: var(--fb-space-2); font-weight: var(--fb-weight-regular); }
+
+        .hint { margin: 0; color: var(--fb-text-muted); font-size: var(--fb-text-xs); }
+
+        .results {
+            display: grid;
+            gap: var(--fb-space-0);
+            max-block-size: calc(6 * var(--fb-size-control));
+            margin: 0;
+            padding: 0;
+            overflow-y: auto;
+            list-style: none;
+        }
+
+        .results button {
+            inline-size: 100%;
+            justify-content: space-between;
+            font-weight: var(--fb-weight-regular);
+            text-align: start;
+        }
+
+        .results small, .chosen small { color: var(--fb-text-muted); }
+
+        .chosen {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--fb-space-2);
+            min-block-size: var(--fb-size-control);
+            padding-inline: var(--fb-space-3);
+            border-radius: var(--fb-radius-md);
+            background: var(--fb-accent-soft);
+        }
+
+        .actions { display: flex; flex-wrap: wrap; gap: var(--fb-space-2); justify-content: flex-end; }
+
         @media (prefers-reduced-motion: reduce) {
             * { transition: none !important; }
         }
@@ -284,9 +439,15 @@ export class EditBar extends LitElement {
         this.confirming = false;
         this.showAll = false;
         this.current = null;
+        this.undo = [];
+        this.link = null;
+        this.toolbar = null;
+        this.saving = 0;
+        this.pages = null;
+        this.editing = null;
         this.frame = 0;
         this.redraw = () => {
-            if (this.frame === 0 && (this.current || this.showAll)) {
+            if (this.frame === 0 && (this.current || this.showAll || this.toolbar)) {
                 this.frame = requestAnimationFrame(() => {
                     this.frame = 0;
                     this.requestUpdate();
@@ -320,6 +481,9 @@ export class EditBar extends LitElement {
         }
 
         if (this.marking) {
+            this.undo = readSession(this.undoKey);
+            this.editing = new Editing(this);
+            this.editing.start();
             document.addEventListener('pointerover', this.onPoint, true);
             document.addEventListener('pointerout', this.onLeave, true);
             document.addEventListener('focusin', this.onFocus, true);
@@ -330,6 +494,7 @@ export class EditBar extends LitElement {
 
     disconnectedCallback() {
         super.disconnectedCallback();
+        this.editing?.stop();
         document.removeEventListener('pointerover', this.onPoint, true);
         document.removeEventListener('pointerout', this.onLeave, true);
         document.removeEventListener('focusin', this.onFocus, true);
@@ -341,6 +506,10 @@ export class EditBar extends LitElement {
         return Boolean(this.config?.editing && this.config?.marking);
     }
 
+    get undoKey() {
+        return UNDO + (this.config?.page?.id ?? '');
+    }
+
     get labels() {
         return this.config?.labels ?? {};
     }
@@ -350,7 +519,7 @@ export class EditBar extends LitElement {
             return nothing;
         }
 
-        return html`${this.outlines()}${this.collapsed ? this.round() : this.bar()}`;
+        return html`${this.outlines()}${this.toolbarView()}${this.collapsed ? this.round() : this.bar()}${this.linkDialog()}`;
     }
 
     round() {
@@ -373,7 +542,8 @@ export class EditBar extends LitElement {
             ${page ? html`<a href=${page.backend}>${icon('external')}${labels.backend}</a>` : nothing}
             <button type="button" aria-label=${labels.collapse} title=${labels.collapse} aria-expanded="true"
                 @click=${() => this.collapse(true)}>${icon('collapse')}</button>
-            <p class="message" role="status" data-tone=${this.message?.tone ?? 'info'}>${this.message?.text ?? ''}</p>
+            <p class="message" role="status" data-tone=${this.message?.tone ?? 'info'}>${this.message?.text ?? ''}${this.message?.reload
+                ? html`<button type="button" @click=${() => location.reload()}>${labels.reload}</button>` : nothing}</p>
         </div>`;
     }
 
@@ -405,6 +575,8 @@ export class EditBar extends LitElement {
             ${this.config.marking ? nothing : html`<span class="note">${labels.readOnly}</span>`}
             ${this.config.marking ? html`<button type="button" aria-pressed=${this.showAll ? 'true' : 'false'}
                 @click=${() => { this.showAll = !this.showAll; }}>${icon('places')}${labels.showAll}</button>` : nothing}
+            ${this.undo.length > 0 ? html`<button type="button" ?disabled=${this.busy}
+                @click=${() => this.undoLast()}>${icon('undo')}${labels.undo}</button>` : nothing}
             ${page.canPublish ? html`<button type="button" class="primary" ?disabled=${this.busy}
                 title=${page.offlineParents.length ? labels.offlineParents.replace('{pages}', page.offlineParents.join(', ')) : nothing}
                 @click=${() => this.publish()}>${labels.publish}</button>` : nothing}
@@ -489,6 +661,7 @@ export class EditBar extends LitElement {
     async publish() {
         const page = this.config.page;
         this.busy = true;
+        await this.editing?.flushAll();
         const response = await this.action('page.publish', { ids: page.publish });
         this.busy = false;
 
@@ -497,6 +670,8 @@ export class EditBar extends LitElement {
 
             return;
         }
+
+        this.forget();
 
         // Visitors now find the page where the draft is.
         this.config = { ...this.config, page: { ...page, status: 'published', published: true, canPublish: false, canDiscard: false, offlineParents: [], visitorUrl: page.draftUrl } };
@@ -516,12 +691,278 @@ export class EditBar extends LitElement {
             return;
         }
 
+        this.forget();
+
         // A page that was never published is gone then.
         if (page.published) {
             location.reload();
         } else {
             location.assign(this.config.pages);
         }
+    }
+
+    /**
+     * Runs an action for a field and tells how it went: "Saving …",
+     * "Saved" or why not, with "Load again" on a conflict (decision 0122).
+     */
+    async run(name, input) {
+        this.saving++;
+        this.message = { tone: 'info', text: this.labels.saving };
+        const response = await this.action(name, input);
+        const body = response ? await response.json().catch(() => null) : null;
+        this.saving--;
+
+        if (response?.ok) {
+            if (this.saving === 0) {
+                this.message = { tone: 'info', text: this.labels.saved };
+            }
+
+            return { ok: true, data: body?.data };
+        }
+
+        const reason = body?.errors?.[0]?.message ?? body?.detail ?? this.labels.failed;
+        this.message = { tone: 'danger', text: reason, reload: response?.status === 409 };
+
+        return { ok: false, status: response?.status ?? 0 };
+    }
+
+    /** After a saved change: the page has a draft now, which may be undone. */
+    changed(entry) {
+        const page = this.config.page;
+
+        if (entry) {
+            this.undo = [...this.undo, entry];
+            writeSession(this.undoKey, this.undo);
+        }
+
+        this.config = {
+            ...this.config,
+            page: { ...page, status: page.published ? 'changed' : 'draft', canPublish: page.mayPublish, canDiscard: page.mayDiscard },
+        };
+    }
+
+    async undoLast() {
+        this.busy = true;
+        await this.editing?.flushAll();
+        const entry = this.undo.at(-1);
+        const response = await this.action('action.undo', { id: entry });
+
+        if (!response?.ok) {
+            this.fail(response);
+
+            return;
+        }
+
+        writeSession(this.undoKey, this.undo.slice(0, -1));
+        location.reload();
+    }
+
+    /** Publishing or discarding leaves nothing to undo here. */
+    forget() {
+        this.undo = [];
+        writeSession(this.undoKey, []);
+    }
+
+    showToolbar(editor) {
+        if (editor.view.hasFocus() || this.link) {
+            this.toolbar = editor;
+            this.requestUpdate();
+        }
+    }
+
+    hideToolbar(editor) {
+        if (this.toolbar === editor && !this.link) {
+            this.toolbar = null;
+        }
+    }
+
+    focusToolbar() {
+        this.renderRoot.querySelector('.toolbar button')?.focus();
+    }
+
+    /** The floating toolbar of rich text, above the selection (decision 0122). */
+    toolbarView() {
+        const editor = this.toolbar;
+
+        if (!editor || editor.isDestroyed) {
+            return nothing;
+        }
+
+        const labels = this.labels;
+        const coords = editor.view.coordsAtPos(editor.state.selection.from);
+        const below = coords.top < 64;
+        const top = below ? coords.bottom : coords.top;
+        const left = Math.max(8, Math.min(coords.left, innerWidth - 320));
+        const run = (command) => command(editor.chain().focus()).run();
+        const items = [
+            ['bold', 'bold', labels.bold, () => run((chain) => chain.toggleBold())],
+            ['italic', 'italic', labels.italic, () => run((chain) => chain.toggleItalic())],
+            ['heading', ['heading', { level: 2 }], labels.subheading, () => run((chain) => chain.toggleHeading({ level: 2 }))],
+            ['list', 'bulletList', labels.bulletList, () => run((chain) => chain.toggleBulletList())],
+            ['ordered', 'orderedList', labels.orderedList, () => run((chain) => chain.toggleOrderedList())],
+            ['quote', 'blockquote', labels.quote, () => run((chain) => chain.toggleBlockquote())],
+            ['link', 'link', labels.link, () => this.richLink(editor)],
+        ];
+
+        return html`<div class="toolbar ${below ? 'below' : ''}" role="toolbar" aria-label=${labels.formatting}
+            style="inset-block-start: ${top}px; inset-inline-start: ${left}px"
+            @keydown=${(event) => this.toolbarKey(event, editor)}
+            @focusout=${(event) => this.toolbarLeft(event, editor)}>
+            ${items.map(([name, active, label, action]) => {
+                const pressed = Array.isArray(active) ? editor.isActive(...active) : editor.isActive(active);
+
+                return html`<button type="button" aria-label=${label} title=${label} aria-pressed=${pressed ? 'true' : 'false'}
+                    @mousedown=${(event) => event.preventDefault()} @click=${action}>${icon(name)}</button>`;
+            })}
+        </div>`;
+    }
+
+    toolbarKey(event, editor) {
+        const buttons = [...this.renderRoot.querySelectorAll('.toolbar button')];
+        const at = buttons.indexOf(this.renderRoot.activeElement);
+
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            editor.commands.focus();
+        } else if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+            event.preventDefault();
+            const step = event.key === 'ArrowRight' ? 1 : -1;
+            buttons[(at + step + buttons.length) % buttons.length]?.focus();
+        }
+    }
+
+    toolbarLeft(event, editor) {
+        const next = event.relatedTarget;
+
+        if (!this.link && !(next instanceof Node && (this.renderRoot.contains(next) || editor.view.dom.contains(next)))) {
+            this.toolbar = null;
+        }
+    }
+
+    /** The link dialog for the selection in rich text. */
+    richLink(editor) {
+        const attributes = editor.getAttributes('link');
+        const existing = editor.isActive('link');
+
+        this.openLink({
+            withText: false,
+            href: attributes.href ?? '',
+            newWindow: attributes.target === '_blank',
+            existing,
+            apply: ({ href, newWindow, label }) => {
+                const link = { href, target: newWindow ? '_blank' : null };
+                const chain = editor.chain().focus();
+
+                if (editor.state.selection.empty && !existing) {
+                    chain.insertContent({ type: 'text', text: label, marks: [{ type: 'link', attrs: link }] });
+                } else {
+                    chain.extendMarkRange('link').setLink(link);
+                }
+
+                chain.run();
+            },
+            remove: () => editor.chain().focus().extendMarkRange('link').unsetLink().run(),
+            done: () => editor.commands.focus(),
+        });
+    }
+
+    /**
+     * Opens the link dialog: text if the field has one, an address or a
+     * page from the search, and whether it opens in a new window.
+     */
+    openLink(options) {
+        const page = options.href.startsWith('page:') ? { id: options.href.slice(5), title: '', path: '' } : null;
+        this.link = { existing: options.href !== '', ...options, query: page ? '' : options.href, page };
+        this.loadPages();
+        this.updateComplete.then(() => {
+            this.renderRoot.querySelector('dialog')?.showModal();
+            this.renderRoot.querySelector('dialog input')?.focus();
+        });
+    }
+
+    async loadPages() {
+        if (this.pages) {
+            return;
+        }
+
+        try {
+            const response = await fetch(this.config.queries + 'page.tree', { headers: { Accept: 'application/json' }, credentials: 'same-origin' });
+            const body = response.ok ? await response.json() : null;
+            this.pages = flatten(body?.data ?? [], this.config.language);
+        } catch {
+            this.pages = [];
+        }
+
+        this.requestUpdate();
+    }
+
+    linkDialog() {
+        const link = this.link;
+
+        if (!link) {
+            return nothing;
+        }
+
+        const labels = this.labels;
+        const page = link.page ? this.pages?.find((item) => item.id === link.page.id) ?? link.page : null;
+        const query = link.query.trim();
+        const search = !page && query !== '' && !isAddress(query);
+        const needle = query.toLowerCase();
+        const results = search && this.pages
+            ? this.pages.filter((item) => item.title.toLowerCase().includes(needle) || item.path.includes(needle)).slice(0, 8)
+            : [];
+        const valid = page !== null || (query !== '' && isAddress(query));
+        const update = (changes) => {
+            this.link = { ...this.link, ...changes };
+        };
+
+        return html`<dialog aria-labelledby="fb-link-title" @cancel=${(event) => { event.preventDefault(); this.closeLink(); }}>
+            <form @submit=${(event) => { event.preventDefault(); this.applyLink(page, query); }}>
+                <h2 id="fb-link-title">${labels.link}</h2>
+                ${link.withText ? html`<label>${labels.linkText}
+                    <input type="text" .value=${link.text ?? ''} @input=${(event) => update({ text: event.target.value })}></label>` : nothing}
+                ${page
+                    ? html`<div><span class="hint">${labels.linkTarget}</span><div class="chosen">
+                        <span>${labels.linkPage}: ${page.title || page.id} <small>${page.path}</small></span>
+                        <button type="button" aria-label=${labels.removeLink} title=${labels.removeLink}
+                            @click=${() => update({ page: null, query: '' })}>${icon('close')}</button></div></div>`
+                    : html`<label>${labels.linkTarget}
+                        <input type="text" .value=${link.query} autocomplete="off" aria-describedby="fb-link-hint"
+                            @input=${(event) => update({ query: event.target.value })}></label>
+                        <p class="hint" id="fb-link-hint">${labels.linkHint}</p>`}
+                ${search ? html`<ul class="results" aria-label=${labels.linkPage}>
+                    ${this.pages && results.length === 0 ? html`<li class="hint">${labels.noPages}</li>` : nothing}
+                    ${results.map((item) => html`<li><button type="button" @click=${() => update({ page: item, query: '' })}>
+                        <span>${item.title}</span><small>${item.path}</small></button></li>`)}
+                </ul>` : nothing}
+                <label class="check"><input type="checkbox" .checked=${link.newWindow}
+                    @change=${(event) => update({ newWindow: event.target.checked })}>${labels.newWindow}</label>
+                <div class="actions">
+                    ${link.existing ? html`<button type="button" class="danger" @click=${() => this.closeLink(link.remove)}>${labels.removeLink}</button>` : nothing}
+                    <button type="button" @click=${() => this.closeLink()}>${labels.cancel}</button>
+                    <button type="submit" class="primary" ?disabled=${!valid}>${labels.apply}</button>
+                </div>
+            </form>
+        </dialog>`;
+    }
+
+    applyLink(page, query) {
+        const link = this.link;
+        const href = page ? 'page:' + page.id : isDomain(query) ? 'https://' + query : query;
+
+        if (!page && !isAddress(query)) {
+            return;
+        }
+
+        this.closeLink(() => link.apply({ text: (link.text ?? '').trim(), href, newWindow: link.newWindow, label: page?.title || query }));
+    }
+
+    closeLink(then = null) {
+        const link = this.link;
+        this.renderRoot.querySelector('dialog')?.close();
+        this.link = null;
+        then?.();
+        link?.done?.();
     }
 
     action(name, input) {

@@ -18,6 +18,8 @@ export default defineConfig({
             output: {
                 format: 'es',
                 entryFileNames: '[name].js',
+                // Rich text with Tiptap loads on its first use only.
+                chunkFileNames: 'chunks/edit-[name]-[hash].js',
             },
         },
     },

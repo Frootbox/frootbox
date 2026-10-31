@@ -10,6 +10,9 @@
     "lint:css": "stylelint \"assets/css/**/*.css\""
   },
   "dependencies": {
+    "@tiptap/core": "^3.32.2",
+    "@tiptap/pm": "^3.32.2",
+    "@tiptap/starter-kit": "^3.32.2",
     "htmx.org": "^2.0.11",
     "lit": "^3.3.3"
   },

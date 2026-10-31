@@ -696,6 +696,32 @@ data from the JSON block `#fb-edit-config` in the head.
   `getBoundingClientRect()`; the page itself only gets a rule without a
   layer for `fb-field`, `fb-area` and `[data-fb-field]`.
 
+Editing fields (decision 0122) keeps the look of the theme: the text is
+typed where it stands, nothing is replaced by a form.
+
+- `headline` and `text` become `contenteditable="plaintext-only"`. Enter
+  ends a headline, Esc takes back what is not saved yet. Saving runs a
+  second after the last input and when the field is left; the status
+  line says "Saving …", "Saved" or why not, with "Load again" on a
+  conflict.
+- After a change the bar shows "Undo" with the undo icon. It reverts the
+  last change of this tab (kept in `sessionStorage`, `fb-edit-undo:<id>`)
+  and loads the page again.
+- **Toolbar** of rich text: floats above the selection (below it near the
+  top edge), `--fb-surface`, `--fb-radius-md`, `--fb-shadow-sm`, buttons
+  of `--fb-size-control-sm` with icon and `aria-label`, active ones with
+  `aria-pressed` in `--fb-accent-soft`. `role="toolbar"`, Alt+F10 reaches
+  it from the text, arrow keys move between buttons, Esc goes back. Its
+  buttons keep the selection (no focus on mouse down).
+- **Link dialog**: a modal `<dialog>` of `--fb-size-dialog` over
+  `--fb-backdrop`. Text (only for link fields), "Address or page" with a
+  search in the page tree, results as buttons with title and path, a
+  chosen page as a soft accent row with a button to remove it, "Open in
+  a new window", then "Remove the link" (danger), "Cancel" and "Apply"
+  (primary). Addresses like `example.com` get `https://`.
+- Themes output link fields with `{{ field() }}` so they can be edited;
+  own markup with `value()` is shown but not editable.
+
 ### Icons
 
 `{{ icon('pencil') }}` writes an SVG from `assets/icons/` inline, 20 px
@@ -791,7 +817,9 @@ and register their own modules with `$registry->import('@acme/thing',
 The editing mode on the website has its own entry `edit.js`, which
 bundles Lit, because theme pages have no import map. It is a build of its
 own (`vite.edit.config.js`), so the backend keeps loading Lit from
-`lit.js` alone.
+`lit.js` alone. Tiptap for rich text is a chunk of it
+(`chunks/edit-richtext-<hash>.js`), loaded on the first focus of such a
+field.
 
 `@frootbox/ui` exports `ThemeSwitch` (`<fb-theme-switch>`), `Form`
 (`<fb-form>`) with `formInput(form)`, `Tree` (`<fb-tree>`), `Navigation`

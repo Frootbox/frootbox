@@ -100,13 +100,19 @@ final class EditModeTest extends BackendTestCase
         self::assertTrue($config['marking']);
         self::assertSame($this->csrfFor($this->session), $config['csrf']);
         self::assertSame('/cms/actions/', $config['actions']);
+        self::assertSame('/cms/queries/', $config['queries']);
+        self::assertSame('de', $config['language']);
         self::assertSame('Bearbeiten', $config['labels']['edit']);
+        self::assertSame('Rückgängig', $config['labels']['undo']);
+        self::assertStringContainsString('.ProseMirror{', $editing);
         self::assertSame([
             'id' => $this->about,
             'status' => 'changed',
             'locked' => false,
             'publish' => [$this->about],
             'offlineParents' => [],
+            'mayPublish' => true,
+            'mayDiscard' => true,
             'canPublish' => true,
             'canDiscard' => true,
             'published' => true,
@@ -134,6 +140,7 @@ final class EditModeTest extends BackendTestCase
         self::assertFalse($config['page']['published']);
         self::assertNull($config['page']['visitorUrl']);
         self::assertSame($team, $config['page']['id']);
+        self::assertTrue($config['page']['mayPublish'], 'Once a field changes, the bar offers to publish.');
 
         $none = $this->createUser('joe@example.org', []);
         self::assertGreaterThan(0, $none);
@@ -184,7 +191,7 @@ final class EditModeTest extends BackendTestCase
     }
 
     /**
-     * @return array{editing: bool, marking: bool, csrf: ?string, actions: string, toggle: string, tokens: string, labels: array<string, string>, page: array<string, mixed>|null}
+     * @return array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, tokens: string, labels: array<string, string>, page: array<string, mixed>|null}
      */
     private function bar(string $html): array
     {
@@ -192,7 +199,7 @@ final class EditModeTest extends BackendTestCase
         $config = json_decode($match[1], true, flags: \JSON_THROW_ON_ERROR);
         self::assertIsArray($config);
 
-        /** @var array{editing: bool, marking: bool, csrf: ?string, actions: string, toggle: string, tokens: string, labels: array<string, string>, page: array<string, mixed>|null} $config */
+        /** @var array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, tokens: string, labels: array<string, string>, page: array<string, mixed>|null} $config */
         return $config;
     }
 

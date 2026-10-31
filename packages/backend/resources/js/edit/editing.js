@@ -1,0 +1,332 @@
+/**
+ * Editing of fields on the website (decision 0122): headline and text
+ * right in the element, rich text with Tiptap, links with a dialog of
+ * the bar. Every change is saved on its own with page.update-field, a
+ * second after the last input and when the field is left.
+ */
+
+const PLAIN = ['headline', 'text'];
+const DELAY = 1000;
+
+/** The stored value of a marked field, from data-fb-value. */
+export function storedValue(element) {
+    if (element.dataset.fbValue === undefined) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(element.dataset.fbValue);
+    } catch {
+        return null;
+    }
+}
+
+/** Whether two values are the same as JSON, whatever the order of keys. */
+export function same(a, b) {
+    return JSON.stringify(sorted(a)) === JSON.stringify(sorted(b));
+}
+
+function sorted(value) {
+    if (Array.isArray(value)) {
+        return value.map(sorted);
+    }
+
+    if (value && typeof value === 'object') {
+        return Object.fromEntries(Object.keys(value).sort().map((key) => [key, sorted(value[key])]));
+    }
+
+    return value ?? null;
+}
+
+/** The text of a plain field as the type stores it, null when empty. */
+function plainValue(element) {
+    const single = element.dataset.fbType === 'headline';
+    let text = element.innerText.replace(/ /g, ' ').replace(/\n+$/, '');
+
+    if (single) {
+        text = text.replace(/\s*\n\s*/g, ' ');
+    }
+
+    return text === '' ? null : text;
+}
+
+export class Editing {
+    constructor(bar) {
+        this.bar = bar;
+        this.saved = new WeakMap();
+        this.timers = new Map();
+        this.queues = new WeakMap();
+        this.editors = new WeakMap();
+        this.loading = null;
+        this.pointer = null;
+
+        this.onFocus = (event) => this.focus(event);
+        this.onBlur = (event) => this.blur(event);
+        this.onInput = (event) => this.input(event);
+        this.onKey = (event) => this.key(event);
+        this.onClick = (event) => this.click(event);
+        this.onPointer = (event) => { this.pointer = { left: event.clientX, top: event.clientY, at: Date.now() }; };
+        this.onLeave = (event) => this.leave(event);
+    }
+
+    start() {
+        for (const element of document.querySelectorAll('[data-fb-field]')) {
+            if (PLAIN.includes(element.dataset.fbType)) {
+                element.contentEditable = 'plaintext-only';
+            }
+        }
+
+        document.addEventListener('focusin', this.onFocus, true);
+        document.addEventListener('focusout', this.onBlur, true);
+        document.addEventListener('input', this.onInput, true);
+        document.addEventListener('keydown', this.onKey, true);
+        document.addEventListener('click', this.onClick, true);
+        document.addEventListener('pointerdown', this.onPointer, true);
+        addEventListener('beforeunload', this.onLeave);
+    }
+
+    stop() {
+        document.removeEventListener('focusin', this.onFocus, true);
+        document.removeEventListener('focusout', this.onBlur, true);
+        document.removeEventListener('input', this.onInput, true);
+        document.removeEventListener('keydown', this.onKey, true);
+        document.removeEventListener('click', this.onClick, true);
+        document.removeEventListener('pointerdown', this.onPointer, true);
+        removeEventListener('beforeunload', this.onLeave);
+    }
+
+    field(target) {
+        return target instanceof Element ? target.closest('[data-fb-field]') : null;
+    }
+
+    /** The value saved last, at first the one the page came with. */
+    savedValue(element) {
+        return this.saved.has(element) ? this.saved.get(element) : storedValue(element);
+    }
+
+    focus(event) {
+        const element = this.field(event.target);
+
+        if (element?.dataset.fbType === 'richtext' && !this.editors.has(element)) {
+            this.richText(element);
+        }
+    }
+
+    blur(event) {
+        const element = this.field(event.target);
+
+        if (element && PLAIN.includes(element.dataset.fbType)) {
+            this.flush(element);
+        }
+    }
+
+    input(event) {
+        const element = this.field(event.target);
+
+        if (element && PLAIN.includes(element.dataset.fbType)) {
+            this.later(element, () => plainValue(element));
+        }
+    }
+
+    key(event) {
+        const element = this.field(event.target);
+
+        if (!element) {
+            return;
+        }
+
+        const type = element.dataset.fbType;
+
+        if (PLAIN.includes(type)) {
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                this.cancel(element);
+                element.innerText = this.savedValue(element) ?? '';
+                element.blur();
+            } else if (event.key === 'Enter' && type === 'headline') {
+                event.preventDefault();
+                element.blur();
+            }
+        } else if (type === 'link' && (event.key === 'Enter' || event.key === ' ')) {
+            event.preventDefault();
+            this.editLink(element);
+        } else if (type === 'richtext' && event.key === 'F10' && event.altKey) {
+            // Alt+F10 reaches the toolbar from the keyboard.
+            event.preventDefault();
+            this.bar.focusToolbar();
+        } else if (type === 'richtext' && event.key === 'Escape') {
+            const editor = this.editors.get(element);
+
+            if (editor) {
+                event.preventDefault();
+                this.cancel(element);
+                editor.commands.setContent(this.savedValue(element) ?? { type: 'doc', content: [] }, { emitUpdate: false });
+                editor.commands.blur();
+                element.blur();
+            }
+        }
+    }
+
+    click(event) {
+        const element = this.field(event.target);
+        const anchor = event.target instanceof Element ? event.target.closest('a') : null;
+
+        // Links lead nowhere in the mode where they hold or are a field.
+        if (anchor && (element || anchor.querySelector('[data-fb-field]'))) {
+            event.preventDefault();
+        }
+
+        if (element?.dataset.fbType === 'link') {
+            event.preventDefault();
+            this.editLink(element);
+        }
+    }
+
+    leave(event) {
+        const pending = this.timers.size > 0;
+        this.flushAll();
+
+        if (pending || this.bar.saving > 0) {
+            event.preventDefault();
+        }
+    }
+
+    /** Saves all pending changes, e.g. before undo or publishing. */
+    flushAll() {
+        const saves = [...this.timers.keys()].map((element) => this.flush(element));
+
+        return Promise.all(saves);
+    }
+
+    /** Saves a second after the last change. */
+    later(element, read) {
+        clearTimeout(this.timers.get(element)?.timer);
+        this.timers.set(element, { read, timer: setTimeout(() => this.flush(element), DELAY) });
+    }
+
+    /** Saves a pending change right away. */
+    flush(element) {
+        const pending = this.timers.get(element);
+
+        if (!pending) {
+            return Promise.resolve(true);
+        }
+
+        clearTimeout(pending.timer);
+        this.timers.delete(element);
+
+        return this.save(element, pending.read());
+    }
+
+    cancel(element) {
+        clearTimeout(this.timers.get(element)?.timer);
+        this.timers.delete(element);
+    }
+
+    /** One save after the other per field, each with the value saved before. */
+    save(element, value) {
+        const queue = (this.queues.get(element) ?? Promise.resolve()).then(() => this.send(element, value));
+        this.queues.set(element, queue.catch(() => {}));
+
+        return queue;
+    }
+
+    async send(element, value) {
+        const previous = this.savedValue(element);
+
+        if (same(previous, value)) {
+            return true;
+        }
+
+        const page = this.bar.config.page;
+        const block = element.closest('[data-fb-block]')?.dataset.fbBlock ?? null;
+        const result = await this.bar.run('page.update-field', {
+            id: page.id,
+            language: this.bar.config.language,
+            path: element.dataset.fbField,
+            block,
+            value,
+            previous,
+        });
+
+        if (!result.ok) {
+            return false;
+        }
+
+        const data = result.data;
+        this.saved.set(element, data.value);
+
+        if (data.value === null) {
+            delete element.dataset.fbValue;
+        } else {
+            element.dataset.fbValue = JSON.stringify(data.value);
+        }
+
+        if (element.dataset.fbType === 'link') {
+            element.innerHTML = data.html;
+        }
+
+        this.bar.changed(data.entry);
+
+        return true;
+    }
+
+    editLink(element) {
+        const value = this.savedValue(element) ?? {};
+
+        this.bar.openLink({
+            withText: true,
+            text: value.text ?? '',
+            href: value.target ?? value.url ?? '',
+            newWindow: value.newWindow === true,
+            apply: ({ text, href, newWindow }) => {
+                const link = href.startsWith('page:') ? { target: href } : { url: href };
+
+                if (text) {
+                    link.text = text;
+                }
+
+                if (newWindow) {
+                    link.newWindow = true;
+                }
+
+                this.save(element, link);
+            },
+            remove: () => this.save(element, null),
+            done: () => element.focus(),
+        });
+    }
+
+    async richText(element) {
+        this.loading ??= import('./richtext.js');
+        const { createEditor, valueOf } = await this.loading;
+
+        if (this.editors.has(element)) {
+            return;
+        }
+
+        // Only a click that just happened, not one before a Tab.
+        const pointer = this.pointer && Date.now() - this.pointer.at < 2000 ? this.pointer : null;
+        const editor = createEditor(element, this.savedValue(element), {
+            update: () => this.later(element, () => valueOf(editor)),
+            selection: () => this.bar.showToolbar(editor),
+            blur: (event) => {
+                // Focus that moves into the bar keeps the toolbar.
+                if (event.relatedTarget === this.bar) {
+                    return;
+                }
+
+                this.flush(element);
+                this.bar.hideToolbar(editor);
+            },
+        });
+
+        this.editors.set(element, editor);
+
+        // The element had the focus before Tiptap listened: focus it anew,
+        // with the cursor where the click was and without scrolling.
+        const position = pointer ? editor.view.posAtCoords(pointer) : null;
+        element.blur();
+        editor.commands.focus(position ? position.pos : 'end', { scrollIntoView: false });
+    }
+}

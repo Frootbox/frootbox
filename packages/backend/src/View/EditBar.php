@@ -44,7 +44,10 @@ final readonly class EditBar
      */
     private const string PAGE_CSS = 'fb-field,fb-area,[data-fb-field]{outline:none}'
         . 'fb-field[data-fb-type="richtext"],fb-area{display:block}'
-        . 'fb-area[data-fb-empty]{min-block-size:4rem}';
+        . 'fb-area[data-fb-empty]{min-block-size:4rem}'
+        . '[data-fb-field][contenteditable]{cursor:text}'
+        . '.ProseMirror{white-space:pre-wrap;overflow-wrap:break-word}'
+        . '.ProseMirror-hideselection *::selection{background:transparent}';
 
     public function __construct(
         private TwigExtension $permissions,
@@ -71,6 +74,8 @@ final readonly class EditBar
             'marking' => $this->mode->marking(),
             'csrf' => $this->csrf->token($event->request),
             'actions' => substr($this->router->path('backend.action', ['name' => 'x']), 0, -1),
+            'queries' => substr($this->router->path('backend.query', ['name' => 'x']), 0, -1),
+            'language' => $event->head->language,
             'toggle' => $this->router->path('backend.edit-mode'),
             'pages' => $this->router->path('backend.pages'),
             'tokens' => $this->design->hostCss(),
@@ -113,6 +118,8 @@ final readonly class EditBar
         $path = $tree->has($id) ? $tree->path($id, $language) : '';
         $start = $tree->has($id) && $tree->row($id)['start'];
         $draftUrl = $this->languages->has($language) && ('' !== $path || $start) ? $this->languages->get($language)->path($path) : null;
+        $mayPublish = $this->permissions->can('page.publish', ['ids' => $publish]);
+        $mayDiscard = $this->permissions->can('page.discard', ['id' => $id]);
 
         return [
             'id' => $id,
@@ -120,8 +127,11 @@ final readonly class EditBar
             'locked' => null !== $details->visibility->lockedBy,
             'publish' => $publish,
             'offlineParents' => array_map(static fn(string $ancestor): string => $tree->row($ancestor)['title'], $offline),
-            'canPublish' => $draft && $this->permissions->can('page.publish', ['ids' => $publish]),
-            'canDiscard' => $draft && $this->permissions->can('page.discard', ['id' => $id]),
+            // Whether the buttons come once a change makes a draft.
+            'mayPublish' => $mayPublish,
+            'mayDiscard' => $mayDiscard,
+            'canPublish' => $draft && $mayPublish,
+            'canDiscard' => $draft && $mayDiscard,
             'published' => PageStatus::Draft !== $details->status,
             'backend' => $this->router->path('backend.pages.show', ['id' => $id]),
             'draftUrl' => $draftUrl,
@@ -158,6 +168,26 @@ final readonly class EditBar
             'collapse' => $t('Collapse the bar'),
             'expand' => $t('Show the bar'),
             'failed' => $t('The server cannot be reached. Check the connection and try again.'),
+            'saving' => $t('Saving …'),
+            'saved' => $t('Saved'),
+            'undo' => $t('Undo'),
+            'reload' => $t('Load again'),
+            'formatting' => $t('Formatting'),
+            'bold' => $t('Bold'),
+            'italic' => $t('Italic'),
+            'subheading' => $t('Subheading'),
+            'bulletList' => $t('List'),
+            'orderedList' => $t('Numbered list'),
+            'quote' => $t('Quote'),
+            'link' => $t('Link'),
+            'linkText' => $t('Text'),
+            'linkTarget' => $t('Address or page'),
+            'linkHint' => $t('Search for a page or enter an address such as https://example.com.'),
+            'linkPage' => $t('Page'),
+            'noPages' => $t('No page found.'),
+            'newWindow' => $t('Open in a new window'),
+            'apply' => $t('Apply'),
+            'removeLink' => $t('Remove the link'),
         ];
     }
 }
