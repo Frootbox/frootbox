@@ -1,0 +1,35 @@
+name: Update screenshots
+
+# Makes new approved images for the screenshot tests (decision 0114) in
+# the same container as CI. Download the artifact and commit its files to
+# tests/e2e/__screenshots__/ after checking them.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PHP_VERSION: '8.5'
+
+jobs:
+  update:
+    name: Update screenshots
+    runs-on: ubuntu-latest
+    # Keep its version equal to @playwright/test in package-lock.json.
+    container: mcr.microsoft.com/playwright:v1.64.1-noble
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: pdo_sqlite
+          coverage: none
+      - run: npm ci
+      - run: npx playwright test --project=visual --update-snapshots=all
+      - uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: tests/e2e/__screenshots__/
+          retention-days: 7

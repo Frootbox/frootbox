@@ -12,11 +12,15 @@ declare(strict_types=1);
  * tests (tests/e2e/). Playwright starts it, see playwright.config.ts.
  *
  * Needs PHP 8.5 and Composer; COMPOSER_BINARY names Composer if it is not
- * in the PATH.
+ * in the PATH. The superuser admin@example.test gets the password of
+ * tests/e2e/admin.ts. E2E_LISTEN (e.g. 0.0.0.0:8100) lets the server take
+ * requests from a container, see tools/visual.mjs.
  */
 
 $root = dirname(__DIR__);
 $address = '127.0.0.1:8100';
+$listen = getenv('E2E_LISTEN');
+$listen = false === $listen || '' === $listen ? $address : $listen;
 $composer = getenv('COMPOSER_BINARY');
 
 if (false === $composer || '' === $composer) {
@@ -28,6 +32,9 @@ if ('' === $composer) {
 
     exit(1);
 }
+
+// The same password as tests/e2e/admin.ts.
+putenv('FROOTBOX_ADMIN_PASSWORD=e2e-kaffeebohne-42');
 
 passthru(sprintf(
     'cd %s && %s %s sandbox -- --reset --dir=var/e2e --env=prod --url=%s',
@@ -46,7 +53,7 @@ putenv('PHP_CLI_SERVER_WORKERS=4');
 passthru(sprintf(
     '%s -S %s -t %s 2>> %s',
     escapeshellarg(PHP_BINARY),
-    escapeshellarg($address),
+    escapeshellarg($listen),
     escapeshellarg($root . '/var/e2e/public'),
     escapeshellarg($root . '/var/e2e/var/log/server.log'),
 ), $exitCode);
