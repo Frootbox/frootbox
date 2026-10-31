@@ -204,6 +204,7 @@ tables below. A test fails while they are behind.
 | --- | --- | --- |
 | `--fb-layer-toast` | `20` | Toasts above the page |
 | `--fb-layer-dialog` | `30` | Dialogs above everything |
+| `--fb-layer-edit` | `2147483000` | Bar of the editing mode above every theme |
 
 #### Contrast (WCAG AA, at least 4.5:1)
 
@@ -668,6 +669,33 @@ semibold.
 (`fb-theme`) until phase 2, an inline script applies it before the first
 paint. It fires `fb-theme-change` with `detail.theme`.
 
+### Edit bar
+
+`<fb-edit-bar>` is the bar of the editing mode on pages of the website,
+not on backend screens (decision 0119). It lives in its own shadow DOM
+with `all: initial` on the host and the tokens of the backend on
+`:host`, so neither the theme nor the backend CSS reaches it. The script
+`edit.js` brings Lit along (no import map on theme pages) and reads its
+data from the JSON block `#fb-edit-config` in the head.
+
+- Floats at the bottom in the middle, `--fb-surface`, `--fb-radius-lg`,
+  `--fb-shadow-lg`, above everything (`--fb-layer-edit`). It wraps on
+  narrow screens and never moves the layout of the page.
+- Content: brand, switch "Edit" (`role="switch"`), status of the page as
+  a badge, "Locked for visitors", "Show all places" (`aria-pressed`),
+  "Publish" (primary), "Discard the draft" (danger, asks in the bar),
+  "Open in the backend", collapse. Messages appear in a `role="status"`
+  line inside the bar.
+- Collapsed it is a round button of `--fb-size-control` with the pencil;
+  the browser keeps that in `localStorage` (`fb-edit-bar-collapsed`).
+- Light or dark follows the choice of the appearance switch (`fb-theme`),
+  else the system.
+- Marked places get an outline of `--fb-size-focus` in `--fb-accent` with
+  a label on hover and focus: solid for fields, dashed for blocks and
+  empty areas. The bar draws them over the page with
+  `getBoundingClientRect()`; the page itself only gets a rule without a
+  layer for `fb-field`, `fb-area` and `[data-fb-field]`.
+
 ### Icons
 
 `{{ icon('pencil') }}` writes an SVG from `assets/icons/` inline, 20 px
@@ -759,6 +787,11 @@ import { LitElement, html } from 'lit';
 
 and register their own modules with `$registry->import('@acme/thing',
 'assets/build/thing.js')`.
+
+The editing mode on the website has its own entry `edit.js`, which
+bundles Lit, because theme pages have no import map. It is a build of its
+own (`vite.edit.config.js`), so the backend keeps loading Lit from
+`lit.js` alone.
 
 `@frootbox/ui` exports `ThemeSwitch` (`<fb-theme-switch>`), `Form`
 (`<fb-form>`) with `formInput(form)`, `Tree` (`<fb-tree>`), `Navigation`

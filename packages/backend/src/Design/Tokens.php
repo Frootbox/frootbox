@@ -189,6 +189,22 @@ final readonly class Tokens
     }
 
     /**
+     * The same variables for the shadow DOM of an element on a page of
+     * the website, e.g. the bar of the editing mode (decision 0119):
+     * on :host, dark for data-theme="dark" on the host or by the system.
+     */
+    public function hostCss(): string
+    {
+        $all = self::declarations($this->tokens, 'light');
+        $themed = array_values(array_filter($this->tokens, static fn(Token $token): bool => $token->isThemed()));
+        $dark = self::declarations($themed, 'dark');
+
+        return ":host{color-scheme:light;{$all}}\n"
+            . ":host([data-theme=\"dark\"]){color-scheme:dark;{$dark}}\n"
+            . "@media (prefers-color-scheme:dark){:host(:not([data-theme=\"light\"])){color-scheme:dark;{$dark}}}";
+    }
+
+    /**
      * @param list<Token> $tokens
      */
     private static function declarations(array $tokens, string $mode): string

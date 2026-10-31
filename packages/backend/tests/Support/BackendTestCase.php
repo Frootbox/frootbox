@@ -77,8 +77,9 @@ abstract class BackendTestCase extends NotesTestCase
      * @param array<string, string>      $headers
      * @param array<string, mixed>|null  $json    a JSON body, as <fb-form> sends it
      * @param string|null                $raw     the body as it is, e.g. an encoded form
+     * @param array<string, string>      $cookies more cookies, e.g. of the editing mode
      */
-    protected function request(string $method, string $path, ?array $body = null, ?string $session = null, array $headers = [], ?array $json = null, string $address = '192.0.2.1', ?string $raw = null): ResponseInterface
+    protected function request(string $method, string $path, ?array $body = null, ?string $session = null, array $headers = [], ?array $json = null, string $address = '192.0.2.1', ?string $raw = null, array $cookies = []): ResponseInterface
     {
         if (null !== $json) {
             $headers += ['Content-Type' => 'application/json', 'Accept' => 'application/json'];
@@ -93,8 +94,10 @@ abstract class BackendTestCase extends NotesTestCase
         }
 
         if (null !== $session) {
-            $request = $request->withCookieParams([AuthenticationMiddleware::COOKIE => $session]);
+            $cookies[AuthenticationMiddleware::COOKIE] = $session;
         }
+
+        $request = $request->withCookieParams($cookies);
 
         // Every request starts as a guest, like a new PHP process.
         $this->get(CurrentContext::class)->set(Context::guest());

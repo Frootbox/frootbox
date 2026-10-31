@@ -28,6 +28,14 @@
         {% endfor %}
 
         <div class="fb-cluster">
+            {% if page.edit %}
+            <form method="post" action="{{ path('backend.edit-mode') }}">
+                <input type="hidden" name="_csrf" value="{{ fb.csrf }}">
+                <input type="hidden" name="on" value="1">
+                <input type="hidden" name="next" value="{{ page.edit }}">
+                {{ ui.button({label: t('Edit on the website'), type: 'submit', variant: 'secondary', icon: 'pencil'}) }}
+            </form>
+            {% endif %}
             {% if page.url %}{{ ui.button({label: t('View on the website'), href: page.url, variant: 'secondary', icon: 'external', attrs: {target: '_blank', rel: 'noopener'}}) }}{% endif %}
             {% if has_draft and can('page.publish', {ids: page.publish}) %}
                 {% if page.offline_parents is empty %}

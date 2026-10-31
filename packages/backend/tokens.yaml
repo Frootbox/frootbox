@@ -125,6 +125,7 @@ system:
   layer:
     toast: { value: '20', use: "Toasts above the page" }
     dialog: { value: '30', use: "Dialogs above everything" }
+    edit: { value: '2147483000', use: "Bar of the editing mode above every theme" }
 
 # Pairs of text and background that need a contrast of at least 4.5:1
 # (WCAG AA) in both modes. The design page shows them, a test checks them,

@@ -5,8 +5,8 @@
   "license": "LGPL-3.0-only",
   "type": "module",
   "scripts": {
-    "build": "vite build",
-    "watch": "vite build --watch",
+    "build": "vite build && vite build --config vite.edit.config.js",
+    "watch": "vite build --watch & vite build --config vite.edit.config.js --watch",
     "lint:css": "stylelint \"assets/css/**/*.css\""
   },
   "dependencies": {

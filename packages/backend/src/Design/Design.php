@@ -79,6 +79,11 @@ final class Design
         return $this->tokens()->css();
     }
 
+    public function hostCss(): string
+    {
+        return $this->tokens()->hostCss();
+    }
+
     /**
      * The URL of the logo, null if the brand has none.
      */

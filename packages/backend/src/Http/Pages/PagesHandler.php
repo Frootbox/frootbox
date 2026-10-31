@@ -105,6 +105,8 @@ final readonly class PagesHandler implements RequestHandlerInterface
             'translation' => $data->translations[$language->code] ?? null,
             'prefix' => $this->host($request, $language) . rtrim($language->path(null === $parentId ? '' : $tree->path($parentId, $language->code)), '/') . '/',
             'url' => $details->urls[$language->code] ?? null,
+            // The draft at its address on this host, in the editing mode (decision 0119).
+            'edit' => null === $language->domain ? $language->path($tree->path($id, $language->code)) : null,
             'publish' => [...$offline, $id],
             'offline_parents' => array_map(static fn(string $ancestor): string => $tree->row($ancestor)['title'], $offline),
             'parent' => $parentId,
