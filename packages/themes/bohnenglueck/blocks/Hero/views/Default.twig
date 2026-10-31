@@ -13,8 +13,8 @@ options:
     <h1>{{ field('title') }}</h1>
     {% if value('text') %}<p class="hero__text">{{ field('text') }}</p>{% endif %}
     <div class="hero__actions">
-      {% if value('button') %}<a class="button" href="{{ value('button').url }}">{{ value('button').text }}</a>{% endif %}
-      {% if value('secondary') %}<a class="button button--ghost" href="{{ value('secondary').url }}">{{ value('secondary').text }}</a>{% endif %}
+      {% if url(value('button')) %}<a class="button" href="{{ url(value('button')) }}">{{ value('button').text }}</a>{% endif %}
+      {% if url(value('secondary')) %}<a class="button button--ghost" href="{{ url(value('secondary')) }}">{{ value('secondary').text }}</a>{% endif %}
     </div>
   </div>
 </section>

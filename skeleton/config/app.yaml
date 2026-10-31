@@ -6,9 +6,14 @@ app:
 database:
   url: '%env(DATABASE_URL)%'
 
-# Languages of the website by code, the first one is the default.
+# Languages of the website by code, the first one is the default and has
+# no prefix. Others get their code as prefix (/en/…) and show the content
+# of the default language where a page has no translation.
 languages:
   de: { title: Deutsch }
+  # en: { title: English }                     # /en/about-us
+  # fr: { title: Français, fallback: false }   # no page without translation
+  # nl: { title: Nederlands, domain: '%env(DOMAIN_NL)%' }
 
 # The active theme: an installed extension with "theme:" in its frootbox.yaml.
 # theme: acme/website

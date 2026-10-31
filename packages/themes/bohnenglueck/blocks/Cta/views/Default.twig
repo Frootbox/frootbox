@@ -11,6 +11,6 @@ fields:
 <section class="section"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
   <div class="wrap cta">
     <div><h2>{{ field('title') }}</h2>{% if value('text') %}<p>{{ field('text') }}</p>{% endif %}</div>
-    <a class="button" href="{{ value('button').url }}">{{ value('button').text }}</a>
+    <a class="button" href="{{ url(value('button')) }}">{{ value('button').text }}</a>
   </div>
 </section>
