@@ -475,6 +475,17 @@ answer:
   monospace font); `data-type="boolean"` makes a hidden field `true` for
   `1`; `data-empty="null"` sends `null` for an empty text. Disabled
   fields are left out.
+- `refresh="page-tree page-detail"` loads the current address again
+  after success and replaces only the elements with these ids; focus
+  goes to the element with the same id or to `[data-fb-focus]` in it
+  (decision 0116). `base="/items/de/2"` takes errors below that JSON
+  pointer to the fields of the form, e.g. `/items/de/2/label` to `label`.
+  An error without a field names the last part of its pointer.
+- `data-type="datetime"` on a `datetime-local` field sends the time with
+  the offset of the browser; `data-value="<ISO time>"` fills it in the
+  time zone of the browser.
+- Events: `fb-form-input` (`detail.input` can be replaced before
+  sending), `fb-form-success` (cancelable) and `fb-form-error`.
 - Hide controls the user may not use: `{% if can('user.create') %}`.
   The action checks again.
 
@@ -484,6 +495,17 @@ checkboxes under a label (no border, 12 px gap); a group shows its error
 once below. A field for a new password gets a ghost button with
 `data-fb-generate="<field id>"`, which fills in a random password and
 shows it.
+
+Helpers for forms, started by `backend.js`:
+
+- `data-fb-fill='{"id": 3, "path": "/old"}'` on a button that opens a
+  dialog fills the fields of that name in it and clears old errors.
+- `data-fb-enables="<field id>"` on a radio button enables that field
+  while it is checked and hides the fields of the other buttons.
+- `data-fb-slug="<title field id>"` on an address field fills it from
+  the title until the user changes it; `data-fb-prefix="<field id>"` on
+  a select with `data-prefix` per option changes the prefix of that
+  address field.
 
 ### Secret
 
@@ -514,6 +536,100 @@ the first entry. Centered, padding 56 px 24 px, dashed 2 px border
 `--fb-border-strong`, radius 14 px. The icon sits in a 56 px circle in
 `--fb-accent-soft`; title 18 px bold; text muted, at most 420 px wide;
 `action` takes the options of `ui.button()`.
+
+### Split
+
+```html
+<div class="fb-split">
+    <section class="fb-card fb-split__side">…tree…</section>
+    <section class="fb-card fb-split__main">…details…</section>
+</div>
+```
+
+A narrow side, e.g. a tree, next to the main part, e.g. its details
+(decision 0116). 24 px apart; the side starts at `--fb-size-narrow` minus
+64 px and the main part takes the rest. When less than about 800 px is
+left, they wrap, side on top.
+
+### Section
+
+`<section class="fb-section">` divides a card into parts one below the
+other: a 1 px line on top, padding 20 px, 16 px between its children.
+`.fb-section__header` holds a title and a short hint or action.
+`.fb-section--flush` has no padding, for lists and trees that reach the
+edges; its header and a `.fb-muted` text keep the padding.
+
+### Missing
+
+```html
+<div class="fb-missing">
+    <p class="fb-missing__title">No version in English yet</p>
+    <p class="fb-muted">…what visitors see meanwhile…</p>
+    {{ ui.button({label: 'Add the version in English', variant: 'secondary', icon: 'plus'}) }}
+</div>
+```
+
+Something that is not there yet, with the way to add it, e.g. a
+translation: dashed 1 px border `--fb-border-strong`, radius 10 px,
+padding 20 px. Smaller than the empty state, it sits inside a card.
+
+### Tree
+
+```html
+<fb-tree id="page-tree" action="page.move" refresh="page-tree page-detail"
+         moved="{title} is below {parent} now, at place {position} of {count}.">
+    <ul class="fb-tree" aria-labelledby="…">
+        <li class="fb-tree__item" data-id="…" data-title="Start" data-fixed>
+            <div class="fb-tree__row" data-depth="0">
+                <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
+                <a class="fb-tree__link" href="…"><span class="fb-tree__title">…</span><span class="fb-tree__meta">…</span></a>
+                {{ ui.status('published') }}
+            </div>
+            <ul class="fb-tree__group">…</ul>
+        </li>
+    </ul>
+</fb-tree>
+```
+
+Pages or menu items as a tree that can be rearranged (decision 0116).
+Each row is at least 56 px high and indents 24 px per level
+(`data-depth`, at most 6). The link covers the row; the current one has
+`aria-current="page"`, `--fb-accent-soft` and a 3 px line on the left. A
+`<button class="fb-tree__link">` works the same, e.g. to edit an item in
+a dialog.
+
+- Keys: arrow up and down, Home and End go through the rows. With Alt,
+  up and down move the row among its siblings, right makes it the last
+  child of the row above, left moves it one level up.
+- Mouse: drag a row before, after or into another one. A line or a
+  dashed outline shows where it lands.
+- `action` runs with `{id, parentId, position}`, then `refresh` loads
+  the parts again and `moved` is read out as a toast. Without `action`,
+  `movable` fires `fb-tree-move` instead and the listener sets
+  `detail.result` to a promise of `{ok, problem}`.
+- `data-fixed` keeps a row in place (the start page), `data-leaf` takes
+  no children, `roots` allows the top level, `depth="2"` limits the
+  levels.
+
+Put a hint like "Drag to move, or Alt and the arrow keys." in the
+header and link it with `aria-describedby` from the movable links.
+
+### Navigation
+
+`<fb-navigation name="main" language="de" items="[…]" refresh="…">`
+holds the items of a navigation in one language and saves them all with
+`navigation.update` (decision 0116). Inside are an `<fb-tree movable
+roots depth="…">` with the items (moves are saved at once) and a
+`<dialog>` with an `<fb-form>` that edits one item: `_path` is its place
+(`"2.0"`, empty for a new one), `data-types="url anchor"` shows a field
+only for these kinds, `data-navigation-remove` on a button removes the
+item.
+
+### Time
+
+`{{ ui.time(page.publishAt) }}` writes a `<time datetime="…">` that the
+browser shows in its own time zone (`localTimes()`), the server zone
+without JavaScript.
 
 ### Avatar
 
@@ -556,9 +672,10 @@ fb-icon--small')` for 18 px. Icons are `aria-hidden`; a button with only
 an icon has a label (`icon_only`). New icons: 24×24 viewBox, stroke 2,
 round caps and joins, no fill, `stroke="currentColor"`.
 
-Available: alert, check, chevron-down, close, dashboard, external, image,
-inbox, info, menu, pages, palette, pencil, plus, redirect, search,
-settings, sign-out, square, users, warning.
+Available: alert, check, chevron-down, clock, close, dashboard, external,
+grip, image, inbox, info, lock, menu, navigation, pages, palette, pencil,
+plus, redirect, restore, search, settings, shield, sign-out, square,
+users, warning.
 
 ### Helpers
 
@@ -640,8 +757,11 @@ and register their own modules with `$registry->import('@acme/thing',
 'assets/build/thing.js')`.
 
 `@frootbox/ui` exports `ThemeSwitch` (`<fb-theme-switch>`), `Form`
-(`<fb-form>`) with `formInput(form)`, `showToast(text)`, and
-`generatePasswords()`, which `backend.js` starts on every page.
+(`<fb-form>`) with `formInput(form)`, `Tree` (`<fb-tree>`), `Navigation`
+(`<fb-navigation>`), `showToast(text)`, `runAction(name, input)` and
+`refresh(ids)` for own components, and the helpers `generatePasswords()`,
+`bindSlugs()`, `bindFills()` and `localTimes()`, which `backend.js`
+starts on every page.
 
 ## Brand (white label)
 

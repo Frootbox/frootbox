@@ -1,18 +1,59 @@
 import { LitElement } from 'lit';
+import { refresh as refreshParts, runAction } from './action.js';
 import { showToast } from './toast.js';
 
 const ALERT = '<svg class="fb-icon fb-icon--small" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6"/><path d="M12 16.5v.5"/></svg>';
 const TOAST_KEY = 'fb-toast';
 
-function meta(name) {
-    return document.querySelector(`meta[name="${name}"]`)?.getAttribute('content') ?? '';
+/**
+ * The field of an error: "/translations/en/slug" is the field named
+ * "translations.en.slug", else "translations.en" and so on; "/roles/1"
+ * is "roles" or "roles[]". Null for "/" or no such field.
+ */
+function fieldFor(form, pointer) {
+    const parts = pointer.split('/').slice(1).filter((part) => part !== '').map((part) => part.replaceAll('~1', '/').replaceAll('~0', '~'));
+
+    for (let length = parts.length; length > 0; length--) {
+        const name = parts.slice(0, length).join('.');
+        const field = form.elements.namedItem(name) ?? form.elements.namedItem(name + '[]');
+
+        if (field) {
+            return field instanceof RadioNodeList ? field[0] : field;
+        }
+    }
+
+    return null;
 }
 
-/** "/roles/1" → "roles", "/" → null */
-function fieldName(pointer) {
-    const first = pointer.split('/')[1] ?? '';
+/** "2026-11-01T18:00" in the time zone of the browser for an ISO time. */
+function localTime(iso) {
+    const date = new Date(iso);
 
-    return first === '' ? null : first.replaceAll('~1', '/').replaceAll('~0', '~');
+    if (Number.isNaN(date.getTime())) {
+        return '';
+    }
+
+    const pad = (number) => String(number).padStart(2, '0');
+
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+/** Sets input[name] with "a.b.c" as {a: {b: {c: …}}}. */
+function assign(input, name, value, list) {
+    const keys = name.split('.');
+    const last = keys.pop();
+    let target = input;
+
+    for (const key of keys) {
+        target[key] ??= {};
+        target = target[key];
+    }
+
+    if (list) {
+        target[last] = [...(target[last] ?? []), ...(Array.isArray(value) ? value : [value])];
+    } else {
+        target[last] = value;
+    }
 }
 
 function valueAt(data, path) {
@@ -36,8 +77,13 @@ function fill(template, data) {
  * - type="number" and data-type="number" are numbers, empty is null
  * - data-type="lines" is a list of the lines that are not empty
  * - data-type="boolean" is true for "1" or "true", e.g. a hidden field
+ * - data-type="datetime" on a datetime-local field is the time with the
+ *   offset of the browser, empty is null; data-value="<ISO time>" fills
+ *   it in the time zone of the browser
  * - data-empty="null" sends null instead of an empty text
- * - fields without a name, disabled fields and _csrf are left out
+ * - a name with dots is nested: "translations.en.title"
+ * - fields without a name, disabled fields and names starting with _
+ *   (e.g. _csrf, or radio buttons that only switch fields) are left out
  */
 export function formInput(form) {
     const input = {};
@@ -45,7 +91,7 @@ export function formInput(form) {
     for (const element of form.elements) {
         const raw = element.name;
 
-        if (!raw || raw === '_csrf' || element.disabled || element.type === 'submit' || element.type === 'button') {
+        if (!raw || raw.startsWith('_') || element.disabled || element.type === 'submit' || element.type === 'button') {
             continue;
         }
 
@@ -53,22 +99,14 @@ export function formInput(form) {
         const name = list ? raw.slice(0, -2) : raw;
 
         if (element.type === 'checkbox') {
-            if (list) {
-                input[name] ??= [];
-
-                if (element.checked) {
-                    input[name].push(element.value);
-                }
-            } else {
-                input[name] = element.checked;
-            }
+            assign(input, name, list ? (element.checked ? [element.value] : []) : element.checked, list);
 
             continue;
         }
 
         if (element.type === 'radio') {
             if (element.checked) {
-                input[name] = element.value;
+                assign(input, name, element.value, false);
             }
 
             continue;
@@ -80,6 +118,8 @@ export function formInput(form) {
             value = value.trim() === '' ? null : Number(value);
         } else if (element.dataset.type === 'boolean') {
             value = value === '1' || value === 'true';
+        } else if (element.dataset.type === 'datetime') {
+            value = value === '' ? null : new Date(value).toISOString();
         } else if (element.dataset.type === 'lines') {
             value = value.split('\n').map((line) => line.trim()).filter((line) => line !== '');
         } else if (element.multiple) {
@@ -88,11 +128,7 @@ export function formInput(form) {
             value = null;
         }
 
-        if (list) {
-            input[name] = [...(input[name] ?? []), ...(Array.isArray(value) ? value : [value])];
-        } else {
-            input[name] = value;
-        }
+        assign(input, name, value, list);
     }
 
     return input;
@@ -116,10 +152,17 @@ export function formInput(form) {
  * - show: the id of a hidden element to show after success, e.g. a new
  *   API token; elements in it with data-fb-value="token" get that value
  *   of the result
+ * - refresh: ids of elements to load again after success, separated by
+ *   spaces (decision 0116); the page stays
+ * - base: a JSON pointer whose errors belong to the fields of this form,
+ *   e.g. "/items/de/2" when the form edits one item of a list
  *
+ * A form in a <dialog> closes it after success.
  * Errors appear at their field and as a summary at the top, which gets
- * the focus. Fires "fb-form-success" with detail.data (cancelable: then
- * nothing else happens) and "fb-form-error" with detail.problem.
+ * the focus. Fires "fb-form-input" with detail.input before sending (a
+ * listener may replace it), "fb-form-success" with detail.data
+ * (cancelable: then nothing else happens) and "fb-form-error" with
+ * detail.problem.
  */
 export class Form extends LitElement {
     static properties = {
@@ -129,6 +172,8 @@ export class Form extends LitElement {
         failed: {},
         reset: { type: Boolean },
         show: {},
+        refresh: {},
+        base: {},
         busy: { type: Boolean, reflect: true },
     };
 
@@ -140,6 +185,8 @@ export class Form extends LitElement {
         this.failed = document.body?.dataset.fbFailed || 'The server cannot be reached. Check the connection and try again.';
         this.reset = false;
         this.show = null;
+        this.refresh = null;
+        this.base = '';
         this.busy = false;
         this.onSubmit = this.onSubmit.bind(this);
     }
@@ -155,6 +202,10 @@ export class Form extends LitElement {
     connectedCallback() {
         super.connectedCallback();
         this.addEventListener('submit', this.onSubmit);
+
+        for (const field of this.querySelectorAll('input[data-type="datetime"][data-value]')) {
+            field.value = localTime(field.dataset.value);
+        }
     }
 
     disconnectedCallback() {
@@ -175,40 +226,24 @@ export class Form extends LitElement {
             return;
         }
 
+        // Disabling the button takes the focus away, a refresh brings it back.
+        const active = document.activeElement;
+
         this.clearErrors();
         this.setBusy(true);
 
-        let response;
-        let body = null;
-
-        try {
-            response = await fetch(meta('fb-actions') + this.action, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json',
-                    'X-CSRF-Token': meta('fb-csrf'),
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify(formInput(form)),
-            });
-            body = await response.json().catch(() => null);
-        } catch {
-            this.setBusy(false);
-            this.showProblem({ detail: this.failed, errors: [] });
-
-            return;
-        }
-
+        const prepared = new CustomEvent('fb-form-input', { detail: { input: formInput(form) }, bubbles: true });
+        this.dispatchEvent(prepared);
+        const result = await runAction(this.action, prepared.detail.input, this.failed);
         this.setBusy(false);
 
-        if (!response.ok) {
-            this.showProblem({ detail: body?.detail ?? this.failed, errors: body?.errors ?? [], status: response.status });
+        if (!result.ok) {
+            this.showProblem(result.problem);
 
             return;
         }
 
-        const data = body?.data ?? null;
+        const data = result.data;
         const success = new CustomEvent('fb-form-success', { detail: { data }, bubbles: true, cancelable: true });
 
         if (!this.dispatchEvent(success)) {
@@ -233,6 +268,15 @@ export class Form extends LitElement {
             form.reset();
         }
 
+        // A dialog gives the focus back to the button that opened it.
+        const dialog = this.closest('dialog');
+        let focused = active;
+
+        if (dialog?.open) {
+            dialog.close();
+            focused = document.activeElement;
+        }
+
         const shown = this.show ? document.getElementById(this.show) : null;
 
         if (shown) {
@@ -243,6 +287,10 @@ export class Form extends LitElement {
             shown.hidden = false;
             shown.tabIndex = -1;
             shown.focus();
+        }
+
+        if (this.refresh) {
+            await refreshParts(this.refresh.split(/\s+/).filter((id) => id !== ''), { active: focused });
         }
 
         if (this.done) {
@@ -284,12 +332,12 @@ export class Form extends LitElement {
         const items = [];
 
         for (const { pointer, message } of problem.errors) {
-            const name = fieldName(pointer ?? '/');
-            const field = name === null ? null : (form.elements.namedItem(name) ?? form.elements.namedItem(name + '[]'));
-            const element = field instanceof RadioNodeList ? field[0] : field;
+            const element = fieldFor(form, this.localPointer(pointer ?? '/'));
 
             if (!element || !element.id) {
-                items.push({ text: message });
+                // Without a field, the last name in the pointer says what is meant, e.g. "title".
+                const name = (pointer ?? '').split('/').filter((part) => part !== '' && !/^\d+$/.test(part)).pop();
+                items.push({ text: name ? `${name.replaceAll('~1', '/').replaceAll('~0', '~')}: ${message}` : message });
 
                 continue;
             }
@@ -344,10 +392,26 @@ export class Form extends LitElement {
         }
 
         summary.append(content);
-        form.prepend(summary);
+        // In a dialog the summary goes below the title, inside its padding.
+        const dialogTitle = form.querySelector('.fb-dialog__body > .fb-dialog__title');
+
+        if (dialogTitle) {
+            dialogTitle.after(summary);
+        } else {
+            form.prepend(summary);
+        }
         summary.focus();
 
         this.dispatchEvent(new CustomEvent('fb-form-error', { detail: { problem }, bubbles: true }));
+    }
+
+    /** "/items/de/2/label" with base "/items/de/2" is "/label"; outside the base "/". */
+    localPointer(pointer) {
+        if (!this.base) {
+            return pointer;
+        }
+
+        return pointer.startsWith(this.base + '/') ? pointer.slice(this.base.length) : '/';
     }
 
     markField(element, message) {

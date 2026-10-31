@@ -1,0 +1,16 @@
+{#- The theme declares no navigations. -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Navigations') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text"><h1 class="fb-heading-1">{{ t('Navigations') }}</h1></div>
+    </header>
+    <section class="fb-card">
+        {{ ui.empty({icon: 'navigation', title: t('No navigations'), text: t('The theme of the website declares no navigations.')}) }}
+    </section>
+</div>
+{% endblock %}

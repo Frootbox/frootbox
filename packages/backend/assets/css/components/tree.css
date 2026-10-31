@@ -1,0 +1,120 @@
+/* A tree of pages or menu items in a card (decision 0116). The whole
+   row is the link; <fb-tree> adds dragging and moving with Alt and the
+   arrow keys. Depth comes from data-depth, deeper than 6 looks like 6. */
+
+.fb-tree__row {
+    position: relative;
+    display: flex;
+    gap: var(--fb-space-3);
+    align-items: center;
+    min-height: var(--fb-size-row);
+    padding: var(--fb-space-2) var(--fb-space-4);
+    border-top: var(--fb-size-border) solid var(--fb-border);
+}
+
+.fb-tree__row:hover {
+    background: var(--fb-surface-2);
+}
+
+.fb-tree__row:has(.fb-tree__link[aria-current="page"]) {
+    background: var(--fb-accent-soft);
+    box-shadow: inset var(--fb-size-indicator) 0 0 var(--fb-accent);
+}
+
+.fb-tree__row:has(.fb-tree__link:focus-visible) {
+    outline: var(--fb-size-focus) solid var(--fb-focus);
+    outline-offset: calc(var(--fb-size-focus) * -1);
+}
+
+.fb-tree__row[data-depth="1"] { padding-inline-start: calc(var(--fb-space-4) + var(--fb-space-6)); }
+.fb-tree__row[data-depth="2"] { padding-inline-start: calc(var(--fb-space-4) + var(--fb-space-6) * 2); }
+.fb-tree__row[data-depth="3"] { padding-inline-start: calc(var(--fb-space-4) + var(--fb-space-6) * 3); }
+.fb-tree__row[data-depth="4"] { padding-inline-start: calc(var(--fb-space-4) + var(--fb-space-6) * 4); }
+.fb-tree__row[data-depth="5"] { padding-inline-start: calc(var(--fb-space-4) + var(--fb-space-6) * 5); }
+.fb-tree__row[data-depth="6"] { padding-inline-start: calc(var(--fb-space-4) + var(--fb-space-6) * 6); }
+
+.fb-tree__handle {
+    display: flex;
+    flex: none;
+    color: var(--fb-text-muted);
+}
+
+.fb-tree__row[draggable="true"] {
+    cursor: grab;
+}
+
+.fb-tree__row:not([draggable="true"]) .fb-tree__handle {
+    visibility: hidden;
+}
+
+.fb-tree__link {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+    color: var(--fb-text);
+    line-height: var(--fb-leading-snug);
+    text-decoration: none;
+}
+
+/* A button as the link of a row, e.g. to edit an item in a dialog. */
+.fb-tree__link:is(button) {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+}
+
+/* The link covers the row, the badge stays readable on top. */
+.fb-tree__link::before {
+    position: absolute;
+    inset: 0;
+    content: "";
+}
+
+.fb-tree__link:focus-visible {
+    outline: none;
+}
+
+.fb-tree__title {
+    font-weight: var(--fb-weight-semibold);
+    overflow-wrap: anywhere;
+}
+
+.fb-tree__meta {
+    color: var(--fb-text-muted);
+    font-size: var(--fb-text-sm);
+    overflow-wrap: anywhere;
+}
+
+.fb-tree__row[data-drop="before"] {
+    box-shadow: inset 0 var(--fb-size-indicator) 0 var(--fb-accent);
+}
+
+.fb-tree__row[data-drop="after"] {
+    box-shadow: inset 0 calc(var(--fb-size-indicator) * -1) 0 var(--fb-accent);
+}
+
+.fb-tree__row[data-drop="inside"] {
+    background: var(--fb-accent-soft);
+    outline: var(--fb-size-focus) dashed var(--fb-accent);
+    outline-offset: calc(var(--fb-size-focus) * -1);
+}
+
+.fb-tree__item[data-dragging] > .fb-tree__row {
+    opacity: 0.5;
+}
+
+fb-tree {
+    display: block;
+}
+
+fb-tree[aria-busy="true"] {
+    cursor: progress;
+}
+
+fb-tree > .fb-alert {
+    margin: 0 var(--fb-space-4) var(--fb-space-3);
+}

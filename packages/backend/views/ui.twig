@@ -39,7 +39,7 @@
 {# Label, hint and error belong to the field and are linked by id. #}
 {% macro field(options) -%}
     {%- set o = {label: '', name: '', id: null, type: 'text', value: '', hint: null, error: null, prefix: null, required: false, optional: false, disabled: false, placeholder: null, autocomplete: null, autofocus: false, multiline: false, attrs: {}}|merge(options) -%}
-    {%- set id = o.id ?? 'field-' ~ o.name -%}
+    {%- set id = o.id ?? ('field-' ~ o.name) -%}
     {%- set described = [o.hint ? id ~ '-hint' : null, o.error ? id ~ '-error' : null]|filter(v => v) -%}
     {%- set attrs = {
         id: id,
@@ -71,17 +71,17 @@
     </div>
 {%- endmacro %}
 
-{# options: list of {value, label}. #}
+{# options: list of {value, label}, optional attrs per option. #}
 {% macro select(options) -%}
     {%- set o = {label: '', name: '', id: null, options: [], value: null, hint: null, error: null, disabled: false, attrs: {}}|merge(options) -%}
-    {%- set id = o.id ?? 'field-' ~ o.name -%}
+    {%- set id = o.id ?? ('field-' ~ o.name) -%}
     {%- set described = [o.hint ? id ~ '-hint' : null, o.error ? id ~ '-error' : null]|filter(v => v) -%}
     <div class="fb-field">
         <label class="fb-label" for="{{ id }}">{{ o.label }}</label>
         <div class="fb-select">
             <select class="fb-input"{{ _self.attributes({id: id, name: o.name, disabled: o.disabled, 'aria-invalid': o.error ? 'true' : null, 'aria-describedby': described ? described|join(' ') : null}|merge(o.attrs)) }}>
                 {%- for option in o.options -%}
-                    <option value="{{ option.value }}"{% if option.value == o.value %} selected{% endif %}>{{ option.label }}</option>
+                    <option value="{{ option.value }}"{% if option.value == o.value %} selected{% endif %}{{ _self.attributes(option.attrs ?? {}) }}>{{ option.label }}</option>
                 {%- endfor -%}
             </select>
             {{ icon('chevron-down') }}
@@ -94,7 +94,7 @@
 {# A checkbox or, with type radio, a radio button with its label on the right. #}
 {% macro check(options) -%}
     {%- set o = {label: '', name: '', id: null, type: 'checkbox', value: '1', checked: false, hint: null, disabled: false, attrs: {}}|merge(options) -%}
-    {%- set id = o.id ?? 'field-' ~ o.name ~ '-' ~ o.value -%}
+    {%- set id = o.id ?? ('field-' ~ o.name ~ '-' ~ o.value) -%}
     <label class="fb-check" for="{{ id }}">
         <input type="{{ o.type }}"{{ _self.attributes({id: id, name: o.name, value: o.value, checked: o.checked, disabled: o.disabled}|merge(o.attrs)) }}>
         <span class="fb-check__text"><span>{{ o.label }}</span>{% if o.hint %}<span class="fb-hint">{{ o.hint }}</span>{% endif %}</span>
@@ -104,7 +104,7 @@
 {# A radio button as a card with a title and a description. #}
 {% macro choice(options) -%}
     {%- set o = {title: '', text: null, name: '', id: null, value: '', checked: false, attrs: {}}|merge(options) -%}
-    {%- set id = o.id ?? 'field-' ~ o.name ~ '-' ~ o.value -%}
+    {%- set id = o.id ?? ('field-' ~ o.name ~ '-' ~ o.value) -%}
     <label class="fb-choice" for="{{ id }}">
         <input type="radio"{{ _self.attributes({id: id, name: o.name, value: o.value, checked: o.checked}|merge(o.attrs)) }}>
         <span class="fb-choice__text"><span class="fb-choice__title">{{ o.title }}</span>{% if o.text %}<span class="fb-hint">{{ o.text }}</span>{% endif %}</span>
@@ -141,7 +141,7 @@
 {% macro tabs(label, tabs) -%}
     <nav class="fb-tabs" aria-label="{{ label }}">
         {%- for tab in tabs -%}
-            <a class="fb-tabs__tab" href="{{ tab.href }}"{% if tab.current ?? false %} aria-current="page"{% endif %}>{{ tab.label }}</a>
+            <a class="fb-tabs__tab" href="{{ tab.href }}"{% if tab.current ?? false %} aria-current="page"{% endif %}{{ _self.attributes(tab.attrs ?? {}) }}>{{ tab.label }}</a>
         {%- endfor -%}
     </nav>
 {%- endmacro %}
@@ -155,6 +155,11 @@
         {% if o.text %}<p class="fb-empty__text">{{ o.text }}</p>{% endif %}
         {% if o.action %}{{ _self.button(o.action) }}{% endif %}
     </div>
+{%- endmacro %}
+
+{# A time, shown in the time zone of the browser (time.js); the server zone without JavaScript. #}
+{% macro time(datetime) -%}
+    <time datetime="{{ datetime|date('c') }}" data-fb-time>{{ datetime|date(t('Y-m-d H:i')) }}</time>
 {%- endmacro %}
 
 {# The initials of a user, hidden from screen readers: the name is next to them. #}

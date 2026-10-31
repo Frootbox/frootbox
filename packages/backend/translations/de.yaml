@@ -154,6 +154,7 @@ Your changes to this page are lost. The published version stays.: Deine Änderun
 Keep the draft: Entwurf behalten
 No media yet: Noch keine Medien
 Upload images and files to use them on your pages.: Lade Bilder und Dateien hoch, um sie auf Deinen Seiten zu nutzen.
+"Tree and details": "Baum und Details"
 
 # Account
 Your account: Dein Konto
@@ -232,3 +233,185 @@ All permissions: Alle Rechte
 Delete the role: Rolle löschen
 Every user loses the role and its permissions.: Alle Benutzer verlieren die Rolle und ihre Rechte.
 The role is deleted.: Die Rolle ist gelöscht.
+
+# Pages (decision 0116)
+"No pages yet": "Noch keine Seiten"
+"The first page becomes the start page of the website.": "Die erste Seite wird die Startseite der Website."
+"The page starts as a draft. You add its content on the website afterwards.": "Die Seite entsteht als Entwurf. Inhalte fügst Du danach auf der Website hinzu."
+"The page is created as a draft.": "Die Seite ist als Entwurf angelegt."
+"Comes from the title. You can change it.": "Entsteht aus dem Titel. Du kannst sie anpassen."
+"Parent page": "Elternseite"
+"Create as a draft": "Als Entwurf anlegen"
+"Layout {layout}": "Layout {layout}"
+"Will be published on {time} by itself.": "Wird am {time} automatisch veröffentlicht."
+"Goes offline on {time} by itself.": "Geht am {time} automatisch offline."
+"View on the website": "Auf der Website ansehen"
+"Discard the draft": "Entwurf verwerfen"
+"The start page has no address of its own.": "Die Startseite hat keine eigene Adresse."
+"If the address changes, the old one redirects to the new one.": "Ändert sich die Adresse, leitet die alte automatisch weiter."
+"Changes go into the draft. Visitors see them after publishing.": "Änderungen landen im Entwurf. Besucher sehen sie erst nach dem Veröffentlichen."
+"No version in {language} yet": "Noch keine Fassung in {language}"
+"Visitors in this language see the page in another language.": "Besucher in dieser Sprache sehen die Seite in einer anderen Sprache."
+"Visitors in this language do not find the page.": "Besucher in dieser Sprache finden die Seite nicht."
+"Add the version in {language}": "Fassung in {language} anlegen"
+"Times": "Zeitsteuerung"
+"Publish on": "Veröffentlichen am"
+"The draft goes online by itself.": "Der Entwurf geht dann automatisch online."
+"Only for a draft.": "Nur für einen Entwurf."
+"Take offline on": "Offline nehmen am"
+"The page and its subpages go offline by themselves.": "Die Seite und ihre Unterseiten gehen dann automatisch offline."
+"Only for a published page.": "Nur für eine veröffentlichte Seite."
+"Save the times": "Zeiten speichern"
+"Not published yet.": "Noch nicht veröffentlicht."
+"Version {number}": "Version {number}"
+"Online": "Online"
+"Version {number} is in the draft now.": "Version {number} steht jetzt im Entwurf."
+"Restore": "Wiederherstellen"
+"Restore version {number}": "Version {number} wiederherstellen"
+"Offline and delete": "Offline nehmen und löschen"
+"Take offline": "Offline nehmen"
+"Delete the page": "Seite löschen"
+"A page with subpages cannot be deleted. Move or delete them first.": "Eine Seite mit Unterseiten lässt sich nicht löschen. Verschiebe oder lösche sie zuerst."
+"The pages are published.": "Die Seiten sind veröffentlicht."
+"Publish with its parents?": "Mit den Elternseiten veröffentlichen?"
+"These pages above it are not online yet and are published with it: {pages}.": "Diese Seiten darüber sind noch nicht online und werden mit veröffentlicht: {pages}."
+"The draft is discarded.": "Der Entwurf ist verworfen."
+"The page was never published and is gone afterwards.": "Die Seite war nie veröffentlicht und ist danach weg."
+"The page is offline.": "Die Seite ist offline."
+"Take {title} offline?": "„{title}“ offline nehmen?"
+"Visitors no longer find the page and its subpages. They stay as drafts and can be published again.": "Besucher finden die Seite und ihre Unterseiten nicht mehr. Sie bleiben als Entwurf und lassen sich wieder veröffentlichen."
+"The page is deleted.": "Die Seite ist gelöscht."
+"Delete {title}?": "„{title}“ löschen?"
+"The page leaves the tree and the website. Visitors no longer find it.": "Die Seite verschwindet aus dem Baum und von der Website. Besucher finden sie nicht mehr."
+"Page tree": "Seitenbaum"
+"Drag to move, or Alt and the arrow keys.": "Zum Verschieben ziehen oder Alt und Pfeiltasten."
+"{title} is below {parent} now, at place {position} of {count}.": "„{title}“ steht jetzt unter „{parent}“, an Stelle {position} von {count}."
+
+# Navigations (decision 0116)
+"The navigation \"{name}\" has {depth} level(s), these items are deeper.": "Die Navigation hat nur {depth} Ebene(n), diese Punkte liegen tiefer."
+"must be a text of 1 to {max} characters, it names the item.": "braucht einen Text mit 1 bis {max} Zeichen, er benennt den Punkt."
+"must be a text of 1 to {max} characters.": "muss 1 bis {max} Zeichen lang sein."
+"must be a whole number from 1 to {max}.": "muss eine ganze Zahl von 1 bis {max} sein."
+"must be the id of an element without \"#\", e.g. \"contact\".": "muss die ID eines Elements ohne „#“ sein, z. B. „kontakt“."
+"must be a phone number such as \"+49 40 123456\".": "muss eine Telefonnummer wie „+49 40 123456“ sein."
+"must be an e-mail address.": "muss eine E-Mail-Adresse sein."
+"is required": "ist ein Pflichtfeld."
+"must be a URL": "muss eine Adresse sein, z. B. https://example.com."
+"must not contain spaces or control characters": "darf keine Leerzeichen oder Steuerzeichen enthalten."
+Navigations: Navigationen
+"The menus of the theme. Changes go into a draft, visitors see them after publishing.": "Die Menüs des Themes. Änderungen landen im Entwurf, Besucher sehen sie nach dem Veröffentlichen."
+"No navigations": "Keine Navigationen"
+"The theme of the website declares no navigations.": "Das Theme der Website sieht keine Navigationen vor."
+Empty: Leer
+"One level": "Eine Ebene"
+"{count} levels": "{count} Ebenen"
+"The navigation is published.": "Die Navigation ist veröffentlicht."
+"The item is removed.": "Der Punkt ist entfernt."
+"No items in {language} yet": "Noch keine Punkte auf {language}"
+"Copy them from another language and adjust them, or start anew.": "Übernimm sie aus einer anderen Sprache und pass sie an, oder fang neu an."
+"The items are copied.": "Die Punkte sind übernommen."
+"Copy from {language}": "Aus {language} übernehmen"
+Items: Punkte
+"Click to edit. Drag to move, or Alt and the arrow keys.": "Klicken zum Bearbeiten. Ziehen zum Verschieben, oder Alt und die Pfeiltasten."
+"No items yet": "Noch keine Punkte"
+"Add pages, links, phone numbers and more.": "Füge Seiten, Links, Telefonnummern und mehr hinzu."
+"{title} is at place {position} of {count} now.": "„{title}“ steht jetzt an Stelle {position} von {count}."
+"Add an item": "Punkt hinzufügen"
+"Item in {language}": "Punkt auf {language}"
+Kind: Art
+Page: Seite
+"Link to an address": "Link zu einer Adresse"
+"Anchor on a page": "Sprungmarke auf einer Seite"
+"Phone number": "Telefonnummer"
+"E-mail address": "E-Mail-Adresse"
+"Heading without a link": "Überschrift ohne Link"
+"Subpages of a page": "Unterseiten einer Seite"
+Anchor: Sprungmarke
+"The id of an element on the page, without #.": "Die ID eines Elements auf der Seite, ohne #."
+Levels: Ebenen
+"How many levels of subpages are shown.": "Wie viele Ebenen von Unterseiten erscheinen."
+"Needed for links, anchors and headings. Otherwise the title of the page or the number shows.": "Nötig bei Links, Sprungmarken und Überschriften. Sonst erscheint der Titel der Seite oder die Nummer."
+Remove: Entfernen
+"The navigation was never published and is empty afterwards.": "Die Navigation wurde nie veröffentlicht und ist danach leer."
+"Your changes to this navigation are lost. The published version stays.": "Deine Änderungen an dieser Navigation gehen verloren. Die veröffentlichte Fassung bleibt."
+Link: Link
+Phone: Telefon
+E-mail: E-Mail
+Heading: Überschrift
+Subpages: Unterseiten
+"Missing page": "Fehlende Seite"
+"Subpages of {page}": "Unterseiten von „{page}“"
+"The page is gone.": "Die Seite gibt es nicht mehr."
+"Without a link": "Ohne Link"
+
+# Locking and leaving out of searches (decision 0117)
+Locked: Gesperrt
+Visibility: Sichtbarkeit
+"Locked for visitors": "Für Besucher gesperrt"
+"Visitors get a notice instead of this page and its subpages.": "Besucher sehen statt dieser Seite und ihrer Unterseiten einen Hinweis."
+"Visitors get a notice instead of this page.": "Besucher sehen statt dieser Seite einen Hinweis."
+"The page is unlocked.": "Die Seite ist entsperrt."
+Unlock: Entsperren
+"The lock comes from {page} above. It can be lifted there.": "Die Sperre kommt von „{page}“ darüber und lässt sich dort aufheben."
+"A locked page stays published, visitors get a notice instead. It works right away.": "Eine gesperrte Seite bleibt veröffentlicht, Besucher sehen stattdessen einen Hinweis. Das wirkt sofort."
+"Lock for visitors": "Für Besucher sperren"
+"Only a published page can be locked.": "Sperren lässt sich nur eine veröffentlichte Seite."
+Include: Aufnehmen
+"Leave out this page": "Diese Seite ausnehmen"
+"Leave out this page and its subpages": "Diese Seite und Unterseiten ausnehmen"
+"Search engines": "Suchmaschinen"
+"Search on the website": "Suche auf der Website"
+"Left out anyway through {page} above.": "Ohnehin ausgenommen über „{page}“ darüber."
+"Left out pages tell search engines not to list them.": "Ausgenommene Seiten bitten Suchmaschinen, sie nicht aufzunehmen."
+"Applies as soon as a search module is installed.": "Wirkt, sobald ein Such-Modul installiert ist."
+"The page is locked.": "Die Seite ist gesperrt."
+"Lock {title} for visitors?": "„{title}“ für Besucher sperren?"
+"Visitors get a notice right away that the page is not available at the moment. It stays published and keeps its addresses.": "Besucher sehen sofort einen Hinweis, dass die Seite gerade nicht erreichbar ist. Sie bleibt veröffentlicht und behält ihre Adressen."
+"Also lock the subpages": "Auch die Unterseiten sperren"
+Lock: Sperren
+"Only published pages can be locked.": "Nur veröffentlichte Seiten lassen sich sperren."
+
+# Redirects (decision 0116)
+"Old address": "Alte Adresse"
+"The path without the domain, e.g. /prices.html": "Der Pfad ohne Domain, z. B. /preise.html"
+"Leads to": "Führt zu"
+"A page": "Einer Seite"
+"Another address": "Einer anderen Adresse"
+"A path on this website or a URL with http or https.": "Ein Pfad auf dieser Website oder eine URL mit http oder https."
+"Permanent (301)": "Dauerhaft (301)"
+"Search engines take over the new address. Turn it off for a short time only.": "Suchmaschinen übernehmen die neue Adresse. Nur für eine kurze Zeit ausschalten."
+"Redirects": "Weiterleitungen"
+"Old addresses that lead to a page or somewhere else. Changed page addresses redirect by themselves.": "Alte Adressen, die zu einer Seite oder woandershin führen. Geänderte Adressen von Seiten leiten von selbst weiter."
+"New redirect": "Neue Weiterleitung"
+"No redirects yet": "Noch keine Weiterleitungen"
+"Add one for an old address, e.g. from your previous website.": "Leg eine für eine alte Adresse an, z. B. von Deiner bisherigen Website."
+"a page that is gone": "eine Seite, die es nicht mehr gibt"
+"Edit {path}": "{path} bearbeiten"
+"Delete {path}": "{path} löschen"
+"Not found": "Nicht gefunden"
+"Addresses visitors asked for and found nothing, the most frequent first.": "Adressen, unter denen Besucher nichts gefunden haben, die häufigsten zuerst."
+"Clear the log": "Protokoll leeren"
+"Nothing so far.": "Bisher nichts."
+"last on {time}": "zuletzt am {time}"
+"Redirect": "Weiterleiten"
+"Redirect {path}": "{path} weiterleiten"
+"The redirect is saved.": "Die Weiterleitung ist gespeichert."
+"Edit the redirect": "Weiterleitung bearbeiten"
+"The redirect is deleted.": "Die Weiterleitung ist gelöscht."
+"Delete the redirect?": "Weiterleitung löschen?"
+"Visitors with the old address find nothing afterwards.": "Besucher mit der alten Adresse finden danach nichts mehr."
+"The log is empty.": "Das Protokoll ist leer."
+"Clear the log?": "Protokoll leeren?"
+"The list starts again. This cannot be undone.": "Die Liste beginnt von vorn. Das lässt sich nicht rückgängig machen."
+"must be a path like \"/old-page\", without query, without slash at the end, at most {max} characters.": "muss ein Pfad wie „/alte-seite“ sein, ohne Abfrage, ohne Schrägstrich am Ende, höchstens {max} Zeichen."
+"already has a redirect (#{id}).": "hat schon eine Weiterleitung (#{id})."
+"is the address of {target}. A page always wins over a redirect.": "ist die Adresse von {target}. Eine Seite geht einer Weiterleitung immer vor."
+"needs either \"target\" (e.g. \"page:01J…\") or \"location\" (a URL).": "braucht entweder eine Seite oder eine Adresse."
+"must be a page, e.g. \"page:01J…\".": "muss eine Seite sein."
+"There is no page {id}.": "Die Seite {id} gibt es nicht."
+"must be a path like \"/new-page\" or a URL with http or https, at most {max} characters.": "muss ein Pfad wie „/neue-seite“ oder eine URL mit http oder https sein, höchstens {max} Zeichen."
+"must not be the path itself.": "darf nicht der Pfad selbst sein."
+"is redirected itself (#{id}). Point to its destination {destination} directly.": "wird selbst weitergeleitet (#{id}). Verweise direkt auf ihr Ziel {destination}."
+"{count} visit":
+  one: "{count} Aufruf"
+  other: "{count} Aufrufe"

@@ -1,0 +1,28 @@
+{#- The pages: the tree and the details of one page (decision 0116). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ page.row.title }} · {{ t('Pages') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Pages') }}</h1>
+        </div>
+        {% if can('page.create') %}{{ ui.button({label: t('New page'), href: path('backend.pages.new') ~ '?parent=' ~ page.id, icon: 'plus'}) }}{% endif %}
+    </header>
+
+    <div class="fb-split">
+        <section class="fb-card fb-split__side" aria-labelledby="page-tree-title">
+            <div class="fb-card__header fb-card__header--tight">
+                <h2 class="fb-heading-4" id="page-tree-title">{{ t('Page tree') }}</h2>
+                {% if can('page.move') %}<p class="fb-muted" id="page-tree-hint">{{ t('Drag to move, or Alt and the arrow keys.') }}</p>{% endif %}
+            </div>
+            {% include '@backend/pages/tree.twig' %}
+        </section>
+
+        {% include '@backend/pages/detail.twig' %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,146 @@
+{#- Manual redirects and the log of paths that found nothing (decision 0116). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Redirects') }}{% endblock %}
+
+{% block content %}
+{% set refresh = 'redirects not-found' %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Redirects') }}</h1>
+            <p class="fb-muted">{{ t('Old addresses that lead to a page or somewhere else. Changed page addresses redirect by themselves.') }}</p>
+        </div>
+        {% if can('redirect.create') %}{{ ui.button({label: t('New redirect'), icon: 'plus', attrs: {commandfor: 'redirect-new', command: 'show-modal', 'data-fb-fill': '{}'}}) }}{% endif %}
+    </header>
+
+    <section class="fb-card" id="redirects" aria-labelledby="redirects-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="redirects-title" tabindex="-1" data-fb-focus>{{ t('Redirects') }}</h2>
+            {{ ui.badge('neutral', redirects|length) }}
+        </div>
+        {% if redirects is empty %}
+            {{ ui.empty({icon: 'redirect', title: t('No redirects yet'), text: t('Add one for an old address, e.g. from your previous website.')}) }}
+        {% else %}
+        <ul>
+            {%- for entry in redirects %}
+            {% set redirect = entry.redirect %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <code class="fb-list__title">{{ redirect.path }}</code>
+                    <span class="fb-list__meta">→ {% if redirect.location %}{{ redirect.location }}{% elseif entry.page %}{{ entry.page.title }} ({{ entry.page.path }}){% else %}{{ t('a page that is gone') }}{% endif %}</span>
+                </span>
+                {{ ui.badge('neutral', redirect.permanent ? '301' : '302') }}
+                {% if can('redirect.update') %}
+                {{ ui.button({label: t('Edit'), variant: 'secondary', small: true, attrs: {commandfor: 'redirect-edit', command: 'show-modal', 'aria-label': t('Edit {path}', {path: redirect.path}), 'data-fb-fill': {id: redirect.id, path: redirect.path, target: redirect.target, location: redirect.location, permanent: redirect.permanent, _destination: redirect.target ? 'page' : 'url'}|json_encode}}) }}
+                {% endif %}
+                {% if can('redirect.delete') %}
+                {{ ui.button({label: t('Delete'), variant: 'ghost', small: true, icon: 'close', icon_only: true, attrs: {commandfor: 'redirect-delete', command: 'show-modal', 'aria-label': t('Delete {path}', {path: redirect.path}), 'data-fb-fill': {id: redirect.id}|json_encode}}) }}
+                {% endif %}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+    </section>
+
+    {% if not_found is not null %}
+    <section class="fb-card" id="not-found" aria-labelledby="not-found-title">
+        <div class="fb-card__header">
+            <div class="fb-stack fb-stack--sm">
+                <h2 class="fb-heading-4" id="not-found-title" tabindex="-1" data-fb-focus>{{ t('Not found') }}</h2>
+                <p class="fb-muted">{{ t('Addresses visitors asked for and found nothing, the most frequent first.') }}</p>
+            </div>
+            {% if not_found is not empty and can('not-found.clear') %}{{ ui.button({label: t('Clear the log'), variant: 'secondary', small: true, attrs: {commandfor: 'not-found-clear', command: 'show-modal'}}) }}{% endif %}
+        </div>
+        {% if not_found is empty %}
+            <p class="fb-card__body fb-muted">{{ t('Nothing so far.') }}</p>
+        {% else %}
+        <ul>
+            {%- for entry in not_found %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <code class="fb-list__title">{{ entry.path }}</code>
+                    <span class="fb-list__meta">{% set last = t('last on {time}')|split('{time}') %}{{ t(['{count} visit', '{count} visits'], {count: entry.hits}) }} · {{ last[0] }}{{ ui.time(entry.lastSeenAt) }}{{ last[1] ?? '' }}</span>
+                </span>
+                {% if can('redirect.create') %}
+                {{ ui.button({label: t('Redirect'), variant: 'secondary', small: true, icon: 'redirect', attrs: {commandfor: 'redirect-new', command: 'show-modal', 'aria-label': t('Redirect {path}', {path: entry.path}), 'data-fb-fill': {path: entry.path}|json_encode}}) }}
+                {% endif %}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+    </section>
+    {% endif %}
+</div>
+
+{% if can('redirect.create') %}
+<dialog class="fb-dialog" id="redirect-new" aria-labelledby="redirect-new-title">
+    <fb-form action="redirect.create" refresh="{{ refresh }}" done="{{ t('The redirect is saved.') }}">
+        <form novalidate>
+            <div class="fb-dialog__body fb-stack">
+                <h2 class="fb-dialog__title" id="redirect-new-title">{{ t('New redirect') }}</h2>
+                {% include '@backend/redirects/form.twig' with {prefix: 'redirect-new'} %}
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'redirect-new', command: 'close'}}) }}
+                {{ ui.button({label: t('Save'), type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if can('redirect.update') %}
+<dialog class="fb-dialog" id="redirect-edit" aria-labelledby="redirect-edit-title">
+    <fb-form action="redirect.update" refresh="{{ refresh }}" done="{{ t('The redirect is saved.') }}">
+        <form novalidate>
+            <input type="hidden" name="id" data-type="number">
+            <div class="fb-dialog__body fb-stack">
+                <h2 class="fb-dialog__title" id="redirect-edit-title">{{ t('Edit the redirect') }}</h2>
+                {% include '@backend/redirects/form.twig' with {prefix: 'redirect-edit'} %}
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'redirect-edit', command: 'close'}}) }}
+                {{ ui.button({label: t('Save'), type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if can('redirect.delete') %}
+<dialog class="fb-dialog" id="redirect-delete" aria-labelledby="redirect-delete-title">
+    <fb-form action="redirect.delete" refresh="{{ refresh }}" done="{{ t('The redirect is deleted.') }}">
+        <form novalidate>
+            <input type="hidden" name="id" data-type="number">
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="redirect-delete-title">{{ t('Delete the redirect?') }}</h2>
+                <p>{{ t('Visitors with the old address find nothing afterwards.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'redirect-delete', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Delete'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if can('not-found.clear') %}
+<dialog class="fb-dialog" id="not-found-clear" aria-labelledby="not-found-clear-title">
+    <fb-form action="not-found.clear" refresh="{{ refresh }}" done="{{ t('The log is empty.') }}">
+        <form novalidate>
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="not-found-clear-title">{{ t('Clear the log?') }}</h2>
+                <p>{{ t('The list starts again. This cannot be undone.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'not-found-clear', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Clear the log'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+{% endblock %}

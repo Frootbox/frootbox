@@ -14,6 +14,10 @@ use Frootbox\Backend\Http\DashboardHandler;
 use Frootbox\Backend\Http\DesignHandler;
 use Frootbox\Backend\Http\LoginHandler;
 use Frootbox\Backend\Http\LogoutHandler;
+use Frootbox\Backend\Http\Navigations\NavigationsHandler;
+use Frootbox\Backend\Http\Pages\NewPageHandler;
+use Frootbox\Backend\Http\Pages\PagesHandler;
+use Frootbox\Backend\Http\Redirects\RedirectsHandler;
 use Frootbox\Backend\Http\Users\RoleHandler;
 use Frootbox\Backend\Http\Users\RolesHandler;
 use Frootbox\Backend\Http\Users\UserHandler;
@@ -31,6 +35,9 @@ final class BackendExtension implements Extension
 {
     public const string ROOT = __DIR__ . '/..';
 
+    /** An id of a page or another record, e.g. in /cms/pages/{id} */
+    private const string ULID = '[0-7][0-9A-HJKMNP-TV-Z]{25}';
+
     public function register(Registry $registry): void
     {
         $registry->mount('backend.path', '/cms')
@@ -40,6 +47,12 @@ final class BackendExtension implements Extension
             ->post('/actions/' . ApiHandler::NAME, ActionHandler::class, 'backend.action')
             ->get('/design', DesignHandler::class, 'backend.design')
             ->get('/account', AccountHandler::class, 'backend.account')
+            ->get('/pages', PagesHandler::class, 'backend.pages')
+            ->get('/pages/new', NewPageHandler::class, 'backend.pages.new')
+            ->get('/pages/{id:' . self::ULID . '}', PagesHandler::class, 'backend.pages.show')
+            ->get('/navigations', NavigationsHandler::class, 'backend.navigations')
+            ->get('/navigations/{name:[a-z][a-z0-9-]{0,63}}', NavigationsHandler::class, 'backend.navigations.show')
+            ->get('/redirects', RedirectsHandler::class, 'backend.redirects')
             ->get('/users', UsersHandler::class, 'backend.users')
             ->get('/users/new', UserHandler::class, 'backend.users.new')
             ->get('/users/{id:\d+}', UserHandler::class, 'backend.users.show')
@@ -52,6 +65,9 @@ final class BackendExtension implements Extension
         $registry->import('@frootbox/ui', 'assets/build/ui.js');
 
         $registry->add(Screen::class, new Screen('Dashboard', 'backend.dashboard', Screen::CONTENT, 'dashboard', order: 0));
+        $registry->add(Screen::class, new Screen('Pages', 'backend.pages', Screen::CONTENT, 'pages', PagesHandler::PERMISSION, order: 10));
+        $registry->add(Screen::class, new Screen('Navigations', 'backend.navigations', Screen::WEBSITE, 'navigation', NavigationsHandler::PERMISSION, order: 20));
+        $registry->add(Screen::class, new Screen('Redirects', 'backend.redirects', Screen::WEBSITE, 'redirect', RedirectsHandler::PERMISSION, order: 30));
         $registry->add(Screen::class, new Screen('Users', 'backend.users', Screen::ADMINISTRATION, 'users', UsersHandler::PERMISSION, order: 100));
         $registry->add(Screen::class, new Screen('Roles', 'backend.roles', Screen::ADMINISTRATION, 'shield', RolesHandler::PERMISSION, order: 110));
         $registry->add(Screen::class, new Screen('Design system', 'backend.design', Screen::ADMINISTRATION, 'palette', DesignHandler::PERMISSION, order: 900, development: true));

@@ -1,0 +1,21 @@
+/* Two columns that wrap: a narrow side, e.g. a tree, and the main part,
+   e.g. its details (decision 0116). */
+
+.fb-split {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fb-space-6);
+    align-items: flex-start;
+}
+
+.fb-split__side {
+    flex: 1 1 calc(var(--fb-size-narrow) - var(--fb-space-16));
+    min-width: 0;
+    overflow: hidden;
+}
+
+.fb-split__main {
+    flex: 999 1 var(--fb-size-narrow);
+    min-width: 0;
+    overflow: hidden;
+}

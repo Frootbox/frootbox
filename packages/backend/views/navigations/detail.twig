@@ -1,0 +1,174 @@
+{#- The items of a navigation in one language, edited in a dialog and saved with navigation.update (decision 0116). -#}
+{% import '@backend/ui.twig' as ui %}
+{% macro rows(rows, editable) %}
+    {% import '@backend/ui.twig' as ui %}
+    {% set types = {target: t('Page'), url: t('Link'), anchor: t('Anchor'), phone: t('Phone'), email: t('E-mail'), heading: t('Heading'), pages: t('Subpages')} %}
+    {%- for row in rows %}
+    {% set item = row.item %}
+    {% set type = item.type ?? '' %}
+    {% set page_title = row.page.title ?? t('Missing page') %}
+    {% set title = type == 'pages' ? t('Subpages of {page}', {page: page_title}) : item.label ?? (type == 'phone' ? item.phone : type == 'email' ? item.email : page_title) %}
+    {% set levels = item.depth ?? 1 %}
+    {% set meta = {
+        target: row.page.path ?? t('The page is gone.'),
+        url: item.url ?? '',
+        anchor: (row.page.path ?? '') ~ '#' ~ (item.anchor ?? ''),
+        phone: item.label is defined ? item.phone ?? '' : '',
+        email: item.label is defined ? item.email ?? '' : '',
+        heading: t('Without a link'),
+        pages: levels == 1 ? t('One level') : t('{count} levels', {count: levels}),
+    }[type] ?? '' %}
+    <li class="fb-tree__item" data-id="{{ row.id }}" data-title="{{ title }}"{% if row.leaf %} data-leaf{% endif %}>
+        <div class="fb-tree__row" data-depth="{{ min(row.depth, 6) }}">
+            <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
+            {% set inner %}<span class="fb-tree__title">{{ title }}</span>{% if meta %}<span class="fb-tree__meta">{{ meta }}</span>{% endif %}{% endset %}
+            {% if editable %}
+            <button class="fb-tree__link" type="button" commandfor="navigation-item" command="show-modal" data-fb-fill="{{ row.fill|json_encode }}" aria-describedby="navigation-tree-hint">{{ inner }}</button>
+            {% else %}
+            <span class="fb-tree__link">{{ inner }}</span>
+            {% endif %}
+            {{ ui.badge('neutral', types[type] ?? type) }}
+        </div>
+        {%- if row.children is not empty %}
+        <ul class="fb-tree__group">{{ _self.rows(row.children, editable) }}</ul>
+        {%- endif %}
+    </li>
+    {%- endfor %}
+{% endmacro %}
+{% set details = navigation.details %}
+{% set language = navigation.language %}
+{% set has_draft = details.draft is not null %}
+{% set editable = can('navigation.update') %}
+{% set refresh = 'navigation-list navigation-detail' %}
+{% set self = path('backend.navigations.show', {name: details.name}) %}
+{% if standalone ?? false %}<title>{{ details.title }} · {{ t('Navigations') }} · {{ fb.brand }}</title>{% endif %}
+<section class="fb-card fb-split__main" id="navigation-detail" aria-labelledby="navigation-detail-title">
+    <div class="fb-card__header">
+        <div class="fb-stack fb-stack--sm">
+            <h2 class="fb-heading-2" id="navigation-detail-title" tabindex="-1" data-fb-focus>{{ details.title }}</h2>
+            <p class="fb-muted">{{ details.depth == 1 ? t('One level') : t('{count} levels', {count: details.depth}) }}</p>
+        </div>
+        {{ details.status.value == 'empty' ? ui.badge('neutral', t('Empty')) : ui.status(details.status.value) }}
+    </div>
+
+    {% if has_draft and (can('navigation.publish') or can('navigation.discard')) %}
+    <div class="fb-card__body">
+        <div class="fb-cluster">
+            {% if can('navigation.publish') %}
+            <fb-form action="navigation.publish" refresh="{{ refresh }}" done="{{ t('The navigation is published.') }}">
+                <form novalidate>
+                    <input type="hidden" name="names[]" value="{{ details.name }}">
+                    {{ ui.button({label: t('Publish'), type: 'submit'}) }}
+                </form>
+            </fb-form>
+            {% endif %}
+            {% if can('navigation.discard') %}
+                {{ ui.button({label: t('Discard the draft'), variant: 'danger', attrs: {commandfor: 'navigation-discard', command: 'show-modal'}}) }}
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {{ ui.tabs(t('Languages'), navigation.languages|map(other => {
+        label: other.title,
+        href: self ~ '?language=' ~ other.code,
+        current: other.code == language.code,
+        attrs: {'hx-get': self ~ '?language=' ~ other.code, 'hx-target': '#navigation-detail', 'hx-select': '#navigation-detail', 'hx-swap': 'outerHTML', 'hx-push-url': 'true', lang: other.code},
+    })) }}
+
+    <fb-navigation name="{{ details.name }}" language="{{ language.code }}" refresh="{{ refresh }}" removed="{{ t('The item is removed.') }}" items="{{ navigation.items|json_encode }}">
+        {% if navigation.missing and navigation.sources is not empty %}
+        <div class="fb-card__body">
+            <div class="fb-missing">
+                <p class="fb-missing__title">{{ t('No items in {language} yet', {language: language.title}) }}</p>
+                <p class="fb-muted">{{ t('Copy them from another language and adjust them, or start anew.') }}</p>
+                {% if can('navigation.copy') %}
+                <div class="fb-cluster">
+                    {% for source in navigation.sources %}
+                    <fb-form action="navigation.copy" refresh="{{ refresh }}" done="{{ t('The items are copied.') }}">
+                        <form novalidate>
+                            <input type="hidden" name="name" value="{{ details.name }}">
+                            <input type="hidden" name="from" value="{{ source.code }}">
+                            <input type="hidden" name="to" value="{{ language.code }}">
+                            {{ ui.button({label: t('Copy from {language}', {language: source.title}), type: 'submit', variant: 'secondary'}) }}
+                        </form>
+                    </fb-form>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <section class="fb-section fb-section--flush" aria-labelledby="navigation-items-title">
+            <div class="fb-section__header">
+                <h3 class="fb-heading-4" id="navigation-items-title">{{ t('Items') }}</h3>
+                {% if editable and navigation.rows is not empty %}<p class="fb-muted" id="navigation-tree-hint">{{ t('Click to edit. Drag to move, or Alt and the arrow keys.') }}</p>{% endif %}
+            </div>
+            {% if navigation.rows is empty %}
+                {% if not (navigation.missing and navigation.sources is not empty) %}{{ ui.empty({icon: 'navigation', title: t('No items yet'), text: t('Add pages, links, phone numbers and more.')}) }}{% endif %}
+            {% else %}
+            <fb-tree id="navigation-tree"{% if editable %} movable roots depth="{{ details.depth }}" refresh="{{ refresh }}" moved="{{ t('{title} is at place {position} of {count} now.') }}"{% endif %}>
+                <ul class="fb-tree" aria-labelledby="navigation-items-title">{{ _self.rows(navigation.rows, editable) }}</ul>
+            </fb-tree>
+            {% endif %}
+        </section>
+
+        {% if editable %}
+        <div class="fb-card__body">
+            {{ ui.button({label: t('Add an item'), variant: 'secondary', icon: 'plus', attrs: {commandfor: 'navigation-item', command: 'show-modal', 'data-fb-fill': {_path: '', type: 'target', depth: 1}|json_encode}}) }}
+        </div>
+
+        <dialog class="fb-dialog" id="navigation-item" aria-labelledby="navigation-item-title">
+            <fb-form action="navigation.update" refresh="{{ refresh }}" done="{{ t('Saved') }}">
+                <form novalidate>
+                    <input type="hidden" name="_path" value="">
+                    <div class="fb-dialog__body fb-stack">
+                        <h2 class="fb-dialog__title" id="navigation-item-title">{{ t('Item in {language}', {language: language.title}) }}</h2>
+                        {{ ui.select({label: t('Kind'), name: 'type', id: 'navigation-item-type', options: [
+                            {value: 'target', label: t('Page')},
+                            {value: 'url', label: t('Link to an address')},
+                            {value: 'anchor', label: t('Anchor on a page')},
+                            {value: 'phone', label: t('Phone number')},
+                            {value: 'email', label: t('E-mail address')},
+                            {value: 'heading', label: t('Heading without a link')},
+                            {value: 'pages', label: t('Subpages of a page')},
+                        ]}) }}
+                        <div data-types="target anchor pages">{{ ui.select({label: t('Page'), name: 'target', id: 'navigation-item-target', options: navigation.pages}) }}</div>
+                        <div data-types="url">{{ ui.field({label: t('Address'), name: 'url', id: 'navigation-item-url', type: 'url', placeholder: 'https://', required: true}) }}</div>
+                        <div data-types="anchor">{{ ui.field({label: t('Anchor'), name: 'anchor', id: 'navigation-item-anchor', required: true, hint: t('The id of an element on the page, without #.')}) }}</div>
+                        <div data-types="phone">{{ ui.field({label: t('Phone number'), name: 'phone', id: 'navigation-item-phone', type: 'tel', required: true}) }}</div>
+                        <div data-types="email">{{ ui.field({label: t('E-mail address'), name: 'email', id: 'navigation-item-email', type: 'email', required: true}) }}</div>
+                        <div data-types="pages">{{ ui.field({label: t('Levels'), name: 'depth', id: 'navigation-item-depth', type: 'number', value: 1, attrs: {min: 1, max: 5}, hint: t('How many levels of subpages are shown.')}) }}</div>
+                        <div data-types="target url anchor phone email heading">{{ ui.field({label: t('Text'), name: 'label', id: 'navigation-item-label', hint: t('Needed for links, anchors and headings. Otherwise the title of the page or the number shows.')}) }}</div>
+                        <div data-types="target url anchor">{{ ui.check({label: t('Open in a new window'), name: 'newWindow', id: 'navigation-item-new-window'}) }}</div>
+                    </div>
+                    <div class="fb-dialog__actions">
+                        {{ ui.button({label: t('Remove'), variant: 'danger', attrs: {'data-navigation-remove': true}}) }}
+                        {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'navigation-item', command: 'close'}}) }}
+                        {{ ui.button({label: t('Save'), type: 'submit'}) }}
+                    </div>
+                </form>
+            </fb-form>
+        </dialog>
+        {% endif %}
+    </fb-navigation>
+
+    {% if has_draft and can('navigation.discard') %}
+    <dialog class="fb-dialog" id="navigation-discard" aria-labelledby="navigation-discard-title">
+        <fb-form action="navigation.discard" refresh="{{ refresh }}" done="{{ t('The draft is discarded.') }}">
+            <form novalidate>
+                <input type="hidden" name="name" value="{{ details.name }}">
+                <div class="fb-dialog__body">
+                    <h2 class="fb-dialog__title" id="navigation-discard-title">{{ t('Discard the draft?') }}</h2>
+                    <p>{{ details.published is empty ? t('The navigation was never published and is empty afterwards.') : t('Your changes to this navigation are lost. The published version stays.') }}</p>
+                </div>
+                <div class="fb-dialog__actions">
+                    {{ ui.button({label: t('Keep the draft'), variant: 'secondary', attrs: {commandfor: 'navigation-discard', command: 'close', autofocus: true}}) }}
+                    {{ ui.button({label: t('Discard'), variant: 'danger-solid', type: 'submit'}) }}
+                </div>
+            </form>
+        </fb-form>
+    </dialog>
+    {% endif %}
+</section>

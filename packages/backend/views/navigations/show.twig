@@ -1,0 +1,42 @@
+{#- The navigations of the theme and the items of one (decision 0116). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ navigation.details.title }} · {{ t('Navigations') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Navigations') }}</h1>
+            <p class="fb-muted">{{ t('The menus of the theme. Changes go into a draft, visitors see them after publishing.') }}</p>
+        </div>
+    </header>
+
+    <div class="fb-split">
+        <section class="fb-card fb-split__side" id="navigation-list" aria-labelledby="navigation-list-title">
+            <div class="fb-card__header fb-card__header--tight">
+                <h2 class="fb-heading-4" id="navigation-list-title">{{ t('Navigations') }}</h2>
+            </div>
+            <fb-tree>
+                <ul class="fb-tree" aria-labelledby="navigation-list-title">
+                    {%- for entry in navigations %}
+                    {% set href = path('backend.navigations.show', {name: entry.name}) %}
+                    <li class="fb-tree__item" data-id="{{ entry.name }}" data-title="{{ entry.title }}">
+                        <div class="fb-tree__row" data-depth="0">
+                            <a class="fb-tree__link" href="{{ href }}" hx-get="{{ href }}" hx-target="#navigation-detail" hx-select="#navigation-detail" hx-swap="outerHTML" hx-push-url="true"{% if entry.name == navigation.details.name %} aria-current="page"{% endif %}>
+                                <span class="fb-tree__title">{{ entry.title }}</span>
+                                <span class="fb-tree__meta">{{ entry.name }}</span>
+                            </a>
+                            {{ entry.status.value == 'empty' ? ui.badge('neutral', t('Empty')) : ui.status(entry.status.value) }}
+                        </div>
+                    </li>
+                    {%- endfor %}
+                </ul>
+            </fb-tree>
+        </section>
+
+        {% include '@backend/navigations/detail.twig' %}
+    </div>
+</div>
+{% endblock %}

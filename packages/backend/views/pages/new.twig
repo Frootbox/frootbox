@@ -1,0 +1,43 @@
+{#- A new page as a draft (decision 0116). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('New page') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <p class="fb-muted"><a href="{{ parent ? path('backend.pages.show', {id: parent}) : path('backend.pages') }}">{{ t('Pages') }}</a></p>
+            <h1 class="fb-heading-1">{{ t('New page') }}</h1>
+            <p class="fb-muted">{{ t('The page starts as a draft. You add its content on the website afterwards.') }}</p>
+        </div>
+    </header>
+
+    <fb-form action="page.create" next="{{ path('backend.pages') }}/{id}" done="{{ t('The page is created as a draft.') }}">
+            <form class="fb-card fb-card--padded fb-stack" novalidate>
+                {% set code = language.code %}
+                {% set default_layout = suggested in layouts|map(l => l.value) ? suggested : null %}
+                {{ ui.field({label: t('Title'), name: 'translations.' ~ code ~ '.title', id: 'new-title', required: true, autofocus: true}) }}
+                {% if parents is not empty %}
+                    {{ ui.field({label: t('Address'), name: 'translations.' ~ code ~ '.slug', id: 'new-slug', prefix: prefix, hint: t('Comes from the title. You can change it.'), attrs: {'data-fb-slug': 'new-title', 'data-empty': 'null'}}) }}
+                    {{ ui.select({label: t('Parent page'), name: 'parentId', id: 'new-parent', value: parent, options: parents, attrs: {'data-fb-prefix': 'new-slug'}}) }}
+                {% else %}
+                    <p class="fb-muted">{{ t('The first page becomes the start page of the website.') }}</p>
+                {% endif %}
+                <fieldset class="fb-fieldset">
+                    <legend class="fb-fieldset__legend">{{ t('Layout') }}</legend>
+                    <div class="fb-stack fb-stack--sm">
+                        {%- for layout in layouts %}
+                        {{ ui.choice({title: layout.title, text: layout.text ?: null, name: 'layout', id: 'new-layout-' ~ loop.index, value: layout.value, checked: layout.value == (default_layout ?? null) or (default_layout is null and loop.first)}) }}
+                        {%- endfor %}
+                    </div>
+                </fieldset>
+                <div class="fb-form__actions">
+                    {{ ui.button({label: t('Create as a draft'), type: 'submit'}) }}
+                    {{ ui.button({label: t('Cancel'), variant: 'ghost', href: parent ? path('backend.pages.show', {id: parent}) : path('backend.pages')}) }}
+                </div>
+            </form>
+    </fb-form>
+</div>
+{% endblock %}

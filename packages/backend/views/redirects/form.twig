@@ -1,0 +1,15 @@
+{#- The fields of a redirect, for the new one and the one to edit. prefix: ids of the fields. -#}
+{% import '@backend/ui.twig' as ui %}
+{{ ui.field({label: t('Old address'), name: 'path', id: prefix ~ '-path', required: true, placeholder: '/alte-seite.html', hint: t('The path without the domain, e.g. /prices.html')}) }}
+<fieldset class="fb-fieldset">
+    <legend class="fb-fieldset__legend">{{ t('Leads to') }}</legend>
+    {% if pages is not empty %}
+    {{ ui.check({type: 'radio', label: t('A page'), name: '_destination', id: prefix ~ '-to-page', value: 'page', checked: true, attrs: {'data-fb-enables': prefix ~ '-target'}}) }}
+    {% endif %}
+    {{ ui.check({type: 'radio', label: t('Another address'), name: '_destination', id: prefix ~ '-to-url', value: 'url', checked: pages is empty, attrs: {'data-fb-enables': prefix ~ '-location'}}) }}
+</fieldset>
+{% if pages is not empty %}
+{{ ui.select({label: t('Page'), name: 'target', id: prefix ~ '-target', options: pages}) }}
+{% endif %}
+{{ ui.field({label: t('Address'), name: 'location', id: prefix ~ '-location', placeholder: 'https://…', hint: t('A path on this website or a URL with http or https.')}) }}
+{{ ui.check({label: t('Permanent (301)'), name: 'permanent', id: prefix ~ '-permanent', checked: true, hint: t('Search engines take over the new address. Turn it off for a short time only.')}) }}

@@ -32,3 +32,9 @@
     border-bottom-color: var(--fb-accent);
     color: var(--fb-text);
 }
+
+/* Tabs in a card reach its edges, the tabs keep the gap of the card. */
+.fb-card > .fb-tabs {
+    padding-inline: var(--fb-space-5);
+    margin-bottom: var(--fb-space-5);
+}

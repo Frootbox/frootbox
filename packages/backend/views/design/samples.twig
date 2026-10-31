@@ -129,6 +129,58 @@
 </div>
 
 <div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Tree and details') }}</p>
+    <div class="fb-split">
+        <section class="fb-card fb-split__side" aria-labelledby="{{ id }}-tree-title">
+            <div class="fb-card__header fb-card__header--tight"><h3 class="fb-heading-4" id="{{ id }}-tree-title">{{ t('Page tree') }}</h3></div>
+            <fb-tree>
+                <ul class="fb-tree" aria-labelledby="{{ id }}-tree-title">
+                    <li class="fb-tree__item" data-id="{{ id }}-start" data-title="Bohnenglück" data-fixed>
+                        <div class="fb-tree__row" data-depth="0">
+                            <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
+                            <a class="fb-tree__link" href="#"><span class="fb-tree__title">Bohnenglück</span><span class="fb-tree__meta">/ · DE, EN</span></a>
+                            {{ ui.status('published') }}
+                        </div>
+                        <ul class="fb-tree__group">
+                            <li class="fb-tree__item" data-id="{{ id }}-about" data-title="Über uns">
+                                <div class="fb-tree__row" data-depth="1">
+                                    <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
+                                    <a class="fb-tree__link" href="#" aria-current="page"><span class="fb-tree__title">Über uns</span><span class="fb-tree__meta">/ueber-uns · DE</span></a>
+                                    {{ ui.badge('danger', t('Locked')) }}
+                                    {{ ui.status('changed') }}
+                                </div>
+                            </li>
+                            <li class="fb-tree__item" data-id="{{ id }}-contact" data-title="Kontakt">
+                                <div class="fb-tree__row" data-depth="1">
+                                    <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
+                                    <button class="fb-tree__link" type="button"><span class="fb-tree__title">Kontakt</span><span class="fb-tree__meta">/kontakt · DE, EN</span></button>
+                                    {{ ui.status('scheduled') }}
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </fb-tree>
+        </section>
+        <section class="fb-card fb-split__main" aria-labelledby="{{ id }}-detail-title">
+            <div class="fb-card__header"><h3 class="fb-heading-4" id="{{ id }}-detail-title">Über uns</h3>{{ ui.status('changed') }}</div>
+            <div class="fb-card__body">
+                <div class="fb-missing">
+                    <p class="fb-missing__title">{{ t('No version in {language} yet', {language: 'English'}) }}</p>
+                    <p class="fb-muted">{{ t('Visitors in this language see the page in another language.') }}</p>
+                    {{ ui.button({label: t('Add the version in {language}', {language: 'English'}), variant: 'secondary', icon: 'plus'}) }}
+                </div>
+            </div>
+            <section class="fb-section">
+                <h4 class="fb-heading-4">{{ t('Times') }}</h4>
+                {% set parts = t('Will be published on {time} by itself.')|split('{time}') %}
+                <p>{{ parts[0] }}{{ ui.time(date('2026-11-01T18:00:00+01:00')) }}{{ parts[1] ?? '' }}</p>
+            </section>
+        </section>
+    </div>
+</div>
+
+<div class="fb-design-sample">
     <p class="fb-design-sample__title">{{ t('Menu') }}</p>
     <ul class="fb-nav__list">
         <li><a class="fb-nav__item" href="#" aria-current="page">{{ icon('dashboard') }}<span>{{ t('Dashboard') }}</span></a></li>

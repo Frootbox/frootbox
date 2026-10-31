@@ -1,0 +1,16 @@
+{#- No pages yet: the way to the start page. -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Pages') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text"><h1 class="fb-heading-1">{{ t('Pages') }}</h1></div>
+    </header>
+    <section class="fb-card">
+        {{ ui.empty({icon: 'pages', title: t('No pages yet'), text: t('The first page becomes the start page of the website.'), action: can('page.create') ? {label: t('New page'), icon: 'plus', href: path('backend.pages.new')} : null}) }}
+    </section>
+</div>
+{% endblock %}
