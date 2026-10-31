@@ -34,8 +34,9 @@ constants. New tables and columns must be snake_case.
 `composer sandbox` creates `sandbox/`, a local test installation that loads
 the packages from `packages/`. Point a web server with PHP 8.5 to
 `sandbox/public`, or run `composer serve` and open http://localhost:8000.
-The sandbox uses SQLite in `sandbox/storage/` and runs its migrations on
-creation. Its console is `sandbox/bin/frootbox`, for example
+The sandbox uses SQLite in `sandbox/storage/` and is set up with
+`bin/frootbox install`, which creates the superuser `admin@example.test`
+and shows its password once. Its console is `sandbox/bin/frootbox`, for example
 `php sandbox/bin/frootbox about` or `php sandbox/bin/frootbox migrate`.
 
 The database layer is its own package, `frootbox/database`, usable in any
@@ -51,6 +52,18 @@ $this->createTable('news', function (Blueprint $table): void {
     $table->timestamps();
 });
 ```
+
+A new installation needs one command after `composer install`. It asks
+for the database (SQLite by default, or MySQL/MariaDB), tests it, writes
+`.env`, runs the migrations and creates the first superuser:
+
+```bash
+php bin/frootbox install
+php bin/frootbox install --no-interaction --admin-email jane@example.com
+```
+
+Without questions, the password comes from `FROOTBOX_ADMIN_PASSWORD` or
+is generated and shown once.
 
 Everything is an extension: a Composer package with a `frootbox.yaml`.
 `bin/frootbox make:extension acme/website` creates one in `extensions/`;

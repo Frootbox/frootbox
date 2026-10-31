@@ -7,4 +7,4 @@ use Frootbox\Core\Application;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-exit(Application::fromProjectRoot(dirname(__DIR__))->runConsole());
+exit(Application::console(dirname(__DIR__)));

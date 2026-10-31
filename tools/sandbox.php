@@ -51,8 +51,6 @@ file_put_contents(
     json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . "\n",
 );
 
-$dotenv = (string) file_get_contents($skeleton . '/.env.example');
-file_put_contents($sandbox . '/.env', (string) preg_replace('/^APP_ENV=.*$/m', 'APP_ENV=dev', $dotenv));
 
 $composerBinary = getenv('COMPOSER_BINARY');
 
@@ -76,7 +74,15 @@ if (0 !== $exitCode) {
     exit($exitCode);
 }
 
-passthru(sprintf('%s %s migrate --no-interaction', escapeshellarg(PHP_BINARY), escapeshellarg($sandbox . '/bin/frootbox')), $exitCode);
+// Writes .env, runs the migrations and creates a superuser with a generated password.
+passthru(
+    sprintf(
+        '%s %s install --no-interaction --env=dev --admin-email=admin@example.test --admin-name=Admin',
+        escapeshellarg(PHP_BINARY),
+        escapeshellarg($sandbox . '/bin/frootbox'),
+    ),
+    $exitCode,
+);
 
 if (0 !== $exitCode) {
     exit($exitCode);
