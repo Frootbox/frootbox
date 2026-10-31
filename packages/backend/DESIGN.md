@@ -720,20 +720,54 @@ typed where it stands, nothing is replaced by a form.
   a new window", then "Remove the link" (danger), "Cancel" and "Apply"
   (primary). Addresses like `example.com` get `https://`.
 - Themes output link fields with `{{ field() }}` so they can be edited;
-  own markup with `value()` is shown but not editable.
+  own markup with `value()` is shown but not editable on the page, only
+  in the settings of the block.
+- Empty fields show their label at half opacity, so they can be reached.
+
+Arranging blocks (decision 0123), from `resources/js/edit/arranging.js`:
+
+- **Block tools**: a `role="toolbar"` named "Block <title>" above the top
+  end of the block under the pointer or focus (inside it near the top
+  edge), styled like the rich text toolbar with small buttons of
+  `--fb-size-control-sm`: block around it, move up, move down, copy,
+  settings, insert a block below, delete (danger). Buttons that cannot
+  act are disabled. Delete asks in place of the buttons ("Delete
+  "<title>"?", danger solid, "Cancel"). Blocks and empty areas are
+  focusable in the mode; Alt+F10 reaches the tools, arrow keys move
+  between them, Esc goes back to the block.
+- **Block dialog**: the modal `<dialog>` like the link dialog, "Insert a
+  block", the area as a hint, one bordered button per block with title
+  and description (muted), a search field above seven blocks. Only blocks
+  the area allows; a full area says so. Clicking an empty area opens it.
+- **Settings panel**: a side panel at the inline end over the full
+  height, `--fb-size-narrow` wide, `--fb-surface`, `--fb-radius-lg`,
+  `--fb-shadow-lg`, not modal. Header with "Settings: <title>" and close,
+  then groups with a small caps legend: variant as radio buttons with
+  description, options (choice as select, boolean as checkbox, number and
+  text as fields), content fields `headline`, `text` and `link`, and each
+  list with its entries (open to edit their fields, move up, move down,
+  remove) and "Add an entry". A change saves when the field is left.
+- Every structural change loads the page again; the focus returns to the
+  block and an open panel opens again.
 
 ### Icons
 
 `{{ icon('pencil') }}` writes an SVG from `assets/icons/` inline, 20 px
 (`--fb-size-icon`), drawn with `currentColor`; `icon('pencil', 'fb-icon
 fb-icon--small')` for 18 px. Icons are `aria-hidden`; a button with only
-an icon has a label (`icon_only`). New icons: 24×24 viewBox, stroke 2,
-round caps and joins, no fill, `stroke="currentColor"`.
+an icon has a label (`icon_only`). New icons come from
+[Lucide](https://lucide.dev) (ISC license, kept as `assets/icons/LICENSE-lucide`),
+one file per icon as needed, drawn by hand only if Lucide has none: 24×24
+viewBox, stroke 1.8, round caps and joins, no fill, `stroke="currentColor"`.
 
-Available: alert, check, chevron-down, clock, close, dashboard, external,
-grip, image, inbox, info, lock, menu, navigation, pages, palette, pencil,
-plus, redirect, restore, search, settings, shield, sign-out, square,
-users, warning.
+Available: alert, arrow-down, arrow-up, check, chevron-down, clock, close,
+copy, dashboard, external, grip, image, inbox, info, lock, menu,
+navigation, pages, palette, parent, pencil, plus, redirect, restore,
+search, settings, shield, sign-out, square, trash, users, warning.
+
+The bar of the editing mode runs on the website without Twig and keeps
+the paths of its icons in `resources/js/edit/icons.js`. An icon used in
+both places has the same paths in both.
 
 ### Helpers
 

@@ -104,7 +104,10 @@ final class EditModeTest extends BackendTestCase
         self::assertSame('de', $config['language']);
         self::assertSame('Bearbeiten', $config['labels']['edit']);
         self::assertSame('Rückgängig', $config['labels']['undo']);
+        self::assertSame('Block darunter einfügen', $config['labels']['insertBelow']);
+        self::assertSame('„{block}“ löschen?', $config['labels']['removeConfirm']);
         self::assertStringContainsString('.ProseMirror{', $editing);
+        self::assertStringContainsString('[data-fb-field]:empty::before{content:attr(data-fb-label)', $editing, 'Empty fields show their label.');
         self::assertSame([
             'id' => $this->about,
             'status' => 'changed',

@@ -1,5 +1,7 @@
-import { LitElement, css, html, nothing, svg } from 'lit';
+import { LitElement, css, html, nothing } from 'lit';
+import { Arranging, arrangingStyles } from './arranging.js';
 import { Editing } from './editing.js';
+import { icon } from './icons.js';
 
 const COLLAPSED = 'fb-edit-bar-collapsed';
 const THEME = 'fb-theme';
@@ -7,27 +9,6 @@ const UNDO = 'fb-edit-undo:';
 
 /** What the bar marks: fields, blocks and empty areas (decision 0119). */
 const MARKED = '[data-fb-field], [data-fb-block], fb-area[data-fb-area]';
-
-const ICONS = {
-    pencil: svg`<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>`,
-    external: svg`<path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/>`,
-    collapse: svg`<path d="m6 9 6 6 6-6"/>`,
-    lock: svg`<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>`,
-    undo: svg`<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>`,
-    bold: svg`<path d="M7 5h6a3.5 3.5 0 0 1 0 7H7z"/><path d="M7 12h7a3.5 3.5 0 0 1 0 7H7z"/>`,
-    italic: svg`<path d="M19 4h-9"/><path d="M14 20H5"/><path d="M15 4 9 20"/>`,
-    heading: svg`<path d="M6 4v16"/><path d="M18 4v16"/><path d="M6 12h12"/>`,
-    list: svg`<path d="M9 6h11"/><path d="M9 12h11"/><path d="M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>`,
-    ordered: svg`<path d="M10 6h10"/><path d="M10 12h10"/><path d="M10 18h10"/><path d="M4 4h1v4"/><path d="M4 14h2l-2 4h2"/>`,
-    quote: svg`<path d="M5 11h4v6H5zM5 11a5 5 0 0 1 4-5"/><path d="M14 11h4v6h-4zM14 11a5 5 0 0 1 4-5"/>`,
-    link: svg`<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>`,
-    close: svg`<path d="M6 6l12 12"/><path d="M18 6 6 18"/>`,
-    places: svg`<rect x="3" y="4" width="18" height="6" rx="1.5" stroke-dasharray="3 2"/><rect x="3" y="14" width="18" height="6" rx="1.5" stroke-dasharray="3 2"/>`,
-};
-
-function icon(name) {
-    return html`<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${ICONS[name]}</svg>`;
-}
 
 function read(key) {
     try {
@@ -125,7 +106,7 @@ export class EditBar extends LitElement {
         toolbar: { state: true },
     };
 
-    static styles = css`
+    static styles = [css`
         :host {
             all: initial;
             position: fixed;
@@ -428,7 +409,7 @@ export class EditBar extends LitElement {
         @media (prefers-reduced-motion: reduce) {
             * { transition: none !important; }
         }
-    `;
+    `, arrangingStyles];
 
     constructor() {
         super();
@@ -445,9 +426,10 @@ export class EditBar extends LitElement {
         this.saving = 0;
         this.pages = null;
         this.editing = null;
+        this.arranging = null;
         this.frame = 0;
         this.redraw = () => {
-            if (this.frame === 0 && (this.current || this.showAll || this.toolbar)) {
+            if (this.frame === 0 && (this.current || this.showAll || this.toolbar || this.arranging?.block)) {
                 this.frame = requestAnimationFrame(() => {
                     this.frame = 0;
                     this.requestUpdate();
@@ -484,6 +466,8 @@ export class EditBar extends LitElement {
             this.undo = readSession(this.undoKey);
             this.editing = new Editing(this);
             this.editing.start();
+            this.arranging = new Arranging(this);
+            this.arranging.start();
             document.addEventListener('pointerover', this.onPoint, true);
             document.addEventListener('pointerout', this.onLeave, true);
             document.addEventListener('focusin', this.onFocus, true);
@@ -495,6 +479,7 @@ export class EditBar extends LitElement {
     disconnectedCallback() {
         super.disconnectedCallback();
         this.editing?.stop();
+        this.arranging?.stop();
         document.removeEventListener('pointerover', this.onPoint, true);
         document.removeEventListener('pointerout', this.onLeave, true);
         document.removeEventListener('focusin', this.onFocus, true);
@@ -519,7 +504,9 @@ export class EditBar extends LitElement {
             return nothing;
         }
 
-        return html`${this.outlines()}${this.toolbarView()}${this.collapsed ? this.round() : this.bar()}${this.linkDialog()}`;
+        const arranging = this.arranging;
+
+        return html`${this.outlines()}${arranging?.tools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}`;
     }
 
     round() {
@@ -590,7 +577,10 @@ export class EditBar extends LitElement {
             return nothing;
         }
 
-        const elements = this.showAll ? [...document.querySelectorAll(MARKED)] : this.current ? [this.current] : [];
+        const selected = this.arranging?.block;
+        const elements = this.showAll
+            ? [...document.querySelectorAll(MARKED)]
+            : [...new Set([selected, this.current].filter((element) => element?.isConnected))];
 
         return elements.map((element) => {
             const rect = element.getBoundingClientRect();
@@ -609,6 +599,7 @@ export class EditBar extends LitElement {
     }
 
     point(target) {
+        this.arranging?.select(target);
         const element = target instanceof Element ? target.closest(MARKED) : null;
 
         if (element !== this.current) {
@@ -875,8 +866,8 @@ export class EditBar extends LitElement {
         this.link = { existing: options.href !== '', ...options, query: page ? '' : options.href, page };
         this.loadPages();
         this.updateComplete.then(() => {
-            this.renderRoot.querySelector('dialog')?.showModal();
-            this.renderRoot.querySelector('dialog input')?.focus();
+            this.renderRoot.querySelector('dialog.link')?.showModal();
+            this.renderRoot.querySelector('dialog.link input')?.focus();
         });
     }
 
@@ -916,7 +907,7 @@ export class EditBar extends LitElement {
             this.link = { ...this.link, ...changes };
         };
 
-        return html`<dialog aria-labelledby="fb-link-title" @cancel=${(event) => { event.preventDefault(); this.closeLink(); }}>
+        return html`<dialog class="link" aria-labelledby="fb-link-title" @cancel=${(event) => { event.preventDefault(); this.closeLink(); }}>
             <form @submit=${(event) => { event.preventDefault(); this.applyLink(page, query); }}>
                 <h2 id="fb-link-title">${labels.link}</h2>
                 ${link.withText ? html`<label>${labels.linkText}
@@ -959,7 +950,7 @@ export class EditBar extends LitElement {
 
     closeLink(then = null) {
         const link = this.link;
-        this.renderRoot.querySelector('dialog')?.close();
+        this.renderRoot.querySelector('dialog.link')?.close();
         this.link = null;
         then?.();
         link?.done?.();

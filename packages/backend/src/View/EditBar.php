@@ -46,6 +46,7 @@ final readonly class EditBar
         . 'fb-field[data-fb-type="richtext"],fb-area{display:block}'
         . 'fb-area[data-fb-empty]{min-block-size:4rem}'
         . '[data-fb-field][contenteditable]{cursor:text}'
+        . '[data-fb-field]:empty::before{content:attr(data-fb-label);opacity:.5}'
         . '.ProseMirror{white-space:pre-wrap;overflow-wrap:break-word}'
         . '.ProseMirror-hideselection *::selection{background:transparent}';
 
@@ -188,6 +189,33 @@ final readonly class EditBar
             'newWindow' => $t('Open in a new window'),
             'apply' => $t('Apply'),
             'removeLink' => $t('Remove the link'),
+            'blockTools' => $t('Block {block}'),
+            'parentBlock' => $t('Select the block around it'),
+            'moveUp' => $t('Move up'),
+            'moveDown' => $t('Move down'),
+            'copyBlock' => $t('Copy the block'),
+            'blockSettings' => $t('Settings of the block'),
+            'insertBelow' => $t('Insert a block below'),
+            'removeBlock' => $t('Delete the block'),
+            'removeConfirm' => $t('Delete "{block}"?'),
+            'removeYes' => $t('Delete'),
+            'addBlock' => $t('Insert a block'),
+            'intoArea' => $t('Into: {area}'),
+            'search' => $t('Search'),
+            'loading' => $t('Loading …'),
+            'noBlocks' => $t('No block fits here.'),
+            'areaFull' => $t('The area "{area}" takes no more blocks.'),
+            'settingsOf' => $t('Settings: {block}'),
+            'close' => $t('Close'),
+            'blockGone' => $t('The block is no longer there. Load the page again.'),
+            'variant' => $t('Variant'),
+            'options' => $t('Options'),
+            'content' => $t('Content'),
+            'noLink' => $t('No link'),
+            'entry' => $t('Entry {number}'),
+            'addEntry' => $t('Add an entry'),
+            'removeEntry' => $t('Remove the entry'),
+            'noSettings' => $t('There is nothing to set for this block. Edit its content right on the page.'),
         ];
     }
 }

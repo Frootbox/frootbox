@@ -453,3 +453,40 @@ There is nothing for the scope "{scope}".: „{scope}“ gibt es nicht.
 "Someone changed the field meanwhile. Load the page again to see it.": "Jemand hat das Feld inzwischen geändert. Lade die Seite neu, um es zu sehen."
 "The page has no translation in this language.": "Die Seite hat keine Übersetzung in dieser Sprache."
 "There is no block with this id in the content.": "Im Inhalt gibt es keinen Block mit dieser ID."
+
+# Arranging blocks on the website
+'Block {block}': 'Block {block}'
+'Select the block around it': 'Übergeordneten Block wählen'
+'Move up': 'Nach oben'
+'Move down': 'Nach unten'
+'Copy the block': 'Block kopieren'
+'Settings of the block': 'Einstellungen des Blocks'
+'Insert a block below': 'Block darunter einfügen'
+'Delete the block': 'Block löschen'
+'Delete "{block}"?': '„{block}“ löschen?'
+'Insert a block': 'Block einfügen'
+'Into: {area}': 'In: {area}'
+Search: Suchen
+'Loading …': 'Lädt …'
+'No block fits here.': 'Hier passt kein Block hin.'
+'The area "{area}" takes no more blocks.': 'Der Bereich „{area}“ nimmt keine weiteren Blöcke auf.'
+'Settings: {block}': 'Einstellungen: {block}'
+Close: Schließen
+'The block is no longer there. Load the page again.': 'Den Block gibt es nicht mehr. Lade die Seite neu.'
+Variant: Variante
+Options: Optionen
+'No link': 'Kein Link'
+'Entry {number}': 'Eintrag {number}'
+'Add an entry': 'Eintrag hinzufügen'
+'Remove the entry': 'Eintrag entfernen'
+'There is nothing to set for this block. Edit its content right on the page.': 'Für diesen Block gibt es nichts einzustellen. Seinen Inhalt bearbeitest Du direkt auf der Seite.'
+'There is no area "{area}" there.': 'Dort gibt es keinen Bereich „{area}“.'
+'There is no block "{block}".': 'Den Block „{block}“ gibt es nicht.'
+'"{block}" is a widget and only goes into areas that allow it by name.': '„{block}“ ist ein Widget und passt nur in Bereiche, die es ausdrücklich erlauben.'
+'The area "{area}" does not take "{block}".': 'Der Bereich „{area}“ nimmt „{block}“ nicht auf.'
+'The block has no variant "{variant}".': 'Der Block hat keine Variante „{variant}“.'
+'The list has {count} entries.': 'Die Liste hat {count} Einträge.'
+'"{path}" is no list.': '„{path}“ ist keine Liste.'
+'The list has no entry {index}.': 'Die Liste hat keinen Eintrag {index}.'
+'There is no block with this id in the area.': 'In diesem Bereich gibt es keinen Block mit dieser ID.'
+'A block cannot go into or next to itself.': 'Ein Block kann nicht in oder neben sich selbst stehen.'
