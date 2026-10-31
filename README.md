@@ -78,6 +78,17 @@ checked, logged and can be undone with `action.undo`, unless the action
 writes past the repositories or is marked `undoable: false`.
 `bin/frootbox actions`, `call` and `actions:log` help along the way.
 
+Users sign in with email and password. Roles bundle permissions with
+rules such as `*`, `page.*` or `-page.delete`, and rank by level:
+`superuser` (100) manages `admin` (50), who manages `editor` (10). Nobody
+changes, undoes or out-ranks someone above them. Sessions and API tokens
+share one table and are sent as a cookie or as `Authorization: Bearer`:
+
+```bash
+php bin/frootbox user:create jane@example.com --role superuser
+php bin/frootbox user:token jane@example.com --name "Deploy"
+```
+
 Tests run against in-memory SQLite. Set `DATABASE_URL` to run them against
 MySQL or MariaDB, as the CI does.
 
