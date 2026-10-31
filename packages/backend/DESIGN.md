@@ -375,7 +375,8 @@ A short confirmation at the bottom right (24 px from the edges), e.g.
 radius 10 px, text 15 px medium, shadow `--fb-shadow-lg`, above the page
 (`--fb-layer-toast`). `role="status"`. It never holds the only way to do
 something (no "Undo" that is not also elsewhere). `static` shows it in the
-flow, e.g. on the design page.
+flow, e.g. on the design page. From JavaScript `showToast(text)` of
+`@frootbox/ui` shows one; `<fb-form>` uses it after saving.
 
 ### Card
 
@@ -409,6 +410,8 @@ or shadow) points to the main way forward, at most once per screen.
 Entries in a card: at least `--fb-size-row` (56 px) high, padding 12 px
 20 px, a 1 px divider above each. Title semibold, a line below it 14 px
 muted, status and actions at the end; on narrow screens they wrap below.
+A title that leads to the entry is a link with `.fb-list__title
+.fb-list__link` (text color, underlined on hover).
 
 ### Tabs
 
@@ -432,8 +435,75 @@ The native `<dialog>` with `showModal()`: focus stays inside, Escape
 closes. Width `--fb-size-dialog` (560 px, at most the screen minus 32 px),
 radius 14 px, shadow `--fb-shadow-lg`, backdrop `--fb-backdrop`. Body
 padding 24 px, title 20 px bold, actions right-aligned with a top border,
-the safe choice first ("Cancel", then "Delete page"). A web component for
-it follows in phase 2.
+the safe choice first ("Cancel", then "Delete page"), and the safe
+choice gets `autofocus`. Buttons open and close it without a script
+through invoker commands: `commandfor="<id>" command="show-modal"` and
+`command="close"`. A confirmation that runs an action puts an
+`<fb-form>` inside (see Form).
+
+### Form
+
+```twig
+<fb-form action="user.create" next="{{ path('backend.users') }}/{user.id}" done="{{ t('The user is created.') }}">
+    <form class="fb-stack" novalidate>
+        {{ ui.field({label: t('Name'), name: 'name', required: true}) }}
+        <div class="fb-form__actions">{{ ui.button({label: t('Create the user'), type: 'submit'}) }}</div>
+    </form>
+</fb-form>
+```
+
+Every form that changes something runs one action through
+`<fb-form>` (decision 0115). It sends the fields as JSON to
+`POST <backend.path>/actions/<action>` with the CSRF token and shows the
+answer:
+
+- Errors appear at their field (as `ui.field` would show them) and as a
+  danger alert at the top of the form, `.fb-form__summary`, with the
+  title "Check the marked fields." and a list of links to the fields in
+  the order of the form. The summary gets the focus. Errors without a
+  field of their own are listed there too.
+- Afterwards it goes to `next` (`{path}` takes a value of the result,
+  e.g. `{user.id}`) and shows `done` as a toast there. Without `next` the
+  page stays: `reset` empties the form, `show="<id>"` reveals a hidden
+  element and fills its `[data-fb-value="token"]` from the result (for
+  something shown only once, like a new API token).
+- While it waits, the submit buttons are disabled and `busy` is set.
+- The input follows the fields: a checkbox is `true`/`false`, with a
+  name ending in `[]` a list of the checked values; `type="number"` and
+  `data-type="number"` are numbers (empty is `null`);
+  `data-type="lines"` is a list of the lines that are not empty (in a
+  monospace font); `data-type="boolean"` makes a hidden field `true` for
+  `1`; `data-empty="null"` sends `null` for an empty text. Disabled
+  fields are left out.
+- Hide controls the user may not use: `{% if can('user.create') %}`.
+  The action checks again.
+
+`.fb-form__actions` holds the buttons at the end, the primary one first,
+12 px apart. `.fb-fieldset` with `.fb-fieldset__legend` groups
+checkboxes under a label (no border, 12 px gap); a group shows its error
+once below. A field for a new password gets a ghost button with
+`data-fb-generate="<field id>"`, which fills in a random password and
+shows it.
+
+### Secret
+
+`<code class="fb-secret">…</code>` shows something to copy once, such as
+a new API token: monospace 14 px, padding 12 px 16 px, border 1 px,
+radius 10 px, on `--fb-bg`; a click selects all of it. Put a warning
+alert above it that says it is shown only once.
+
+### Disclosure
+
+```html
+<details class="fb-card fb-disclosure">
+    <summary class="fb-disclosure__summary">…</summary>
+    <ul class="fb-disclosure__body">…list entries…</ul>
+</details>
+```
+
+Something to look up that stays closed until needed, e.g. all
+permissions below the rules of a role. The summary is 44 px high,
+semibold, with the native marker; the body scrolls after eight rows.
 
 ### Empty state
 
@@ -568,6 +638,10 @@ import { LitElement, html } from 'lit';
 
 and register their own modules with `$registry->import('@acme/thing',
 'assets/build/thing.js')`.
+
+`@frootbox/ui` exports `ThemeSwitch` (`<fb-theme-switch>`), `Form`
+(`<fb-form>`) with `formInput(form)`, `showToast(text)`, and
+`generatePasswords()`, which `backend.js` starts on every page.
 
 ## Brand (white label)
 

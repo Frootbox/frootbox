@@ -129,7 +129,7 @@ final class BackendView
             null === $user ? null : FrameUser::named($user->name),
             null === $user ? [] : $this->menu->groups($user, $route instanceof Route ? $route->name : null),
             $csrf,
-            $this->head->html($csrf),
+            $this->head->html($csrf, null === $user ? null : substr($this->router->path('backend.action', ['name' => 'x']), 0, -1)),
         );
     }
 

@@ -42,3 +42,8 @@
 .fb-card--padded {
     padding: var(--fb-space-6);
 }
+
+.fb-card__footer--stack {
+    flex-direction: column;
+    gap: var(--fb-space-5);
+}

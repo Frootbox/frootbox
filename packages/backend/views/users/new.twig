@@ -1,0 +1,32 @@
+{#- A new user with a password from the one who creates it (decision 0115). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('New user') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <p class="fb-muted"><a href="{{ path('backend.users') }}">{{ t('Users') }}</a></p>
+            <h1 class="fb-heading-1">{{ t('New user') }}</h1>
+        </div>
+    </header>
+
+    <fb-form action="user.create" next="{{ path('backend.users') }}/{user.id}" done="{{ t('The user is created.') }}">
+        <form class="fb-card fb-card--padded fb-stack" novalidate>
+            {{ ui.field({label: t('Name'), name: 'name', required: true, autocomplete: 'off'}) }}
+            {{ ui.field({label: t('Email'), name: 'email', type: 'email', required: true, autocomplete: 'off', hint: t('The user signs in with it.')}) }}
+            <div class="fb-stack fb-stack--sm">
+                {{ ui.field({label: t('Password'), name: 'password', type: 'password', required: true, autocomplete: 'new-password', hint: t('At least 10 characters. Pass it on in person or by phone, not by email.')}) }}
+                <div>{{ ui.button({label: t('Make a password'), variant: 'ghost', small: true, attrs: {'data-fb-generate': 'field-password'}}) }}</div>
+            </div>
+            {% include '@backend/users/roles-field.twig' with {assigned: []} %}
+            <div class="fb-form__actions">
+                {{ ui.button({label: t('Create the user'), type: 'submit'}) }}
+                {{ ui.button({label: t('Cancel'), variant: 'ghost', href: path('backend.users')}) }}
+            </div>
+        </form>
+    </fb-form>
+</div>
+{% endblock %}

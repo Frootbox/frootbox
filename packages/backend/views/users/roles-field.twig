@@ -1,0 +1,8 @@
+{#- The roles of a user as checkboxes. assigned: names of the roles they have everywhere; hide_legend when a heading says it already. -#}
+{% import '@backend/ui.twig' as ui %}
+<fieldset class="fb-fieldset" id="field-roles">
+    <legend class="fb-fieldset__legend{% if hide_legend ?? false %} fb-visually-hidden{% endif %}">{{ t('Roles') }}</legend>
+    {%- for role in roles %}
+    {{ ui.check({label: role.title, name: 'roles[]', value: role.name, checked: role.name in assigned, hint: role.name}) }}
+    {%- endfor %}
+</fieldset>

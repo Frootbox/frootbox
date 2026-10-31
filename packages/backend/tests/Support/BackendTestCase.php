@@ -75,10 +75,16 @@ abstract class BackendTestCase extends NotesTestCase
      *
      * @param array<string, string>|null $body    form fields of a POST
      * @param array<string, string>      $headers
+     * @param array<string, mixed>|null  $json    a JSON body, as <fb-form> sends it
+     * @param string|null                $raw     the body as it is, e.g. an encoded form
      */
-    protected function request(string $method, string $path, ?array $body = null, ?string $session = null, array $headers = []): ResponseInterface
+    protected function request(string $method, string $path, ?array $body = null, ?string $session = null, array $headers = [], ?array $json = null, string $address = '192.0.2.1', ?string $raw = null): ResponseInterface
     {
-        $request = new ServerRequest($method, self::HOST . $path, ['Sec-Fetch-Site' => 'same-origin', ...$headers]);
+        if (null !== $json) {
+            $headers += ['Content-Type' => 'application/json', 'Accept' => 'application/json'];
+        }
+
+        $request = new ServerRequest($method, self::HOST . $path, ['Sec-Fetch-Site' => 'same-origin', ...$headers], null === $json ? $raw : json_encode($json, \JSON_THROW_ON_ERROR), '1.1', ['REMOTE_ADDR' => $address]);
         parse_str((string) parse_url($path, \PHP_URL_QUERY), $query);
         $request = $request->withQueryParams($query);
 
@@ -109,5 +115,22 @@ abstract class BackendTestCase extends NotesTestCase
     protected function html(ResponseInterface $response): string
     {
         return (string) $response->getBody();
+    }
+
+    /**
+     * Runs an action like <fb-form>: JSON with the CSRF token in the header.
+     *
+     * @param array<string, mixed> $input
+     *
+     * @return array<mixed> the decoded answer
+     */
+    protected function action(string $name, array $input, string $session, int $status = 200): array
+    {
+        $response = $this->request('POST', '/cms/actions/' . $name, session: $session, headers: [Csrf::HEADER => $this->csrfFor($session)], json: $input);
+        self::assertSame($status, $response->getStatusCode(), (string) $response->getBody());
+        $body = json_decode((string) $response->getBody(), true, flags: \JSON_THROW_ON_ERROR);
+        self::assertIsArray($body);
+
+        return $body;
     }
 }

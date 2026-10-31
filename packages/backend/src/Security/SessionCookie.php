@@ -15,14 +15,17 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * The cookie of a browser session (decision 0112): HttpOnly, SameSite=Lax,
  * Secure under HTTPS, for the whole website, so the edit mode is signed
- * in too. It ends with the browser; the session itself expires on the
- * server.
+ * in too. It ends with the browser, with "stay signed in" it lasts long
+ * (decision 0115). Either way the session itself expires on the server.
  */
 final readonly class SessionCookie
 {
-    public function set(ResponseInterface $response, ServerRequestInterface $request, string $token): ResponseInterface
+    /** 400 days, the most browsers keep a cookie. */
+    public const int REMEMBER = 400 * 86400;
+
+    public function set(ResponseInterface $response, ServerRequestInterface $request, string $token, bool $remember = false): ResponseInterface
     {
-        return $response->withAddedHeader('Set-Cookie', self::cookie($request, $token));
+        return $response->withAddedHeader('Set-Cookie', $remember ? self::cookie($request, $token, 'Max-Age=' . self::REMEMBER) : self::cookie($request, $token));
     }
 
     public function clear(ResponseInterface $response, ServerRequestInterface $request): ResponseInterface

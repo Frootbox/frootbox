@@ -3,6 +3,7 @@
 
 .fb-dialog {
     width: min(var(--fb-size-dialog), calc(100% - var(--fb-space-8)));
+    margin: auto;
     padding: 0;
     border: var(--fb-size-border) solid var(--fb-border);
     border-radius: var(--fb-radius-lg);
@@ -18,6 +19,7 @@
 .fb-dialog--static {
     position: static;
     display: block;
+    margin: 0;
     width: 100%;
     max-width: var(--fb-size-dialog);
 }

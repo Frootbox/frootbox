@@ -5,7 +5,7 @@
 {{ fb.head|raw }}
 <title>{% block title %}{% endblock %} · {{ fb.brand }}</title>
 </head>
-<body>
+<body data-fb-failed="{{ t('The server cannot be reached. Check the connection and try again.') }}">
 {% block body %}{% endblock %}
 </body>
 </html>

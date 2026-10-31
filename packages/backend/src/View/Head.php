@@ -35,6 +35,13 @@ final readonly class Head
 
     public const string SCRIPT = BackendExtension::ROOT . '/assets/build/backend.js';
 
+    /**
+     * Holds back a form of <fb-form> that is sent before its script has
+     * loaded and sends it once the script is there, so it never goes out
+     * as a plain GET.
+     */
+    private const string FORM_SCRIPT = 'document.addEventListener("submit",function(e){var f=e.target;if(customElements.get("fb-form")||!f.closest||!f.closest("fb-form"))return;e.preventDefault();var s=e.submitter||null;customElements.whenDefined("fb-form").then(function(){f.requestSubmit(s)})},true);';
+
     /** Sets the appearance chosen in the browser before anything is drawn. */
     private const string THEME_SCRIPT = 'try{var t=localStorage.getItem("fb-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}';
 
@@ -45,7 +52,11 @@ final readonly class Head
         private Registry $registry,
     ) {}
 
-    public function html(?string $csrf): string
+    /**
+     * @param ?string $csrf    token of the session, null for guests
+     * @param ?string $actions where forms send actions, e.g. "/cms/actions/"
+     */
+    public function html(?string $csrf, ?string $actions = null): string
     {
         $assets = $this->assets();
         $favicon = $this->design->favicon();
@@ -55,7 +66,8 @@ final readonly class Head
             '<meta name="robots" content="noindex, nofollow">',
             null === $favicon ? '' : '<link rel="icon" href="' . Html::escape($favicon) . '">',
             null === $csrf ? '' : '<meta name="fb-csrf" content="' . Html::escape($csrf) . '">',
-            '<script>' . self::THEME_SCRIPT . '</script>',
+            null === $actions ? '' : '<meta name="fb-actions" content="' . Html::escape($actions) . '">',
+            '<script>' . self::THEME_SCRIPT . self::FORM_SCRIPT . '</script>',
             '<style>' . $assets->layerOrder() . '</style>',
             '<style>@layer tokens{' . $this->design->css() . '}</style>',
             $this->tags->styles($assets),

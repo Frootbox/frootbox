@@ -10,6 +10,9 @@ namespace Frootbox\Backend\View;
 
 use Frootbox\Backend\BackendExtension;
 use Frootbox\Backend\I18n\Translator;
+use Frootbox\Core\Action\Catalog;
+use Frootbox\Core\Action\CurrentContext;
+use Frootbox\Core\Auth\Gate;
 use Frootbox\Core\Routing\Router;
 use Frootbox\RichText\Html;
 use Twig\Extension\AbstractExtension;
@@ -21,6 +24,7 @@ use Twig\TwigFunction;
  *     {{ t('Hello {name}', {name: user.name}) }}
  *     {{ path('backend.dashboard') }}
  *     {{ icon('pages') }}
+ *     {% if can('user.create') %}…{% endif %}
  */
 final class TwigExtension extends AbstractExtension
 {
@@ -32,15 +36,29 @@ final class TwigExtension extends AbstractExtension
     public function __construct(
         private readonly Translator $translator,
         private readonly Router $router,
+        private readonly Catalog $catalog,
+        private readonly Gate $gate,
+        private readonly CurrentContext $context,
     ) {}
 
     public function getFunctions(): array
     {
         return [
+            new TwigFunction('device', Device::describe(...)),
             new TwigFunction('t', $this->translator->get(...)),
             new TwigFunction('path', $this->router->path(...)),
             new TwigFunction('icon', $this->icon(...), ['is_safe' => ['html']]),
+            new TwigFunction('can', $this->can(...)),
         ];
+    }
+
+    /**
+     * Whether the user may run an action or query, so a screen shows only
+     * the controls that work (decision 0115). The action checks again.
+     */
+    public function can(string $name): bool
+    {
+        return $this->catalog->has($name) && $this->gate->allows($this->context->get()->actor, $this->catalog->get($name));
     }
 
     /**

@@ -1,1 +1,1 @@
-import"@frootbox/ui";import e from"htmx.org";document.addEventListener(`htmx:configRequest`,e=>{let t=document.querySelector(`meta[name="fb-csrf"]`)?.getAttribute(`content`);t&&(e.detail.headers[`X-CSRF-Token`]=t)});var t=e;export{t as default};
+import{generatePasswords as e,showPendingToast as t}from"@frootbox/ui";import n from"htmx.org";e(),t(),document.addEventListener(`htmx:configRequest`,e=>{let t=document.querySelector(`meta[name="fb-csrf"]`)?.getAttribute(`content`);t&&(e.detail.headers[`X-CSRF-Token`]=t)});var r=n;export{r as default};

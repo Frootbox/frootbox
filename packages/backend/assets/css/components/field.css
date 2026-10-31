@@ -115,3 +115,8 @@ textarea.fb-input {
     pointer-events: none;
     transform: translateY(-50%);
 }
+
+.fb-input[data-type="lines"] {
+    font-family: var(--fb-font-mono);
+    font-size: var(--fb-text-md);
+}

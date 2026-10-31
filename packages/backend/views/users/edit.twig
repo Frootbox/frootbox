@@ -1,0 +1,111 @@
+{#- A user: details, roles, password and deleting, each a form of its own (decision 0115). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% set user = profile.user %}
+{% block title %}{{ user.name }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <p class="fb-muted"><a href="{{ path('backend.users') }}">{{ t('Users') }}</a></p>
+            <h1 class="fb-heading-1">{{ user.name }}</h1>
+        </div>
+        {% if not user.active %}{{ ui.badge('neutral', t('Disabled')) }}{% endif %}
+    </header>
+
+    {% set editable = can('user.update') %}
+    <section class="fb-card" aria-labelledby="fb-details-title">
+        <div class="fb-card__header"><h2 class="fb-heading-4" id="fb-details-title">{{ t('Details') }}</h2></div>
+        <div class="fb-card__body">
+            <fb-form action="user.update" done="{{ t('Saved') }}">
+                <form class="fb-stack" novalidate>
+                    <input type="hidden" name="id" value="{{ user.id }}" data-type="number">
+                    {{ ui.field({label: t('Name'), name: 'name', value: user.name, required: true, disabled: not editable}) }}
+                    {{ ui.field({label: t('Email'), name: 'email', type: 'email', value: user.email, required: true, disabled: not editable}) }}
+                    {% if yourself %}
+                        <input type="hidden" name="active" value="1" data-type="boolean">
+                    {% else %}
+                        {{ ui.check({label: t('May sign in'), name: 'active', checked: user.active, disabled: not editable, hint: t('Without it the user is signed out and cannot sign in.')}) }}
+                    {% endif %}
+                    {% if editable %}<div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit'}) }}</div>{% endif %}
+                </form>
+            </fb-form>
+        </div>
+    </section>
+
+    <section class="fb-card" aria-labelledby="fb-roles-title">
+        <div class="fb-card__header"><h2 class="fb-heading-4" id="fb-roles-title">{{ t('Roles') }}</h2></div>
+        <div class="fb-card__body">
+            {% if can('user.set-roles') %}
+            <fb-form action="user.set-roles" done="{{ t('The roles are saved.') }}">
+                <form class="fb-stack" novalidate>
+                    <input type="hidden" name="userId" value="{{ user.id }}" data-type="number">
+                    {% include '@backend/users/roles-field.twig' with {hide_legend: true} %}
+                    <div class="fb-form__actions">{{ ui.button({label: t('Save the roles'), type: 'submit'}) }}</div>
+                </form>
+            </fb-form>
+            {% else %}
+                <p>{{ assigned is empty ? t('No roles') : assigned|map(name => titles[name] ?? name)|join(', ') }}</p>
+            {% endif %}
+            {% if scoped is not empty %}
+            <div class="fb-stack fb-stack--sm">
+                <p class="fb-label">{{ t('Only within a part of the website') }}</p>
+                <ul class="fb-muted">
+                    {%- for assignment in scoped %}
+                    <li>{{ titles[assignment.role] ?? assignment.role }} · <code>{{ assignment.scope }}</code></li>
+                    {%- endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    {% if can('user.set-password') %}
+    <section class="fb-card" aria-labelledby="fb-set-password-title">
+        <div class="fb-card__header"><h2 class="fb-heading-4" id="fb-set-password-title">{{ t('New password') }}</h2></div>
+        <div class="fb-card__body">
+            <fb-form action="user.set-password" reset done="{{ t('The password is set. The user is signed out everywhere.') }}">
+                <form class="fb-stack" novalidate>
+                    <input type="hidden" name="id" value="{{ user.id }}" data-type="number">
+                    <div class="fb-stack fb-stack--sm">
+                        {{ ui.field({label: t('New password'), name: 'password', type: 'password', required: true, autocomplete: 'new-password', hint: t('At least 10 characters. Pass it on in person or by phone, not by email.')}) }}
+                        <div>{{ ui.button({label: t('Make a password'), variant: 'ghost', small: true, attrs: {'data-fb-generate': 'field-password'}}) }}</div>
+                    </div>
+                    <div class="fb-form__actions">{{ ui.button({label: t('Set the password'), variant: 'secondary', type: 'submit'}) }}</div>
+                </form>
+            </fb-form>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if can('user.delete') and not yourself %}
+    <section class="fb-card" aria-labelledby="fb-delete-title">
+        <div class="fb-card__header">
+            <div class="fb-stack fb-stack--sm">
+                <h2 class="fb-heading-4" id="fb-delete-title">{{ t('Delete the user') }}</h2>
+                <p class="fb-muted">{{ t('The user is signed out and can no longer sign in. What they did stays.') }}</p>
+            </div>
+            {{ ui.button({label: t('Delete the user'), variant: 'danger', attrs: {commandfor: 'fb-delete-user', command: 'show-modal'}}) }}
+        </div>
+    </section>
+
+    <dialog class="fb-dialog" id="fb-delete-user" aria-labelledby="fb-delete-user-title">
+        <fb-form action="user.delete" next="{{ path('backend.users') }}" done="{{ t('The user is deleted.') }}">
+            <form novalidate>
+                <input type="hidden" name="id" value="{{ user.id }}" data-type="number">
+                <div class="fb-dialog__body">
+                    <h2 class="fb-dialog__title" id="fb-delete-user-title">{{ t('Delete {name}?', {name: user.name}) }}</h2>
+                    <p>{{ t('The user is signed out and can no longer sign in. What they did stays.') }}</p>
+                </div>
+                <div class="fb-dialog__actions">
+                    {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'fb-delete-user', command: 'close', autofocus: true}}) }}
+                    {{ ui.button({label: t('Delete for good'), variant: 'danger-solid', type: 'submit'}) }}
+                </div>
+            </form>
+        </fb-form>
+    </dialog>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{#- The list of users (user.list). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Users') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Users') }}</h1>
+            <p class="fb-muted">{{ t('Who may sign in and what they may do.') }}</p>
+        </div>
+        {% if can('user.create') %}{{ ui.button({label: t('New user'), href: path('backend.users.new'), icon: 'plus'}) }}{% endif %}
+    </header>
+
+    <section class="fb-card" aria-label="{{ t('Users') }}">
+        <ul>
+            {%- for user in users %}
+            <li class="fb-list__item">
+                {{ ui.avatar(user.name|split(' ')|map(part => part|first|upper)|slice(0, 2)|join) }}
+                <span class="fb-list__main">
+                    <a class="fb-list__title fb-list__link" href="{{ path('backend.users.show', {id: user.id}) }}">{{ user.name }}</a>
+                    <span class="fb-list__meta">{{ user.email }}</span>
+                </span>
+                {% if not user.active %}{{ ui.badge('neutral', t('Disabled')) }}{% endif %}
+            </li>
+            {%- endfor %}
+        </ul>
+    </section>
+</div>
+{% endblock %}

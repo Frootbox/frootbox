@@ -1,0 +1,99 @@
+{#- The own account: password, sessions and API tokens (decision 0115). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Your account') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Your account') }}</h1>
+            <p class="fb-muted">{{ profile.user.name }} · {{ profile.user.email }}</p>
+        </div>
+    </header>
+
+    <section class="fb-card" aria-labelledby="fb-password-title">
+        <div class="fb-card__header"><h2 class="fb-heading-4" id="fb-password-title">{{ t('Change the password') }}</h2></div>
+        <div class="fb-card__body">
+            <fb-form action="account.change-password" reset done="{{ t('Your password is changed. Other devices are signed out.') }}">
+                <form class="fb-stack" novalidate>
+                    {{ ui.field({label: t('Current password'), name: 'currentPassword', type: 'password', autocomplete: 'current-password', required: true}) }}
+                    {{ ui.field({label: t('New password'), name: 'newPassword', type: 'password', autocomplete: 'new-password', required: true, hint: t('At least 10 characters. A few words in a row are easy to remember.')}) }}
+                    <div class="fb-form__actions">{{ ui.button({label: t('Change the password'), type: 'submit'}) }}</div>
+                </form>
+            </fb-form>
+        </div>
+    </section>
+
+    <section class="fb-card" aria-labelledby="fb-sessions-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="fb-sessions-title">{{ t('Where you are signed in') }}</h2>
+        </div>
+        <ul>
+            {%- for session in sessions %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title" title="{{ session.name }}">{{ device(session.name) ?? t('Unknown device') }}</span>
+                    <span class="fb-list__meta">{{ t('Last used {date}', {date: (session.lastUsedAt ?? session.createdAt)|date(t('Y-m-d H:i'))}) }}</span>
+                </span>
+                {% if session.id == current %}
+                    {{ ui.badge('neutral', t('This device')) }}
+                {% else %}
+                    <fb-form action="account.revoke-token" next="{{ path('backend.account') }}" done="{{ t('The session is ended.') }}">
+                        <form novalidate>
+                            <input type="hidden" name="id" value="{{ session.id }}" data-type="number">
+                            {{ ui.button({label: t('Sign out'), variant: 'secondary', small: true, type: 'submit', attrs: {'aria-label': t('Sign out {device}', {device: device(session.name) ?? t('Unknown device')})}}) }}
+                        </form>
+                    </fb-form>
+                {% endif %}
+            </li>
+            {%- endfor %}
+        </ul>
+    </section>
+
+    <section class="fb-card" aria-labelledby="fb-tokens-title">
+        <div class="fb-card__header">
+            <div class="fb-stack fb-stack--sm">
+                <h2 class="fb-heading-4" id="fb-tokens-title">{{ t('API tokens') }}</h2>
+                <p class="fb-muted">{{ t('Scripts and apps use a token to act with your permissions.') }}</p>
+            </div>
+        </div>
+        {% if tokens is not empty %}
+        <ul>
+            {%- for token in tokens %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title">{{ token.name }}</span>
+                    <span class="fb-list__meta">
+                        {{- token.lastUsedAt ? t('Last used {date}', {date: token.lastUsedAt|date(t('Y-m-d H:i'))}) : t('Not used yet') -}}
+                        {%- if token.expiresAt %} · {{ t('Valid until {date}', {date: token.expiresAt|date(t('Y-m-d'))}) }}{% endif -%}
+                    </span>
+                </span>
+                <fb-form action="account.revoke-token" next="{{ path('backend.account') }}" done="{{ t('The token is revoked.') }}">
+                    <form novalidate>
+                        <input type="hidden" name="id" value="{{ token.id }}" data-type="number">
+                        {{ ui.button({label: t('Revoke'), variant: 'danger', small: true, type: 'submit', attrs: {'aria-label': t('Revoke {token}', {token: token.name})}}) }}
+                    </form>
+                </fb-form>
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+        <div class="fb-card__footer fb-card__footer--stack">
+            <fb-form action="account.create-token" show="fb-new-token" reset>
+                <form class="fb-stack" novalidate>
+                    {{ ui.field({label: t('New token for'), name: 'name', required: true, placeholder: t('e.g. Deploy script')}) }}
+                    {{ ui.field({label: t('Valid for days'), name: 'days', type: 'number', optional: true, hint: t('Empty: until you revoke it.'), attrs: {min: 1, max: 3650, inputmode: 'numeric'}}) }}
+                    <div class="fb-form__actions">{{ ui.button({label: t('Create the token'), variant: 'secondary', type: 'submit', icon: 'plus'}) }}</div>
+                </form>
+            </fb-form>
+            <div class="fb-stack fb-stack--sm" id="fb-new-token" hidden>
+                {{ ui.alert({tone: 'warning', title: t('Copy the token now'), text: t('It is shown only this once. Whoever has it acts as you.')}) }}
+                <code class="fb-secret" data-fb-value="token"></code>
+                <div>{{ ui.button({label: t('Done'), variant: 'secondary', href: path('backend.account')}) }}</div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

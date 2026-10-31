@@ -23,7 +23,7 @@
             {%- if fb.user %}
             <div class="fb-account">
                 {{- ui.avatar(fb.user.initials) -}}
-                <span class="fb-account__name">{{ fb.user.name }}</span>
+                <a class="fb-account__name" href="{{ path('backend.account') }}" title="{{ t('Your account') }}">{{ fb.user.name }}</a>
                 <form method="post" action="{{ path('backend.logout') }}">
                     <input type="hidden" name="_csrf" value="{{ fb.csrf }}">
                     {{ ui.button({label: t('Sign out'), variant: 'ghost', type: 'submit', icon: 'sign-out', icon_only: true}) }}

@@ -1,0 +1,78 @@
+{#- A new role or one to edit. Rules as text, one per line, and every permission to look up (decision 0115). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% set editable = role is null ? can('role.create') : can('role.update') %}
+{% block title %}{{ role ? role.title : t('New role') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <p class="fb-muted"><a href="{{ path('backend.roles') }}">{{ t('Roles') }}</a></p>
+            <h1 class="fb-heading-1">{{ role ? role.title : t('New role') }}</h1>
+        </div>
+    </header>
+
+    <fb-form action="{{ role ? 'role.update' : 'role.create' }}" {% if role %}done="{{ t('Saved') }}"{% else %}next="{{ path('backend.roles') }}/{name}" done="{{ t('The role is created.') }}"{% endif %}>
+        <form class="fb-card fb-card--padded fb-stack" novalidate>
+            {% if role %}
+                <input type="hidden" name="name" value="{{ role.name }}">
+            {% else %}
+                {{ ui.field({label: t('Short name'), name: 'name', required: true, autocomplete: 'off', hint: t('Lowercase letters, digits and dashes, e.g. "author". It cannot be changed later.'), disabled: not editable}) }}
+            {% endif %}
+            {{ ui.field({label: t('Title'), name: 'title', value: role.title ?? '', required: true, disabled: not editable}) }}
+            {{ ui.field({label: t('Level'), name: 'level', type: 'number', value: role.level ?? 0, required: true, disabled: not editable, hint: t('0 to 1000. Users manage users up to their own level and roles below it.'), attrs: {min: 0, max: 1000, inputmode: 'numeric'}}) }}
+            {{ ui.field({label: t('Permissions'), name: 'permissions', multiline: true, value: (role.permissions ?? [])|join("\n"), disabled: not editable, hint: t('One rule per line: "page.*" allows everything with pages, "-page.delete" takes deleting away again, "*" allows everything.'), attrs: {'data-type': 'lines', rows: 8, spellcheck: 'false'}}) }}
+            {% if editable %}
+            <div class="fb-form__actions">
+                {{ ui.button({label: role ? t('Save') : t('Create the role'), type: 'submit'}) }}
+                {{ ui.button({label: t('Cancel'), variant: 'ghost', href: path('backend.roles')}) }}
+            </div>
+            {% endif %}
+        </form>
+    </fb-form>
+
+    <details class="fb-card fb-disclosure">
+        <summary class="fb-disclosure__summary">{{ t('All permissions') }}</summary>
+        <ul class="fb-disclosure__body">
+            {%- for permission in permissions %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <code class="fb-list__title">{{ permission.name }}</code>
+                    <span class="fb-list__meta">{{ permission.description }}</span>
+                </span>
+            </li>
+            {%- endfor %}
+        </ul>
+    </details>
+
+    {% if role and not protected and can('role.delete') %}
+    <section class="fb-card" aria-labelledby="fb-delete-title">
+        <div class="fb-card__header">
+            <div class="fb-stack fb-stack--sm">
+                <h2 class="fb-heading-4" id="fb-delete-title">{{ t('Delete the role') }}</h2>
+                <p class="fb-muted">{{ t('Every user loses the role and its permissions.') }}</p>
+            </div>
+            {{ ui.button({label: t('Delete the role'), variant: 'danger', attrs: {commandfor: 'fb-delete-role', command: 'show-modal'}}) }}
+        </div>
+    </section>
+
+    <dialog class="fb-dialog" id="fb-delete-role" aria-labelledby="fb-delete-role-title">
+        <fb-form action="role.delete" next="{{ path('backend.roles') }}" done="{{ t('The role is deleted.') }}">
+            <form novalidate>
+                <input type="hidden" name="name" value="{{ role.name }}">
+                <div class="fb-dialog__body">
+                    <h2 class="fb-dialog__title" id="fb-delete-role-title">{{ t('Delete {name}?', {name: role.title}) }}</h2>
+                    <p>{{ t('Every user loses the role and its permissions.') }}</p>
+                </div>
+                <div class="fb-dialog__actions">
+                    {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'fb-delete-role', command: 'close', autofocus: true}}) }}
+                    {{ ui.button({label: t('Delete for good'), variant: 'danger-solid', type: 'submit'}) }}
+                </div>
+            </form>
+        </fb-form>
+    </dialog>
+    {% endif %}
+</div>
+{% endblock %}

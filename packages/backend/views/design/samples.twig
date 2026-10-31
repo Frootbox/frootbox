@@ -39,6 +39,29 @@
 </div>
 
 <div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Form') }}</p>
+    <div class="fb-alert fb-form__summary" data-tone="danger" role="alert">
+        {{ icon('alert', 'fb-icon fb-icon--small') }}
+        <div>
+            <p class="fb-alert__title">{{ t('Check the marked fields.') }}</p>
+            <ul class="fb-form__errors"><li><a href="#{{ id }}-name">{{ t('Name') }}: {{ t('is required.') }}</a></li></ul>
+        </div>
+    </div>
+    {{ ui.field({label: t('Name'), name: 'name', id: id ~ '-name', error: t('is required.')}) }}
+    <fieldset class="fb-fieldset">
+        <legend class="fb-fieldset__legend">{{ t('Roles') }}</legend>
+        {{ ui.check({label: 'Administrator', name: 'roles[]', id: id ~ '-role-admin', value: 'admin', hint: 'admin'}) }}
+        {{ ui.check({label: 'Editor', name: 'roles[]', id: id ~ '-role-editor', value: 'editor', hint: 'editor', checked: true}) }}
+    </fieldset>
+    {{ ui.field({label: t('Permissions'), name: 'permissions', id: id ~ '-permissions', multiline: true, value: "page.*\n-page.delete", attrs: {'data-type': 'lines', rows: 3}}) }}
+    <div class="fb-form__actions">
+        {{ ui.button({label: t('Save'), type: 'button'}) }}
+        {{ ui.button({label: t('Cancel'), variant: 'ghost'}) }}
+    </div>
+    <code class="fb-secret">fbx_4f1c2a9e7b3d5f80c6a1e2d4b9f7c3a5</code>
+</div>
+
+<div class="fb-design-sample">
     <p class="fb-design-sample__title">{{ t('Status') }}</p>
     <div class="fb-cluster">
         {{ ui.status('published') }}
@@ -64,11 +87,21 @@
     <section class="fb-card">
         <div class="fb-card__header"><h3 class="fb-heading-4">{{ t('Waiting to be published') }}</h3>{{ ui.badge('neutral', '2') }}</div>
         <ul>
-            <li class="fb-list__item"><span class="fb-list__main"><span class="fb-list__title">Kaffee</span><span class="fb-list__meta">/kaffee</span></span>{{ ui.status('changed') }}{{ ui.button({label: t('Open'), variant: 'secondary', small: true}) }}</li>
+            <li class="fb-list__item"><span class="fb-list__main"><a class="fb-list__title fb-list__link" href="#">Kaffee</a><span class="fb-list__meta">/kaffee</span></span>{{ ui.status('changed') }}{{ ui.button({label: t('Open'), variant: 'secondary', small: true}) }}</li>
             <li class="fb-list__item"><span class="fb-list__main"><span class="fb-list__title">Rösterei</span><span class="fb-list__meta">/roesterei</span></span>{{ ui.status('draft') }}{{ ui.button({label: t('Open'), variant: 'secondary', small: true}) }}</li>
         </ul>
         <div class="fb-card__footer">{{ ui.button({label: t('Publish all')}) }}</div>
     </section>
+</div>
+
+<div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Disclosure') }}</p>
+    <details class="fb-card fb-disclosure" open>
+        <summary class="fb-disclosure__summary">{{ t('All permissions') }}</summary>
+        <ul class="fb-disclosure__body">
+            <li class="fb-list__item"><span class="fb-list__main"><code class="fb-list__title">page.create</code><span class="fb-list__meta">Creates a page</span></span></li>
+        </ul>
+    </details>
 </div>
 
 <div class="fb-design-sample">

@@ -26,3 +26,12 @@
     color: var(--fb-text-muted);
     font-size: var(--fb-text-sm);
 }
+
+.fb-list__link {
+    color: var(--fb-text);
+    text-decoration: none;
+}
+
+.fb-list__link:hover {
+    text-decoration: underline;
+}

@@ -118,10 +118,16 @@
     flex: 1;
     min-width: 0;
     overflow: hidden;
+    color: var(--fb-text);
     font-size: var(--fb-text-md);
     font-weight: var(--fb-weight-semibold);
+    text-decoration: none;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.fb-account__name:hover {
+    text-decoration: underline;
 }
 
 .fb-page-header {
