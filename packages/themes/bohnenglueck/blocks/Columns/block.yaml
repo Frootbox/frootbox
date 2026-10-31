@@ -1,0 +1,5 @@
+title: Zwei Spalten
+description: Zwei Bereiche nebeneinander, auf schmalen Bildschirmen untereinander.
+areas:
+  left: { label: Links, allow: [Text, Quote] }
+  right: { label: Rechts, allow: [Text, Quote] }

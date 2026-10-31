@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ba787221d39edabe6d728843210dbe40",
+    "content-hash": "eae44b3f7fb0faef9ffddcb64c43d73c",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -499,6 +499,43 @@
                 "rich-text",
                 "sanitizer",
                 "tiptap"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "frootbox/theme-bohnenglueck",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/themes/bohnenglueck",
+                "reference": "c12d1ab5fb66bb139ab1d835745723c1f3dc1f7f"
+            },
+            "require": {
+                "frootbox/core": "^0.1",
+                "php": ">=8.5"
+            },
+            "type": "frootbox-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\ThemeBohnenglueck\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Bohnenglück, a demo theme for Frootbox: a one-pager for a small coffee roastery",
+            "keywords": [
+                "demo",
+                "frootbox",
+                "theme"
             ],
             "transport-options": {
                 "symlink": true,
@@ -6708,7 +6745,8 @@
     "stability-flags": {
         "frootbox/core": 20,
         "frootbox/database": 20,
-        "frootbox/rich-text": 20
+        "frootbox/rich-text": 20,
+        "frootbox/theme-bohnenglueck": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

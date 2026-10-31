@@ -1,0 +1,21 @@
+title: 'Bohnenglück'
+description: 'Demo-Theme: One-Pager für eine kleine Kaffeerösterei'
+extension: Frootbox\ThemeBohnenglueck\BohnenglueckExtension
+theme:
+  tokens:
+    color:
+      bg: '#fbf7f2'
+      surface: '#ffffff'
+      text: '#2b211c'
+      muted: '#6f625a'
+      primary: '#8a4b2a'
+      primary-contrast: '#ffffff'
+      accent: '#e8b04b'
+      dark: '#2b211c'
+      line: '#e7ddd3'
+    font:
+      body: 'system-ui, -apple-system, "Segoe UI", sans-serif'
+      heading: 'ui-serif, Georgia, "Times New Roman", serif'
+    radius: 14px
+    space: 'clamp(3rem, 8vw, 6rem)'
+    width: 72rem

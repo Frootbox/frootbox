@@ -12,7 +12,7 @@ use PhpCsFixer\Finder;
 
 /*
  * Same rules as .php-cs-fixer.dist.php, but for the MIT licensed packages.
- * Themes and the skeleton join later.
+ * The skeleton joins later.
  */
 $base = require __DIR__ . '/.php-cs-fixer.dist.php';
 
@@ -31,5 +31,5 @@ $rules['header_comment'] = [
 return new Config()
     ->setRiskyAllowed(true)
     ->setCacheFile(__DIR__ . '/.cache/php-cs-fixer-mit.cache')
-    ->setFinder(Finder::create()->in([__DIR__ . '/packages/rich-text']))
+    ->setFinder(Finder::create()->in([__DIR__ . '/packages/rich-text', __DIR__ . '/packages/themes']))
     ->setRules($rules);

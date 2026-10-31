@@ -1,0 +1,27 @@
+{# frootbox
+title: One-Pager
+description: Eine Seite mit Kopf, Ankernavigation, Inhaltsbereich und Fuß.
+fields:
+  brand: { type: headline, maxLength: 60 }
+  nav:
+    type: list
+    optional: true
+    max: 6
+    fields:
+      link: { type: link }
+  footer: { type: text, multiline: true, optional: true }
+areas:
+  main: {}
+#}
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="site-brand" href="#top">{{ field('brand') }}</a>
+    {% if field('nav')|length %}
+      <nav aria-label="Hauptnavigation"><ul>
+        {% for item in field('nav') %}<li>{{ item.field('link') }}</li>{% endfor %}
+      </ul></nav>
+    {% endif %}
+  </div>
+</header>
+<main id="top">{{ area('main') }}</main>
+<footer class="site-footer"><p>{{ field('footer') }}</p></footer>

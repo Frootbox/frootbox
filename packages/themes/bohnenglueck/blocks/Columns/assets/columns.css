@@ -1,0 +1,7 @@
+@layer blocks {
+  .columns { display: grid; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+  @media (min-width: 48rem) {
+    .columns--even { grid-template-columns: 1fr 1fr; }
+    .columns--wide { grid-template-columns: 2fr 1fr; }
+  }
+}

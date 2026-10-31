@@ -1,0 +1,32 @@
+{# frootbox
+title: Vorteile
+description: Überschrift mit Einleitung und einem Raster aus kurzen Punkten.
+options:
+  anchor: { type: text, label: Anker für die Navigation }
+  columns:
+    type: choice
+    label: Spalten
+    choices: { 2: Zwei, 3: Drei, 4: Vier }
+    default: 3
+fields:
+  title: { type: headline }
+  intro: { type: text, optional: true }
+  items:
+    type: list
+    min: 1
+    max: 8
+    fields:
+      icon: { type: headline, maxLength: 4, description: Ein Emoji }
+      title: { type: headline }
+      text: { type: text, multiline: true }
+#}
+<section class="section features"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
+  <div class="wrap">
+    <header class="section__head"><h2>{{ field('title') }}</h2>{% if value('intro') %}<p>{{ field('intro') }}</p>{% endif %}</header>
+    <ul class="features__grid" style="--columns: {{ options.columns }}">
+      {% for item in field('items') %}
+        <li class="features__item"><span class="features__icon" aria-hidden="true">{{ item.field('icon') }}</span><h3>{{ item.field('title') }}</h3><p>{{ item.field('text') }}</p></li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>

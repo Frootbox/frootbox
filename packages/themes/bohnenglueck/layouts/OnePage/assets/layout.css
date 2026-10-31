@@ -1,0 +1,55 @@
+@layer reset, layout, blocks;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+  h1, h2, h3, p, ul, ol, blockquote, figure { margin: 0; }
+  img { max-inline-size: 100%; display: block; }
+}
+
+@layer layout {
+  html { scroll-behavior: smooth; scroll-padding-block-start: 5rem; }
+  body {
+    font-family: var(--font-body);
+    color: var(--color-text);
+    background: var(--color-bg);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: var(--font-heading); line-height: 1.15; text-wrap: balance; }
+  a { color: var(--color-primary); }
+  .wrap { inline-size: min(100% - 2.5rem, var(--width)); margin-inline: auto; }
+
+  .site-header {
+    position: sticky; inset-block-start: 0; z-index: 10;
+    background: color-mix(in srgb, var(--color-bg) 85%, transparent);
+    backdrop-filter: blur(10px);
+    border-block-end: 1px solid var(--color-line);
+  }
+  .site-header__inner {
+    inline-size: min(100% - 2.5rem, var(--width)); margin-inline: auto;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding-block: .9rem;
+  }
+  .site-brand { font-family: var(--font-heading); font-size: 1.35rem; font-weight: 700; color: var(--color-text); text-decoration: none; }
+  .site-header nav ul { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; list-style: none; padding: 0; }
+  .site-header nav a { color: var(--color-muted); text-decoration: none; font-weight: 500; }
+  .site-header nav a:hover { color: var(--color-primary); }
+
+  .site-footer { background: var(--color-dark); color: color-mix(in srgb, var(--color-bg) 75%, transparent); padding-block: 2.5rem; text-align: center; font-size: .9rem; }
+
+  .button {
+    display: inline-flex; align-items: center; gap: .5rem;
+    padding: .85rem 1.5rem; border-radius: 999px;
+    background: var(--color-primary); color: var(--color-primary-contrast);
+    font-weight: 600; text-decoration: none;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .button:hover { transform: translateY(-2px); box-shadow: 0 .5rem 1.5rem color-mix(in srgb, var(--color-primary) 35%, transparent); }
+  .button--ghost { background: transparent; color: inherit; box-shadow: inset 0 0 0 2px currentColor; }
+  .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: .8rem; font-weight: 700; color: var(--color-primary); }
+  .section { padding-block: var(--space); }
+  .section__head { max-inline-size: 42rem; margin-block-end: 2.5rem; }
+  .section__head h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); }
+  .section__head p { color: var(--color-muted); margin-block-start: .75rem; font-size: 1.1rem; }
+}

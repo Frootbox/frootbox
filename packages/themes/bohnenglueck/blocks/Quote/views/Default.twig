@@ -1,0 +1,12 @@
+{# frootbox
+title: Zitat
+description: Ein Kundenstimme oder Leitsatz, groß gesetzt.
+fields:
+  quote: { type: text, multiline: true }
+  author: { type: headline }
+  role: { type: headline, optional: true }
+#}
+<figure class="quote">
+  <blockquote><p>{{ field('quote') }}</p></blockquote>
+  <figcaption><strong>{{ field('author') }}</strong>{% if value('role') %}<span>{{ field('role') }}</span>{% endif %}</figcaption>
+</figure>

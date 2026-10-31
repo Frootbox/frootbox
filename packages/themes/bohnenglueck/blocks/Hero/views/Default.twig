@@ -1,0 +1,20 @@
+{# frootbox
+title: Zentriert
+description: Alles mittig, für den ersten Eindruck.
+options:
+  anchor: { type: text, label: Anker für die Navigation }
+  tone:
+    type: choice
+    choices: { light: Hell, dark: Dunkel }
+#}
+<section class="hero hero--center hero--{{ options.tone }}"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
+  <div class="wrap hero__inner">
+    {% if value('eyebrow') %}<p class="eyebrow">{{ field('eyebrow') }}</p>{% endif %}
+    <h1>{{ field('title') }}</h1>
+    {% if value('text') %}<p class="hero__text">{{ field('text') }}</p>{% endif %}
+    <div class="hero__actions">
+      {% if value('button') %}<a class="button" href="{{ value('button').url }}">{{ value('button').text }}</a>{% endif %}
+      {% if value('secondary') %}<a class="button button--ghost" href="{{ value('secondary').url }}">{{ value('secondary').text }}</a>{% endif %}
+    </div>
+  </div>
+</section>

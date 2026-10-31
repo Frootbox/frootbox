@@ -16,6 +16,7 @@ mirrored into a read-only repository.
 | `packages/core` | `frootbox/core` |
 | `packages/database` | `frootbox/database` |
 | `packages/rich-text` | `frootbox/rich-text` (MIT) |
+| `packages/themes/bohnenglueck` | `frootbox/theme-bohnenglueck`, demo theme (MIT) |
 
 ## Development
 

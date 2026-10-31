@@ -1,0 +1,25 @@
+{
+    "name": "frootbox/theme-bohnenglueck",
+    "description": "Bohnenglück, a demo theme for Frootbox: a one-pager for a small coffee roastery",
+    "type": "frootbox-extension",
+    "license": "MIT",
+    "keywords": [
+        "frootbox",
+        "theme",
+        "demo"
+    ],
+    "require": {
+        "php": ">=8.5",
+        "frootbox/core": "^0.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Frootbox\\ThemeBohnenglueck\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    }
+}

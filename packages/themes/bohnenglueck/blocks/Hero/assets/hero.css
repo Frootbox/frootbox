@@ -1,0 +1,19 @@
+@layer blocks {
+  .hero { padding-block: calc(var(--space) * 1.2); overflow: clip; }
+  .hero h1 { font-size: clamp(2.4rem, 6vw, 4.4rem); margin-block: .5rem 1rem; }
+  .hero__text { font-size: clamp(1.05rem, 2vw, 1.3rem); color: var(--color-muted); max-inline-size: 38rem; }
+  .hero__actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-block-start: 2rem; }
+  .hero--center .hero__inner { text-align: center; display: grid; justify-items: center; }
+  .hero--center .hero__actions { justify-content: center; }
+  .hero--dark { background: var(--color-dark); color: var(--color-bg); }
+  .hero--dark .hero__text { color: color-mix(in srgb, var(--color-bg) 75%, transparent); }
+  .hero--dark .eyebrow { color: var(--color-accent); }
+  .hero--light { background: radial-gradient(60rem 30rem at 50% -10%, color-mix(in srgb, var(--color-accent) 30%, transparent), transparent); }
+
+  .hero__grid { display: grid; gap: 3rem; align-items: center; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
+  .hero__art { position: relative; aspect-ratio: 1; max-inline-size: 26rem; justify-self: center; inline-size: 100%; }
+  .hero__art span { position: absolute; border-radius: 50%; }
+  .hero__art span:nth-child(1) { inset: 0 15% 15% 0; background: var(--color-primary); }
+  .hero__art span:nth-child(2) { inset: 35% 0 0 35%; background: var(--color-accent); mix-blend-mode: multiply; }
+  .hero__art span:nth-child(3) { inset: 30% 40% 40% 30%; background: var(--color-bg); }
+}

@@ -1,0 +1,25 @@
+{# frootbox
+title: FAQ
+description: Fragen und Antworten zum Aufklappen.
+options:
+  anchor: { type: text, label: Anker für die Navigation }
+  open:
+    type: boolean
+    label: Erste Antwort geöffnet
+fields:
+  title: { type: headline }
+  items:
+    type: list
+    min: 1
+    fields:
+      question: { type: headline }
+      answer: { type: richtext }
+#}
+<section class="section faq"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
+  <div class="wrap faq__inner">
+    <header class="section__head"><h2>{{ field('title') }}</h2></header>
+    {% for item in field('items') %}
+      <details name="faq"{{ options.open and loop.first ? ' open' }}><summary>{{ item.field('question') }}</summary><div class="faq__answer">{{ item.field('answer') }}</div></details>
+    {% endfor %}
+  </div>
+</section>

@@ -28,7 +28,7 @@ jobs:
       - name: Validate composer.json files
         run: |
           composer validate --strict
-          for file in packages/*/composer.json; do
+          for file in packages/*/composer.json packages/*/*/composer.json; do
             composer validate --strict --no-check-lock "$file"
           done
       - uses: ramsey/composer-install@v3

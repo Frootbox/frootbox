@@ -1,0 +1,15 @@
+{# frootbox
+title: Gleich breit
+options:
+  anchor: { type: text, label: Anker für die Navigation }
+  ratio:
+    type: choice
+    label: Verhältnis
+    choices: { even: '1 : 1', wide: '2 : 1' }
+#}
+<section class="section"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
+  <div class="wrap columns columns--{{ options.ratio }}">
+    <div>{{ area('left') }}</div>
+    <div>{{ area('right') }}</div>
+  </div>
+</section>

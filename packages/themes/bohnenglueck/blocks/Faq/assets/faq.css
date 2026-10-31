@@ -1,0 +1,9 @@
+@layer blocks {
+  .faq__inner { max-inline-size: 48rem; }
+  .faq details { border-block-end: 1px solid var(--color-line); }
+  .faq summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 1rem; padding-block: 1.1rem; font-weight: 600; font-size: 1.1rem; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; color: var(--color-primary); font-size: 1.4rem; line-height: 1; transition: rotate .2s ease; }
+  .faq details[open] summary::after { rotate: 45deg; }
+  .faq__answer { padding-block-end: 1.25rem; color: var(--color-muted); }
+}

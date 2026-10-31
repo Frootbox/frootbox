@@ -7,10 +7,12 @@
         "php": ">=8.5",
         "frootbox/core": "^0.1@dev",
         "frootbox/database": "^0.1@dev",
-        "frootbox/rich-text": "^0.1@dev"
+        "frootbox/rich-text": "^0.1@dev",
+        "frootbox/theme-bohnenglueck": "^0.1@dev"
     },
     "repositories": [
-        { "type": "path", "url": "packages/*", "options": { "symlink": true } }
+        { "type": "path", "url": "packages/*", "options": { "symlink": true } },
+        { "type": "path", "url": "packages/themes/*", "options": { "symlink": true } }
     ],
     "autoload-dev": {
         "psr-4": {

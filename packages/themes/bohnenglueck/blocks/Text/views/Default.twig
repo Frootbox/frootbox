@@ -1,0 +1,17 @@
+{# frootbox
+title: Text
+description: Formatierter Fließtext mit optionaler Überschrift.
+options:
+  anchor: { type: text, label: Anker für die Navigation }
+  width:
+    type: choice
+    label: Breite
+    choices: { narrow: Schmal, wide: Breit }
+fields:
+  title: { type: headline, optional: true }
+  body: { type: richtext }
+#}
+<section class="text text--{{ options.width }}"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
+  {% if value('title') %}<h2>{{ field('title') }}</h2>{% endif %}
+  <div class="text__body">{{ field('body') }}</div>
+</section>

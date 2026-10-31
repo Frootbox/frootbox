@@ -1,0 +1,16 @@
+{# frootbox
+title: Aufruf
+description: Farbiges Band mit Überschrift, Satz und Button am Ende einer Seite.
+options:
+  anchor: { type: text, label: Anker für die Navigation }
+fields:
+  title: { type: headline }
+  text: { type: text, optional: true }
+  button: { type: link }
+#}
+<section class="section"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
+  <div class="wrap cta">
+    <div><h2>{{ field('title') }}</h2>{% if value('text') %}<p>{{ field('text') }}</p>{% endif %}</div>
+    <a class="button" href="{{ value('button').url }}">{{ value('button').text }}</a>
+  </div>
+</section>

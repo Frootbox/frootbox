@@ -1,0 +1,20 @@
+{# frootbox
+title: Geteilt
+description: Text links, rechts eine grafische Fläche in den Theme-Farben.
+options:
+  anchor: { type: text, label: Anker für die Navigation }
+#}
+<section class="hero hero--split"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
+  <div class="wrap hero__grid">
+    <div>
+      {% if value('eyebrow') %}<p class="eyebrow">{{ field('eyebrow') }}</p>{% endif %}
+      <h1>{{ field('title') }}</h1>
+      {% if value('text') %}<p class="hero__text">{{ field('text') }}</p>{% endif %}
+      <div class="hero__actions">
+        {% if value('button') %}<a class="button" href="{{ value('button').url }}">{{ value('button').text }}</a>{% endif %}
+        {% if value('secondary') %}<a class="button button--ghost" href="{{ value('secondary').url }}">{{ value('secondary').text }}</a>{% endif %}
+      </div>
+    </div>
+    <div class="hero__art" aria-hidden="true"><span></span><span></span><span></span></div>
+  </div>
+</section>

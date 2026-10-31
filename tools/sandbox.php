@@ -44,6 +44,7 @@ if (!is_array($composer)) {
 $composer['name'] = 'frootbox/sandbox';
 $composer['repositories'] = [
     ['type' => 'path', 'url' => '../packages/*', 'options' => ['symlink' => true]],
+    ['type' => 'path', 'url' => '../packages/themes/*', 'options' => ['symlink' => true]],
 ];
 
 file_put_contents(
