@@ -34,3 +34,19 @@
 .section__head { max-inline-size: 42rem; margin-block-end: 2.5rem; }
 .section__head h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); }
 .section__head p { color: var(--color-muted); margin-block-start: .75rem; font-size: 1.1rem; }
+
+/* Language switcher */
+.languages { display: flex; gap: .25rem; list-style: none; padding: 0; font-size: .85rem; }
+.languages a, .languages span { display: inline-block; padding: .2rem .45rem; border-radius: 6px; text-decoration: none; color: var(--color-muted); text-transform: uppercase; font-weight: 600; }
+.languages a:hover { color: var(--color-primary); }
+.languages [aria-current] { background: var(--color-line); color: var(--color-text); }
+
+.site-header nav a:not(.button):is([aria-current], .is-active) { color: var(--color-primary); }
+.site-header__end { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+@media (max-width: 40rem) {
+  .site-header__inner { flex-wrap: wrap; }
+  .site-header__end { inline-size: 100%; justify-content: space-between; }
+}
+
+.skip-link { position: absolute; inset-inline-start: 1rem; inset-block-start: -3rem; z-index: 20; padding: .5rem 1rem; border-radius: 6px; background: var(--color-primary); color: var(--color-primary-contrast); }
+.skip-link:focus { inset-block-start: 1rem; }

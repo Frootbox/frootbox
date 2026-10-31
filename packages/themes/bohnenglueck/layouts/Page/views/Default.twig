@@ -1,0 +1,31 @@
+{# frootbox
+title: Unterseite
+description: Seite mit Brotkrumen, Überschrift, Einleitung und Inhaltsbereich.
+fields:
+  title: { type: headline, maxLength: 120 }
+  intro: { type: text, multiline: true, optional: true, maxLength: 400 }
+areas:
+  main: {}
+#}
+{% import '@theme/labels.twig' as labels %}
+{% include '@theme/header.twig' %}
+<main id="content">
+  <div class="page-head">
+    <div class="wrap">
+      {% set crumbs = breadcrumb() %}
+      {% if crumbs|length > 1 %}
+        <nav class="breadcrumb" aria-label="{{ labels.t('breadcrumb') }}"><ol>
+          {% for crumb in crumbs %}
+            <li>{% if crumb.current %}<span aria-current="page">{{ crumb.label }}</span>{% else %}<a href="{{ crumb.url }}">{{ loop.first ? labels.t('home') : crumb.label }}</a>{% endif %}</li>
+          {% endfor %}
+        </ol></nav>
+      {% endif %}
+      {# A page without translation shows the text of another language. #}
+      {% set lang = content_language() != language() ? ' lang="' ~ content_language() ~ '"' : '' %}
+      <h1{{ lang|raw }}>{{ field('title') }}</h1>
+      {% if value('intro') %}<p class="page-head__intro"{{ lang|raw }}>{{ field('intro') }}</p>{% endif %}
+    </div>
+  </div>
+  {{ area('main') }}
+</main>
+{% include '@theme/footer.twig' %}

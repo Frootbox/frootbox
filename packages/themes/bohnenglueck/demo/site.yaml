@@ -1,0 +1,390 @@
+# Demo website of Bohnenglück in German and English, for
+#
+#     php bin/frootbox seed frootbox/theme-bohnenglueck:demo/site.yaml
+#
+# Every step is an action or query with its input. "as" names the result,
+# later steps use it as ${name.path}. The website needs the languages de
+# and en, de first.
+#
+# The Impressum has no English translation on purpose: /en/impressum shows
+# the German text. "Über uns" first goes online as /roesterei and then
+# moves to /ueber-uns, so the old address answers with a 301.
+
+# The start page first, its content follows once the pages it links exist.
+- page.create:
+    layout: frootbox/theme-bohnenglueck/OnePage
+    translations:
+      de: { title: Bohnenglück }
+      en: { title: Bohnenglück }
+  as: start
+
+- page.create:
+    layout: frootbox/theme-bohnenglueck/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Unsere Sorten
+        slug: sorten
+        content:
+          fields:
+            title: Unsere Sorten
+            intro: Vier Kaffees, die immer da sind, und jeden Monat eine neue Single Origin. Alle frisch geröstet, ganz oder gemahlen.
+          areas:
+            main:
+              - block: frootbox/theme-bohnenglueck/Features
+                options: { anchor: sorten, columns: 2 }
+                fields:
+                  title: Immer im Regal
+                  intro: Von mild bis kräftig, für Siebträger, Filter und French Press.
+                  items:
+                    - { icon: '☀️', title: Hafenmorgen, text: "Brasilien und Kolumbien. Nussig, Schokolade, wenig Säure.\nUnser Espresso für jeden Tag." }
+                    - { icon: '⚓', title: Kapitänsmischung, text: "Indien und Uganda, dunkel geröstet.\nKräftig, mit Crema, ideal für Milchkaffee." }
+                    - { icon: '🌸', title: Elbblüte, text: "Äthiopien Yirgacheffe, hell geröstet.\nJasmin, Bergamotte, Zitrus. Für den Filter." }
+                    - { icon: '🌙', title: Nachtwache, text: "Entkoffeiniert nach dem Schweizer Wasserverfahren.\nVoller Geschmack, ruhiger Schlaf." }
+              - block: frootbox/theme-bohnenglueck/Faq
+                options: { anchor: preise }
+                fields:
+                  title: Preise und Versand
+                  items:
+                    - question: Was kostet ein Beutel?
+                      answer: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: '250 g kosten 9,50 Euro, 1 kg kostet 32 Euro. Die Single Origin des Monats liegt je nach Ernte etwas darüber.' }] }] }
+                    - question: Wie schnell ist der Kaffee bei mir?
+                      answer: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Wir rösten montags und verschicken dienstags. Ab 30 Euro ist der Versand innerhalb Deutschlands frei.' }] }] }
+      en:
+        title: Our coffees
+        slug: coffees
+        content:
+          fields:
+            title: Our coffees
+            intro: Four coffees that are always here, and a new single origin every month. All freshly roasted, whole bean or ground.
+          areas:
+            main:
+              - block: frootbox/theme-bohnenglueck/Features
+                options: { anchor: coffees, columns: 2 }
+                fields:
+                  title: Always on the shelf
+                  intro: From mild to strong, for espresso machines, filter and French press.
+                  items:
+                    - { icon: '☀️', title: Harbour Morning, text: "Brazil and Colombia. Nutty, chocolate, low acidity.\nOur everyday espresso." }
+                    - { icon: '⚓', title: "Captain's Blend", text: "India and Uganda, dark roast.\nStrong, with crema, made for milk coffee." }
+                    - { icon: '🌸', title: Elbe Blossom, text: "Ethiopia Yirgacheffe, light roast.\nJasmine, bergamot, citrus. For the filter." }
+                    - { icon: '🌙', title: Night Watch, text: "Decaffeinated with the Swiss Water Process.\nFull taste, quiet sleep." }
+              - block: frootbox/theme-bohnenglueck/Faq
+                options: { anchor: prices }
+                fields:
+                  title: Prices and shipping
+                  items:
+                    - question: How much is a bag?
+                      answer: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: '250 g are 9.50 euros, 1 kg is 32 euros. The single origin of the month costs a little more, depending on the harvest.' }] }] }
+                    - question: How soon will I have my coffee?
+                      answer: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'We roast on Mondays and ship on Tuesdays. Shipping within Germany is free from 30 euros.' }] }] }
+  as: coffees
+
+- page.create:
+    layout: frootbox/theme-bohnenglueck/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Über uns
+        slug: roesterei
+        content:
+          fields:
+            title: Sechs Leute, eine Trommel
+            intro: Seit 2014 rösten wir in einem alten Kontorhaus am Hamburger Hafen.
+          areas:
+            main:
+              - block: frootbox/theme-bohnenglueck/Columns
+                options: { anchor: geschichte, ratio: wide }
+                areas:
+                  left:
+                    - block: frootbox/theme-bohnenglueck/Text
+                      fields:
+                        title: Wie alles anfing
+                        body: { type: doc, content: [
+                          { type: paragraph, content: [{ type: text, text: 'Angefangen hat es mit einer Popcornmaschine in der Küche. Heute steht in der Rösterei eine Trommel für 15 Kilo, und wir kennen jede Farm, von der unsere Bohnen kommen.' }] },
+                          { type: paragraph, content: [{ type: text, text: 'Wir kaufen ' }, { type: text, text: 'direkt', marks: [{ type: bold }] }, { type: text, text: ' und zahlen deutlich mehr als den Weltmarktpreis.' }] } ] }
+                  right:
+                    - block: frootbox/theme-bohnenglueck/Quote
+                      fields:
+                        quote: Guter Kaffee braucht Zeit. Wir nehmen sie uns.
+                        author: Jonas Brandt
+                        role: Röstmeister
+      en:
+        title: About us
+        slug: roastery
+        content:
+          fields:
+            title: Six people, one drum
+            intro: Since 2014 we have been roasting in an old warehouse at the port of Hamburg.
+          areas:
+            main:
+              - block: frootbox/theme-bohnenglueck/Columns
+                options: { anchor: story, ratio: wide }
+                areas:
+                  left:
+                    - block: frootbox/theme-bohnenglueck/Text
+                      fields:
+                        title: How it started
+                        body: { type: doc, content: [
+                          { type: paragraph, content: [{ type: text, text: 'It started with a popcorn maker in the kitchen. Today a 15 kilo drum stands in the roastery, and we know every farm our beans come from.' }] },
+                          { type: paragraph, content: [{ type: text, text: 'We buy ' }, { type: text, text: 'directly', marks: [{ type: bold }] }, { type: text, text: ' and pay well above the world market price.' }] } ] }
+                  right:
+                    - block: frootbox/theme-bohnenglueck/Quote
+                      fields:
+                        quote: Good coffee takes time. We take it.
+                        author: Jonas Brandt
+                        role: Head roaster
+  as: about
+
+- page.create:
+    layout: frootbox/theme-bohnenglueck/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Kontakt
+        content:
+          fields:
+            title: Komm vorbei
+            intro: Café und Laden haben Montag bis Samstag von 8 bis 18 Uhr geöffnet.
+          areas:
+            main:
+              - block: frootbox/theme-bohnenglueck/Text
+                options: { anchor: adresse }
+                fields:
+                  title: So findest Du uns
+                  body: { type: doc, content: [
+                    { type: paragraph, content: [{ type: text, text: 'Bohnenglück Kaffeerösterei' }, { type: hardBreak }, { type: text, text: 'Hafenstraße 12, 20457 Hamburg' }] },
+                    { type: paragraph, content: [{ type: text, text: 'U3 Baumwall, dann fünf Minuten am Wasser entlang.' }] } ] }
+              - block: frootbox/theme-bohnenglueck/Cta
+                fields:
+                  title: Lieber schreiben?
+                  text: Wir antworten innerhalb eines Werktags.
+                  button: { url: 'mailto:hallo@bohnenglueck.example', text: Schreib uns }
+      en:
+        title: Contact
+        content:
+          fields:
+            title: Come and see us
+            intro: Café and shop are open Monday to Saturday from 8 am to 6 pm.
+          areas:
+            main:
+              - block: frootbox/theme-bohnenglueck/Text
+                options: { anchor: address }
+                fields:
+                  title: How to find us
+                  body: { type: doc, content: [
+                    { type: paragraph, content: [{ type: text, text: 'Bohnenglück coffee roastery' }, { type: hardBreak }, { type: text, text: 'Hafenstraße 12, 20457 Hamburg, Germany' }] },
+                    { type: paragraph, content: [{ type: text, text: 'Take the U3 to Baumwall, then walk five minutes along the water.' }] } ] }
+              - block: frootbox/theme-bohnenglueck/Cta
+                fields:
+                  title: Rather write?
+                  text: We answer within one working day.
+                  button: { url: 'mailto:hallo@bohnenglueck.example', text: Write to us }
+  as: contact
+
+# German only: English visitors see it in German.
+- page.create:
+    layout: frootbox/theme-bohnenglueck/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Impressum
+        content:
+          fields:
+            title: Impressum
+          areas:
+            main:
+              - block: frootbox/theme-bohnenglueck/Text
+                options: { width: narrow }
+                fields:
+                  body: { type: doc, content: [
+                    { type: paragraph, content: [{ type: text, text: 'Bohnenglück Kaffeerösterei GmbH' }, { type: hardBreak }, { type: text, text: 'Hafenstraße 12, 20457 Hamburg' }] },
+                    { type: paragraph, content: [{ type: text, text: 'Vertreten durch: Jonas Brandt' }, { type: hardBreak }, { type: text, text: 'Telefon: +49 40 1234567' }, { type: hardBreak }, { type: text, text: 'E-Mail: hallo@bohnenglueck.example' }] },
+                    { type: paragraph, content: [{ type: text, text: 'Dies ist eine Demo-Website. Die Firma gibt es nicht.', marks: [{ type: italic }] }] } ] }
+  as: imprint
+
+- page.create:
+    layout: frootbox/theme-bohnenglueck/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Datenschutz
+        content:
+          fields:
+            title: Datenschutz
+          areas:
+            main:
+              - block: frootbox/theme-bohnenglueck/Text
+                options: { width: narrow }
+                fields:
+                  body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Diese Demo setzt keine Cookies und bindet keine Inhalte von anderen Servern ein. Der Server speichert Aufrufe nur so lange, wie es für den Betrieb nötig ist.' }] }] }
+      en:
+        title: Privacy
+        content:
+          fields:
+            title: Privacy
+          areas:
+            main:
+              - block: frootbox/theme-bohnenglueck/Text
+                options: { width: narrow }
+                fields:
+                  body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'This demo sets no cookies and embeds no content from other servers. The server keeps requests only as long as running it requires.' }] }] }
+  as: privacy
+
+# Now the start page, linking to the pages above.
+- page.update:
+    id: '${start.id}'
+    translations:
+      de:
+        content:
+          areas:
+            main:
+              - block: frootbox/theme-bohnenglueck/Hero
+                variant: Split
+                options: { anchor: start }
+                fields:
+                  eyebrow: Kleine Rösterei am Hafen
+                  title: Kaffee, der nach Hamburg schmeckt.
+                  text: "Wir rösten jede Woche frisch in kleinen Chargen.\nDirekt gehandelt, fair bezahlt, ehrlich im Geschmack."
+                  button: { target: 'page:${coffees.id}', text: Unsere Sorten }
+                  secondary: { target: 'page:${contact.id}', text: Besuch uns }
+              - block: frootbox/theme-bohnenglueck/Features
+                options: { anchor: angebot, columns: 3 }
+                fields:
+                  title: Was uns ausmacht
+                  intro: Drei Dinge, die Du in jeder Tasse schmeckst.
+                  items:
+                    - { icon: '🌱', title: Direkter Handel, text: 'Wir kennen unsere Farmen persönlich und zahlen deutlich über Fairtrade.' }
+                    - { icon: '🔥', title: Langsam geröstet, text: 'Trommelröstung in kleinen Chargen, bis zu 20 Minuten pro Durchgang.' }
+                    - { icon: '📦', title: Frisch verschickt, text: 'Geröstet am Montag, bei Dir am Mittwoch. Versandkostenfrei ab 30 Euro.' }
+              - block: frootbox/theme-bohnenglueck/Columns
+                options: { anchor: roesterei, ratio: even }
+                areas:
+                  left:
+                    - block: frootbox/theme-bohnenglueck/Text
+                      options: { width: narrow }
+                      fields:
+                        title: Die Rösterei
+                        body: { type: doc, content: [
+                          { type: paragraph, content: [{ type: text, text: 'Seit 2014 rösten wir in einem alten Kontorhaus direkt am Hafen. Was als ' }, { type: text, text: 'Hobby in der Küche', marks: [{ type: bold }] }, { type: text, text: ' begann, ist heute eine kleine Manufaktur mit sechs Leuten.' }] },
+                          { type: bulletList, content: [
+                            { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Espresso, Filter und saisonale Single Origins' }] }] },
+                            { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Röstkurse jeden ersten Samstag im Monat' }] }] },
+                            { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Café mit 20 Plätzen, Mo–Sa ab 8 Uhr' }] }] } ] },
+                          { type: paragraph, content: [{ type: text, text: 'Mehr über uns liest Du auf der Seite ' }, { type: text, text: 'Über uns', marks: [{ type: link, attrs: { href: 'page:${about.id}' } }] }, { type: text, text: '.' }] } ] }
+                  right:
+                    - block: frootbox/theme-bohnenglueck/Quote
+                      fields:
+                        quote: Der beste Espresso, den ich außerhalb von Italien getrunken habe. Und die Leute sind einfach herzlich.
+                        author: Mara Lindqvist
+                        role: Stammgast seit 2016
+              - block: frootbox/theme-bohnenglueck/Faq
+                options: { anchor: faq, open: true }
+                fields:
+                  title: Häufige Fragen
+                  items:
+                    - question: Welche Mahlgrade bietet Ihr an?
+                      answer: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Ganze Bohne, ' }, { type: text, text: Siebträger, marks: [{ type: bold }] }, { type: text, text: ', Filter, French Press und Mokka. Im Zweifel: ganze Bohne und frisch mahlen.' }] }] }
+                    - question: Wie lange ist der Kaffee haltbar?
+                      answer: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Am besten schmeckt er 1 bis 6 Wochen nach der Röstung. Luftdicht, kühl und dunkel lagern, nicht im Kühlschrank.' }] }] }
+                    - question: Kann ich vor Ort probieren?
+                      answer: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Ja! Im Café gibt es jeden Tag zwei Sorten zum Probieren, kostenlos.' }] }] }
+              - block: frootbox/theme-bohnenglueck/Cta
+                options: { anchor: kontakt }
+                fields:
+                  title: Komm auf einen Kaffee vorbei.
+                  text: Hafenstraße 12, Hamburg · Mo–Sa 8–18 Uhr
+                  button: { target: 'page:${contact.id}', text: So findest Du uns }
+      en:
+        content:
+          areas:
+            main:
+              - block: frootbox/theme-bohnenglueck/Hero
+                variant: Split
+                options: { anchor: start }
+                fields:
+                  eyebrow: Small roastery at the port
+                  title: Coffee that tastes of Hamburg.
+                  text: "We roast fresh every week in small batches.\nTraded directly, paid fairly, honest in taste."
+                  button: { target: 'page:${coffees.id}', text: Our coffees }
+                  secondary: { target: 'page:${contact.id}', text: Visit us }
+              - block: frootbox/theme-bohnenglueck/Features
+                options: { anchor: offer, columns: 3 }
+                fields:
+                  title: What makes us
+                  intro: Three things you taste in every cup.
+                  items:
+                    - { icon: '🌱', title: Direct trade, text: 'We know our farms in person and pay well above Fairtrade.' }
+                    - { icon: '🔥', title: Slow roasting, text: 'Drum roasting in small batches, up to 20 minutes each.' }
+                    - { icon: '📦', title: Shipped fresh, text: 'Roasted on Monday, with you on Wednesday. Free shipping from 30 euros.' }
+              - block: frootbox/theme-bohnenglueck/Columns
+                options: { anchor: roastery, ratio: even }
+                areas:
+                  left:
+                    - block: frootbox/theme-bohnenglueck/Text
+                      options: { width: narrow }
+                      fields:
+                        title: The roastery
+                        body: { type: doc, content: [
+                          { type: paragraph, content: [{ type: text, text: 'Since 2014 we have been roasting in an old warehouse right at the port. What began as a ' }, { type: text, text: 'hobby in the kitchen', marks: [{ type: bold }] }, { type: text, text: ' is now a small manufactory of six people.' }] },
+                          { type: bulletList, content: [
+                            { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Espresso, filter and seasonal single origins' }] }] },
+                            { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Roasting classes every first Saturday of the month' }] }] },
+                            { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Café with 20 seats, Mon–Sat from 8 am' }] }] } ] },
+                          { type: paragraph, content: [{ type: text, text: 'Read more on the page ' }, { type: text, text: 'About us', marks: [{ type: link, attrs: { href: 'page:${about.id}' } }] }, { type: text, text: '.' }] } ] }
+                  right:
+                    - block: frootbox/theme-bohnenglueck/Quote
+                      fields:
+                        quote: The best espresso I have had outside of Italy. And the people are simply warm.
+                        author: Mara Lindqvist
+                        role: Regular since 2016
+              - block: frootbox/theme-bohnenglueck/Faq
+                options: { anchor: faq, open: true }
+                fields:
+                  title: Frequent questions
+                  items:
+                    - question: Which grinds do you offer?
+                      answer: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Whole bean, ' }, { type: text, text: espresso, marks: [{ type: bold }] }, { type: text, text: ', filter, French press and moka pot. When in doubt: whole bean, ground fresh.' }] }] }
+                    - question: How long does the coffee keep?
+                      answer: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'It tastes best 1 to 6 weeks after roasting. Keep it airtight, cool and dark, not in the fridge.' }] }] }
+                    - question: Can I try before I buy?
+                      answer: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Yes! The café has two coffees to try every day, free of charge.' }] }] }
+              - block: frootbox/theme-bohnenglueck/Cta
+                options: { anchor: contact }
+                fields:
+                  title: Come by for a coffee.
+                  text: Hafenstraße 12, Hamburg · Mon–Sat 8 am–6 pm
+                  button: { target: 'page:${contact.id}', text: How to find us }
+
+- page.publish:
+    ids: ['${start.id}', '${coffees.id}', '${about.id}', '${contact.id}', '${imprint.id}', '${privacy.id}']
+
+# A new address: the old one now answers with a 301.
+- page.update:
+    id: '${about.id}'
+    translations:
+      de: { slug: ueber-uns }
+      en: { slug: about-us }
+- page.publish: { ids: ['${about.id}'] }
+
+# Items without a label show the title of the page in the language of the
+# visitor, so one list serves both languages.
+- navigation.update:
+    name: main
+    items:
+      de:
+        - { type: target, target: 'page:${coffees.id}' }
+        - { type: target, target: 'page:${about.id}' }
+        - { type: target, target: 'page:${contact.id}', options: { button: true } }
+- navigation.update:
+    name: footer
+    items:
+      de:
+        - { type: target, target: 'page:${imprint.id}' }
+        - { type: target, target: 'page:${privacy.id}' }
+        - { type: phone, phone: '+49 40 1234567' }
+        - { type: email, email: hallo@bohnenglueck.example }
+- navigation.publish: { names: [main, footer] }
+
+# The old shop moved: /shop leads to the coffees.
+- redirect.create: { path: /shop, target: 'page:${coffees.id}' }

@@ -1,0 +1,26 @@
+{% import '@theme/labels.twig' as labels %}
+{% set main = navigation('main') %}
+{% set home = breadcrumb()|first %}
+<a class="skip-link" href="#content">{{ language() == 'en' ? 'Skip to content' : 'Zum Inhalt' }}</a>
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="site-brand" href="{{ home ? home.url : '/' }}">Bohnenglück</a>
+    <div class="site-header__end">
+      {% if main %}
+        <nav aria-label="{{ labels.t('main') }}"><ul>
+          {% for item in main %}
+            <li><a href="{{ item.url }}"{% if item.options.button %} class="button"{% elseif item.active %} class="is-active"{% endif %}{% if item.current %} aria-current="page"{% endif %}{% if item.newWindow %} target="_blank" rel="noopener"{% endif %}>{{ item.label }}</a></li>
+          {% endfor %}
+        </ul></nav>
+      {% endif %}
+      {% set languages = alternates() %}
+      {% if languages|length > 1 %}
+        <ul class="languages" aria-label="{{ labels.t('languages') }}">
+          {% for alternate in languages %}
+            <li>{% if alternate.current %}<span aria-current="true" title="{{ alternate.title }}">{{ alternate.code }}</span>{% else %}<a href="{{ alternate.url }}" hreflang="{{ alternate.code }}" lang="{{ alternate.code }}" title="{{ alternate.title }}">{{ alternate.code }}</a>{% endif %}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </div>
+</header>

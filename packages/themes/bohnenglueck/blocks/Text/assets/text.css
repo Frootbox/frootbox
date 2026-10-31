@@ -6,3 +6,8 @@
 .text__body li::marker { color: var(--color-primary); }
 .text__body blockquote { border-inline-start: 4px solid var(--color-accent); padding-inline-start: 1rem; font-style: italic; }
 @container (min-width: 36rem) { .text__body { font-size: 1.075rem; } }
+
+/* Directly on the page instead of inside Columns */
+main > .text { padding: var(--space) max(1.25rem, (100% - var(--width)) / 2); }
+main > .text--narrow { max-inline-size: none; }
+main > .text--narrow > * { max-inline-size: 40rem; }

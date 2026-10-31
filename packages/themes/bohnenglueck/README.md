@@ -1,10 +1,12 @@
 # Bohnenglück
 
-A demo theme for [Frootbox](https://github.com/Frootbox/frootbox): a one-pager
-for Bohnenglück, a small (made-up) coffee roastery at the harbour of Hamburg.
+A demo theme for [Frootbox](https://github.com/Frootbox/frootbox): the website
+of Bohnenglück, a small (made-up) coffee roastery at the harbour of Hamburg,
+in German and English.
 
-It is the first theme of Frootbox and still a sketch. It shows blocks with
-variants, options, lists, nested areas and rich text, and it will grow into a
+It is the first theme of Frootbox. It shows blocks with variants, options,
+lists, nested areas and rich text, two layouts, partials, navigations, a
+language switcher and a page without translation, and it will grow into a
 complete theme.
 
 ## Contents
@@ -12,7 +14,10 @@ complete theme.
 | Path | What it is |
 |---|---|
 | `frootbox.yaml` | Theme manifest with the navigations `main` (option `button`) and `footer` and the design tokens (colours, fonts, radius, spacing, width) |
-| `layouts/OnePage` | Page layout with header and main navigation, the area `main` and a footer with the footer navigation |
+| `layouts/OnePage` | Start page: header, the area `main` and footer |
+| `layouts/Page` | Subpage: header, breadcrumb, fields `title` and `intro`, the area `main` and footer |
+| `partials/header.twig`, `partials/footer.twig` | Header with main navigation and language switcher, footer with the footer navigation, included as `@theme/header.twig` |
+| `partials/labels.twig` | The texts of the theme in German and English |
 | `blocks/Hero` | Opening section, variants `Default` (option `tone`) and `Split` |
 | `blocks/Features` | Cards with icon, title and text, option `columns` |
 | `blocks/Text` | Rich text, option `width` |
@@ -20,9 +25,8 @@ complete theme.
 | `blocks/Quote` | Testimonial |
 | `blocks/Faq` | Questions with rich text answers, option `open` |
 | `blocks/Cta` | Call to action |
-| `assets/reset.css`, `assets/base.css` | Reset and base styles for every page |
-| `demo/onepager.json` | Demo content in German, as input for `page.create` |
-| `demo/navigation-main.json`, `demo/navigation-footer.json` | Demo navigations, as input for `navigation.update` |
+| `assets/reset.css`, `assets/base.css`, `assets/site.css` | Reset, base styles and header, footer and buttons for every page |
+| `demo/site.yaml` | The demo website for `bin/frootbox seed` |
 
 Every block has an `anchor` option for links within the page.
 
@@ -32,29 +36,26 @@ Every block has an `anchor` option for links within the page.
 composer require frootbox/theme-bohnenglueck
 ```
 
-Make it the active theme in `config/app.yaml`:
+Make it the active theme in `config/app.yaml`, with German and English:
 
 ```yaml
 theme: frootbox/theme-bohnenglueck
+
+languages:
+  de: { title: Deutsch }
+  en: { title: English }
 ```
 
-Create the demo as the start page and publish it, with the id that
-`page.create` prints:
+Create the demo website in an empty installation. It publishes six pages,
+the navigations and a redirect:
 
 ```bash
-php bin/frootbox call page.create "$(cat vendor/frootbox/theme-bohnenglueck/demo/onepager.json)"
-php bin/frootbox call page.publish '{"ids": ["<id>"]}'
+php bin/frootbox seed frootbox/theme-bohnenglueck:demo/site.yaml
 ```
 
-Fill the navigations and publish them:
-
-```bash
-php bin/frootbox call navigation.update "$(cat vendor/frootbox/theme-bohnenglueck/demo/navigation-main.json)"
-php bin/frootbox call navigation.update "$(cat vendor/frootbox/theme-bohnenglueck/demo/navigation-footer.json)"
-php bin/frootbox call navigation.publish '{"names": ["main", "footer"]}'
-```
-
-Then open `/`. In development mode every change to the templates, the CSS
+Then open `/` and `/en`. The Impressum has no English translation, so
+`/en/impressum` shows the German text. `/roesterei` is the former address of
+"Über uns" and `/shop` a redirect, both lead on with a 301. In development mode every change to the templates, the CSS
 or the tokens shows up on the next reload.
 
 ## License

@@ -1,0 +1,8 @@
+{# Texts of the theme in the language of the visitor. #}
+{% macro t(key) %}
+  {%- set texts = {
+    de: { main: 'Hauptnavigation', footer: 'Footer', languages: 'Sprache', breadcrumb: 'Brotkrumen', home: 'Startseite', address: 'Bohnenglück Kaffeerösterei · Hafenstraße 12 · 20457 Hamburg', built: 'Gebaut mit Frootbox 2 – Demo-Theme Bohnenglück.' },
+    en: { main: 'Main navigation', footer: 'Footer', languages: 'Language', breadcrumb: 'Breadcrumb', home: 'Home', address: 'Bohnenglück coffee roastery · Hafenstraße 12 · 20457 Hamburg, Germany', built: 'Built with Frootbox 2 – demo theme Bohnenglück.' },
+  } -%}
+  {{- (texts[language()] ?? texts.de)[key] -}}
+{% endmacro %}

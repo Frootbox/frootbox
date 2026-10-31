@@ -1,0 +1,12 @@
+{% import '@theme/labels.twig' as labels %}
+{% set links = navigation('footer') %}
+<footer class="site-footer">
+  {% if links %}
+    <nav aria-label="{{ labels.t('footer') }}"><ul>
+      {% for item in links %}
+        <li><a href="{{ item.url }}"{% if item.current %} aria-current="page"{% endif %}{% if item.newWindow %} target="_blank" rel="noopener"{% endif %}>{{ item.label }}</a></li>
+      {% endfor %}
+    </ul></nav>
+  {% endif %}
+  <p>{{ labels.t('address') }}<br>{{ labels.t('built') }}</p>
+</footer>
