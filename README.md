@@ -63,7 +63,7 @@ from its types. Repositories read and write the rows of a table as typed
 entities:
 
 ```php
-#[AsAction('news.publish', 'Publishes an article')]
+#[AsAction('acme/news/article.publish', 'Publishes an article')]
 final readonly class PublishArticle implements Action
 {
     public function __construct(public int $id) {}
@@ -77,13 +77,16 @@ final readonly class PublishArticle implements Action
 $articles->fetch(['where' => ['status' => 'published', 'date <=' => $now], 'order' => 'date desc', 'limit' => 10]);
 ```
 
-Register it with `$registry->action(PublishArticle::class)`. Every run is
+Register it with `$registry->action(PublishArticle::class)`. Names of
+extension actions start with the Composer package name, here `acme/news`,
+so two extensions never collide; plain names like `page.create` belong to
+the core. Every run is
 checked, logged and can be undone with `action.undo`, unless the action
 writes past the repositories or is marked `undoable: false`.
 `bin/frootbox actions`, `call` and `actions:log` help along the way.
 
 Users sign in with email and password. Roles bundle permissions with
-rules such as `*`, `page.*` or `-page.delete`, and rank by level:
+rules such as `*`, `page.*`, `-page.delete` or `acme/*`, and rank by level:
 `superuser` (100) manages `admin` (50), who manages `editor` (10). Nobody
 changes, undoes or out-ranks someone above them. Sessions and API tokens
 share one table and are sent as a cookie or as `Authorization: Bearer`:
@@ -91,6 +94,18 @@ share one table and are sent as a cookie or as `Authorization: Bearer`:
 ```bash
 php bin/frootbox user:create jane@example.com --role superuser
 php bin/frootbox user:token jane@example.com --name "Deploy"
+```
+
+Every action and query is also a REST endpoint, with no extra code:
+actions as `POST /api/v1/<name>` with a JSON body, queries as
+`GET /api/v1/<name>?…`, e.g. `POST /api/v1/acme/news/article.publish`. Answers are `{"data": …}`, errors are
+`application/problem+json` (RFC 9457). `GET /api/v1/openapi.json`
+describes everything the caller may run:
+
+```bash
+curl -H "Authorization: Bearer fbx_…" -H "Content-Type: application/json" \
+     -d '{"email": "joe@example.com", "name": "Joe", "roles": ["editor"]}' \
+     https://example.com/api/v1/user.create
 ```
 
 Tests run against in-memory SQLite. Set `DATABASE_URL` to run them against
