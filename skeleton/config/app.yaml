@@ -4,6 +4,9 @@ app:
 database:
   url: '%env(DATABASE_URL)%'
 
+# The active theme: an installed extension with "theme:" in its frootbox.yaml.
+# theme: acme/website
+
 # Logs are written to var/log/. Uncomment to change the level:
 # debug, info, notice, warning, error, critical, alert, emergency.
 # Defaults: debug in dev, warning in prod.

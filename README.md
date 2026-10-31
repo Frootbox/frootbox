@@ -123,6 +123,37 @@ curl -H "Authorization: Bearer fbx_…" -H "Content-Type: application/json" \
      https://example.com/api/v1/user.create
 ```
 
+Blocks and layouts are folders in an extension. A block is one Twig file
+whose header declares its fields; `block.yaml` holds the schema when there
+are several variants:
+
+```twig
+{# frootbox
+title: Teaser
+fields:
+  title: { type: headline }
+  text: { type: richtext, optional: true }
+  button: { type: link, optional: true }
+#}
+<section class="teaser"><h2>{{ field('title') }}</h2>{{ field('text') }}{{ field('button') }}</section>
+```
+
+```
+blocks/Teaser/views/Default.twig        every block has a variant Default
+blocks/Teaser/views/ImageLeft.twig      more variants
+blocks/Teaser/assets/teaser.css
+```
+
+Blocks are named after their package, e.g. `acme/website/Teaser`. A theme
+is an extension with `theme:` in its `frootbox.yaml` (parent and design
+tokens) and is chosen with `theme: acme/website` in `config/app.yaml`. It
+replaces single files of other blocks under
+`overrides/<vendor>/<package>/blocks/<Name>/`. Field types are an
+extension point: `$registry->fieldType()` with `#[AsFieldType]`; the core
+brings `headline`, `text`, `richtext`, `link` and `list`.
+`bin/frootbox blocks` lists what is available, `blocks:check` checks all
+schemas and templates, `cache:clear` empties `var/cache` after a deployment.
+
 Tests run against in-memory SQLite. Set `DATABASE_URL` to run them against
 MySQL or MariaDB, as the CI does.
 
