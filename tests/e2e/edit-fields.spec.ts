@@ -3,7 +3,7 @@
  */
 
 import { expect, test, type Page } from '@playwright/test';
-import { signIn } from './admin';
+import { action, signIn } from './admin';
 
 // Fields edited on the website (decision 0122): headline, rich text and
 // link save themselves into the draft, undo reverts the last change and
@@ -11,20 +11,6 @@ import { signIn } from './admin';
 // retries find no leftovers.
 
 const unique = () => `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-
-/** Runs an action with the session of a backend page. */
-async function action(page: Page, name: string, input: object): Promise<{ status: number; body: any }> {
-    return page.evaluate(async ([name, input]) => {
-        const meta = (key: string) => document.querySelector(`meta[name="${key}"]`)?.getAttribute('content') ?? '';
-        const response = await fetch(meta('fb-actions') + name, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-Token': meta('fb-csrf') },
-            body: JSON.stringify(input),
-        });
-
-        return { status: response.status, body: await response.json() };
-    }, [name, input] as const);
-}
 
 /** Creates and publishes a page with a text and a call to action, and opens it in the mode. */
 async function openPage(page: Page, slug: string, heading: string): Promise<string> {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "feb06920003bc5456558c8ec755786f6",
+    "content-hash": "4b72dce2600a49553e37d995697ee201",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -554,15 +554,47 @@
             }
         },
         {
+            "name": "frootbox/theme-base",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/themes/base",
+                "reference": "d9ea4dcf093c758167796054f49c7f997ca99fe2"
+            },
+            "require": {
+                "frootbox/core": "^0.1",
+                "php": ">=8.5"
+            },
+            "type": "frootbox-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "The base theme of Frootbox: tokens and the blocks every theme can build on",
+            "keywords": [
+                "frootbox",
+                "theme"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "frootbox/theme-bohnenglueck",
             "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "packages/themes/bohnenglueck",
-                "reference": "aaa4b20aa03e70d805df62ba0add927b8415b8b3"
+                "reference": "526203777f0f82e1210cb7664e18ab917e65cfa5"
             },
             "require": {
                 "frootbox/core": "^0.1",
+                "frootbox/theme-base": "^0.1",
                 "php": ">=8.5"
             },
             "type": "frootbox-extension",
@@ -6790,6 +6822,7 @@
         "frootbox/core": 20,
         "frootbox/database": 20,
         "frootbox/rich-text": 20,
+        "frootbox/theme-base": 20,
         "frootbox/theme-bohnenglueck": 20
     },
     "prefer-stable": false,

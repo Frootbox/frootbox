@@ -9,6 +9,7 @@
         "frootbox/core": "^0.1@dev",
         "frootbox/database": "^0.1@dev",
         "frootbox/rich-text": "^0.1@dev",
+        "frootbox/theme-base": "^0.1@dev",
         "frootbox/theme-bohnenglueck": "^0.1@dev"
     },
     "repositories": [
