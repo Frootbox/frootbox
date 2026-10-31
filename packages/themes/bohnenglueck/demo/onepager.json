@@ -6,32 +6,6 @@
       "content": {
         "fields": {
           "brand": "Bohnenglück",
-          "nav": [
-            {
-              "link": {
-                "url": "#angebot",
-                "text": "Angebot"
-              }
-            },
-            {
-              "link": {
-                "url": "#roesterei",
-                "text": "Rösterei"
-              }
-            },
-            {
-              "link": {
-                "url": "#faq",
-                "text": "Fragen"
-              }
-            },
-            {
-              "link": {
-                "url": "#kontakt",
-                "text": "Kontakt"
-              }
-            }
-          ],
           "footer": "Bohnenglück Kaffeerösterei · Hafenstraße 12 · 20457 Hamburg\nGebaut mit Frootbox 2 – Demo-Theme Bohnenglück."
         },
         "areas": {

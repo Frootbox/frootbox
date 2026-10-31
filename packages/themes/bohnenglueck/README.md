@@ -11,8 +11,8 @@ complete theme.
 
 | Path | What it is |
 |---|---|
-| `frootbox.yaml` | Theme manifest with the design tokens (colours, fonts, radius, spacing, width) |
-| `layouts/OnePage` | Page layout with header, navigation, the area `main` and a footer |
+| `frootbox.yaml` | Theme manifest with the navigations `main` (option `button`) and `footer` and the design tokens (colours, fonts, radius, spacing, width) |
+| `layouts/OnePage` | Page layout with header and main navigation, the area `main` and a footer with the footer navigation |
 | `blocks/Hero` | Opening section, variants `Default` (option `tone`) and `Split` |
 | `blocks/Features` | Cards with icon, title and text, option `columns` |
 | `blocks/Text` | Rich text, option `width` |
@@ -22,6 +22,7 @@ complete theme.
 | `blocks/Cta` | Call to action |
 | `assets/reset.css`, `assets/base.css` | Reset and base styles for every page |
 | `demo/onepager.json` | Demo content in German, as input for `page.create` |
+| `demo/navigation-main.json`, `demo/navigation-footer.json` | Demo navigations, as input for `navigation.update` |
 
 Every block has an `anchor` option for links within the page.
 
@@ -43,6 +44,14 @@ Create the demo as the start page and publish it, with the id that
 ```bash
 php bin/frootbox call page.create "$(cat vendor/frootbox/theme-bohnenglueck/demo/onepager.json)"
 php bin/frootbox call page.publish '{"ids": ["<id>"]}'
+```
+
+Fill the navigations and publish them:
+
+```bash
+php bin/frootbox call navigation.update "$(cat vendor/frootbox/theme-bohnenglueck/demo/navigation-main.json)"
+php bin/frootbox call navigation.update "$(cat vendor/frootbox/theme-bohnenglueck/demo/navigation-footer.json)"
+php bin/frootbox call navigation.publish '{"names": ["main", "footer"]}'
 ```
 
 Then open `/`. In development mode every change to the templates, the CSS

@@ -1,6 +1,12 @@
 title: 'Bohnenglück'
 description: 'Demo-Theme: One-Pager für eine kleine Kaffeerösterei'
 theme:
+  navigations:
+    main:
+      title: Hauptnavigation
+      options:
+        button: { type: boolean, label: Als Button }
+    footer: Footer
   tokens:
     color:
       bg: '#fbf7f2'

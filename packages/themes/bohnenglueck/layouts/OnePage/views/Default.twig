@@ -1,27 +1,34 @@
 {# frootbox
 title: One-Pager
-description: Eine Seite mit Kopf, Ankernavigation, Inhaltsbereich und Fuß.
+description: Eine Seite mit Kopf, Hauptnavigation, Inhaltsbereich und Fuß mit Footer-Navigation.
 fields:
   brand: { type: headline, maxLength: 60 }
-  nav:
-    type: list
-    optional: true
-    max: 6
-    fields:
-      link: { type: link }
   footer: { type: text, multiline: true, optional: true }
 areas:
   main: {}
 #}
+{% set main = navigation('main') %}
+{% set links = navigation('footer') %}
 <header class="site-header">
   <div class="site-header__inner">
     <a class="site-brand" href="#top">{{ field('brand') }}</a>
-    {% if field('nav')|length %}
+    {% if main %}
       <nav aria-label="Hauptnavigation"><ul>
-        {% for item in field('nav') %}<li>{{ item.field('link') }}</li>{% endfor %}
+        {% for item in main %}
+          <li><a href="{{ item.url }}"{% if item.options.button %} class="button"{% endif %}{% if item.current %} aria-current="page"{% endif %}{% if item.newWindow %} target="_blank" rel="noopener"{% endif %}>{{ item.label }}</a></li>
+        {% endfor %}
       </ul></nav>
     {% endif %}
   </div>
 </header>
 <main id="top">{{ area('main') }}</main>
-<footer class="site-footer"><p>{{ field('footer') }}</p></footer>
+<footer class="site-footer">
+  {% if links %}
+    <nav aria-label="Footer"><ul>
+      {% for item in links %}
+        <li><a href="{{ item.url }}"{% if item.newWindow %} target="_blank" rel="noopener"{% endif %}>{{ item.label }}</a></li>
+      {% endfor %}
+    </ul></nav>
+  {% endif %}
+  <p>{{ field('footer') }}</p>
+</footer>
