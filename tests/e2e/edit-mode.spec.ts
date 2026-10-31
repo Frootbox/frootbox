@@ -31,7 +31,7 @@ test('leaves guests alone', async ({ request }) => {
     expect(html).not.toContain('data-fb-');
 
     // Other tests may clear the cache meanwhile, so ask until it hits.
-    await expect.poll(async () => (await request.get('/')).headers()['x-frootbox-cache']).toBe('hit');
+    await expect.poll(async () => (await request.get('/')).headers()['x-frootbox-cache'], { timeout: 15000 }).toBe('hit');
 });
 
 test('edits the website from the draft', async ({ page, request }) => {
