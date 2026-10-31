@@ -6,7 +6,8 @@
     "require": {
         "php": ">=8.5",
         "frootbox/core": "^0.1@dev",
-        "frootbox/database": "^0.1@dev"
+        "frootbox/database": "^0.1@dev",
+        "frootbox/rich-text": "^0.1@dev"
     },
     "repositories": [
         { "type": "path", "url": "packages/*", "options": { "symlink": true } }
@@ -15,13 +16,20 @@
         "psr-4": {
             "Frootbox\\Core\\Tests\\": "packages/core/tests/",
             "Frootbox\\Database\\Tests\\": "packages/database/tests/",
+            "Frootbox\\RichText\\Tests\\": "packages/rich-text/tests/",
             "Frootbox\\Tools\\PHPStan\\": "tools/phpstan/src/",
             "Frootbox\\Tools\\PHPStan\\Tests\\": "tools/phpstan/tests/"
         }
     },
     "scripts": {
-        "cs": "@php vendor/bin/php-cs-fixer check --diff",
-        "cs:fix": "@php vendor/bin/php-cs-fixer fix",
+        "cs": [
+            "@php vendor/bin/php-cs-fixer check --diff",
+            "@php vendor/bin/php-cs-fixer check --diff --config=.php-cs-fixer.mit.php"
+        ],
+        "cs:fix": [
+            "@php vendor/bin/php-cs-fixer fix",
+            "@php vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.mit.php"
+        ],
         "stan": "@php vendor/bin/phpstan analyse --memory-limit=1G",
         "test": "@php vendor/bin/phpunit",
         "sandbox": "@php tools/sandbox.php",

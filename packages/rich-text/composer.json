@@ -1,0 +1,32 @@
+{
+    "name": "frootbox/rich-text",
+    "description": "Read, validate and render Tiptap and ProseMirror JSON as safe HTML or plain text, with your own nodes and marks",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "tiptap",
+        "prosemirror",
+        "rich-text",
+        "html",
+        "sanitizer",
+        "frootbox"
+    ],
+    "require": {
+        "php": ">=8.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Frootbox\\RichText\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Frootbox\\RichText\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    }
+}

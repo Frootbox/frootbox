@@ -25,6 +25,9 @@
         <testsuite name="database">
             <directory>packages/database/tests</directory>
         </testsuite>
+        <testsuite name="rich-text">
+            <directory>packages/rich-text/tests</directory>
+        </testsuite>
         <testsuite name="tools">
             <directory>tools/phpstan/tests</directory>
             <exclude>tools/phpstan/tests/data</exclude>
@@ -35,6 +38,7 @@
         <include>
             <directory>packages/core/src</directory>
             <directory>packages/database/src</directory>
+            <directory>packages/rich-text/src</directory>
         </include>
     </source>
 

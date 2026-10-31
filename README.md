@@ -14,6 +14,8 @@ mirrored into a read-only repository.
 | Path | Package |
 |---|---|
 | `packages/core` | `frootbox/core` |
+| `packages/database` | `frootbox/database` |
+| `packages/rich-text` | `frootbox/rich-text` (MIT) |
 
 ## Development
 

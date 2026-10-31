@@ -9,12 +9,12 @@ declare(strict_types=1);
 use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
 
-// Themes, the skeleton and examples are MIT licensed and get their own header later.
+// MIT licensed code has its own configuration: .php-cs-fixer.mit.php
 $finder = Finder::create()
     ->in([__DIR__ . '/packages', __DIR__ . '/tools'])
-    ->exclude('themes')
+    ->exclude(['themes', 'rich-text'])
     ->notPath('phpstan/tests/data')
-    ->append([__FILE__]);
+    ->append([__FILE__, __DIR__ . '/.php-cs-fixer.mit.php']);
 
 return new Config()
     ->setRiskyAllowed(true)
