@@ -1,0 +1,14 @@
+{# frootbox
+title: Button
+description: Ein Link als Button in einer Spalte.
+widget: true
+options:
+  style:
+    type: choice
+    label: Stil
+    choices: { primary: Gefüllt, secondary: Umrandet }
+    default: primary
+fields:
+  link: { type: link, label: Link }
+#}
+<p class="base-button base-button--{{ options.style }}">{{ field('link') }}</p>

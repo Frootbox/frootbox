@@ -1,0 +1,19 @@
+{
+    "name": "frootbox/theme-base",
+    "description": "The base theme of Frootbox: tokens and the blocks every theme can build on",
+    "type": "frootbox-extension",
+    "license": "MIT",
+    "keywords": [
+        "frootbox",
+        "theme"
+    ],
+    "require": {
+        "php": ">=8.5",
+        "frootbox/core": "^0.1"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    }
+}

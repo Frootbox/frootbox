@@ -1,0 +1,21 @@
+{# frootbox
+title: Zwei Spalten
+description: Zwei gleich breite Spalten.
+options:
+  spacing:
+    type: choice
+    label: Abstand
+    choices: { small: Klein, medium: Mittel, large: Groß }
+    default: medium
+  background:
+    type: choice
+    label: Hintergrund
+    choices: { none: Keiner, surface: Fläche, primary: Akzent }
+    default: none
+#}
+<section class="base-section base-section--{{ options.spacing }} base-section--{{ options.background }}">
+  <div class="base-section__grid base-section__grid--two">
+    <div class="base-section__column">{{ area('first') }}</div>
+    <div class="base-section__column">{{ area('second') }}</div>
+  </div>
+</section>

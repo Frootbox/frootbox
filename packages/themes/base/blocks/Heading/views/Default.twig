@@ -1,0 +1,14 @@
+{# frootbox
+title: Überschrift
+description: Eine Überschrift in einer Spalte.
+widget: true
+options:
+  level:
+    type: choice
+    label: Stufe
+    choices: { h2: Überschrift 2, h3: Überschrift 3 }
+    default: h2
+fields:
+  text: { type: headline, label: Überschrift }
+#}
+<{{ options.level }} class="base-heading base-heading--{{ options.level }}">{{ field('text') }}</{{ options.level }}>
