@@ -109,6 +109,23 @@
                         quote: Guter Kaffee braucht Zeit. Wir nehmen sie uns.
                         author: Jonas Brandt
                         role: Röstmeister
+              - block: frootbox/theme-base/Section
+                variant: TwoOne
+                options: { background: surface }
+                areas:
+                  first:
+                    - block: frootbox/theme-base/Heading
+                      fields: { text: So rösten wir }
+                    - block: frootbox/theme-base/Text
+                      fields:
+                        body: { type: doc, content: [
+                          { type: paragraph, content: [{ type: text, text: 'Langsam und in kleinen Mengen: Jede Sorte bekommt ihr eigenes Röstprofil, das wir nach dem Probieren anpassen.' }] } ] }
+                  second:
+                    - block: frootbox/theme-base/Heading
+                      options: { level: h3 }
+                      fields: { text: Selbst probieren }
+                    - block: frootbox/theme-base/Button
+                      fields: { link: { target: 'page:${coffees.id}', text: Zu unseren Sorten } }
       en:
         title: About us
         slug: roastery
@@ -134,6 +151,23 @@
                         quote: Good coffee takes time. We take it.
                         author: Jonas Brandt
                         role: Head roaster
+              - block: frootbox/theme-base/Section
+                variant: TwoOne
+                options: { background: surface }
+                areas:
+                  first:
+                    - block: frootbox/theme-base/Heading
+                      fields: { text: How we roast }
+                    - block: frootbox/theme-base/Text
+                      fields:
+                        body: { type: doc, content: [
+                          { type: paragraph, content: [{ type: text, text: 'Slowly and in small batches: every coffee gets its own roast profile, which we adjust after tasting.' }] } ] }
+                  second:
+                    - block: frootbox/theme-base/Heading
+                      options: { level: h3 }
+                      fields: { text: Taste for yourself }
+                    - block: frootbox/theme-base/Button
+                      fields: { link: { target: 'page:${coffees.id}', text: To our coffees } }
   as: about
 
 - page.create:

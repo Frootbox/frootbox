@@ -1,6 +1,7 @@
 title: 'Bohnenglück'
 description: 'Demo-Theme: Website einer kleinen Kaffeerösterei'
 theme:
+  parent: frootbox/theme-base
   navigations:
     main:
       title: Hauptnavigation
