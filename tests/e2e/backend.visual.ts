@@ -33,3 +33,11 @@ test('design page', async ({ page }) => {
     // Building blocks in both modes side by side, then all tokens.
     await expect(page).toHaveScreenshot('design.png', { fullPage: true });
 });
+
+test('form with errors', async ({ page }) => {
+    await signIn(page, '/cms/users/new');
+    await page.getByRole('button', { name: 'Benutzer anlegen' }).click();
+    await expect(page.locator('.fb-form__summary')).toBeFocused();
+
+    await expect(page).toHaveScreenshot('user-errors.png', { fullPage: true });
+});
