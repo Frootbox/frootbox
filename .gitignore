@@ -11,3 +11,9 @@
 
 # Lokale Testinstallation (Entscheidung 0076)
 /sandbox/
+
+# Browser-Tests
+/node_modules/
+/var/
+/test-results/
+/playwright-report/

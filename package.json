@@ -1,0 +1,12 @@
+{
+  "name": "frootbox-monorepo",
+  "private": true,
+  "description": "Browser tests of Frootbox",
+  "license": "LGPL-3.0-only",
+  "scripts": {
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1"
+  }
+}

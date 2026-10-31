@@ -98,3 +98,30 @@ jobs:
       - run: composer test
         env:
           DATABASE_URL: 'pdo-mysql://root:root@127.0.0.1:3306/frootbox'
+
+  browser-tests:
+    name: Browser tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: pdo_sqlite
+          coverage: none
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      # Builds var/e2e/ with the demo website and serves it (tools/e2e.php).
+      - run: npm run test:e2e
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright
+          path: |
+            test-results/
+            var/e2e/var/log/
+          retention-days: 7

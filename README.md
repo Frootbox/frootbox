@@ -39,8 +39,23 @@ the packages from `packages/`. Point a web server with PHP 8.5 to
 `sandbox/public`, or run `composer serve` and open http://localhost:8000.
 The sandbox uses SQLite in `sandbox/storage/` and is set up with
 `bin/frootbox install`, which creates the superuser `admin@example.test`
-and shows its password once. Its console is `sandbox/bin/frootbox`, for example
+and shows its password once. It runs the demo theme Bohnenglück in German
+and English with its demo website from
+`packages/themes/bohnenglueck/demo/site.yaml`. Its console is `sandbox/bin/frootbox`, for example
 `php sandbox/bin/frootbox about` or `php sandbox/bin/frootbox migrate`.
+
+Browser tests use [Playwright](https://playwright.dev) and need Node.js.
+They build a fresh installation of the demo website in `var/e2e/`, in live
+mode with SQLite, and serve it on http://127.0.0.1:8100:
+
+```bash
+npm install
+npx playwright install chromium
+npm run test:e2e
+```
+
+`PHP` names the PHP 8.5 binary if `php` is another version,
+`COMPOSER_BINARY` names Composer if it is not in the `PATH`.
 
 The database layer is its own package, `frootbox/database`, usable in any
 PHP project (see [its README](packages/database/README.md)).
