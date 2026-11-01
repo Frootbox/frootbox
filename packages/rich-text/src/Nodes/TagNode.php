@@ -8,15 +8,18 @@ declare(strict_types=1);
 
 namespace Frootbox\RichText\Nodes;
 
+use Frootbox\RichText\Attribute;
 use Frootbox\RichText\Content;
 use Frootbox\RichText\Html;
 use Frootbox\RichText\NodeType;
 
 /**
- * A node that becomes one HTML element without attributes, e.g.
+ * A node that becomes one HTML element, e.g.
  * new TagNode('paragraph', 'p', Content::inline()).
  *
- * Without content it is a void element such as <br> or <hr>.
+ * Without content it is a void element such as <br> or <hr>. With
+ * $directional it takes an optional "dir", "ltr" or "rtl", for text that
+ * runs the other way than the text around it.
  */
 final readonly class TagNode implements NodeType
 {
@@ -25,16 +28,17 @@ final readonly class TagNode implements NodeType
         private string $tag,
         private Content $content,
         private bool $inline = false,
+        private bool $directional = false,
     ) {}
 
     public static function paragraph(): self
     {
-        return new self('paragraph', 'p', Content::inline());
+        return new self('paragraph', 'p', Content::inline(), directional: true);
     }
 
     public static function blockquote(): self
     {
-        return new self('blockquote', 'blockquote', Content::blocks());
+        return new self('blockquote', 'blockquote', Content::blocks(), directional: true);
     }
 
     public static function bulletList(): self
@@ -74,7 +78,7 @@ final readonly class TagNode implements NodeType
 
     public function attributes(): array
     {
-        return [];
+        return $this->directional ? ['dir' => Attribute::direction()] : [];
     }
 
     public function toHtml(array $attributes, string $content): string
@@ -83,7 +87,7 @@ final readonly class TagNode implements NodeType
             return Html::open($this->tag);
         }
 
-        return Html::element($this->tag, $content);
+        return Html::element($this->tag, $content, $this->directional ? ['dir' => $attributes['dir'] ?? null] : []);
     }
 
     public function toText(array $attributes, string $content): string

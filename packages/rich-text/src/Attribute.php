@@ -47,6 +47,15 @@ final readonly class Attribute
     }
 
     /**
+     * The direction of a block that runs the other way than the text
+     * around it: "ltr" or "rtl", none by default.
+     */
+    public static function direction(): self
+    {
+        return self::choice(['ltr', 'rtl']);
+    }
+
+    /**
      * Text, at most $maxLength characters, optionally matching a regular
      * expression such as '/^[a-z0-9-]+$/'.
      */

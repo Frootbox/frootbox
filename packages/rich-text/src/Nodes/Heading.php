@@ -54,18 +54,20 @@ final readonly class Heading implements NodeType
 
     public function attributes(): array
     {
-        return ['level' => Attribute::choice($this->levels, $this->levels[0])];
+        return ['level' => Attribute::choice($this->levels, $this->levels[0]), 'dir' => Attribute::direction()];
     }
 
     public function toHtml(array $attributes, string $content): string
     {
         $stored = (int) ($attributes['level'] ?? $this->levels[0]);
 
+        $dir = \is_string($attributes['dir'] ?? null) ? $attributes['dir'] : null;
+
         if (null === $this->level) {
-            return Html::element('h' . $stored, $content);
+            return Html::element('h' . $stored, $content, ['dir' => $dir]);
         }
 
-        return Html::element('h' . max(1, min(6, ($this->level)($stored, $content))), $content, ['data-rank' => $stored]);
+        return Html::element('h' . max(1, min(6, ($this->level)($stored, $content))), $content, ['data-rank' => $stored, 'dir' => $dir]);
     }
 
     public function toText(array $attributes, string $content): string

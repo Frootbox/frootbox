@@ -295,6 +295,22 @@ final class RichTextTest extends TestCase
         self::assertSame(['/content/2/attrs/level: must be one of 1, 2, 3'], array_map(strval(...), $read->violations));
     }
 
+    public function testKeepsTheDirectionOfABlock(): void
+    {
+        $document = self::doc(
+            ['type' => 'paragraph', 'attrs' => ['dir' => 'ltr'], 'content' => [self::text('Espresso')]],
+            ['type' => 'heading', 'attrs' => ['level' => 2, 'dir' => 'rtl'], 'content' => [self::text('قهوة')]],
+            ['type' => 'blockquote', 'attrs' => ['dir' => 'ltr'], 'content' => [self::paragraph(self::text('Quote'))]],
+            ['type' => 'paragraph', 'attrs' => ['dir' => 'auto'], 'content' => [self::text('x')]],
+            self::paragraph(self::text('ohne')),
+        );
+
+        $read = RichText::standard()->read($document);
+
+        self::assertSame('<p dir="ltr">Espresso</p><h2 dir="rtl">قهوة</h2><blockquote dir="ltr"><p>Quote</p></blockquote><p>x</p><p>ohne</p>', $read->toHtml());
+        self::assertSame(['/content/3/attrs/dir: must be one of ltr, rtl'], array_map(strval(...), $read->violations));
+    }
+
     public function testAttributesCheckTheirValues(): void
     {
         self::assertSame([5, null], Attribute::integer(1, min: 0, max: 10)->clean(5));

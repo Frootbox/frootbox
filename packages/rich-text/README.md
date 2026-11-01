@@ -43,6 +43,11 @@ Nodes: `paragraph`, `heading`, `blockquote`, `bulletList`, `orderedList`,
 Marks: `link`, `bold`, `italic`, `underline`, `strike`, `subscript`,
 `superscript`, `code`.
 
+`paragraph`, `heading` and `blockquote` take an optional `dir`, `ltr` or
+`rtl`, for text that runs the other way than the text around it, e.g. an
+English quote in an Arabic text: `{"type": "paragraph", "attrs": {"dir":
+"ltr"}, …}` becomes `<p dir="ltr">…</p>`.
+
 ## Own nodes and marks
 
 ```php
