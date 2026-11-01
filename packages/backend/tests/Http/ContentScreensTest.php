@@ -62,7 +62,7 @@ final class ContentScreensTest extends BackendTestCase
         self::assertStringContainsString('<span class="fb-visually-hidden">, Veröffentlicht</span>', $html);
         self::assertStringContainsString('<fb-tree-filter class="fb-tree-filter" for="page-tree"', $html, 'The sitemap can be searched.');
         self::assertMatchesRegularExpression('~data-id="' . $this->about . '"[^>]* data-terms="Über uns /ueber-uns[^"]*"~', $html, 'By title and address.');
-
+        self::assertMatchesRegularExpression('~ title="Über uns · /ueber-uns · [^"]+ · Veröffentlicht" hx-get="~', $html, 'The tooltip names everything, and the link goes on cleanly.');
     }
 
     public function testShowsTheTreeAndThePage(): void

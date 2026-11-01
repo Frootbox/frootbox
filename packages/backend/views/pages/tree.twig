@@ -21,7 +21,7 @@
             </span>
             {% else %}
             <span class="fb-tree__dot" data-status="{{ row.status }}" aria-hidden="true"></span>
-            <a class="fb-tree__link" href="{{ path('backend.pages.show', {id: row.id}) }}" title="{{ row.title }} · {{ row.path }} · {{ row.languages|join(', ') }} · {{ status }}"|join(', ') }} · {{ status }}" hx-get="{{ path('backend.pages.show', {id: row.id}) }}" hx-target="#page-detail" hx-select="#page-detail" hx-swap="outerHTML" hx-push-url="true"{% if row.id == current %} aria-current="page"{% endif %}{% if movable and not row.fixed %} aria-describedby="page-tree-hint"{% endif %}>
+            <a class="fb-tree__link" href="{{ path('backend.pages.show', {id: row.id}) }}" title="{{ row.title }} · {{ row.path }} · {{ row.languages|join(', ') }} · {{ status }}" hx-get="{{ path('backend.pages.show', {id: row.id}) }}" hx-target="#page-detail" hx-select="#page-detail" hx-swap="outerHTML" hx-push-url="true"{% if row.id == current %} aria-current="page"{% endif %}{% if movable and not row.fixed %} aria-describedby="page-tree-hint"{% endif %}>
                 <span class="fb-tree__title">{{ row.title }}</span>
                 <span class="fb-tree__path">{{ row.path }}</span>
                 <span class="fb-visually-hidden">, {{ status }}{% if row.locked %}, {{ t('Locked') }}{% endif %}</span>
