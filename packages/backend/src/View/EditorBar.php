@@ -96,6 +96,8 @@ final readonly class EditorBar
             'preview' => $this->permissions->can('preview.create') ? ['durations' => $this->durations(), 'manage' => $this->permissions->can('preview.list') ? $this->router->path('backend.access') : null] : null,
             'access' => $this->permissions->can('preview.list') ? $this->router->path('backend.access') : null,
             'protection' => $this->runner->ask(new ShowProtection())->on,
+            // Comments of the page (decision 0156).
+            'comments' => $this->permissions->can('comment.list') ? ['resolve' => $this->permissions->can('comment.resolve'), 'delete' => $this->permissions->can('comment.delete')] : null,
             'page' => $page,
             'media' => null === $id || null === $page ? null : $this->media($id),
             'labels' => $this->labels(),
@@ -392,6 +394,13 @@ final readonly class EditorBar
             'entriesMin' => $t('The list needs at least {count} entries.'),
             'entriesMax' => $t('The list takes at most {count} entries.'),
             'noSettings' => $t('There is nothing to set for this block. Edit its content right on the page.'),
+            ...PreviewNote::commentLabels($this->translator),
+            'resolve' => $t('Mark as done'),
+            'reopen' => $t('Open again'),
+            'deleteThread' => $t('Delete thread'),
+            'deleteThreadConfirm' => $t('Delete the thread with all replies?'),
+            'doneBy' => $t('Marked as done by {name}.'),
+            'guest' => $t('Preview link'),
         ];
     }
 }

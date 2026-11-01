@@ -1,5 +1,6 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { Arranging, arrangingStyles } from './arranging.js';
+import { CommentsPanel, commentStyles } from './comments.js';
 import { DesignPanel, designStyles } from './design.js';
 import { Editing } from './editing.js';
 import { follow, registerFieldTools, toolsOf } from './field-tools.js';
@@ -601,7 +602,7 @@ export class EditorBar extends LitElement {
         @media (prefers-reduced-motion: reduce) {
             * { transition: none !important; animation: none !important; }
         }
-    `, arrangingStyles, mediaStyles, designStyles, shareStyles];
+    `, arrangingStyles, mediaStyles, designStyles, shareStyles, commentStyles];
 
     constructor() {
         super();
@@ -641,9 +642,10 @@ export class EditorBar extends LitElement {
         this.media = new MediaPicker(this);
         this.design = new DesignPanel(this);
         this.share = new SharePreview(this);
+        this.comments = new CommentsPanel(this);
         this.frame = 0;
         this.redraw = () => {
-            if (this.frame === 0 && (this.current || this.showAll || this.toolbar || this.arranging?.block || this.problems.length > 0)) {
+            if (this.frame === 0 && (this.current || this.showAll || this.toolbar || this.arranging?.block || this.problems.length > 0 || this.comments.threads.length > 0)) {
                 this.frame = requestAnimationFrame(() => {
                     this.frame = 0;
                     this.requestUpdate();
@@ -689,6 +691,15 @@ export class EditorBar extends LitElement {
             document.addEventListener('focusin', this.onFocus, true);
             addEventListener('scroll', this.redraw, { passive: true, capture: true });
             addEventListener('resize', this.redraw, { passive: true });
+        } else if (this.config?.editing && this.config?.comments) {
+            // Pins of comments follow their places on pages one may not change as well.
+            addEventListener('scroll', this.redraw, { passive: true, capture: true });
+            addEventListener('resize', this.redraw, { passive: true });
+        }
+
+        // Comments of the page, for the counter and the pins (decision 0156).
+        if (this.config?.editing) {
+            this.comments.load();
         }
 
         // The menu entry "Design" of the backend opens the website with the panel.
@@ -720,6 +731,7 @@ export class EditorBar extends LitElement {
         document.removeEventListener('pointerdown', this.onOutside, true);
         this.editing?.stop();
         this.arranging?.stop();
+        this.comments.stopPicking();
         document.removeEventListener('pointerover', this.onPoint, true);
         document.removeEventListener('pointerout', this.onLeave, true);
         document.removeEventListener('focusin', this.onFocus, true);
@@ -761,7 +773,7 @@ export class EditorBar extends LitElement {
 
         const arranging = this.arranging;
 
-        return html`${this.outlines()}${arranging?.tools() ?? nothing}${arranging?.entryTools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.design.view()}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}${this.media.dialog()}${this.share.dialog()}`;
+        return html`${this.outlines()}${this.config.editing ? this.comments.pins() : nothing}${this.comments.pickHint()}${arranging?.tools() ?? nothing}${arranging?.entryTools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.design.view()}${this.comments.view()}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}${this.media.dialog()}${this.share.dialog()}`;
     }
 
     round() {
@@ -779,6 +791,7 @@ export class EditorBar extends LitElement {
                 <span class="switch-track" aria-hidden="true"></span><span class="button-text">${labels.edit}</span>
             </button>
             ${editing ? this.pageControls(page) : nothing}
+            ${editing ? this.comments.button() : nothing}
             ${this.more()}
             <button type="button" aria-label=${labels.collapse} title=${labels.collapse} aria-expanded="true"
                 @click=${() => this.collapse(true)}>${icon('collapse')}</button>

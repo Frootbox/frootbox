@@ -1,0 +1,92 @@
+{#- The threads of comments of the whole website (decision 0156). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Comments') }}{% endblock %}
+
+{% block content %}
+{% set refresh = 'comments fb-nav' %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Comments') }}</h1>
+            <p class="fb-muted">{{ t('What customers with a preview link and your team wrote about places on the website. Comment on the website itself, in the editing mode or in the preview.') }}</p>
+        </div>
+    </header>
+
+    {{ ui.tabs(t('Show comments'), [
+        {label: t('Open thread'), href: path('backend.comments'), current: status == 'open'},
+        {label: t('Done thread'), href: path('backend.comments') ~ '?status=done', current: status == 'done'},
+        {label: t('All'), href: path('backend.comments') ~ '?status=all', current: status == 'all'},
+    ]) }}
+
+    <section class="fb-stack" id="comments" aria-label="{{ t('Comments') }}">
+        {% if threads is empty %}
+            {{ ui.empty({icon: 'comment', title: status == 'open' ? t('No open comments') : t('No comments'), text: t('Share a preview so customers can comment on places of the website.')}) }}
+        {% endif %}
+        {% for thread in threads %}
+        {% set done = thread.status.value == 'done' %}
+        <article class="fb-card" aria-labelledby="thread-{{ thread.id }}">
+            <div class="fb-card__header">
+                <div class="fb-stack fb-stack--sm">
+                    <h2 class="fb-heading-4" id="thread-{{ thread.id }}">
+                        {%- set href = thread.pageTitle is null ? null : (thread.path ?: path('backend.pages.show', {id: thread.pageId})) -%}
+                        {%- if href %}<a href="{{ href }}">{{ thread.pageTitle }}</a>{% else %}{{ t('Deleted page') }}{% endif -%}
+                    </h2>
+                    {% if thread.excerpt %}<p class="fb-muted">„{{ thread.excerpt|length > 120 ? thread.excerpt|slice(0, 120) ~ ' …' : thread.excerpt }}“</p>{% endif %}
+                </div>
+                {{ done ? ui.badge('published', t('Done thread')) : ui.badge('changed', t('Open thread')) }}
+            </div>
+            <div class="fb-card__body fb-stack">
+                {% for entry in [thread.comment]|merge(thread.replies) %}
+                <div class="fb-comment{% if not loop.first %} fb-comment--reply{% endif %}">
+                    <p class="fb-comment__meta"><strong>{{ entry.authorName }}</strong>{% if entry.guest %} {{ ui.badge('neutral', t('Preview link')) }}{% endif %} <span class="fb-muted">{{ ui.time(entry.createdAt) }}</span></p>
+                    <p class="fb-comment__body">{{ entry.body }}</p>
+                </div>
+                {% endfor %}
+                {% if done and thread.resolvedBy %}<p class="fb-muted">{{ t('Marked as done by {name}.', {name: thread.resolvedBy}) }}</p>{% endif %}
+                {% if can('comment.reply') %}
+                <fb-form action="comment.reply" reset refresh="{{ refresh }}" done="{{ t('The reply is sent.') }}">
+                    <form class="fb-stack" novalidate>
+                        <input type="hidden" name="commentId" value="{{ thread.id }}">
+                        {{ ui.field({label: t('Reply'), name: 'body', id: 'reply-' ~ thread.id, multiline: true, required: true, attrs: {maxlength: 2000}}) }}
+                        <div class="fb-form__actions">
+                            {{ ui.button({label: t('Send reply'), type: 'submit', variant: 'tonal'}) }}
+                        </div>
+                    </form>
+                </fb-form>
+                {% endif %}
+                <div class="fb-form__actions">
+                    {% if done and can('comment.reopen') %}
+                    <fb-form action="comment.reopen" refresh="{{ refresh }}" done="{{ t('The thread is open again.') }}"><form><input type="hidden" name="id" value="{{ thread.id }}">{{ ui.button({label: t('Open again'), type: 'submit', variant: 'outline', small: true}) }}</form></fb-form>
+                    {% elseif not done and can('comment.resolve') %}
+                    <fb-form action="comment.resolve" refresh="{{ refresh }}" done="{{ t('The thread is done.') }}"><form><input type="hidden" name="id" value="{{ thread.id }}">{{ ui.button({label: t('Mark as done'), type: 'submit', variant: 'outline', small: true, icon: 'check'}) }}</form></fb-form>
+                    {% endif %}
+                    {% if can('comment.delete') %}
+                    {{ ui.button({label: t('Delete thread'), variant: 'ghost', small: true, icon: 'trash', attrs: {commandfor: 'comment-delete', command: 'show-modal', 'data-fb-fill': {id: thread.id}|json_encode}}) }}
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+    </section>
+</div>
+
+{% if can('comment.delete') %}
+<dialog class="fb-dialog" id="comment-delete" aria-labelledby="comment-delete-title">
+    <fb-form action="comment.delete" refresh="{{ refresh }}" done="{{ t('The thread is deleted.') }}">
+        <form novalidate>
+            <input type="hidden" name="id">
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="comment-delete-title">{{ t('Delete the thread with all replies?') }}</h2>
+                <p>{{ t('Nobody sees it afterwards, not the customer either.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'comment-delete', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Delete thread'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+{% endblock %}

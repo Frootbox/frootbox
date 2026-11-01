@@ -959,6 +959,7 @@ export class Arranging {
     async openPanel(element) {
         const id = element.dataset.fbBlock;
         this.bar.design?.hide();
+        this.bar.comments?.hide();
         this.panel = { id, title: element.dataset.fbTitle ?? '', loading: true, busy: false };
         this.bar.requestUpdate();
 

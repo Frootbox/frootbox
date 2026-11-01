@@ -14,12 +14,14 @@
             <a class="fb-nav__item fb-nav__item--small fb-nav__item--notice" href="{{ path('backend.access') }}">{{ icon('lock', 'fb-icon fb-icon--small') }}<span>{{ t('Website is password protected') }}</span></a>
             {%- endif %}
         </div>
-        <nav class="fb-nav" aria-label="{{ t('Main menu') }}">
+        <nav class="fb-nav" id="fb-nav" aria-label="{{ t('Main menu') }}">
             {%- for group in fb.menu %}
             <p class="fb-nav__label" id="fb-nav-{{ loop.index }}">{{ group.label }}</p>
             <ul class="fb-nav__list" aria-labelledby="fb-nav-{{ loop.index }}">
                 {%- for entry in group.entries %}
-                <li><a class="fb-nav__item" href="{{ entry.url }}"{% if entry.current %} aria-current="page"{% endif %}>{{ icon(entry.icon) }}<span>{{ entry.label }}</span></a></li>
+                <li><a class="fb-nav__item" href="{{ entry.url }}"{% if entry.current %} aria-current="page"{% endif %}>{{ icon(entry.icon) }}<span>{{ entry.label }}</span>
+                    {%- if entry.count %}<span class="fb-nav__count"><span class="fb-visually-hidden">, </span>{{ entry.count }}<span class="fb-visually-hidden"> {{ t('open') }}</span></span>{% endif -%}
+                </a></li>
                 {%- endfor %}
             </ul>
             {%- endfor %}

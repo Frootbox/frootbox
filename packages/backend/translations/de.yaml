@@ -812,3 +812,49 @@ The fields of the website have no changes to discard.: Die Inhalte der Website h
 'Too many attempts. Wait a moment and try again.': 'Zu viele Versuche. Warte einen Moment und versuch es dann noch einmal.'
 'The password is not right.': 'Das Passwort stimmt nicht.'
 'Revoke link': 'Zurückziehen'
+
+# Comments (decision 0156)
+Comment: Kommentieren
+Comments: Kommentare
+Click the place you want to comment on.: Klicke auf die Stelle, die Du kommentieren willst.
+The whole page: Ganze Seite
+New comment: Neuer Kommentar
+'About: {place}': 'Zu: {place}'
+About the whole page: Zur ganzen Seite
+Your comment: Dein Kommentar
+Your name: Dein Name
+Send: Senden
+Reply: Antworten
+Send reply: Antwort senden
+No comments yet.: Noch keine Kommentare.
+On this page: Auf dieser Seite
+On other pages: Auf anderen Seiten
+Show: Zeigen
+Open thread: Offen
+Done thread: Erledigt
+'{count} open': '{count} offen'
+'Comment {number}: {text}': 'Kommentar {number}: {text}'
+That did not work. Try again.: Das hat nicht geklappt. Versuch es noch einmal.
+Too many comments. Try again in a minute.: Zu viele Kommentare. Versuch es in einer Minute noch einmal.
+Too many comments. Try again in {minutes} minutes.: Zu viele Kommentare. Versuch es in {minutes} Minuten noch einmal.
+Open the preview link again to comment.: Öffne den Vorschaulink noch einmal, um zu kommentieren.
+must not be empty.: darf nicht leer sein.
+is not a page.: ist keine Seite.
+Mark as done: Erledigen
+Open again: Wieder öffnen
+Delete thread: Faden löschen
+Delete the thread with all replies?: Den Faden mit allen Antworten löschen?
+'Marked as done by {name}.': 'Erledigt von {name}.'
+open: offen
+What customers with a preview link and your team wrote about places on the website. Comment on the website itself, in the editing mode or in the preview.: Was Kunden mit Vorschaulink und Dein Team zu Stellen der Website geschrieben haben. Kommentiert wird auf der Website selbst, im Bearbeitungsmodus oder in der Vorschau.
+Show comments: Kommentare zeigen
+All: Alle
+Deleted page: Gelöschte Seite
+No open comments: Keine offenen Kommentare
+No comments: Keine Kommentare
+Share a preview so customers can comment on places of the website.: Teile eine Vorschau, damit Kunden Stellen der Website kommentieren können.
+The reply is sent.: Die Antwort ist gesendet.
+The thread is open again.: Der Faden ist wieder offen.
+The thread is done.: Der Faden ist erledigt.
+The thread is deleted.: Der Faden ist gelöscht.
+Nobody sees it afterwards, not the customer either.: Danach sieht ihn niemand mehr, auch der Kunde nicht.

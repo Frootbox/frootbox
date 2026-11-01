@@ -1,0 +1,24 @@
+/* A comment of a thread with author, time and text; replies indented (decision 0156). */
+
+.fb-comment {
+    display: grid;
+    gap: var(--fb-space-1);
+}
+
+.fb-comment--reply {
+    padding-inline-start: var(--fb-space-4);
+    border-inline-start: var(--fb-size-border) solid var(--fb-border);
+}
+
+.fb-comment__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fb-space-1) var(--fb-space-2);
+    align-items: center;
+    font-size: var(--fb-text-sm);
+}
+
+.fb-comment__body {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}

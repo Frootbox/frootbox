@@ -15,5 +15,7 @@ final readonly class MenuEntry
         public string $url,
         public string $icon,
         public bool $current,
+        /** A number to look at, e.g. open comments; null for none */
+        public ?int $count = null,
     ) {}
 }

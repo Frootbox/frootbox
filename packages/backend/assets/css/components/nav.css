@@ -59,3 +59,17 @@
     background: var(--fb-warning-bg);
     color: var(--fb-warning-text);
 }
+
+/* A number to look at, e.g. open comments (decision 0156). */
+.fb-nav__count {
+    min-inline-size: var(--fb-size-icon);
+    margin-inline-start: auto;
+    padding-inline: var(--fb-space-1);
+    border-radius: var(--fb-radius-full);
+    background: var(--fb-accent);
+    color: var(--fb-on-accent);
+    font-size: var(--fb-text-xs);
+    font-weight: var(--fb-weight-semibold);
+    line-height: var(--fb-size-icon);
+    text-align: center;
+}

@@ -301,11 +301,26 @@
 </div>
 
 <div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Comments') }}</p>
+    <div class="fb-stack">
+        <div class="fb-comment">
+            <p class="fb-comment__meta"><strong>Frau Müller</strong> {{ ui.badge('neutral', t('Preview link')) }} <span class="fb-muted">{{ ui.time(date('2026-11-01 10:15')) }}</span></p>
+            <p class="fb-comment__body">Bitte das Foto vom Laden nehmen.</p>
+        </div>
+        <div class="fb-comment fb-comment--reply">
+            <p class="fb-comment__meta"><strong>Jan Brüning</strong> <span class="fb-muted">{{ ui.time(date('2026-11-01 11:02')) }}</span></p>
+            <p class="fb-comment__body">Ist getauscht.</p>
+        </div>
+    </div>
+</div>
+
+<div class="fb-design-sample">
     <p class="fb-design-sample__title">{{ t('Menu') }}</p>
     <a class="fb-nav__item fb-nav__item--small fb-nav__item--notice" href="#">{{ icon('lock', 'fb-icon fb-icon--small') }}<span>{{ t('Website is password protected') }}</span></a>
     <ul class="fb-nav__list">
         <li><a class="fb-nav__item" href="#" aria-current="page">{{ icon('dashboard') }}<span>{{ t('Dashboard') }}</span></a></li>
         <li><a class="fb-nav__item" href="#">{{ icon('pages') }}<span>{{ t('Pages') }}</span></a></li>
+        <li><a class="fb-nav__item" href="#">{{ icon('comment') }}<span>{{ t('Comments') }}</span><span class="fb-nav__count"><span class="fb-visually-hidden">, </span>3<span class="fb-visually-hidden"> {{ t('open') }}</span></span></a></li>
     </ul>
     <div class="fb-segmented" role="group" aria-label="{{ t('Appearance') }}">
         <button class="fb-segmented__item" type="button" aria-pressed="true">{{ t('Like the system') }}</button>

@@ -8,9 +8,12 @@ declare(strict_types=1);
 
 namespace Frootbox\Backend\View;
 
+use Doctrine\DBAL\Exception as DatabaseException;
 use Frootbox\Backend\I18n\Translator;
 use Frootbox\Backend\Screen;
+use Frootbox\Core\Action\ActionException;
 use Frootbox\Core\Action\Catalog;
+use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Auth\Actor;
 use Frootbox\Core\Auth\Gate;
 use Frootbox\Core\Auth\Permissions;
@@ -32,6 +35,7 @@ final readonly class Menu
         private Environment $environment,
         private Router $router,
         private Translator $translator,
+        private Runner $runner,
     ) {}
 
     /**
@@ -50,6 +54,7 @@ final readonly class Menu
                 $this->router->path($screen->route),
                 $screen->icon,
                 null !== $route && ($route === $screen->route || str_starts_with($route, $screen->route . '.')),
+                $this->count($screen, $actor),
             ), $inGroup);
 
             if ([] !== $entries) {
@@ -58,6 +63,26 @@ final readonly class Menu
         }
 
         return $groups;
+    }
+
+    /**
+     * The number of the query the screen names, if the actor may ask it;
+     * null for none or zero.
+     */
+    private function count(Screen $screen, Actor $actor): ?int
+    {
+        if (null === $screen->count || !$this->catalog->has($screen->count) || !$this->gate->allows($actor, $this->catalog->get($screen->count))) {
+            return null;
+        }
+
+        try {
+            $count = $this->runner->call($screen->count, []);
+        } catch (ActionException|DatabaseException) {
+            // The menu stays usable, e.g. before the migration of a new table.
+            return null;
+        }
+
+        return \is_int($count) && $count > 0 ? $count : null;
     }
 
     private function visible(Screen $screen, Actor $actor): bool

@@ -12,6 +12,7 @@ use Frootbox\Backend\Http\Access\AccessHandler;
 use Frootbox\Backend\Http\AccountHandler;
 use Frootbox\Backend\Http\ActionHandler;
 use Frootbox\Backend\Http\BackendErrorPage;
+use Frootbox\Backend\Http\Comments\CommentsHandler;
 use Frootbox\Backend\Http\DashboardHandler;
 use Frootbox\Backend\Http\DesignHandler;
 use Frootbox\Backend\Http\EditModeHandler;
@@ -22,6 +23,7 @@ use Frootbox\Backend\Http\Media\UploadHandler;
 use Frootbox\Backend\Http\Navigations\NavigationsHandler;
 use Frootbox\Backend\Http\Pages\NewPageHandler;
 use Frootbox\Backend\Http\Pages\PagesHandler;
+use Frootbox\Backend\Http\PreviewActionHandler;
 use Frootbox\Backend\Http\QueryHandler;
 use Frootbox\Backend\Http\Redirects\RedirectsHandler;
 use Frootbox\Backend\Http\Theme\ThemeHandler;
@@ -59,6 +61,9 @@ final class BackendExtension implements Extension
             ->post('/logout', LogoutHandler::class, 'backend.logout')
             ->post('/actions/' . ApiHandler::NAME, ActionHandler::class, 'backend.action')
             ->get('/queries/' . ApiHandler::NAME, QueryHandler::class, 'backend.query')
+            // For the note of a preview, e.g. comments (decision 0156).
+            ->post('/preview/actions/' . ApiHandler::NAME, PreviewActionHandler::class, 'backend.preview.action')
+            ->get('/preview/queries/' . ApiHandler::NAME, PreviewActionHandler::class, 'backend.preview.query')
             ->post('/edit-mode', EditModeHandler::class, 'backend.edit-mode')
             ->get('/design', DesignHandler::class, 'backend.design')
             ->get('/account', AccountHandler::class, 'backend.account')
@@ -72,6 +77,7 @@ final class BackendExtension implements Extension
             ->post('/uploads', UploadHandler::class, 'backend.uploads')
             ->get('/redirects', RedirectsHandler::class, 'backend.redirects')
             ->get('/access', AccessHandler::class, 'backend.access')
+            ->get('/comments', CommentsHandler::class, 'backend.comments')
             ->get('/theme', ThemeHandler::class, 'backend.theme')
             ->get('/users', UsersHandler::class, 'backend.users')
             ->get('/users/new', UserHandler::class, 'backend.users.new')
@@ -90,6 +96,7 @@ final class BackendExtension implements Extension
         $registry->add(Screen::class, new Screen('Dashboard', 'backend.dashboard', Screen::CONTENT, 'dashboard', order: 0));
         $registry->add(Screen::class, new Screen('Pages', 'backend.pages', Screen::CONTENT, 'pages', PagesHandler::PERMISSION, order: 10));
         $registry->add(Screen::class, new Screen('Media', 'backend.media', Screen::CONTENT, 'image', MediaHandler::PERMISSION, order: 20));
+        $registry->add(Screen::class, new Screen('Comments', 'backend.comments', Screen::CONTENT, 'comment', CommentsHandler::PERMISSION, order: 30, count: 'comment.count'));
         $registry->add(Screen::class, new Screen('Design', 'backend.theme', Screen::WEBSITE, 'palette', ThemeHandler::PERMISSION, order: 10));
         $registry->add(Screen::class, new Screen('Navigations', 'backend.navigations', Screen::WEBSITE, 'navigation', NavigationsHandler::PERMISSION, order: 20));
         $registry->add(Screen::class, new Screen('Redirects', 'backend.redirects', Screen::WEBSITE, 'redirect', RedirectsHandler::PERMISSION, order: 30));

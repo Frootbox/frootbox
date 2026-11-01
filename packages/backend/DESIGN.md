@@ -849,6 +849,24 @@ small icon, e.g. "Website is password protected" with a lock, leading to
 the screen "Access" (decision 0155). The container is always there, so a
 screen refreshes it with `refresh="… fb-site-notices"`.
 
+An item may carry a number to look at, from a query its screen names
+(`Screen(count: 'comment.count')`, decision 0156): `.fb-nav__count` at
+the end of the item, `--fb-accent` / `--fb-on-accent`, 12 px semibold,
+fully rounded, at least 20 px wide, with ", 3 open" for screen readers.
+Zero shows nothing. The menu has the id `fb-nav`, so a screen refreshes
+the number with `refresh="… fb-nav"`.
+
+### Comment
+
+`.fb-comment` for one comment of a thread (decision 0156): a meta line
+(`.fb-comment__meta`, 14 px) with the author in semibold, a neutral badge
+"Preview link" for guests and the time muted, then the text
+(`.fb-comment__body`), kept as written with line breaks. Replies get
+`.fb-comment--reply`: indented by 16 px with a border at the start. The
+screen "Comments" shows each thread as a card with the page as title,
+the excerpt muted, a badge Open/Done, the comments, a reply form and
+"Mark as done" / "Open again" and "Delete thread" (with a dialog).
+
 ### Appearance switch
 
 `<fb-theme-switch>` (web component from `@frootbox/ui`) on
@@ -1047,6 +1065,16 @@ Arranging blocks (decision 0123), from `resources/js/edit/arranging.js`:
   `--fb-surface-2` with "Copy link" (primary), "Done" and a link "All
   preview links" to the screen "Access". The details of the status say
   when the website is password protected.
+- **Comments** (decision 0156): an icon button with the number of open
+  threads of the page in an accent pill, between the page controls and
+  "More". It opens a side panel like the settings of a block: "Comment"
+  (primary) starts picking a place as in the preview note (a click on a
+  field then picks instead of editing, Escape cancels), below the
+  threads of the page with badge, excerpt, "Show" (scrolls to the
+  place), comments with a badge "Preview link" for guests, a reply form,
+  "Mark as done" / "Open again" and "Delete thread" with a confirmation
+  in place. Numbered pins mark the places; the one of the chosen thread
+  has a focus ring.
 
 ### Preview note
 
@@ -1059,6 +1087,20 @@ yet" semibold, until when the link works muted, and "End the preview" as
 a small link button on `--fb-surface-2`. It wraps on narrow screens and
 is not printed.
 
+On pages it also has "Comment" and "Comments" (decision 0156). The host
+covers the window without catching the pointer, so pins and panels
+position themselves. "Comment" (pressed while active) shows a hint on
+`--fb-inverse-bg` at the top start with "The whole page" and "Cancel",
+outlines the field or block under the pointer with `--fb-accent` and its
+label, and a click opens the panel: `--fb-size-narrow` wide at the end,
+with "About: <label>", the excerpt as a quote, the text, the name on the
+first comment (kept in `localStorage`) and "Send" (primary). "Comments"
+shows the number of open threads in an accent pill and lists the threads
+of the link, those of this page first, each with a badge Open/Done, the
+excerpt, the comments and a reply form. Numbered pins (`--fb-accent`,
+rounded but for the lower start corner) mark the places of the threads
+on the page; done ones on `--fb-surface-2`.
+
 ### Icons
 
 `{{ icon('pencil') }}` writes an SVG from `assets/icons/` inline, 20 px
@@ -1070,7 +1112,7 @@ one file per icon as needed, drawn by hand only if Lucide has none: 24×24
 viewBox, stroke 1.8, round caps and joins, no fill, `stroke="currentColor"`.
 
 Available: alert, arrow-down, arrow-up, check, chevron-down, clock, close,
-copy, dashboard, external, grip, image, inbox, info, lock, menu,
+comment, copy, dashboard, external, grip, image, inbox, info, lock, menu,
 navigation, pages, palette, parent, pencil, plus, redirect, restore,
 search, settings, shield, sign-out, square, trash, users, warning.
 

@@ -37,6 +37,7 @@ final readonly class Screen
      * @param string      $icon        a file in assets/icons/ of the backend, without .svg
      * @param string|null $permission  shown only if the user has it, e.g. "page.tree"
      * @param bool        $development shown to everyone signed in while developing
+     * @param string|null $count       a query returning a number to show next to the entry, e.g. "comment.count" (decision 0156)
      */
     public function __construct(
         public string $label,
@@ -46,5 +47,6 @@ final readonly class Screen
         public ?string $permission = null,
         public int $order = 100,
         public bool $development = false,
+        public ?string $count = null,
     ) {}
 }
