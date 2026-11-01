@@ -63,6 +63,20 @@ test('adds, moves and sets up blocks on the website', async ({ page, browser }, 
     await bar.getByRole('toolbar', { name: 'Block Text' }).getByRole('button', { name: 'Block darunter einfügen' }).click();
     await expect(picker.getByRole('button', { name: /^Abschnitt/ })).toBeVisible();
     await expect(picker.getByRole('button', { name: /^Überschrift/ })).toHaveCount(0);
+
+    // Each card shows the preview from the block folder in the colours of the theme (decision 0148).
+    const preview = picker.getByRole('button', { name: /^Abschnitt/ }).locator('.preview use');
+    const href = await preview.getAttribute('href');
+    expect(href).toMatch(/^\/previews\/frootbox\/theme-base\/blocks\/Section\/preview\.svg\?v=\d+#preview$/);
+    const file = await page.request.get(href!.replace('#preview', ''));
+    expect(file.status()).toBe(200);
+    expect(file.headers()['content-type']).toBe('image/svg+xml');
+    await expect.poll(() => preview.evaluate((use: SVGUseElement) => use.getBBox().width)).toBeGreaterThan(0);
+    await picker.getByLabel('Suchen').fill('kundenstimme');
+    await expect(picker.getByRole('button', { name: /^Zitat/ })).toBeVisible();
+    await expect(picker.getByRole('button', { name: /^Abschnitt/ })).toHaveCount(0);
+    await picker.getByLabel('Suchen').fill('');
+
     await picker.getByRole('button', { name: /^Abschnitt/ }).click();
     await expect(section).toBeFocused();
     await expect(bar.locator('.state .visually-hidden')).toHaveText('Status: Änderungen offen');

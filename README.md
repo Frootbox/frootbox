@@ -196,8 +196,25 @@ fields. Use `value()` for attributes and conditions. Entries of a list
 that nobody filled are left out for visitors and are not checked on
 publishing, unless the list needs them to reach its `min`.
 
+In the block picker blocks stand in groups by use. A block names one
+with `group:` (`header`, `heading`, `text`, `media`, `teaser`, `callout`,
+`list`, `form`, `structure`, or one an extension registers with
+`$registry->blockGroup('acme/shop/products', 'Products')`) and may add
+`keywords` for the search. Its preview lies in its folder, next to
+`views/`: `preview.svg` or `preview.webp` in 16:10, one per variant as
+`preview.Split.webp`. The core delivers previews under `/previews/…` to
+editors only; they are never published. Neutral SVGs take the colours
+of the theme; see [the kit](tools/previews/README.md).
+
+```yaml
+title: Hero
+group: header
+keywords: [Stage, Intro]
+```
+
 `bin/frootbox blocks` lists what is available, `blocks:check` checks all
-schemas and templates, `cache:clear` empties `var/cache` after a deployment.
+schemas and templates and hints at missing groups and previews,
+`cache:clear` empties `var/cache` after a deployment.
 
 Tests run against in-memory SQLite. Set `DATABASE_URL` to run them against
 MySQL or MariaDB, as the CI does.
