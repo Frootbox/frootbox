@@ -16,6 +16,11 @@
     background: var(--fb-surface);
 }
 
+/* Notes on the state of the website, e.g. the password protection; they take part in the gap of the sidebar. */
+.fb-sidebar__notices {
+    display: contents;
+}
+
 .fb-sidebar__footer {
     display: flex;
     flex-direction: column;

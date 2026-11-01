@@ -1,11 +1,12 @@
 // The entry of every backend page: the building blocks and htmx, which
 // sends the CSRF token of the session with every request (decision 0112).
-import { bindFills, bindSlugs, generatePasswords, guardUnsaved, localTimes, showPendingToast } from '@frootbox/ui';
+import { bindCopies, bindFills, bindSlugs, generatePasswords, guardUnsaved, localTimes, showPendingToast } from '@frootbox/ui';
 import htmx from 'htmx.org';
 
 generatePasswords();
 bindSlugs();
 bindFills();
+bindCopies();
 localTimes();
 showPendingToast();
 guardUnsaved();

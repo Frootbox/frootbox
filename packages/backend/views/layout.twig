@@ -8,6 +8,12 @@
     <aside class="fb-sidebar">
         {{ ui.brand(fb, path('backend.dashboard')) }}
         <a class="fb-nav__item fb-nav__item--small" href="/">{{ icon('external', 'fb-icon fb-icon--small') }}<span>{{ fb.site ? t('View {site}', {site: fb.site}) : t('View the website') }}</span></a>
+        {#- Always there, so screens can refresh it, e.g. after switching the protection (decision 0153). -#}
+        <div class="fb-sidebar__notices" id="fb-site-notices">
+            {%- if fb.protection and fb.protection.on %}
+            <a class="fb-nav__item fb-nav__item--small fb-nav__item--notice" href="{{ path('backend.access') }}">{{ icon('lock', 'fb-icon fb-icon--small') }}<span>{{ t('Website is password protected') }}</span></a>
+            {%- endif %}
+        </div>
         <nav class="fb-nav" aria-label="{{ t('Main menu') }}">
             {%- for group in fb.menu %}
             <p class="fb-nav__label" id="fb-nav-{{ loop.index }}">{{ group.label }}</p>

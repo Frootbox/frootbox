@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace Frootbox\Backend\View;
 
+use Frootbox\Core\Site\ProtectionStatus;
+
 /**
  * What every backend view gets as "fb": language, brand, website, user,
  * menu, CSRF token and the tags of the head.
@@ -27,5 +29,7 @@ final readonly class Frame
         public array $menu,
         public ?string $csrf,
         public string $head,
+        /** Null for guests */
+        public ?ProtectionStatus $protection = null,
     ) {}
 }

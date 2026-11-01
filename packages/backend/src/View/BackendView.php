@@ -11,13 +11,17 @@ namespace Frootbox\Backend\View;
 use Frootbox\Backend\Design\Design;
 use Frootbox\Backend\I18n\Translator;
 use Frootbox\Backend\Security\Csrf;
+use Frootbox\Core\Action\AccessDeniedException;
 use Frootbox\Core\Action\CurrentContext;
+use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Auth\Actor;
 use Frootbox\Core\Auth\ActorType;
 use Frootbox\Core\Config\Config;
 use Frootbox\Core\ProjectPaths;
 use Frootbox\Core\Routing\Route;
 use Frootbox\Core\Routing\Router;
+use Frootbox\Core\Site\ProtectionStatus;
+use Frootbox\Core\Site\ShowProtection;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -47,6 +51,7 @@ final class BackendView
         private readonly Menu $menu,
         private readonly Head $head,
         private readonly Translator $translator,
+        private readonly Runner $runner,
     ) {}
 
     /**
@@ -140,7 +145,21 @@ final class BackendView
             null === $user ? [] : $this->menu->groups($user, $route instanceof Route ? $route->name : null),
             $csrf,
             $this->head->html($csrf, null === $user ? null : substr($this->router->path('backend.action', ['name' => 'x']), 0, -1)),
+            null === $user ? null : $this->protection(),
         );
+    }
+
+    /**
+     * Whether the website is protected, so the frame says so and nobody
+     * forgets it at the launch (decision 0153).
+     */
+    private function protection(): ?ProtectionStatus
+    {
+        try {
+            return $this->runner->ask(new ShowProtection());
+        } catch (AccessDeniedException) {
+            return null;
+        }
     }
 
     /**

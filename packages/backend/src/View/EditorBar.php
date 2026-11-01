@@ -10,6 +10,7 @@ namespace Frootbox\Backend\View;
 
 use Frootbox\Backend\BackendExtension;
 use Frootbox\Backend\Design\Design;
+use Frootbox\Backend\Http\Access\AccessHandler;
 use Frootbox\Backend\Http\Pages\PageTree;
 use Frootbox\Backend\I18n\Translator;
 use Frootbox\Backend\Security\Csrf;
@@ -24,6 +25,7 @@ use Frootbox\Core\Page\PageStatus;
 use Frootbox\Core\Page\ShowPage;
 use Frootbox\Core\Page\ShowPageTree;
 use Frootbox\Core\Routing\Router;
+use Frootbox\Core\Site\ShowProtection;
 use Frootbox\Core\Site\ShowSite;
 use Frootbox\Core\View\BuildingHead;
 use Frootbox\RichText\Html;
@@ -90,6 +92,10 @@ final readonly class EditorBar
             'site' => $this->site(),
             'design' => $this->permissions->can('design.update') ? ['publish' => $this->permissions->can('design.publish'), 'discard' => $this->permissions->can('design.discard')] : null,
             'tokens' => $this->design->hostCss(),
+            // Preview links and password protection (decisions 0152 and 0153).
+            'preview' => $this->permissions->can('preview.create') ? ['durations' => $this->durations(), 'manage' => $this->permissions->can('preview.list') ? $this->router->path('backend.access') : null] : null,
+            'access' => $this->permissions->can('preview.list') ? $this->router->path('backend.access') : null,
+            'protection' => $this->runner->ask(new ShowProtection())->on,
             'page' => $page,
             'media' => null === $id || null === $page ? null : $this->media($id),
             'labels' => $this->labels(),
@@ -203,6 +209,20 @@ final readonly class EditorBar
     }
 
     /**
+     * How long a new preview link works, 14 days chosen.
+     *
+     * @return list<array{value: string, label: string, selected: bool}>
+     */
+    private function durations(): array
+    {
+        return array_map(fn(array $duration): array => [
+            'value' => $duration['value'],
+            'label' => $this->translator->get(['{count} day', '{count} days'], ['count' => $duration['days']]),
+            'selected' => $duration['selected'],
+        ], AccessHandler::durations());
+    }
+
+    /**
      * @return array<string, string|array<string, string>> Texts by key, the names of the system fonts by font
      */
     private function labels(): array
@@ -233,6 +253,22 @@ final readonly class EditorBar
             'more' => $t('More options'),
             'thisPage' => $t('This page'),
             'website' => $t('Website'),
+            'share' => $t('Share a preview …'),
+            'shareTitle' => $t('Share a preview'),
+            'shareNote' => $t('Note (optional)'),
+            'shareNotePlaceholder' => $t('for Ms Miller'),
+            'shareNoteHint' => $t('Who the link is for, so you know it again in the list.'),
+            'shareDays' => $t('Works for'),
+            'shareHint' => $t('The link shows the whole website with all drafts, without the editor bar. Whoever has it can pass it on. Revoke it when it is no longer needed.'),
+            'shareCreate' => $t('Create the link'),
+            'shareReady' => $t('The preview link is ready'),
+            'shareLink' => $t('Preview link'),
+            'shareCopy' => $t('Copy link'),
+            'shareCopied' => $t('The link is copied.'),
+            'shareDone' => $t('Done'),
+            'shareManage' => $t('All preview links'),
+            'access' => $t('Access and preview links'),
+            'protectedSite' => $t('The website is password protected. Visitors need the password, search engines stay out.'),
             'collapse' => $t('Collapse the editor bar'),
             'expand' => $t('Show the editor bar'),
             'failed' => $t('The server cannot be reached. Check the connection and try again.'),

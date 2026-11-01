@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Frootbox\Backend;
 
+use Frootbox\Backend\Http\Access\AccessHandler;
 use Frootbox\Backend\Http\AccountHandler;
 use Frootbox\Backend\Http\ActionHandler;
 use Frootbox\Backend\Http\BackendErrorPage;
@@ -29,6 +30,7 @@ use Frootbox\Backend\Http\Users\RolesHandler;
 use Frootbox\Backend\Http\Users\UserHandler;
 use Frootbox\Backend\Http\Users\UsersHandler;
 use Frootbox\Backend\View\EditorBar;
+use Frootbox\Backend\View\PreviewNote;
 use Frootbox\Core\Api\ApiHandler;
 use Frootbox\Core\Extension\Extension;
 use Frootbox\Core\Extension\Registry;
@@ -69,6 +71,7 @@ final class BackendExtension implements Extension
             ->get('/media/{id:' . self::ULID . '}', MediaHandler::class, 'backend.media.show')
             ->post('/uploads', UploadHandler::class, 'backend.uploads')
             ->get('/redirects', RedirectsHandler::class, 'backend.redirects')
+            ->get('/access', AccessHandler::class, 'backend.access')
             ->get('/theme', ThemeHandler::class, 'backend.theme')
             ->get('/users', UsersHandler::class, 'backend.users')
             ->get('/users/new', UserHandler::class, 'backend.users.new')
@@ -78,6 +81,7 @@ final class BackendExtension implements Extension
             ->get('/roles/{name:[a-z][a-z0-9-]*}', RoleHandler::class, 'backend.roles.show');
 
         $registry->listen(BuildingHead::class, EditorBar::class);
+        $registry->listen(BuildingHead::class, PreviewNote::class);
 
         $registry->import('lit', 'assets/build/lit.js');
         $registry->import('htmx.org', 'assets/build/htmx.js');
@@ -89,6 +93,7 @@ final class BackendExtension implements Extension
         $registry->add(Screen::class, new Screen('Design', 'backend.theme', Screen::WEBSITE, 'palette', ThemeHandler::PERMISSION, order: 10));
         $registry->add(Screen::class, new Screen('Navigations', 'backend.navigations', Screen::WEBSITE, 'navigation', NavigationsHandler::PERMISSION, order: 20));
         $registry->add(Screen::class, new Screen('Redirects', 'backend.redirects', Screen::WEBSITE, 'redirect', RedirectsHandler::PERMISSION, order: 30));
+        $registry->add(Screen::class, new Screen('Access', 'backend.access', Screen::WEBSITE, 'lock', AccessHandler::PERMISSION, order: 40));
         $registry->add(Screen::class, new Screen('Users', 'backend.users', Screen::ADMINISTRATION, 'users', UsersHandler::PERMISSION, order: 100));
         $registry->add(Screen::class, new Screen('Roles', 'backend.roles', Screen::ADMINISTRATION, 'shield', RolesHandler::PERMISSION, order: 110));
         $registry->add(Screen::class, new Screen('Design system', 'backend.design', Screen::ADMINISTRATION, 'palette', DesignHandler::PERMISSION, order: 900, development: true));

@@ -52,3 +52,10 @@
 .fb-nav__item--small {
     font-size: var(--fb-text-sm);
 }
+
+/* A state of the website that nobody should forget, e.g. the password protection (decision 0153). */
+.fb-nav__item--notice,
+.fb-nav__item--notice:hover {
+    background: var(--fb-warning-bg);
+    color: var(--fb-warning-text);
+}

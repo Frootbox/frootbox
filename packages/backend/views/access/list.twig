@@ -1,0 +1,172 @@
+{#- Who sees the website before it is public: password protection and preview links (decisions 0152 to 0154). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Access') }}{% endblock %}
+
+{% block content %}
+{% set refresh = 'protection previews fb-site-notices' %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Access') }}</h1>
+            <p class="fb-muted">{{ t('Who sees the website before it is public: with a password or with a preview link.') }}</p>
+        </div>
+        {% if previews is not null and can('preview.create') %}{{ ui.button({label: t('Share a preview'), icon: 'plus', attrs: {commandfor: 'preview-new', command: 'show-modal', 'data-fb-fill': '{}'}}) }}{% endif %}
+    </header>
+
+    {% if protection is not null %}
+    <section class="fb-card" id="protection" aria-labelledby="protection-title">
+        <div class="fb-card__header">
+            <div class="fb-stack fb-stack--sm">
+                <h2 class="fb-heading-4" id="protection-title" tabindex="-1" data-fb-focus>{{ t('Password protection') }}</h2>
+                <p class="fb-muted">{{ t('Visitors need the password, signed-in users and preview links do not. Search engines stay out.') }}</p>
+            </div>
+            {{ protection.on ? ui.badge('changed', t('On')) : ui.badge('neutral', t('Off')) }}
+        </div>
+        <div class="fb-card__body fb-stack">
+            {% if protection.forced %}
+                {{ ui.alert({tone: 'info', title: t('Protected by this installation'), text: protection.password ? t('SITE_PROTECT in .env keeps the protection on, e.g. on a staging copy. It cannot be switched off here.') : t('SITE_PROTECT in .env keeps the protection on, e.g. on a staging copy. Without a password only signed-in users and preview links get in.')}) }}
+            {% elseif protection.on and protection.since %}
+                <p>{% set since = t('Protected since {time}.')|split('{time}') %}{{ since[0] }}{{ ui.time(protection.since) }}{{ since[1] ?? '' }}</p>
+            {% elseif not protection.on %}
+                <p>{{ t('Everyone can see the published pages.') }}</p>
+            {% endif %}
+            {% if can('site.protect') %}
+            <fb-form action="site.protect" reset refresh="{{ refresh }}" done="{{ protection.on ? t('The new password is set. Visitors let in before need it again.') : t('The website is protected now.') }}">
+                <form class="fb-stack" novalidate>
+                    {{ ui.field({label: protection.password ? t('New password') : t('Password'), name: 'password', id: 'protection-password', type: 'password', autocomplete: 'new-password', required: true, hint: protection.password ? t('Everyone you gave the old password to needs the new one.') : t('At least 8 characters. Give it to whoever should see the website.')}) }}
+                    <div class="fb-form__actions">
+                        {{ ui.button({label: protection.password ? t('Set the new password') : t('Protect the website'), type: 'submit', variant: protection.on ? 'outline' : 'tonal'}) }}
+                        {% if protection.on and not protection.forced and can('site.unprotect') %}
+                        {{ ui.button({label: t('Switch off'), variant: 'danger', attrs: {commandfor: 'protection-off', command: 'show-modal'}}) }}
+                        {% endif %}
+                    </div>
+                </form>
+            </fb-form>
+            {% endif %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if previews is not null %}
+    <section class="fb-card" id="previews" aria-labelledby="previews-title">
+        <div class="fb-card__header">
+            <div class="fb-stack fb-stack--sm">
+                <h2 class="fb-heading-4" id="previews-title" tabindex="-1" data-fb-focus>{{ t('Preview links') }}</h2>
+                <p class="fb-muted">{{ t('A link shows the whole website with all drafts, read only and without an account.') }}</p>
+            </div>
+            {{ ui.badge('neutral', previews|length) }}
+        </div>
+        {% if previews is empty %}
+            {{ ui.empty({icon: 'external', title: t('No preview links yet'), text: t('Share one so someone without an account can look at the changes before they go online.')}) }}
+        {% else %}
+        <ul>
+            {%- for entry in previews %}
+            {% set preview = entry.preview %}
+            {% set status = preview.status.value %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title">{{ preview.note ?: t('Preview link') }}</span>
+                    <span class="fb-list__meta">
+                        {%- if status == 'revoked' -%}
+                            {% set at = t('revoked on {time}')|split('{time}') %}{{ at[0] }}{{ ui.time(preview.revokedAt) }}{{ at[1] ?? '' }}
+                        {%- elseif status == 'expired' -%}
+                            {% set at = t('expired on {time}')|split('{time}') %}{{ at[0] }}{{ ui.time(preview.expiresAt) }}{{ at[1] ?? '' }}
+                        {%- else -%}
+                            {% set at = t('works until {time}')|split('{time}') %}{{ at[0] }}{{ ui.time(preview.expiresAt) }}{{ at[1] ?? '' }}
+                        {%- endif -%}
+                        {%- if preview.lastOpenedAt %} · {% set at = t(['opened once, last on {time}', 'opened {count} times, last on {time}'], {count: preview.opens})|split('{time}') %}{{ at[0] }}{{ ui.time(preview.lastOpenedAt) }}{{ at[1] ?? '' }}{% else %} · {{ t('not opened yet') }}{% endif -%}
+                        {%- if entry.page and entry.page != '/' %} · {{ entry.page }}{% endif -%}
+                        {%- if preview.createdBy %} · {{ t('by {name}', {name: preview.createdBy}) }}{% endif -%}
+                    </span>
+                </span>
+                {% if status == 'valid' %}{{ ui.badge('published', t('Works')) }}{% elseif status == 'expired' %}{{ ui.badge('neutral', t('Expired')) }}{% else %}{{ ui.badge('danger', t('Revoked')) }}{% endif %}
+                {% if status == 'valid' and entry.link %}
+                {{ ui.button({label: t('Copy link'), variant: 'outline', small: true, icon: 'copy', attrs: {'data-fb-copy': entry.link, 'data-fb-copied': t('The link is copied.'), 'aria-label': t('Copy the link {note}', {note: preview.note ?: t('Preview link')})}}) }}
+                {% endif %}
+                {% if status != 'revoked' and can('preview.update') %}
+                {{ ui.button({label: status == 'expired' ? t('Extend') : t('Edit'), variant: 'outline', small: true, attrs: {commandfor: 'preview-edit', command: 'show-modal', 'aria-label': t('Edit {note}', {note: preview.note ?: t('Preview link')}), 'data-fb-fill': {id: preview.id, note: preview.note ?? ''}|json_encode}}) }}
+                {% endif %}
+                {% if status == 'valid' and can('preview.revoke') %}
+                {{ ui.button({label: t('Revoke link'), variant: 'ghost', small: true, icon: 'close', icon_only: true, attrs: {commandfor: 'preview-revoke', command: 'show-modal', 'aria-label': t('Revoke {note}', {note: preview.note ?: t('Preview link')}), 'data-fb-fill': {id: preview.id}|json_encode}}) }}
+                {% endif %}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+    </section>
+    {% endif %}
+</div>
+
+{% if protection is not null and protection.on and not protection.forced and can('site.unprotect') %}
+<dialog class="fb-dialog" id="protection-off" aria-labelledby="protection-off-title">
+    <fb-form action="site.unprotect" refresh="{{ refresh }}" done="{{ t('The website is public now.') }}">
+        <form novalidate>
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="protection-off-title">{{ t('Switch off the password protection?') }}</h2>
+                <p>{{ t('Everyone can see the published pages afterwards, and search engines may take them in. Drafts stay hidden.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'protection-off', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Switch off'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if previews is not null and can('preview.create') %}
+<dialog class="fb-dialog" id="preview-new" aria-labelledby="preview-new-title">
+    <fb-form action="preview.create" refresh="{{ refresh }}" done="{{ t('The link is created. Copy it in the list.') }}">
+        <form novalidate>
+            <div class="fb-dialog__body fb-stack">
+                <h2 class="fb-dialog__title" id="preview-new-title">{{ t('Share a preview') }}</h2>
+                {% include '@backend/access/form.twig' with {prefix: 'preview-new'} %}
+                <p class="fb-hint">{{ t('Whoever has the link sees all drafts of the website and can pass it on. Revoke it when it is no longer needed.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'preview-new', command: 'close'}}) }}
+                {{ ui.button({label: t('Create the link'), type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if previews is not null and can('preview.update') %}
+<dialog class="fb-dialog" id="preview-edit" aria-labelledby="preview-edit-title">
+    <fb-form action="preview.update" refresh="{{ refresh }}" done="{{ t('The link is saved.') }}">
+        <form novalidate>
+            <input type="hidden" name="id">
+            <div class="fb-dialog__body fb-stack">
+                <h2 class="fb-dialog__title" id="preview-edit-title">{{ t('Edit the preview link') }}</h2>
+                {% include '@backend/access/form.twig' with {prefix: 'preview-edit', from_now: true} %}
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'preview-edit', command: 'close'}}) }}
+                {{ ui.button({label: t('Save'), type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if previews is not null and can('preview.revoke') %}
+<dialog class="fb-dialog" id="preview-revoke" aria-labelledby="preview-revoke-title">
+    <fb-form action="preview.revoke" refresh="{{ refresh }}" done="{{ t('The link is revoked.') }}">
+        <form novalidate>
+            <input type="hidden" name="id">
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="preview-revoke-title">{{ t('Revoke the link?') }}</h2>
+                <p>{{ t('It stops working at once. Whoever opens it sees that it has ended.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'preview-revoke', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Revoke link'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,8 @@
+{#- Note and end of a preview link. prefix: ids of the fields; from_now: the end may stay as it is. -#}
+{% import '@backend/ui.twig' as ui %}
+{{ ui.field({label: t('Note'), name: 'note', id: prefix ~ '-note', optional: true, placeholder: t('for Ms Miller'), hint: t('Who the link is for, so you know it again in the list.'), attrs: {maxlength: 200}}) }}
+{% set options = (from_now ?? false) ? [{value: '', label: t('Keep as it is')}] : [] %}
+{% for duration in durations %}
+    {% set options = options|merge([{value: duration.value, label: t(['{count} day', '{count} days'], {count: duration.days}), attrs: {selected: not (from_now ?? false) and duration.selected}}]) %}
+{% endfor %}
+{{ ui.select({label: (from_now ?? false) ? t('Works for another') : t('Works for'), name: 'expiresAt', id: prefix ~ '-expires', options: options, hint: t('At most 90 days. You can extend it later.'), attrs: {'data-empty': 'null'}}) }}

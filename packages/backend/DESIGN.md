@@ -552,6 +552,10 @@ Helpers for forms, started by `backend.js`:
   the title until the user changes it; `data-fb-prefix="<field id>"` on
   a select with `data-prefix` per option changes the prefix of that
   address field.
+- `data-fb-copy="<text>"` on a button copies the text (a path starting
+  with `/` as a full address of this host) and shows the toast from
+  `data-fb-copied`, e.g. "Copy link" of a preview link. Without the
+  clipboard (plain http) the browser asks to copy it by hand.
 
 ### Secret
 
@@ -594,6 +598,12 @@ sign-in. From top to bottom: the icon in a 56 px circle (`--fb-size-row`) in
 or "Try again", outline: the dashboard). In development the technical
 details follow in a closed disclosure (open for 5xx), never live. Texts
 by status: missing (404, 410), forbidden (403), failed (5xx), other.
+
+On pages of the website, `site-access.twig` answers the password of a
+protected website (401) and an ended preview link (410) as a card like
+the sign-in: title, name of the website, one sentence, the password
+field with "Continue" and below the card "Sign in to edit" (decisions
+0152 to 0155).
 
 ### Split
 
@@ -832,6 +842,13 @@ register. Group labels 12 px capitals, 0.06 em tracking, muted. Items
 (`aria-current="page"`) `--fb-accent-soft` / `--fb-accent-text`
 semibold.
 
+Below "View the website", `#fb-site-notices` holds notes on the state of
+the website that nobody should forget, as `.fb-nav__item--small
+.fb-nav__item--notice` on `--fb-warning-bg` / `--fb-warning-text` with a
+small icon, e.g. "Website is password protected" with a lock, leading to
+the screen "Access" (decision 0155). The container is always there, so a
+screen refreshes it with `refresh="… fb-site-notices"`.
+
 ### Appearance switch
 
 `<fb-theme-switch>` (web component from `@frootbox/ui`) on
@@ -1023,6 +1040,24 @@ Arranging blocks (decision 0123), from `resources/js/edit/arranging.js`:
   remove) and "Add an entry". A change saves when the field is left.
 - Every structural change loads the page again; the focus returns to the
   block and an open panel opens again.
+- **Share a preview** (menu "More", section Website, decision 0152): a
+  dialog with note, "Works for" as a select (1 to 90 days, 14 chosen) and
+  a hint that the link shows all drafts. After "Create the link" the
+  same dialog shows the address in a read-only monospace field on
+  `--fb-surface-2` with "Copy link" (primary), "Done" and a link "All
+  preview links" to the screen "Access". The details of the status say
+  when the website is password protected.
+
+### Preview note
+
+`<fb-preview-note>` from `assets/build/preview.js` (no Lit) for guests
+with a preview link instead of the bar (decision 0152): shielded like the
+bar (`all: initial` on `:host`, tokens from the brand), fixed at the
+bottom centre on `--fb-layer-edit`, `--fb-surface` with `--fb-border`,
+`--fb-radius-lg` and `--fb-shadow-lg`, 14 px. "Preview, not published
+yet" semibold, until when the link works muted, and "End the preview" as
+a small link button on `--fb-surface-2`. It wraps on narrow screens and
+is not printed.
 
 ### Icons
 

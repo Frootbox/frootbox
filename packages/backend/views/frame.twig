@@ -5,7 +5,7 @@
 {{ fb.head|raw }}
 <title>{% block title %}{% endblock %} · {{ fb.brand }}</title>
 </head>
-<body data-fb-failed="{{ t('The server cannot be reached. Check the connection and try again.') }}" data-fb-unsaved="{{ t('Not saved') }}" data-fb-leave="{{ t('Your changes are not saved. Leave anyway?') }}">
+<body data-fb-failed="{{ t('The server cannot be reached. Check the connection and try again.') }}" data-fb-unsaved="{{ t('Not saved') }}" data-fb-leave="{{ t('Your changes are not saved. Leave anyway?') }}" data-fb-copy-manually="{{ t('Copy the text:') }}">
 {% block body %}{% endblock %}
 </body>
 </html>

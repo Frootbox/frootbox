@@ -10,9 +10,13 @@ namespace Frootbox\Backend\Http;
 
 use Frootbox\Backend\I18n\Translator;
 use Frootbox\Backend\View\BackendView;
+use Frootbox\Core\Auth\AuthenticationException;
+use Frootbox\Core\Auth\TooManyAttemptsException;
 use Frootbox\Core\Error\ErrorPage;
+use Frootbox\Core\Http\Exception\HttpException;
 use Frootbox\Core\Routing\Route;
 use Frootbox\Core\Routing\Router;
+use Frootbox\Core\Site\SiteAccessMiddleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
@@ -23,6 +27,9 @@ use Throwable;
  */
 final readonly class BackendErrorPage implements ErrorPage
 {
+    /** Reasons of HttpException that get a page of their own on the website. */
+    private const array SITE_ACCESS = ['site-protected', 'site-protected-closed', 'preview-expired'];
+
     public function __construct(
         private BackendView $view,
         private Router $router,
@@ -33,6 +40,12 @@ final readonly class BackendErrorPage implements ErrorPage
     {
         $base = rtrim($this->router->path('backend.dashboard'), '/');
         $path = $request->getUri()->getPath();
+        $reason = $throwable instanceof HttpException ? $throwable->reason : null;
+
+        // The password of the website and ended preview links on its pages (decisions 0152, 0153).
+        if (\in_array($reason, self::SITE_ACCESS, true)) {
+            return $this->siteAccess($request, $reason, $throwable);
+        }
 
         if ($path !== $base && !str_starts_with($path, $base . '/')) {
             return null;
@@ -74,6 +87,27 @@ final readonly class BackendErrorPage implements ErrorPage
                 'again' => $path . ('' === $query ? '' : '?' . $query),
                 'details' => $showDetails ? self::details($throwable) : [],
             ],
+        ]);
+    }
+
+    /**
+     * The password form of a protected website, or that a preview link
+     * ended, like the sign-in of the backend.
+     */
+    private function siteAccess(ServerRequestInterface $request, string $reason, Throwable $throwable): string
+    {
+        $previous = $throwable->getPrevious();
+
+        return $this->view->html($request, '@backend/site-access.twig', [
+            'reason' => $reason,
+            'expired' => 'preview-expired' === $reason,
+            'field' => SiteAccessMiddleware::FIELD,
+            'error' => match (true) {
+                $previous instanceof TooManyAttemptsException => $this->translator->get('Too many attempts. Wait a moment and try again.'),
+                $previous instanceof AuthenticationException => $this->translator->get('The password is not right.'),
+                default => null,
+            },
+            'login' => $this->router->path('backend.login'),
         ]);
     }
 

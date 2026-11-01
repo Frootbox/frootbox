@@ -6,6 +6,7 @@ import { follow, registerFieldTools, toolsOf } from './field-tools.js';
 import { icon } from './icons.js';
 import { MediaPicker, mediaStyles } from './media.js';
 import { placesOf } from './problems.js';
+import { SharePreview, shareStyles } from './share.js';
 
 const COLLAPSED = 'fb-editor-bar-collapsed';
 const THEME = 'fb-theme';
@@ -600,7 +601,7 @@ export class EditorBar extends LitElement {
         @media (prefers-reduced-motion: reduce) {
             * { transition: none !important; animation: none !important; }
         }
-    `, arrangingStyles, mediaStyles, designStyles];
+    `, arrangingStyles, mediaStyles, designStyles, shareStyles];
 
     constructor() {
         super();
@@ -639,6 +640,7 @@ export class EditorBar extends LitElement {
         this.arranging = null;
         this.media = new MediaPicker(this);
         this.design = new DesignPanel(this);
+        this.share = new SharePreview(this);
         this.frame = 0;
         this.redraw = () => {
             if (this.frame === 0 && (this.current || this.showAll || this.toolbar || this.arranging?.block || this.problems.length > 0)) {
@@ -759,7 +761,7 @@ export class EditorBar extends LitElement {
 
         const arranging = this.arranging;
 
-        return html`${this.outlines()}${arranging?.tools() ?? nothing}${arranging?.entryTools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.design.view()}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}${this.media.dialog()}`;
+        return html`${this.outlines()}${arranging?.tools() ?? nothing}${arranging?.entryTools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.design.view()}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}${this.media.dialog()}${this.share.dialog()}`;
     }
 
     round() {
@@ -854,7 +856,8 @@ export class EditorBar extends LitElement {
 
         return html`<p>${labels[`explain${state[0].toUpperCase()}${state.slice(1)}`]}</p>
             ${saved}
-            ${locked ? html`<p>${labels.locked}.</p>` : nothing}`;
+            ${locked ? html`<p>${labels.locked}.</p>` : nothing}
+            ${this.config.protection ? html`<p>${labels.protectedSite}</p>` : nothing}`;
     }
 
     /**
@@ -946,6 +949,9 @@ export class EditorBar extends LitElement {
         const forSite = [
             this.config.design && editing ? html`<button type="button" role="menuitem"
                 @click=${() => this.choose(() => this.design.show())}>${icon('palette')}${labels.design}</button>` : nothing,
+            this.config.preview ? html`<button type="button" role="menuitem"
+                @click=${() => this.choose(() => this.share.show(() => this.renderRoot.querySelector('[data-fb-more]')?.focus()))}>${icon('link')}${labels.share}</button>` : nothing,
+            this.config.access ? html`<a role="menuitem" href=${this.config.access}>${icon('lock')}${labels.access}</a>` : nothing,
         ].filter((item) => item !== nothing);
 
         if (forPage.length === 0 && forSite.length === 0) {
