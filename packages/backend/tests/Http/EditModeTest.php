@@ -24,6 +24,7 @@ use Frootbox\Core\Page\CreatePage;
 use Frootbox\Core\Page\EditMode;
 use Frootbox\Core\Page\PublishPages;
 use Frootbox\Core\Page\UpdatePage;
+use Frootbox\Core\Site\UpdateSite;
 use Frootbox\Core\Tests\Support\FixtureSite;
 use Frootbox\Core\User\AssignRole;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -140,6 +141,17 @@ final class EditModeTest extends BackendTestCase
         self::assertSame(['sans' => 'Serifenlos', 'serif' => 'Mit Serifen', 'rounded' => 'Abgerundet', 'mono' => 'Gleichbreit'], $config['labels']['fontNames']);
     }
 
+    public function testTellsTheBarAboutTheFieldsOfTheWebsite(): void
+    {
+        $config = $this->bar($this->html($this->page('/ueber-uns')));
+        self::assertSame(['draft' => false, 'publish' => true, 'discard' => true], $config['site']);
+
+        $this->runner()->run(new UpdateSite('de', ['brand' => 'Bohnenglück']), Context::system());
+        $html = $this->html($this->page('/ueber-uns'));
+        self::assertSame(['draft' => true, 'publish' => true, 'discard' => true], $this->bar($html)['site']);
+        self::assertStringContainsString('data-fb-field="brand" data-fb-type="headline" data-fb-label="Name" data-fb-site', $html);
+    }
+
     public function testShowsWhatAnEditorMayDo(): void
     {
         $id = $this->createUser('jane@example.org', []);
@@ -151,6 +163,7 @@ final class EditModeTest extends BackendTestCase
         self::assertFalse($start['marking'], 'Outside the branch nothing is marked.');
         self::assertNull($start['page'], 'And the bar shows nothing of the page.');
         self::assertNull($start['design'], 'The design is one for the website, a branch is not enough.');
+        self::assertNull($start['site'], 'The fields of the website are the same on every page, a branch is not enough.');
 
         $config = $this->bar($this->html($this->page('/ueber-uns/team')));
         self::assertTrue($config['marking']);
@@ -210,7 +223,7 @@ final class EditModeTest extends BackendTestCase
     }
 
     /**
-     * @return array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null}
+     * @return array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null}
      */
     private function bar(string $html): array
     {
@@ -218,7 +231,7 @@ final class EditModeTest extends BackendTestCase
         $config = json_decode($match[1], true, flags: \JSON_THROW_ON_ERROR);
         self::assertIsArray($config);
 
-        /** @var array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null} $config */
+        /** @var array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null} $config */
         return $config;
     }
 

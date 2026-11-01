@@ -608,3 +608,10 @@ The design has no changes to publish.: Das Design hat keine Änderungen zum Ver�
 The design has no changes to discard.: Das Design hat keine Änderungen zum Verwerfen.
 The design has no version {version}.: Das Design hat keine Version {version}.
 'No theme is active, set one in config/app.yaml.': 'Es ist kein Theme aktiv, trag eins in config/app.yaml ein.'
+
+# Fields of the website (decision 0128)
+The fields of the website have no changes to publish.: Die Inhalte der Website haben keine Änderungen zum Veröffentlichen.
+The fields of the website have no changes to discard.: Die Inhalte der Website haben keine Änderungen zum Verwerfen.
+'The website has no field "{name}".': 'Die Website hat kein Feld „{name}“.'
+'"{name}" is no list with entries to change; a path looks like "links/0/text".': '„{name}“ ist keine Liste mit Einträgen; ein Pfad sieht so aus: „links/0/text“.'
+'The website has no language "{language}". Languages: {languages}.': 'Die Website hat keine Sprache „{language}“. Sprachen: {languages}.'

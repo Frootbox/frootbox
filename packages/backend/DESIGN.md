@@ -739,7 +739,9 @@ data from the JSON block `#fb-edit-config` in the head.
 
 - Floats at the bottom in the middle, `--fb-surface`, `--fb-radius-lg`,
   `--fb-shadow-lg`, above everything (`--fb-layer-edit`). It wraps on
-  narrow screens and never moves the layout of the page.
+  narrow screens and never moves the layout of the page; the page only
+  gets room at its end (`padding-block-end` on `body`, the measured
+  height of the bar plus 2rem), so the footer can be reached.
 - Content: brand, switch "Edit" (`role="switch"`), status of the page as
   a badge, "Locked for visitors", "Show all places" (`aria-pressed`),
   "Publish" (primary), "Discard the draft" (danger, asks in the bar),
@@ -782,6 +784,10 @@ typed where it stands, nothing is replaced by a form.
   own markup with `value()` is shown but not editable on the page, only
   in the settings of the block.
 - Empty fields show their label at half opacity, so they can be reached.
+- Fields of the website (`data-fb-site`, decision 0128), e.g. in the
+  footer, look and behave like fields of the page and are saved with
+  `site.update-field`. Their draft counts like one of the page: the
+  badge says "Changed", "Publish" and "Discard the draft" act on both.
 
 Arranging blocks (decision 0123), from `resources/js/edit/arranging.js`:
 

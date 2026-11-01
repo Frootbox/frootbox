@@ -1,8 +1,9 @@
 /**
  * Editing of fields on the website (decision 0122): headline and text
  * right in the element, rich text with Tiptap, links and images with a
- * dialog of the bar (decision 0126). Every change is saved on its own with page.update-field, a
- * second after the last input and when the field is left.
+ * dialog of the bar (decision 0126). Every change is saved on its own with page.update-field,
+ * or site.update-field for fields of the website (decision 0128), a second after the last
+ * input and when the field is left.
  */
 
 const PLAIN = ['headline', 'text'];
@@ -244,16 +245,23 @@ export class Editing {
             return true;
         }
 
-        const page = this.bar.config.page;
-        const block = element.closest('[data-fb-block]')?.dataset.fbBlock ?? null;
-        const result = await this.bar.run('page.update-field', {
-            id: page.id,
-            language: this.bar.config.language,
-            path: element.dataset.fbField,
-            block,
-            value,
-            previous,
-        });
+        // Fields of the website, e.g. in the footer, are the same on every page (decision 0128).
+        const site = element.dataset.fbSite !== undefined;
+        const result = site
+            ? await this.bar.run('site.update-field', {
+                language: this.bar.config.language,
+                path: element.dataset.fbField,
+                value,
+                previous,
+            })
+            : await this.bar.run('page.update-field', {
+                id: this.bar.config.page.id,
+                language: this.bar.config.language,
+                path: element.dataset.fbField,
+                block: element.closest('[data-fb-block]')?.dataset.fbBlock ?? null,
+                value,
+                previous,
+            });
 
         if (!result.ok) {
             return false;
@@ -272,7 +280,7 @@ export class Editing {
             element.innerHTML = data.html;
         }
 
-        this.bar.changed(data.entry);
+        this.bar.changed(data.entry, site);
 
         return true;
     }

@@ -497,13 +497,18 @@ export class EditBar extends LitElement {
         removeEventListener('resize', this.redraw);
     }
 
-    /** Panels end above the bar, whose height changes with its content. */
+    /**
+     * Panels end above the bar, whose height changes with its content,
+     * and the page gets as much room at its end, so the bar never covers
+     * the footer.
+     */
     updated() {
         const bar = this.renderRoot.querySelector('.bar, .round');
         const height = bar ? `${Math.ceil(bar.getBoundingClientRect().height)}px` : '0px';
 
         if (this.style.getPropertyValue('--bar-block-size') !== height) {
             this.style.setProperty('--bar-block-size', height);
+            document.body.style.paddingBlockEnd = bar ? `calc(${height} + 2rem)` : '';
         }
     }
 
@@ -577,18 +582,24 @@ export class EditBar extends LitElement {
                 <button type="button" @click=${() => { this.confirming = false; }}>${labels.cancel}</button>`;
         }
 
+        // A draft of the fields of the website counts like one of the page (decision 0128).
+        const site = this.siteDraft;
+        const status = page.status === 'published' && site ? 'changed' : page.status;
+        const canPublish = page.canPublish || (site && this.config.site.publish);
+        const canDiscard = page.canDiscard || (site && this.config.site.discard);
+
         return html`
-            <span class="badge" data-status=${page.status}><span class="visually-hidden">${labels.status}: </span>${labels[page.status] ?? page.status}</span>
+            <span class="badge" data-status=${status}><span class="visually-hidden">${labels.status}: </span>${labels[status] ?? status}</span>
             ${page.locked ? html`<span class="badge locked">${icon('lock')}${labels.locked}</span>` : nothing}
             ${this.config.marking ? nothing : html`<span class="note">${labels.readOnly}</span>`}
             ${this.config.marking ? html`<button type="button" aria-pressed=${this.showAll ? 'true' : 'false'}
                 @click=${() => { this.showAll = !this.showAll; }}>${icon('places')}${labels.showAll}</button>` : nothing}
             ${this.undo.length > 0 ? html`<button type="button" ?disabled=${this.busy}
                 @click=${() => this.undoLast()}>${icon('undo')}${labels.undo}</button>` : nothing}
-            ${page.canPublish ? html`<button type="button" class="primary" ?disabled=${this.busy}
-                title=${page.offlineParents.length ? labels.offlineParents.replace('{pages}', page.offlineParents.join(', ')) : nothing}
+            ${canPublish ? html`<button type="button" class="primary" ?disabled=${this.busy}
+                title=${page.canPublish && page.offlineParents.length ? labels.offlineParents.replace('{pages}', page.offlineParents.join(', ')) : nothing}
                 @click=${() => this.publish()}>${labels.publish}</button>` : nothing}
-            ${page.canDiscard ? html`<button type="button" class="danger" ?disabled=${this.busy}
+            ${canDiscard ? html`<button type="button" class="danger" ?disabled=${this.busy}
                 @click=${() => { this.confirming = true; }}>${labels.discard}</button>` : nothing}`;
     }
 
@@ -670,43 +681,74 @@ export class EditBar extends LitElement {
         }
     }
 
+    /** Whether the fields of the website have a draft (decision 0128). */
+    get siteDraft() {
+        return Boolean(this.config?.site?.draft);
+    }
+
+    /** Publishes the page and the fields of the website, whichever has a draft. */
     async publish() {
         const page = this.config.page;
         this.busy = true;
         await this.editing?.flushAll();
-        const response = await this.action('page.publish', { ids: page.publish });
-        this.busy = false;
 
-        if (!response?.ok) {
-            this.fail(response);
+        if (page.canPublish) {
+            const response = await this.action('page.publish', { ids: page.publish });
 
-            return;
+            if (!response?.ok) {
+                this.busy = false;
+                this.fail(response);
+
+                return;
+            }
+
+            // Visitors now find the page where the draft is.
+            this.config = { ...this.config, page: { ...page, status: 'published', published: true, canPublish: false, canDiscard: false, offlineParents: [], visitorUrl: page.draftUrl } };
         }
 
-        this.forget();
+        if (this.siteDraft && this.config.site.publish) {
+            const response = await this.action('site.publish', {});
 
-        // Visitors now find the page where the draft is.
-        this.config = { ...this.config, page: { ...page, status: 'published', published: true, canPublish: false, canDiscard: false, offlineParents: [], visitorUrl: page.draftUrl } };
+            if (!response?.ok) {
+                this.busy = false;
+                this.fail(response);
+
+                return;
+            }
+
+            this.config = { ...this.config, site: { ...this.config.site, draft: false } };
+        }
+
+        this.busy = false;
+        this.forget();
         this.message = { tone: 'info', text: this.labels.publishDone };
     }
 
+    /** Discards the drafts of the page and of the fields of the website. */
     async discard() {
         const page = this.config.page;
         this.busy = true;
-        const response = await this.action('page.discard', { id: page.id });
+        const steps = [
+            ...(page.canDiscard ? [['page.discard', { id: page.id }]] : []),
+            ...(this.siteDraft && this.config.site.discard ? [['site.discard', {}]] : []),
+        ];
 
-        if (!response?.ok) {
-            this.busy = false;
-            this.confirming = false;
-            this.fail(response);
+        for (const [name, input] of steps) {
+            const response = await this.action(name, input);
 
-            return;
+            if (!response?.ok) {
+                this.busy = false;
+                this.confirming = false;
+                this.fail(response);
+
+                return;
+            }
         }
 
         this.forget();
 
         // A page that was never published is gone then.
-        if (page.published) {
+        if (page.published || !page.canDiscard) {
             location.reload();
         } else {
             location.assign(this.config.pages);
@@ -738,13 +780,22 @@ export class EditBar extends LitElement {
         return { ok: false, status: response?.status ?? 0 };
     }
 
-    /** After a saved change: the page has a draft now, which may be undone. */
-    changed(entry) {
+    /**
+     * After a saved change: the page, or with $site the fields of the
+     * website, have a draft now, which may be undone.
+     */
+    changed(entry, site = false) {
         const page = this.config.page;
 
         if (entry) {
             this.undo = [...this.undo, entry];
             writeSession(this.undoKey, this.undo);
+        }
+
+        if (site) {
+            this.config = { ...this.config, site: { ...this.config.site, draft: true } };
+
+            return;
         }
 
         this.config = {

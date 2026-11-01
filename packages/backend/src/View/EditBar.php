@@ -22,6 +22,7 @@ use Frootbox\Core\Page\PageStatus;
 use Frootbox\Core\Page\ShowPage;
 use Frootbox\Core\Page\ShowPageTree;
 use Frootbox\Core\Routing\Router;
+use Frootbox\Core\Site\ShowSite;
 use Frootbox\Core\View\BuildingHead;
 use Frootbox\RichText\Html;
 
@@ -81,6 +82,7 @@ final readonly class EditBar
             'pages' => $this->router->path('backend.pages'),
             'uploads' => $this->router->path('backend.uploads'),
             'mayUpload' => $this->permissions->can('media.create'),
+            'site' => $this->site(),
             'design' => $this->permissions->can('design.update') ? ['publish' => $this->permissions->can('design.publish'), 'discard' => $this->permissions->can('design.discard')] : null,
             'tokens' => $this->design->hostCss(),
             'brand' => ['name' => $this->design->brand()->name, 'logo' => $this->design->logo(), 'logoDark' => $this->design->logo(true)],
@@ -140,6 +142,26 @@ final readonly class EditBar
             'backend' => $this->router->path('backend.pages.show', ['id' => $id]),
             'draftUrl' => $draftUrl,
             'visitorUrl' => $details->urls[$language] ?? null,
+        ];
+    }
+
+    /**
+     * The fields of the website (decision 0128): whether they have a draft
+     * and what the user may do with it, null without the right to change
+     * them.
+     *
+     * @return array{draft: bool, publish: bool, discard: bool}|null
+     */
+    private function site(): ?array
+    {
+        if (!$this->permissions->can('site.update-field')) {
+            return null;
+        }
+
+        return [
+            'draft' => $this->runner->ask(new ShowSite())->draft,
+            'publish' => $this->permissions->can('site.publish'),
+            'discard' => $this->permissions->can('site.discard'),
         ];
     }
 
