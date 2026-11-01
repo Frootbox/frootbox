@@ -82,6 +82,24 @@ test('creates, publishes and restores a page', async ({ page }) => {
     await expect(page.locator('#page-detail-title')).toHaveText(`${title} neu`);
 });
 
+test('writes the address of a title in Latin letters', async ({ page }) => {
+    await signIn(page, '/cms/pages/new');
+    await page.waitForLoadState('domcontentloaded');
+    const address = page.getByLabel('Adresse');
+
+    // The rules of the core through page.slug (decision 0134), not a copy in the script.
+    await page.getByLabel('Titel').fill('Łódź & Москва');
+    await expect(address).toHaveValue('lodz-moskva');
+    await page.getByLabel('Titel').fill('Über İstanbul');
+    await expect(address).toHaveValue('ueber-istanbul');
+
+    // Once typed into, the address stays.
+    await address.fill('eigene-adresse');
+    await page.getByLabel('Titel').fill('Etwas anderes');
+    await page.waitForTimeout(400);
+    await expect(address).toHaveValue('eigene-adresse');
+});
+
 test('moves a page with the keyboard', async ({ page }) => {
     // In a branch of its own: tests running at the same time add pages
     // below the start page, which must not get a subpage from this one.

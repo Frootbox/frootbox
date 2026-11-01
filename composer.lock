@@ -408,7 +408,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/core",
-                "reference": "e0516eace3fc48c0ef00d126a1d25cede909d848"
+                "reference": "835fe334542b1ef97738c175d3e74a9716e7c53d"
             },
             "require": {
                 "doctrine/dbal": "^4.5",
@@ -432,6 +432,7 @@
                 "psr/log": "^3.0",
                 "symfony/console": "^8.1",
                 "symfony/dotenv": "^8.1",
+                "symfony/polyfill-intl-normalizer": "^1.33",
                 "symfony/yaml": "^8.1",
                 "twig/twig": "^3.30"
             },

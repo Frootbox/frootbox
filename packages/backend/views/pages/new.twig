@@ -20,7 +20,7 @@
                 {% set default_layout = suggested in layouts|map(l => l.value) ? suggested : null %}
                 {{ ui.field({label: t('Title'), name: 'translations.' ~ code ~ '.title', id: 'new-title', required: true, autofocus: true}) }}
                 {% if parents is not empty %}
-                    {{ ui.field({label: t('Address'), name: 'translations.' ~ code ~ '.slug', id: 'new-slug', prefix: prefix, hint: t('Comes from the title. You can change it.'), attrs: {'data-fb-slug': 'new-title', 'data-empty': 'null'}}) }}
+                    {{ ui.field({label: t('Address'), name: 'translations.' ~ code ~ '.slug', id: 'new-slug', prefix: prefix, hint: t('Comes from the title. You can change it.'), attrs: {'data-fb-slug': 'new-title', 'data-fb-slug-query': path('backend.query', {name: 'page.slug'}) ~ '?language=' ~ code|url_encode, 'data-empty': 'null'}}) }}
                     {{ ui.select({label: t('Parent page'), name: 'parentId', id: 'new-parent', value: parent, options: parents, attrs: {'data-fb-prefix': 'new-slug'}}) }}
                 {% else %}
                     <p class="fb-muted">{{ t('The first page becomes the start page of the website.') }}</p>

@@ -129,6 +129,12 @@ final class ContentScreensTest extends BackendTestCase
 
         self::assertStringContainsString('<fb-form action="page.create"', $html);
         self::assertMatchesRegularExpression('/value="' . $this->about . '" selected data-prefix="example\.org\/ueber-uns\/"/', $html);
+        self::assertStringContainsString('data-fb-slug-query="/cms/queries/page.slug?language=de"', $html);
+
+        // The address comes from the rules in the core (decision 0134).
+        $response = $this->request('GET', '/cms/queries/page.slug?language=uk&title=' . rawurlencode('Київ'), session: $this->session);
+        self::assertSame(200, $response->getStatusCode(), (string) $response->getBody());
+        self::assertSame(['data' => 'kyiv'], json_decode((string) $response->getBody(), true, flags: \JSON_THROW_ON_ERROR));
     }
 
     public function testEditsTheItemsOfANavigation(): void
