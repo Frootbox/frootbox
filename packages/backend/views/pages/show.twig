@@ -14,11 +14,17 @@
     </header>
 
     <div class="fb-split">
-        <section class="fb-card fb-split__side" aria-labelledby="page-tree-title">
+        <section class="fb-card fb-split__side fb-split__side--sticky" aria-labelledby="page-tree-title">
             <div class="fb-card__header fb-card__header--tight">
-                <h2 class="fb-heading-4" id="page-tree-title">{{ t('Page tree') }}</h2>
+                <h2 class="fb-heading-4" id="page-tree-title">{{ t('Sitemap') }}</h2>
                 {% if can('page.move') %}<p class="fb-muted" id="page-tree-hint">{{ t('Drag to move, or Alt and the arrow keys.') }}</p>{% endif %}
             </div>
+            <fb-tree-filter class="fb-tree-filter" for="page-tree" found="{{ t('{count} pages found') }}" one="{{ t('One page found') }}" empty="{{ t('No page found') }}">
+                <label class="fb-visually-hidden" for="page-tree-filter">{{ t('Find a page') }}</label>
+                <span class="fb-tree-filter__icon" aria-hidden="true">{{ icon('search', 'fb-icon fb-icon--small') }}</span>
+                <input class="fb-input fb-tree-filter__input" id="page-tree-filter" type="search" placeholder="{{ t('Find by title or address') }}" autocomplete="off" spellcheck="false" aria-controls="page-tree" aria-describedby="page-tree-filter-status" aria-keyshortcuts="/">
+                <p class="fb-tree-filter__status" id="page-tree-filter-status" role="status"></p>
+            </fb-tree-filter>
             {% include '@backend/pages/tree.twig' %}
         </section>
 

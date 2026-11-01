@@ -1,6 +1,7 @@
 /* A tree of pages or menu items in a card (decision 0116). The whole
    row is the link; <fb-tree> adds dragging and moving with Alt and the
-   arrow keys. Depth comes from data-depth, deeper than 6 looks like 6. */
+   arrow keys. Depth comes from data-depth, deeper than 6 looks like 6;
+   in the compact tree up to 9 (decision 0135). */
 
 .fb-tree__row {
     position: relative;
@@ -126,4 +127,241 @@ fb-tree[aria-busy="true"] {
 
 fb-tree > .fb-alert {
     margin: 0 var(--fb-space-4) var(--fb-space-3);
+}
+
+/* The compact tree, e.g. the sitemap (decision 0135): one line per row,
+   smaller text, narrow steps with guide lines, branches that open and
+   close. The handle shows only on hover, in the step to the left. */
+
+.fb-tree--compact .fb-tree__row {
+    gap: var(--fb-space-2);
+    min-height: var(--fb-size-control-sm);
+    padding-block: var(--fb-space-1);
+    padding-inline-end: var(--fb-space-3);
+    border-top: 0;
+}
+
+.fb-tree--compact .fb-tree__row[data-depth="0"] { padding-inline-start: calc(var(--fb-space-2) + var(--fb-space-4) * 0); }
+.fb-tree--compact .fb-tree__row[data-depth="1"] { padding-inline-start: calc(var(--fb-space-2) + var(--fb-space-4) * 1); }
+.fb-tree--compact .fb-tree__row[data-depth="2"] { padding-inline-start: calc(var(--fb-space-2) + var(--fb-space-4) * 2); }
+.fb-tree--compact .fb-tree__row[data-depth="3"] { padding-inline-start: calc(var(--fb-space-2) + var(--fb-space-4) * 3); }
+.fb-tree--compact .fb-tree__row[data-depth="4"] { padding-inline-start: calc(var(--fb-space-2) + var(--fb-space-4) * 4); }
+.fb-tree--compact .fb-tree__row[data-depth="5"] { padding-inline-start: calc(var(--fb-space-2) + var(--fb-space-4) * 5); }
+.fb-tree--compact .fb-tree__row[data-depth="6"] { padding-inline-start: calc(var(--fb-space-2) + var(--fb-space-4) * 6); }
+.fb-tree--compact .fb-tree__row[data-depth="7"] { padding-inline-start: calc(var(--fb-space-2) + var(--fb-space-4) * 7); }
+.fb-tree--compact .fb-tree__row[data-depth="8"] { padding-inline-start: calc(var(--fb-space-2) + var(--fb-space-4) * 8); }
+.fb-tree--compact .fb-tree__row[data-depth="9"] { padding-inline-start: calc(var(--fb-space-2) + var(--fb-space-4) * 9); }
+
+.fb-tree--compact .fb-tree__handle {
+    position: absolute;
+    inset-block: 0;
+    align-items: center;
+    opacity: 0;
+}
+
+.fb-tree--compact .fb-tree__row[data-depth="1"] .fb-tree__handle { inset-inline-start: calc(var(--fb-space-4) * 1 - var(--fb-space-2)); }
+.fb-tree--compact .fb-tree__row[data-depth="2"] .fb-tree__handle { inset-inline-start: calc(var(--fb-space-4) * 2 - var(--fb-space-2)); }
+.fb-tree--compact .fb-tree__row[data-depth="3"] .fb-tree__handle { inset-inline-start: calc(var(--fb-space-4) * 3 - var(--fb-space-2)); }
+.fb-tree--compact .fb-tree__row[data-depth="4"] .fb-tree__handle { inset-inline-start: calc(var(--fb-space-4) * 4 - var(--fb-space-2)); }
+.fb-tree--compact .fb-tree__row[data-depth="5"] .fb-tree__handle { inset-inline-start: calc(var(--fb-space-4) * 5 - var(--fb-space-2)); }
+.fb-tree--compact .fb-tree__row[data-depth="6"] .fb-tree__handle { inset-inline-start: calc(var(--fb-space-4) * 6 - var(--fb-space-2)); }
+.fb-tree--compact .fb-tree__row[data-depth="7"] .fb-tree__handle { inset-inline-start: calc(var(--fb-space-4) * 7 - var(--fb-space-2)); }
+.fb-tree--compact .fb-tree__row[data-depth="8"] .fb-tree__handle { inset-inline-start: calc(var(--fb-space-4) * 8 - var(--fb-space-2)); }
+.fb-tree--compact .fb-tree__row[data-depth="9"] .fb-tree__handle { inset-inline-start: calc(var(--fb-space-4) * 9 - var(--fb-space-2)); }
+
+.fb-tree--compact .fb-tree__row[draggable="true"]:is(:hover, :focus-within) .fb-tree__handle {
+    opacity: 1;
+}
+
+.fb-tree--compact .fb-tree__group {
+    position: relative;
+}
+
+.fb-tree--compact .fb-tree__group::before {
+    position: absolute;
+    inset-block: 0;
+    width: var(--fb-size-border);
+    background: var(--fb-border);
+    content: "";
+}
+
+.fb-tree--compact .fb-tree__row[data-depth="0"] + .fb-tree__group::before { inset-inline-start: calc(var(--fb-space-4) * 1); }
+.fb-tree--compact .fb-tree__row[data-depth="1"] + .fb-tree__group::before { inset-inline-start: calc(var(--fb-space-4) * 2); }
+.fb-tree--compact .fb-tree__row[data-depth="2"] + .fb-tree__group::before { inset-inline-start: calc(var(--fb-space-4) * 3); }
+.fb-tree--compact .fb-tree__row[data-depth="3"] + .fb-tree__group::before { inset-inline-start: calc(var(--fb-space-4) * 4); }
+.fb-tree--compact .fb-tree__row[data-depth="4"] + .fb-tree__group::before { inset-inline-start: calc(var(--fb-space-4) * 5); }
+.fb-tree--compact .fb-tree__row[data-depth="5"] + .fb-tree__group::before { inset-inline-start: calc(var(--fb-space-4) * 6); }
+.fb-tree--compact .fb-tree__row[data-depth="6"] + .fb-tree__group::before { inset-inline-start: calc(var(--fb-space-4) * 7); }
+.fb-tree--compact .fb-tree__row[data-depth="7"] + .fb-tree__group::before { inset-inline-start: calc(var(--fb-space-4) * 8); }
+.fb-tree--compact .fb-tree__row[data-depth="8"] + .fb-tree__group::before { inset-inline-start: calc(var(--fb-space-4) * 9); }
+
+.fb-tree--compact .fb-tree__link {
+    flex-direction: row;
+    gap: var(--fb-space-2);
+    align-items: baseline;
+    font-size: var(--fb-text-sm);
+}
+
+.fb-tree--compact .fb-tree__title {
+    overflow: hidden;
+    font-weight: var(--fb-weight-medium);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fb-tree--compact .fb-tree__row[data-depth="0"] .fb-tree__title {
+    font-weight: var(--fb-weight-semibold);
+}
+
+.fb-tree--compact .fb-tree__meta {
+    flex: none;
+    font-size: var(--fb-text-xs);
+}
+
+/* Opens and closes a branch; an empty one keeps the titles in line. */
+.fb-tree__toggle {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--fb-size-icon-sm);
+    height: var(--fb-size-icon-sm);
+    padding: 0;
+    border: 0;
+    border-radius: var(--fb-radius-sm);
+    background: none;
+    color: var(--fb-text-muted);
+    cursor: pointer;
+}
+
+.fb-tree__toggle:is(button):hover {
+    background: var(--fb-border);
+    color: var(--fb-text);
+}
+
+.fb-tree__toggle .fb-icon {
+    transition: transform var(--fb-motion-fast);
+}
+
+.fb-tree__item[data-collapsed] > .fb-tree__row .fb-tree__toggle .fb-icon {
+    transform: rotate(-90deg);
+}
+
+.fb-tree__item[data-collapsed] > .fb-tree__group {
+    display: none;
+}
+
+/* The status as a dot; "published" needs no more. */
+.fb-tree__dot {
+    flex: none;
+    width: var(--fb-size-dot);
+    height: var(--fb-size-dot);
+    border-radius: var(--fb-radius-full);
+    background: var(--fb-success-text);
+}
+
+.fb-tree__dot[data-status="changed"] {
+    background: var(--fb-warning-text);
+}
+
+.fb-tree__dot[data-status="draft"] {
+    background: none;
+    box-shadow: inset 0 0 0 var(--fb-size-focus) var(--fb-warning-text);
+}
+
+.fb-tree__dot[data-status="scheduled"] {
+    background: var(--fb-info-text);
+}
+
+/* What differs from "published", as short text without a background. */
+.fb-tree__flag {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    gap: var(--fb-space-1);
+    align-items: center;
+    color: var(--fb-warning-text);
+    font-size: var(--fb-text-xs);
+    font-weight: var(--fb-weight-semibold);
+    white-space: nowrap;
+}
+
+.fb-tree__flag[data-status="scheduled"] {
+    color: var(--fb-info-text);
+}
+
+.fb-tree__flag[data-status="danger"] {
+    color: var(--fb-danger-text);
+}
+
+.fb-tree__item[data-collapsed] > .fb-tree__row .fb-tree__toggle .fb-icon:dir(rtl) {
+    transform: rotate(90deg);
+}
+
+/* The search above a tree (decision 0136): only the hits and the way to
+   them; the address of each page shows next to its title. */
+.fb-tree-filter {
+    position: relative;
+    display: block;
+    padding: 0 var(--fb-space-4) var(--fb-space-3);
+}
+
+.fb-tree-filter__icon {
+    position: absolute;
+    inset-block-start: calc((var(--fb-size-control-sm) - var(--fb-size-icon-sm)) / 2);
+    inset-inline-start: calc(var(--fb-space-4) + var(--fb-space-3));
+    display: flex;
+    color: var(--fb-text-muted);
+    pointer-events: none;
+}
+
+.fb-tree-filter__input {
+    min-height: var(--fb-size-control-sm);
+    padding-inline-start: calc(var(--fb-space-3) * 2 + var(--fb-size-icon-sm));
+}
+
+.fb-tree-filter__status {
+    color: var(--fb-text-muted);
+    font-size: var(--fb-text-xs);
+}
+
+.fb-tree-filter__status:not(:empty) {
+    margin-top: var(--fb-space-2);
+}
+
+.fb-tree__item[hidden] {
+    display: none;
+}
+
+.fb-tree__path {
+    display: none;
+}
+
+fb-tree[data-filtering] .fb-tree__item[data-match] > .fb-tree__row .fb-tree__path {
+    display: block;
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--fb-text-muted);
+    font-size: var(--fb-text-xs);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+fb-tree[data-filtering] .fb-tree__title {
+    flex: 0 1 auto;
+    min-width: 0;
+}
+
+/* Pages on the way to a hit, without a hit themselves. */
+fb-tree[data-filtering] .fb-tree__item:not([data-match]) > .fb-tree__row .fb-tree__link {
+    color: var(--fb-text-muted);
+}
+
+.fb-tree__mark {
+    border-radius: var(--fb-radius-sm);
+    background: var(--fb-warning-bg);
+    color: inherit;
 }

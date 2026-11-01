@@ -147,35 +147,111 @@
     <p class="fb-design-sample__title">{{ t('Tree and details') }}</p>
     <div class="fb-split">
         <section class="fb-card fb-split__side" aria-labelledby="{{ id }}-tree-title">
-            <div class="fb-card__header fb-card__header--tight"><h3 class="fb-heading-4" id="{{ id }}-tree-title">{{ t('Page tree') }}</h3></div>
+            <div class="fb-card__header fb-card__header--tight"><h3 class="fb-heading-4" id="{{ id }}-tree-title">{{ t('Sitemap') }}</h3></div>
+            <div class="fb-tree-filter">
+                <label class="fb-visually-hidden" for="{{ id }}-tree-filter">{{ t('Find a page') }}</label>
+                <span class="fb-tree-filter__icon" aria-hidden="true">{{ icon('search', 'fb-icon fb-icon--small') }}</span>
+                <input class="fb-input fb-tree-filter__input" id="{{ id }}-tree-filter" type="search" placeholder="{{ t('Find by title or address') }}" autocomplete="off">
+            </div>
             <fb-tree>
-                <ul class="fb-tree" aria-labelledby="{{ id }}-tree-title">
+                <ul class="fb-tree fb-tree--compact" aria-labelledby="{{ id }}-tree-title">
                     <li class="fb-tree__item" data-id="{{ id }}-start" data-title="Bohnenglück" data-fixed>
                         <div class="fb-tree__row" data-depth="0">
                             <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
-                            <a class="fb-tree__link" href="#"><span class="fb-tree__title">Bohnenglück</span><span class="fb-tree__meta">/ · DE, EN</span></a>
-                            {{ ui.status('published') }}
+                            <button class="fb-tree__toggle" type="button" aria-expanded="true" aria-controls="{{ id }}-start-group" aria-label="{{ t('Subpages of {page}', {page: 'Bohnenglück'}) }}" tabindex="-1">{{ icon('chevron-down', 'fb-icon fb-icon--small') }}</button>
+                            <span class="fb-tree__dot" data-status="published" aria-hidden="true"></span>
+                            <a class="fb-tree__link" href="#"><span class="fb-tree__title">Bohnenglück</span></a>
                         </div>
-                        <ul class="fb-tree__group">
-                            <li class="fb-tree__item" data-id="{{ id }}-about" data-title="Über uns">
+                        <ul class="fb-tree__group" id="{{ id }}-start-group">
+                            <li class="fb-tree__item" data-id="{{ id }}-care" data-title="Medizin und Pflege">
                                 <div class="fb-tree__row" data-depth="1">
                                     <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
-                                    <a class="fb-tree__link" href="#" aria-current="page"><span class="fb-tree__title">Über uns</span><span class="fb-tree__meta">/ueber-uns · DE</span></a>
-                                    {{ ui.badge('danger', t('Locked')) }}
-                                    {{ ui.status('changed') }}
+                                    <button class="fb-tree__toggle" type="button" aria-expanded="true" aria-controls="{{ id }}-care-group" aria-label="{{ t('Subpages of {page}', {page: 'Medizin und Pflege'}) }}" tabindex="-1">{{ icon('chevron-down', 'fb-icon fb-icon--small') }}</button>
+                                    <span class="fb-tree__dot" data-status="published" aria-hidden="true"></span>
+                                    <a class="fb-tree__link" href="#"><span class="fb-tree__title">Medizin und Pflege</span></a>
                                 </div>
+                                <ul class="fb-tree__group" id="{{ id }}-care-group">
+                                    <li class="fb-tree__item" data-id="{{ id }}-clinics" data-title="Kliniken">
+                                        <div class="fb-tree__row" data-depth="2">
+                                            <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
+                                            <button class="fb-tree__toggle" type="button" aria-expanded="true" aria-controls="{{ id }}-clinics-group" aria-label="{{ t('Subpages of {page}', {page: 'Kliniken'}) }}" tabindex="-1">{{ icon('chevron-down', 'fb-icon fb-icon--small') }}</button>
+                                            <span class="fb-tree__dot" data-status="published" aria-hidden="true"></span>
+                                            <a class="fb-tree__link" href="#"><span class="fb-tree__title">Kliniken</span></a>
+                                        </div>
+                                        <ul class="fb-tree__group" id="{{ id }}-clinics-group">
+                                            <li class="fb-tree__item" data-id="{{ id }}-psych" data-title="Psychiatrie und Psychotherapie">
+                                                <div class="fb-tree__row" data-depth="3">
+                                                    <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
+                                                    <button class="fb-tree__toggle" type="button" aria-expanded="true" aria-controls="{{ id }}-psych-group" aria-label="{{ t('Subpages of {page}', {page: 'Psychiatrie und Psychotherapie'}) }}" tabindex="-1">{{ icon('chevron-down', 'fb-icon fb-icon--small') }}</button>
+                                                    <span class="fb-tree__dot" data-status="published" aria-hidden="true"></span>
+                                                    <a class="fb-tree__link" href="#"><span class="fb-tree__title">Psychiatrie und Psychotherapie</span></a>
+                                                </div>
+                                                <ul class="fb-tree__group" id="{{ id }}-psych-group">
+                                                    <li class="fb-tree__item" data-id="{{ id }}-station" data-title="Akut- und Krisenintervention Gerontopsychiatrie – Station 57">
+                                                        <div class="fb-tree__row" data-depth="4">
+                                                            <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
+                                                            <span class="fb-tree__toggle" aria-hidden="true"></span>
+                                                            <span class="fb-tree__dot" data-status="changed" aria-hidden="true"></span>
+                                                            <a class="fb-tree__link" href="#" aria-current="page"><span class="fb-tree__title">Akut- und Krisenintervention Gerontopsychiatrie – Station 57</span></a>
+                                                            <span class="fb-tree__flag" data-status="changed" aria-hidden="true">{{ t('Changed') }}</span>
+                                                        </div>
+                                                    </li>
+                                                    <li class="fb-tree__item" data-id="{{ id }}-portal" data-title="Patientenportal">
+                                                        <div class="fb-tree__row" data-depth="4">
+                                                            <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
+                                                            <span class="fb-tree__toggle" aria-hidden="true"></span>
+                                                            <span class="fb-tree__dot" data-status="published" aria-hidden="true"></span>
+                                                            <a class="fb-tree__link" href="#"><span class="fb-tree__title">Patientenportal</span></a>
+                                                            <span class="fb-tree__flag" data-status="danger" aria-hidden="true">{{ icon('lock', 'fb-icon fb-icon--small') }}{{ t('Locked') }}</span>
+                                                        </div>
+                                                    </li>
+                                                    <li class="fb-tree__item" data-id="{{ id }}-day" data-title="Tagesklinik">
+                                                        <div class="fb-tree__row" data-depth="4">
+                                                            <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
+                                                            <span class="fb-tree__toggle" aria-hidden="true"></span>
+                                                            <span class="fb-tree__dot" data-status="draft" aria-hidden="true"></span>
+                                                            <a class="fb-tree__link" href="#"><span class="fb-tree__title">Tagesklinik</span></a>
+                                                            <span class="fb-tree__flag" data-status="draft" aria-hidden="true">{{ t('Draft') }}</span>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                            <li class="fb-tree__item" data-id="{{ id }}-radio" data-title="Radiologie">
+                                                <div class="fb-tree__row" data-depth="3">
+                                                    <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
+                                                    <span class="fb-tree__toggle" aria-hidden="true"></span>
+                                                    <span class="fb-tree__dot" data-status="scheduled" aria-hidden="true"></span>
+                                                    <a class="fb-tree__link" href="#"><span class="fb-tree__title">Radiologie</span></a>
+                                                    <span class="fb-tree__flag" data-status="scheduled" aria-hidden="true">{{ t('Scheduled') }}</span>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
                             </li>
-                            <li class="fb-tree__item" data-id="{{ id }}-contact" data-title="Kontakt">
+                            <li class="fb-tree__item" data-id="{{ id }}-jobs" data-title="Jobs und Karriere" data-collapsed>
                                 <div class="fb-tree__row" data-depth="1">
                                     <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
-                                    <button class="fb-tree__link" type="button"><span class="fb-tree__title">Kontakt</span><span class="fb-tree__meta">/kontakt · DE, EN</span></button>
-                                    {{ ui.status('scheduled') }}
+                                    <button class="fb-tree__toggle" type="button" aria-expanded="false" aria-controls="{{ id }}-jobs-group" aria-label="{{ t('Subpages of {page}', {page: 'Jobs und Karriere'}) }}" tabindex="-1">{{ icon('chevron-down', 'fb-icon fb-icon--small') }}</button>
+                                    <span class="fb-tree__dot" data-status="published" aria-hidden="true"></span>
+                                    <a class="fb-tree__link" href="#"><span class="fb-tree__title">Jobs und Karriere</span></a>
                                 </div>
+                                <ul class="fb-tree__group" id="{{ id }}-jobs-group">
+                                    <li class="fb-tree__item" data-id="{{ id }}-offers" data-title="Stellenangebote">
+                                        <div class="fb-tree__row" data-depth="2">
+                                            <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
+                                            <span class="fb-tree__toggle" aria-hidden="true"></span>
+                                            <span class="fb-tree__dot" data-status="published" aria-hidden="true"></span>
+                                            <a class="fb-tree__link" href="#"><span class="fb-tree__title">Stellenangebote</span></a>
+                                        </div>
+                                    </li>
+                                </ul>
                             </li>
                             <li class="fb-tree__item" data-id="{{ id }}-imprint" data-title="Impressum" data-fixed data-leaf data-outside>
                                 <div class="fb-tree__row" data-depth="1">
                                     <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
-                                    <span class="fb-tree__link"><span class="fb-tree__title">Impressum</span><span class="fb-tree__meta">/impressum · {{ t('Outside your pages') }}</span></span>
+                                    <span class="fb-tree__toggle" aria-hidden="true"></span>
+                                    <span class="fb-tree__link"><span class="fb-tree__title">Impressum</span><span class="fb-tree__meta">{{ t('Outside your pages') }}</span></span>
                                 </div>
                             </li>
                         </ul>

@@ -28,9 +28,7 @@ async function action(page: Page, name: string, input: object): Promise<{ status
 
 /** The id of a page in the tree by its address. */
 async function pageId(page: Page, path: string): Promise<string> {
-    const id = await page.locator('#page-tree .fb-tree__item').filter({
-        has: page.locator(':scope > .fb-tree__row .fb-tree__meta', { hasText: new RegExp(`^${path} ·`) }),
-    }).getAttribute('data-id');
+    const id = await page.locator(`#page-tree .fb-tree__item[data-path="${path}"]`).getAttribute('data-id');
     expect(id).toBeTruthy();
 
     return id ?? '';
@@ -69,7 +67,7 @@ test('limits an editor to the branch', async ({ page, browser }) => {
     await expect(top).toHaveAttribute('data-outside', '');
     await expect(top.locator(':scope > .fb-tree__row')).toContainText('Außerhalb Deiner Seiten');
     await expect(top.locator(':scope > .fb-tree__row a')).toHaveCount(0);
-    await expect(tree.getByRole('link', { name: /\/ueber-uns/ })).toHaveAttribute('aria-current', 'page');
+    await expect(tree.locator(`[data-id="${about}"] > .fb-tree__row a`)).toHaveAttribute('aria-current', 'page');
     await expect(editor.getByRole('navigation').getByRole('link', { name: 'Navigationen' })).toHaveCount(0);
 
     const detail = editor.locator('#page-detail');

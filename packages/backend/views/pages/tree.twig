@@ -1,34 +1,41 @@
-{#- The page tree as <fb-tree>; links load the details with htmx (decision 0116). -#}
-{% import '@backend/ui.twig' as ui %}
-{% macro rows(rows, current, movable) %}
-    {% import '@backend/ui.twig' as ui %}
+{#- The sitemap as <fb-tree>; links load the details with htmx (decisions 0116, 0135). One line per page: the status as a dot, a label only where it is not "published". Whole levels open while they fit (decision 0136), else branches open along the current page; <fb-tree> remembers what was opened or closed. -#}
+{% macro rows(rows, current, movable, open, levels) %}
+    {%- set labels = {published: t('Published'), draft: t('Draft'), changed: t('Changed'), scheduled: t('Scheduled')} -%}
     {%- for row in rows %}
-    <li class="fb-tree__item" data-id="{{ row.id }}" data-title="{{ row.title }}"{% if row.fixed or row.outside %} data-fixed{% endif %}{% if row.outside %} data-leaf data-outside{% endif %}>
-        <div class="fb-tree__row" data-depth="{{ min(row.depth, 6) }}">
+    {%- set branch = row.children is not empty -%}
+    {%- set expanded = row.depth < levels or row.id in open -%}
+    {%- set status = labels[row.status] ?? row.status -%}
+    <li class="fb-tree__item" data-id="{{ row.id }}" data-title="{{ row.title }}"{% if row.fixed or row.outside %} data-fixed{% endif %}{% if row.outside %} data-leaf data-outside{% endif %} data-path="{{ row.path }}" data-terms="{{ row.terms }}"{% if branch and not expanded %} data-collapsed{% endif %}>
+        <div class="fb-tree__row" data-depth="{{ min(row.depth, 9) }}">
             <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
+            {% if branch %}
+            <button class="fb-tree__toggle" type="button" aria-expanded="{{ expanded ? 'true' : 'false' }}" aria-controls="page-tree-{{ row.id }}" aria-label="{{ t('Subpages of {page}', {page: row.title}) }}" tabindex="-1">{{ icon('chevron-down', 'fb-icon fb-icon--small') }}</button>
+            {% else %}
+            <span class="fb-tree__toggle" aria-hidden="true"></span>
+            {% endif %}
             {% if row.outside %}
             {#- Only the way to a branch of the user (decision 0118). -#}
-            <span class="fb-tree__link">
+            <span class="fb-tree__link" title="{{ row.title }} · {{ row.path }}">
                 <span class="fb-tree__title">{{ row.title }}</span>
-                <span class="fb-tree__meta">{{ row.path }} · {{ t('Outside your pages') }}</span>
+                <span class="fb-tree__meta">{{ t('Outside your pages') }}</span>
             </span>
             {% else %}
-            <a class="fb-tree__link" href="{{ path('backend.pages.show', {id: row.id}) }}" hx-get="{{ path('backend.pages.show', {id: row.id}) }}" hx-target="#page-detail" hx-select="#page-detail" hx-swap="outerHTML" hx-push-url="true"{% if row.id == current %} aria-current="page"{% endif %}{% if movable and not row.fixed %} aria-describedby="page-tree-hint"{% endif %}>
+            <span class="fb-tree__dot" data-status="{{ row.status }}" aria-hidden="true"></span>
+            <a class="fb-tree__link" href="{{ path('backend.pages.show', {id: row.id}) }}" title="{{ row.title }} · {{ row.path }} · {{ row.languages|join(', ') }} · {{ status }}"|join(', ') }} · {{ status }}" hx-get="{{ path('backend.pages.show', {id: row.id}) }}" hx-target="#page-detail" hx-select="#page-detail" hx-swap="outerHTML" hx-push-url="true"{% if row.id == current %} aria-current="page"{% endif %}{% if movable and not row.fixed %} aria-describedby="page-tree-hint"{% endif %}>
                 <span class="fb-tree__title">{{ row.title }}</span>
-                <span class="fb-tree__meta">{{ row.path }} · {{ row.languages|join(', ') }}</span>
+                <span class="fb-tree__path">{{ row.path }}</span>
+                <span class="fb-visually-hidden">, {{ status }}{% if row.locked %}, {{ t('Locked') }}{% endif %}</span>
             </a>
-            {% endif %}
-            {% if not row.outside %}
-            {% if row.locked %}{{ ui.badge('danger', t('Locked')) }}{% endif %}
-            {{ ui.status(row.status) }}
+            {% if row.locked %}<span class="fb-tree__flag" data-status="danger" aria-hidden="true">{{ icon('lock', 'fb-icon fb-icon--small') }}{{ t('Locked') }}</span>{% endif %}
+            {% if row.status != 'published' %}<span class="fb-tree__flag" data-status="{{ row.status }}" aria-hidden="true">{{ status }}</span>{% endif %}
             {% endif %}
         </div>
-        {%- if row.children is not empty %}
-        <ul class="fb-tree__group">{{ _self.rows(row.children, current, movable) }}</ul>
+        {%- if branch %}
+        <ul class="fb-tree__group" id="page-tree-{{ row.id }}">{{ _self.rows(row.children, current, movable, open, levels) }}</ul>
         {%- endif %}
     </li>
     {%- endfor %}
 {% endmacro %}
-<fb-tree id="page-tree"{% if can('page.move') %} action="page.move" refresh="page-tree page-detail" moved="{{ t('{title} is below {parent} now, at place {position} of {count}.') }}"{% endif %}>
-    <ul class="fb-tree" aria-labelledby="page-tree-title">{{ _self.rows(tree, page.id, can('page.move')) }}</ul>
+<fb-tree id="page-tree"{% if can('page.move') %} action="page.move" refresh="page-tree page-detail" moved="{{ t('{title} is below {parent} now, at place {position} of {count}.') }}"{% endif %} remember="pages">
+    <ul class="fb-tree fb-tree--compact" aria-labelledby="page-tree-title">{{ _self.rows(tree, page.id, can('page.move'), open ?? [page.id], openLevels ?? 1) }}</ul>
 </fb-tree>

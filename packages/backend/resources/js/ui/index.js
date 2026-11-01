@@ -5,7 +5,7 @@
 export { ThemeSwitch } from './theme-switch.js';
 export { Form, formInput, guardUnsaved, showPendingToast } from './form.js';
 export { showToast } from './toast.js';
-export { Tree } from './tree.js';
+export { Tree, TreeFilter } from './tree.js';
 export { Navigation } from './navigation.js';
 export { refresh, runAction } from './action.js';
 export { generatePasswords, randomPassword } from './password.js';

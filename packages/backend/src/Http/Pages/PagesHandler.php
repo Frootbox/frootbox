@@ -66,7 +66,7 @@ final readonly class PagesHandler implements RequestHandlerInterface
         }
 
         $detailOnly = $request->hasHeader('HX-Request') && self::DETAIL === $request->getHeaderLine('HX-Target');
-        $context = ['tree' => $tree->rows, 'page' => $this->page($request, $tree, $id), 'standalone' => $detailOnly];
+        $context = ['tree' => $tree->rows, 'open' => [...$tree->ancestors($id), $id], 'openLevels' => $tree->openLevels(), 'page' => $this->page($request, $tree, $id), 'standalone' => $detailOnly];
 
         return $this->view->render($request, $detailOnly ? '@backend/pages/detail.twig' : '@backend/pages/show.twig', $context);
     }

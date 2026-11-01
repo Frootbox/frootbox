@@ -9,7 +9,7 @@
 }
 
 .fb-split__side {
-    flex: 1 1 calc(var(--fb-size-narrow) - var(--fb-space-16));
+    flex: 1 1 var(--fb-size-narrow);
     min-width: 0;
     overflow: hidden;
 }
@@ -18,4 +18,21 @@
     flex: 999 1 var(--fb-size-narrow);
     min-width: 0;
     overflow: hidden;
+}
+
+/* A long side, e.g. the sitemap, stays in view and scrolls by itself
+   while both parts stand side by side (decision 0135). */
+@media (min-width: 1240px) {
+    .fb-split__side--sticky {
+        position: sticky;
+        top: var(--fb-space-6);
+        display: flex;
+        flex-direction: column;
+        max-height: calc(100dvh - var(--fb-space-6) * 2);
+    }
+
+    .fb-split__side--sticky > :last-child {
+        min-height: 0;
+        overflow-y: auto;
+    }
 }

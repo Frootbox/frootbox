@@ -285,7 +285,12 @@ The role is deleted.: Die Rolle ist gelöscht.
 "The page is deleted.": "Die Seite ist gelöscht."
 "Delete {title}?": "„{title}“ löschen?"
 "The page leaves the tree and the website. Visitors no longer find it.": "Die Seite verschwindet aus dem Baum und von der Website. Besucher finden sie nicht mehr."
-"Page tree": "Seitenbaum"
+"Sitemap": "Sitemap"
+"Find a page": "Seite finden"
+"Find by title or address": "Titel oder Adresse suchen"
+"{count} pages found": "{count} Seiten gefunden"
+"One page found": "Eine Seite gefunden"
+"No page found": "Keine Seite gefunden"
 "Drag to move, or Alt and the arrow keys.": "Zum Verschieben ziehen oder Alt und Pfeiltasten."
 "{title} is below {parent} now, at place {position} of {count}.": "„{title}“ steht jetzt unter „{parent}“, an Stelle {position} von {count}."
 

@@ -144,6 +144,65 @@ test('locks a page for visitors right away', async ({ page }) => {
     expect((await page.request.get(`/${slug}`)).status()).toBe(200);
 });
 
+test('opens and closes branches of the sitemap', async ({ page }) => {
+    // Decisions 0135 and 0136: a branch opens and closes, this browser remembers.
+    const parent = await createPage(page, `Zweig ${unique()}`);
+    const child = await createPage(page, `Blatt ${unique()}`, parent.id);
+    await page.goto('/cms/pages');
+
+    const item = page.locator(`#page-tree [data-id="${parent.id}"]`);
+    const toggle = item.locator(':scope > .fb-tree__row > button.fb-tree__toggle');
+    const leaf = page.locator(`#page-tree [data-id="${child.id}"] > .fb-tree__row a`);
+
+    // Small trees start open, large ones closed; other tests add pages.
+    if (await toggle.getAttribute('aria-expanded') === 'false') {
+        await toggle.click();
+    }
+
+    await expect(leaf).toBeVisible();
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(leaf).toBeHidden();
+
+    await page.reload();
+    await expect(leaf).toBeHidden();
+
+    // Arrow right opens the branch again, arrow left closes it.
+    await item.locator(':scope > .fb-tree__row a').focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(leaf).toBeVisible();
+    await page.keyboard.press('ArrowLeft');
+    await expect(leaf).toBeHidden();
+    await expect(item.locator(':scope > .fb-tree__row .fb-tree__flag')).toHaveText('Entwurf');
+});
+
+test('finds a page in the sitemap', async ({ page }) => {
+    // Decision 0136: the search shows the hits with the way to them.
+    const word = `Suchbar${unique()}`;
+    const parent = await createPage(page, `Bereich ${unique()}`);
+    const child = await createPage(page, `Tiefe Seite ${word}`, parent.id);
+    await page.goto('/cms/pages');
+
+    await page.keyboard.press('/');
+    const search = page.getByLabel('Seite finden');
+    await expect(search).toBeFocused();
+    await search.fill(word.toLowerCase());
+
+    const tree = page.locator('#page-tree');
+    await expect(page.locator('#page-tree-filter-status')).toHaveText('Eine Seite gefunden');
+    await expect(tree.locator('.fb-tree__item:not([hidden])')).toHaveCount(3);
+    await expect(tree.locator(`[data-id="${child.id}"] mark`)).toHaveText(word);
+
+    await search.press('Enter');
+    await expect(page).toHaveURL(new RegExp(`/cms/pages/${child.id}$`));
+    await expect(detail(page).getByLabel('Titel')).toHaveValue(`Tiefe Seite ${word}`);
+
+    await search.press('Escape');
+    await expect(search).toHaveValue('');
+    await expect(tree.locator('.fb-tree__item[hidden]')).toHaveCount(0);
+    await expect(tree.locator(`[data-id="${child.id}"] > .fb-tree__row a`)).toBeVisible();
+});
+
 test('marks unsaved changes and asks before they get lost', async ({ page }) => {
     // Decision 0130: the save button turns primary while its form is changed.
     const title = `Ungespeichert ${unique()}`;

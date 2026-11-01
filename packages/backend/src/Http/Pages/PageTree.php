@@ -20,10 +20,15 @@ use Frootbox\Core\Page\PageTreeNode;
  * the pages above them are "outside": shown, but not opened or moved
  * (decision 0118).
  *
- * @phpstan-type Row array{id: string, title: string, path: string, languages: list<string>, status: string, layout: string, depth: int, start: bool, fixed: bool, online: bool, locked: bool, outside: bool, children: list<mixed>}
+ * @phpstan-type Row array{id: string, title: string, path: string, terms: string, languages: list<string>, status: string, layout: string, depth: int, start: bool, fixed: bool, online: bool, locked: bool, outside: bool, children: list<mixed>}
  */
 final readonly class PageTree
 {
+    /**
+     * Rows the sitemap shows at most when it opens whole levels by itself.
+     */
+    public const int OPEN_ROWS = 50;
+
     /**
      * @param list<Row>                                                                                                         $rows
      * @param array<string, array{row: Row, parentId: ?string, ancestors: list<string>, paths: array<string, string>, children: int}> $pages
@@ -93,6 +98,37 @@ final readonly class PageTree
     public function ancestors(string $id): array
     {
         return $this->pages[$id]['ancestors'];
+    }
+
+    /**
+     * How many levels the sitemap shows open at first (decision 0136): as
+     * many whole levels as fit into $rows rows, at least the start page.
+     * A small website is open completely, a large one only at the top.
+     */
+    public function openLevels(int $rows = self::OPEN_ROWS): int
+    {
+        $byDepth = [];
+
+        foreach ($this->pages as $page) {
+            $depth = $page['row']['depth'];
+            $byDepth[$depth] = ($byDepth[$depth] ?? 0) + 1;
+        }
+
+        ksort($byDepth);
+        $shown = 0;
+        $levels = 0;
+
+        foreach ($byDepth as $depth => $count) {
+            $shown += $count;
+
+            if ($shown > $rows) {
+                break;
+            }
+
+            $levels = $depth + 1;
+        }
+
+        return max(1, $levels);
     }
 
     public function hasChildren(string $id): bool
@@ -173,6 +209,11 @@ final readonly class PageTree
                 'id' => $node->id,
                 'title' => $node->titles[$default->code] ?? array_first($node->titles) ?? $node->id,
                 'path' => $default->path($paths[$default->code]),
+                // What the search in the sitemap finds (decision 0136): titles and addresses in every language.
+                'terms' => implode(' ', array_unique([...array_values($node->titles), ...array_map(
+                    static fn(Language $language): string => $language->path($paths[$language->code]),
+                    $languages->all(),
+                )])),
                 'languages' => array_values(array_map(
                     static fn(Language $language): string => strtoupper($language->code),
                     array_filter($languages->all(), static fn(Language $language): bool => isset($node->titles[$language->code])),

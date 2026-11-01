@@ -605,9 +605,11 @@ by status: missing (404, 410), forbidden (403), failed (5xx), other.
 ```
 
 A narrow side, e.g. a tree, next to the main part, e.g. its details
-(decision 0116). 24 px apart; the side starts at `--fb-size-narrow` minus
-64 px and the main part takes the rest. When less than about 800 px is
-left, they wrap, side on top.
+(decision 0116). 24 px apart; the side starts at `--fb-size-narrow` and
+the main part takes the rest. When less than about 860 px is left, they
+wrap, side on top. `.fb-split__side--sticky` (decision 0135) keeps a long
+side in view from a window of 1240 px: it stays at the top and its last
+child scrolls by itself.
 
 ### Section
 
@@ -675,6 +677,60 @@ a dialog.
 
 Put a hint like "Drag to move, or Alt and the arrow keys." in the
 header and link it with `aria-describedby` from the movable links.
+
+**Compact tree** (`<ul class="fb-tree fb-tree--compact">`, decision
+0135), for long trees like the sitemap: one line per row, at least 36 px
+(`--fb-size-control-sm`), titles in 14 px cut with "…" (put the full
+title, the path and the status into `title`), 16 px per level with thin
+guide lines, `data-depth` up to 9. The handle shows only on hover or
+focus, in the step to the left.
+
+```html
+<li class="fb-tree__item" data-id="…" data-title="Kliniken" data-collapsed>
+    <div class="fb-tree__row" data-depth="2">
+        <span class="fb-tree__handle" aria-hidden="true">…</span>
+        <button class="fb-tree__toggle" type="button" aria-expanded="false" aria-controls="…" aria-label="Subpages of „Kliniken“" tabindex="-1">…chevron-down…</button>
+        <span class="fb-tree__dot" data-status="changed" aria-hidden="true"></span>
+        <a class="fb-tree__link" href="…" title="…"><span class="fb-tree__title">Kliniken</span><span class="fb-visually-hidden">, Changed</span></a>
+        <span class="fb-tree__flag" data-status="changed" aria-hidden="true">Changed</span>
+    </div>
+    <ul class="fb-tree__group" id="…">…</ul>
+</li>
+```
+
+- The status is a dot (`.fb-tree__dot`: published green, changed
+  yellow, draft a yellow ring, scheduled blue). Only a status other
+  than "published" adds a short `.fb-tree__flag` without background at
+  the end; "Locked" with the lock icon. The link names the status for
+  screen readers.
+- `.fb-tree__toggle` opens and closes a branch (`data-collapsed` on the
+  item); a row without children has an empty `<span>` of the same width
+  so titles stay in line. Arrow right opens or goes in, arrow left
+  closes or goes to the parent; closed rows are skipped.
+- `remember="name"` keeps opened and closed branches in this browser;
+  the way to the current link stays open. A tree that scrolls by itself
+  scrolls to the current link and keeps its place when loaded again.
+- Which branches start open is up to the screen; the sitemap opens
+  whole levels while they fit into 50 rows (decision 0136).
+
+**Search in a tree** (decision 0136):
+
+```html
+<fb-tree-filter class="fb-tree-filter" for="page-tree" found="{count} pages found" one="One page found" empty="No page found">
+    <label class="fb-visually-hidden" for="page-tree-filter">Find a page</label>
+    <span class="fb-tree-filter__icon" aria-hidden="true">…search…</span>
+    <input class="fb-input fb-tree-filter__input" id="page-tree-filter" type="search" placeholder="Find by title or address" aria-controls="page-tree" aria-describedby="page-tree-filter-status" aria-keyshortcuts="/">
+    <p class="fb-tree-filter__status" id="page-tree-filter-status" role="status"></p>
+</fb-tree-filter>
+```
+
+Between the header of the card and the tree, 36 px high. It keeps only
+the items whose `data-terms` (else `data-title`) hold every word,
+ignoring case and accents, and the way to them: hits show their
+`.fb-tree__path` and the word in a `<mark class="fb-tree__mark">`
+(`--fb-warning-bg`), rows on the way are muted. Moving is off meanwhile.
+"/" anywhere puts the focus in the field, arrow down goes to the first
+hit, Enter opens it, Escape empties the field and brings the tree back.
 
 ### Navigation
 

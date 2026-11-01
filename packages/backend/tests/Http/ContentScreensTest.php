@@ -50,6 +50,21 @@ final class ContentScreensTest extends BackendTestCase
         $this->session = $this->signIn('admin@example.org');
     }
 
+    public function testTheSitemapIsCompact(): void
+    {
+        $html = $this->html($this->request('GET', '/cms/pages', session: $this->session));
+
+        self::assertStringContainsString('<h2 class="fb-heading-4" id="page-tree-title">Sitemap</h2>', $html);
+        self::assertDoesNotMatchRegularExpression('~data-collapsed~', $html, 'A small website is open completely.');
+        self::assertStringContainsString('aria-controls="page-tree-' . $this->about . '" aria-label="Unterseiten von „Über uns“"', $html);
+        self::assertStringContainsString('<span class="fb-tree__flag" data-status="draft" aria-hidden="true">Entwurf</span>', $html, 'A draft says so.');
+        self::assertSame(1, substr_count($html, 'class="fb-tree__flag"'), 'Published pages have only the dot.');
+        self::assertStringContainsString('<span class="fb-visually-hidden">, Veröffentlicht</span>', $html);
+        self::assertStringContainsString('<fb-tree-filter class="fb-tree-filter" for="page-tree"', $html, 'The sitemap can be searched.');
+        self::assertMatchesRegularExpression('~data-id="' . $this->about . '"[^>]* data-terms="Über uns /ueber-uns[^"]*"~', $html, 'By title and address.');
+
+    }
+
     public function testShowsTheTreeAndThePage(): void
     {
         $html = $this->html($this->request('GET', '/cms/pages', session: $this->session));
