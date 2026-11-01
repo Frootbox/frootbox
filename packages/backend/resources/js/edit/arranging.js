@@ -788,8 +788,8 @@ export class Arranging {
 
         return html`<label>${field.label}
             ${field.type === 'text'
-                ? html`<textarea rows="3" .value=${value ?? ''} @change=${save}></textarea>`
-                : html`<input type="text" .value=${value ?? ''} @change=${save}
+                ? html`<textarea rows="3" .value=${value ?? ''} placeholder=${field.placeholder || nothing} @change=${save}></textarea>`
+                : html`<input type="text" .value=${value ?? ''} placeholder=${field.placeholder || nothing} @change=${save}
                     @keydown=${(event) => { if (event.key === 'Enter') { event.preventDefault(); event.target.blur(); } }}>`}
         </label>`;
     }

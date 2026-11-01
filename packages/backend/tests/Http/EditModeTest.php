@@ -112,6 +112,7 @@ final class EditModeTest extends BackendTestCase
         self::assertSame('„{block}“ löschen?', $config['labels']['removeConfirm']);
         self::assertStringContainsString('.ProseMirror{', $editing);
         self::assertStringContainsString('[data-fb-field]:empty::before{content:attr(data-fb-label)', $editing, 'Empty fields show their label.');
+        self::assertStringContainsString('[data-fb-field][data-fb-placeholder]:empty::before{content:attr(data-fb-placeholder)}', $editing, 'Or their placeholder (decision 0142).');
         self::assertSame([
             'id' => $this->about,
             'status' => 'changed',

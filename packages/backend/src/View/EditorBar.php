@@ -48,6 +48,7 @@ final readonly class EditorBar
         . 'fb-area[data-fb-empty]{min-block-size:4rem}'
         . '[data-fb-field][contenteditable]{cursor:text}'
         . '[data-fb-field]:empty::before{content:attr(data-fb-label);opacity:.5}'
+        . '[data-fb-field][data-fb-placeholder]:empty::before{content:attr(data-fb-placeholder)}'
         . '.ProseMirror{white-space:pre-wrap;overflow-wrap:break-word}'
         . '.ProseMirror-hideselection *::selection{background:transparent}';
 

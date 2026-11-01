@@ -254,7 +254,7 @@ var e=globalThis,t=e.ShadowRoot&&(e.ShadyCSS===void 0||e.ShadyCSS.nativeShadow)&
                     <span>${i}</span>${U(`link`)}</button></div>`}if(t.type===`image`)return M`<div><span class="hint">${t.label}</span>
                 <button type="button" class="link-field" @click=${()=>this.editImage(e,n,r)}>
                     <span>${r?.media?this.labels.imageChosen:this.labels.noImage}</span>${U(`image`)}</button></div>`;let i=t=>{let i=t.target.value.trim()===``?null:t.target.value;this.setField(e,n,r,i)};return M`<label>${t.label}
-            ${t.type===`text`?M`<textarea rows="3" .value=${r??``} @change=${i}></textarea>`:M`<input type="text" .value=${r??``} @change=${i}
+            ${t.type===`text`?M`<textarea rows="3" .value=${r??``} placeholder=${t.placeholder||F} @change=${i}></textarea>`:M`<input type="text" .value=${r??``} placeholder=${t.placeholder||F} @change=${i}
                     @keydown=${e=>{e.key===`Enter`&&(e.preventDefault(),e.target.blur())}}>`}
         </label>`}listView(e,t){let n=this.labels,r=Array.isArray(e.fields?.[t.name])?e.fields[t.name]:[],i=t.fields.filter(e=>G.includes(e.type)),a=this.panel.open??[],o=r.length-1,s=e=>{this.panel={...this.panel,open:a.includes(e)?a.filter(t=>t!==e):[...a,e]},this.bar.requestUpdate()};return M`<fieldset>
             <legend>${t.label}</legend>
