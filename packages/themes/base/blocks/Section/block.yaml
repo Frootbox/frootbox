@@ -1,5 +1,7 @@
 title: Abschnitt
 description: Spalten mit Überschriften, Texten, Bildern und Buttons. Auf schmalen Bildschirmen stehen die Spalten untereinander.
+group: structure
+keywords: [Spalten, Raster]
 areas:
   first: { label: Erste Spalte, allow: [Heading, Text, Image, Button] }
   second: { label: Zweite Spalte, allow: [Heading, Text, Image, Button] }
