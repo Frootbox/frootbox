@@ -11,6 +11,7 @@
 
 # Lokale Testinstallation (Entscheidung 0076)
 /sandbox/
+/sandbox.env
 
 # Browser-Tests
 /node_modules/

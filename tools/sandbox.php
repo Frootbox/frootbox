@@ -17,6 +17,12 @@ declare(strict_types=1);
  * Usage: composer sandbox            create it
  *        composer sandbox -- --reset delete and create it again (loses its content)
  *
+ * The superuser comes from FROOTBOX_ADMIN_EMAIL, FROOTBOX_ADMIN_NAME and
+ * FROOTBOX_ADMIN_PASSWORD, so it is the same after every reset. Put them in
+ * sandbox.env next to composer.json (see sandbox.env.example, not in Git) or
+ * export them in the shell, which wins over the file. Without them it is
+ * admin@example.test with a generated password, shown once.
+ *
  * The browser tests build their own installation with the same script:
  *        --dir=var/e2e   another folder in the repository
  *        --env=prod      live operation instead of development
@@ -25,6 +31,10 @@ declare(strict_types=1);
 
 $root = dirname(__DIR__);
 $skeleton = $root . '/skeleton';
+
+require $root . '/vendor/autoload.php';
+
+loadSettings($root . '/sandbox.env');
 $options = getopt('', ['reset', 'dir:', 'env:', 'url:']);
 $reset = isset($options['reset']);
 $directory = is_string($options['dir'] ?? null) ? trim($options['dir'], '/') : 'sandbox';
@@ -101,9 +111,21 @@ if (0 !== $exitCode) {
     exit($exitCode);
 }
 
+// FROOTBOX_ADMIN_EMAIL, FROOTBOX_ADMIN_NAME and FROOTBOX_ADMIN_PASSWORD set the
+// superuser, so it stays the same after every reset. Without them it is
+// admin@example.test with a generated password.
+$adminEmail = getenv('FROOTBOX_ADMIN_EMAIL');
+$adminEmail = false === $adminEmail || '' === trim($adminEmail) ? 'admin@example.test' : trim($adminEmail);
+$adminName = getenv('FROOTBOX_ADMIN_NAME');
+$admin = '--admin-email=' . escapeshellarg($adminEmail);
+
+if ((false === $adminName || '' === trim($adminName)) && 'admin@example.test' === $adminEmail) {
+    $admin .= ' --admin-name=Admin';
+}
+
 $commands = [
-    // Writes .env, runs the migrations and creates a superuser with a generated password.
-    'install --no-interaction --env=' . $environment . ' --admin-email=admin@example.test --admin-name=Admin',
+    // Writes .env, runs the migrations and creates the superuser.
+    'install --no-interaction --env=' . $environment . ' ' . $admin,
     'seed frootbox/theme-bohnenglueck:demo/site.yaml',
 ];
 
@@ -128,12 +150,32 @@ if ('sandbox' !== $directory) {
 echo <<<TEXT
 
     Sandbox ready: {$sandbox}
+    Superuser: {$adminEmail}
 
     Browser via MAMP: create a host with PHP 8.5 and the document root
       {$sandbox}/public
     or run `composer serve` and open http://localhost:8000
 
     TEXT;
+
+/**
+ * Sets the variables from sandbox.env that the environment does not set yet.
+ * They reach the installer, which runs as a child process.
+ */
+function loadSettings(string $file): void
+{
+    if (!is_file($file)) {
+        return;
+    }
+
+    foreach (new Symfony\Component\Dotenv\Dotenv()->parse((string) file_get_contents($file), $file) as $name => $value) {
+        $current = getenv($name);
+
+        if (is_string($value) && (false === $current || '' === $current)) {
+            putenv($name . '=' . $value);
+        }
+    }
+}
 
 /**
  * Makes Bohnenglück the theme and adds English.

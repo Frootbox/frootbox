@@ -33,7 +33,9 @@ if ('' === $composer) {
     exit(1);
 }
 
-// The same password as tests/e2e/admin.ts.
+// The same superuser as tests/e2e/admin.ts, whatever the shell sets.
+putenv('FROOTBOX_ADMIN_EMAIL=admin@example.test');
+putenv('FROOTBOX_ADMIN_NAME=Admin');
 putenv('FROOTBOX_ADMIN_PASSWORD=e2e-kaffeebohne-42');
 
 passthru(sprintf(

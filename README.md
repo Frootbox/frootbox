@@ -39,7 +39,10 @@ the packages from `packages/`. Point a web server with PHP 8.5 to
 `sandbox/public`, or run `composer serve` and open http://localhost:8000.
 The sandbox uses SQLite in `sandbox/storage/` and is set up with
 `bin/frootbox install`, which creates the superuser `admin@example.test`
-and shows its password once. It runs the demo theme Bohnenglück in German
+and shows its password once. To keep your own superuser after
+`composer sandbox -- --reset`, copy `sandbox.env.example` to `sandbox.env`
+and set `FROOTBOX_ADMIN_EMAIL`, `FROOTBOX_ADMIN_NAME` and
+`FROOTBOX_ADMIN_PASSWORD` there; variables in the shell win. It runs the demo theme Bohnenglück in German
 and English with its demo website from
 `packages/themes/bohnenglueck/demo/site.yaml`. Its console is `sandbox/bin/frootbox`, for example
 `php sandbox/bin/frootbox about` or `php sandbox/bin/frootbox migrate`.
@@ -80,8 +83,10 @@ php bin/frootbox install
 php bin/frootbox install --no-interaction --admin-email jane@example.com
 ```
 
-Without questions, the password comes from `FROOTBOX_ADMIN_PASSWORD` or
-is generated and shown once.
+Email, name and password of the superuser can also come from
+`FROOTBOX_ADMIN_EMAIL`, `FROOTBOX_ADMIN_NAME` and `FROOTBOX_ADMIN_PASSWORD`;
+the options win over the variables. Without questions and without the
+variable, the password is generated and shown once.
 
 Everything is an extension: a Composer package with a `frootbox.yaml`.
 `bin/frootbox make:extension acme/website` creates one in `extensions/`;
