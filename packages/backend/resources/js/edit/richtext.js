@@ -6,17 +6,54 @@
  */
 import { Editor, mergeAttributes } from '@tiptap/core';
 import Heading from '@tiptap/extension-heading';
+import { Plugin, PluginKey } from '@tiptap/pm/state';
+import { Decoration, DecorationSet } from '@tiptap/pm/view';
 import StarterKit from '@tiptap/starter-kit';
+
+/**
+ * The levels the page gives the headings of a document, by the rule of
+ * the core: each rank wants its level, none skips one after the heading
+ * before, none goes above the floor, and only one h1.
+ */
+function levelsOf(ranks, { wanted, last, floor, main }) {
+    return ranks.map((rank) => {
+        let level = Math.max(Math.min(Math.max(1, wanted[rank - 1] ?? wanted.at(-1)), last + 1), floor);
+        level = Math.min(main && level === 1 ? 2 : level, 6);
+        last = level;
+        main = main || level === 1;
+
+        return level;
+    });
+}
+
+/** What the page gives the field, see Headings::flow() in the core. */
+function flowOf(element) {
+    try {
+        const flow = JSON.parse(element.dataset.fbHeadingFlow ?? '');
+
+        if (Array.isArray(flow.wanted) && flow.wanted.length > 0) {
+            return { wanted: flow.wanted.map(Number), last: Number(flow.last) || 0, floor: Number(flow.floor) || 1, main: Boolean(flow.main) };
+        }
+    } catch {
+        // Without it the headings start below an h1.
+    }
+
+    return { wanted: [2, 3, 4], last: 1, floor: 1, main: true };
+}
+
+const rankOf = (node, levels) => levels.includes(node.attrs.level) ? node.attrs.level : levels[0];
+
+const levelOf = (decorations) => decorations.find((decoration) => decoration.spec.headingLevel)?.spec.headingLevel;
 
 /**
  * Headings store their rank (decision 0129): 1 „Überschrift“, 2
  * „Unterüberschrift“, 3 „Kleine Überschrift“. The page decides the level,
- * the editor shows them at the one the page gives rank 1, like visitors
- * see them.
+ * the editor shows each at the level visitors get: a decoration carries
+ * it, and the node view makes the element of that level.
  */
 const RankedHeading = Heading.extend({
     addOptions() {
-        return { ...this.parent?.(), levels: [1, 2, 3], level: 2 };
+        return { ...this.parent?.(), levels: [1, 2, 3], flow: { wanted: [2, 3, 4], last: 1, floor: 1, main: true } };
     },
 
     parseHTML() {
@@ -34,10 +71,63 @@ const RankedHeading = Heading.extend({
         return [...ranked, ...this.parent?.() ?? []];
     },
 
+    // Copying: the level the rank wants; pasting reads the rank.
     renderHTML({ node, HTMLAttributes }) {
-        const rank = this.options.levels.includes(node.attrs.level) ? node.attrs.level : this.options.levels[0];
+        const rank = rankOf(node, this.options.levels);
+        const level = Math.max(1, Math.min(6, this.options.flow.wanted[rank - 1] ?? 2));
 
-        return [`h${Math.min(6, this.options.level + rank - 1)}`, mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, { 'data-rank': rank }), 0];
+        return [`h${level}`, mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, { 'data-rank': rank }), 0];
+    },
+
+    addNodeView() {
+        return ({ node, decorations, HTMLAttributes }) => {
+            const rank = rankOf(node, this.options.levels);
+            const level = levelOf(decorations) ?? levelsOf([rank], this.options.flow)[0];
+            const dom = document.createElement(`h${level}`);
+
+            for (const [name, value] of Object.entries(mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, { 'data-rank': rank }))) {
+                if (value !== null && value !== undefined) {
+                    dom.setAttribute(name, String(value));
+                }
+            }
+
+            // Another rank or level makes a new element.
+            return {
+                dom,
+                contentDOM: dom,
+                update: (updated, next) => updated.type === node.type && rankOf(updated, this.options.levels) === rank && (levelOf(next) ?? level) === level,
+            };
+        };
+    },
+
+    addProseMirrorPlugins() {
+        const extension = this;
+        const decorate = (doc) => {
+            const headings = [];
+            doc.descendants((node, pos) => {
+                if (node.type.name === extension.name) {
+                    headings.push({ node, pos });
+                }
+
+                return !node.isTextblock;
+            });
+            const levels = levelsOf(headings.map(({ node }) => rankOf(node, extension.options.levels)), extension.options.flow);
+
+            return DecorationSet.create(doc, headings.map(({ node, pos }, index) => Decoration.node(pos, pos + node.nodeSize, {}, { headingLevel: levels[index] })));
+        };
+
+        return [...this.parent?.() ?? [], new Plugin({
+            key: new PluginKey('headingLevels'),
+            state: {
+                init: (_, state) => decorate(state.doc),
+                apply: (transaction, set) => transaction.docChanged ? decorate(transaction.doc) : set,
+            },
+            props: {
+                decorations(state) {
+                    return this.getState(state);
+                },
+            },
+        })];
     },
 });
 
@@ -89,7 +179,7 @@ export function clean(node) {
  */
 export function createEditor(element, value, { update, selection, blur }) {
     const ranks = ranksOf(element);
-    const level = Math.max(1, Math.min(6, Number(element.dataset.fbHeadingLevel) || 2));
+    const flow = flowOf(element);
 
     return new Editor({
         element: { mount: element },
@@ -111,7 +201,7 @@ export function createEditor(element, value, { update, selection, blur }) {
                 },
             }),
             // Strg+Alt+1 to 3 and "# " to "### " give the ranks, Strg+Alt+0 text.
-            ...ranks.length > 0 ? [RankedHeading.configure({ levels: ranks, level })] : [],
+            ...ranks.length > 0 ? [RankedHeading.configure({ levels: ranks, flow })] : [],
         ],
         onUpdate: () => update(),
         // Each change may move the selection or what the toolbar shows active.

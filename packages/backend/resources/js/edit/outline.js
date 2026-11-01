@@ -158,7 +158,8 @@ export class OutlinePanel {
 
     /** With „Alle Stellen zeigen“ each heading shows its level, e.g. "H2". */
     badges() {
-        return [...document.querySelectorAll(HEADINGS)].map((element) => {
+        // The h1 only for screen readers has no place to mark.
+        return [...document.querySelectorAll(HEADINGS)].filter((element) => !element.classList.contains('fb-visually-hidden')).map((element) => {
             const rect = element.getBoundingClientRect();
 
             if (rect.width === 0 || rect.height === 0) {
