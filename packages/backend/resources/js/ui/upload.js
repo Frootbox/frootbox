@@ -15,11 +15,12 @@ function failedText() {
 
 /**
  * Uploads one file and adds it to the media library: the file goes to
- * the upload address, its token to media.create. Returns { ok, data,
- * problem } like runAction(); data is the new medium, problem.errors a
+ * the upload address, its token to media.create, or to media.replace
+ * with the id of a medium in replace (decision 0146). Returns { ok,
+ * data, problem } like runAction(); data is the medium, problem.errors a
  * list of { pointer, message }.
  */
-export async function uploadMedium(url, file, folderId = null) {
+export async function uploadMedium(url, file, folderId = null, replace = null) {
     const body = new FormData();
     body.append('file', file, file.name);
     let response;
@@ -39,6 +40,10 @@ export async function uploadMedium(url, file, folderId = null) {
 
     if (!response.ok) {
         return { ok: false, data: null, problem: { detail: answer?.detail ?? failedText(), errors: answer?.errors ?? [], status: response.status } };
+    }
+
+    if (replace) {
+        return runAction('media.replace', { id: replace, upload: answer.data.upload });
     }
 
     return runAction('media.create', { upload: answer.data.upload, folderId: folderId || null });
@@ -61,6 +66,8 @@ export async function uploadMedium(url, file, folderId = null) {
  *
  * - existing: the note for a file that is already in the library, with
  *   {name} (decision 0146); such a file is not added a second time
+ * - replace: the id of a medium whose file one image replaces
+ *   (media.replace) instead of adding new ones
  *
  * Errors appear as an alert above the content, one line per file, notes
  * on files already in the library as a calm alert. Fires "fb-uploaded"
@@ -75,6 +82,7 @@ export class Upload extends LitElement {
         progress: {},
         done: {},
         existing: {},
+        replace: {},
         disabled: { type: Boolean, reflect: true },
         dragging: { type: Boolean, reflect: true },
         busy: { type: Boolean, reflect: true },
@@ -89,6 +97,7 @@ export class Upload extends LitElement {
         this.progress = 'Uploading {done} of {total} …';
         this.done = null;
         this.existing = '{name} is already in the media library.';
+        this.replace = '';
         this.disabled = false;
         this.dragging = false;
         this.busy = false;
@@ -131,7 +140,7 @@ export class Upload extends LitElement {
 
         const input = document.createElement('input');
         input.type = 'file';
-        input.multiple = true;
+        input.multiple = !this.replace;
         input.accept = IMAGE_TYPES.join(',');
         input.addEventListener('change', () => this.upload([...(input.files ?? [])]));
         input.click();
@@ -193,6 +202,9 @@ export class Upload extends LitElement {
             return;
         }
 
+        // One file replaces one file.
+        files = this.replace ? files.slice(0, 1) : files;
+
         this.busy = true;
         this.querySelectorAll(':scope > .fb-alert').forEach((alert) => alert.remove());
         const media = [];
@@ -201,7 +213,7 @@ export class Upload extends LitElement {
 
         for (const [index, file] of files.entries()) {
             this.status(this.progress.replace('{done}', String(index + 1)).replace('{total}', String(files.length)));
-            const result = await uploadMedium(this.url, file, this.folder);
+            const result = await uploadMedium(this.url, file, this.folder, this.replace || null);
 
             if (result.ok && result.data.existing) {
                 known.push(this.existing.replace('{name}', result.data.fileName));

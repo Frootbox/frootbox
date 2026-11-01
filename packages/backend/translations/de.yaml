@@ -598,9 +598,26 @@ Changes visitors do not see yet.: Änderungen, die Besucher noch nicht sehen.
 Visitors see the changes once they are published.: Besucher sehen die Änderungen erst nach dem Veröffentlichen.
 The changes to the image are published.: Die Änderungen am Bild sind veröffentlicht.
 The changes to the image are discarded.: Die Änderungen am Bild sind verworfen.
-'Changes to the focus point and the texts wait in a draft until you publish them.': 'Änderungen an Fokuspunkt und Texten warten im Entwurf, bis Du sie veröffentlichst.'
-Focus point and texts go back to what visitors see.: Fokuspunkt und Texte gehen zurück auf das, was Besucher sehen.
+'Changes to the file, the focus point and the texts wait in a draft until you publish them.': 'Änderungen an Datei, Fokuspunkt und Texten warten im Entwurf, bis Du sie veröffentlichst.'
+'File, focus point and texts go back to what visitors see.': 'Datei, Fokuspunkt und Texte gehen zurück auf das, was Besucher sehen.'
 Discard the changes?: Änderungen verwerfen?
+# Replacing the file of a medium (decisions 0146, 0147)
+Replace the file: Datei ersetzen
+Drop an image here to replace the file: Bild hierher ziehen, um die Datei zu ersetzen
+Uploading …: Wird hochgeladen …
+The new file is in the draft.: Die neue Datei liegt im Entwurf.
+The file is replaced.: Die Datei ist ersetzt.
+The new file counts at every place that uses the image. The focus point stays.: Die neue Datei gilt an allen Stellen, die das Bild nutzen. Der Fokuspunkt bleibt.
+The medium has this file already.: Das Bild hat diese Datei schon.
+'The file is in the media library already, as "{name}".': 'Die Datei liegt schon in den Medien, als „{name}“.'
+The medium has no changes to publish.: Das Bild hat keine Änderungen zum Veröffentlichen.
+The medium has no changes to discard.: Das Bild hat keine Änderungen zum Verwerfen.
+There is no medium with this id.: Dieses Bild gibt es nicht.
+'The image here is used at other places as well. Should “{name}” replace it only here or everywhere?': 'Das Bild hier wird auch an anderen Stellen genutzt. Soll „{name}“ es nur hier ersetzen oder überall?'
+Only here: Nur hier
+Everywhere ({count} places): Überall ({count} Stellen)
+The new file counts everywhere. Visitors see it once the image is published.: Die neue Datei gilt überall. Besucher sehen sie, sobald das Bild veröffentlicht ist.
+The new file counts everywhere.: Die neue Datei gilt überall.
 'The file cannot be read as an image.': 'Die Datei lässt sich nicht als Bild lesen.'
 'The image has too many pixels, at most {max} million.': 'Das Bild hat zu viele Pixel, höchstens {max} Millionen.'
 'The file is no image of type JPEG, PNG, WebP or GIF.': 'Die Datei ist kein Bild im Format JPEG, PNG, WebP oder GIF.'

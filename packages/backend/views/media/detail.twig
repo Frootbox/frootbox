@@ -1,4 +1,4 @@
-{#- The details of one medium: focus point, texts per language, tags, folder (decision 0126), where it is used (0146), its draft (0147). -#}
+{#- The details of one medium: focus point, texts per language, tags, folder (decision 0126), where it is used and its file replaced (0146), its draft (0147). -#}
 {% import '@backend/ui.twig' as ui %}
 {% set editable = can('media.update') %}
 <section class="fb-card fb-split__main" id="media-detail" aria-labelledby="media-detail-title">
@@ -31,8 +31,18 @@
     </div>
     {% elseif medium.public %}
     <div class="fb-card__body">
-        <p class="fb-hint">{{ t('Changes to the focus point and the texts wait in a draft until you publish them.') }}</p>
+        <p class="fb-hint">{{ t('Changes to the file, the focus point and the texts wait in a draft until you publish them.') }}</p>
     </div>
+    {% endif %}
+
+    {% if can('media.replace') %}
+    <fb-upload class="fb-card__body fb-stack fb-stack--sm" url="{{ path('backend.uploads') }}" replace="{{ medium.id }}" refresh="media-detail" label="{{ t('Drop an image here to replace the file') }}" progress="{{ t('Uploading …') }}" done="{{ medium.public ? t('The new file is in the draft.') : t('The file is replaced.') }}">
+        <div class="fb-cluster">
+            {{ ui.button({label: t('Replace the file'), variant: 'outline', attrs: {'data-fb-upload': true}}) }}
+        </div>
+        <p class="fb-hint">{{ t('The new file counts at every place that uses the image. The focus point stays.') }}</p>
+        <p class="fb-visually-hidden" role="status" data-fb-upload-status></p>
+    </fb-upload>
     {% endif %}
 
     <fb-form action="media.update" refresh="media-detail" done="{{ t('The image is saved.') }}">
@@ -102,7 +112,7 @@
             <input type="hidden" name="id" value="{{ medium.id }}">
             <div class="fb-dialog__body">
                 <h2 class="fb-dialog__title" id="media-discard-title">{{ t('Discard the changes?') }}</h2>
-                <p>{{ t('Focus point and texts go back to what visitors see.') }}</p>
+                <p>{{ t('File, focus point and texts go back to what visitors see.') }}</p>
             </div>
             <div class="fb-dialog__actions">
                 {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'media-discard', command: 'close', autofocus: true}}) }}

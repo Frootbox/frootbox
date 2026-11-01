@@ -101,6 +101,28 @@ final class MediaScreenTest extends BackendTestCase
         self::assertStringNotContainsString('id="media-discard"', $detail);
     }
 
+    public function testReplacesTheFileOfAPublicImageInTheDraft(): void
+    {
+        $id = $this->upload('hafen.jpg');
+        $this->connection()->executeStatement('UPDATE media SET public = ? WHERE id = ?', [1, $id]);
+
+        $detail = $this->html($this->request('GET', '/cms/media/' . $id, session: $this->session));
+        self::assertStringContainsString('replace="' . $id . '" refresh="media-detail"', $detail);
+        self::assertStringContainsString('Datei ersetzen', $detail);
+        self::assertStringContainsString('done="Die neue Datei liegt im Entwurf."', $detail);
+
+        $file = $this->image();
+        $token = json_decode((string) $this->send(new UploadedFile($file, (int) filesize($file), \UPLOAD_ERR_OK, 'neu.jpg'))->getBody(), true, flags: \JSON_THROW_ON_ERROR);
+        self::assertIsArray($token);
+        self::assertIsArray($token['data']);
+        $this->action('media.replace', ['id' => $id, 'upload' => $token['data']['upload']], $this->session);
+
+        $detail = $this->html($this->request('GET', '/cms/media/' . $id, session: $this->session));
+        self::assertStringContainsString('id="media-detail-title" tabindex="-1" data-fb-focus>neu.jpg</h2>', $detail, 'The library shows the draft.');
+        self::assertStringContainsString('Änderungen offen', $detail);
+        self::assertStringContainsString('Datei, Fokuspunkt und Texte gehen zurück', $detail);
+    }
+
     public function testExplainsWhatIsWrongWithAFile(): void
     {
         $file = $this->get(ProjectPaths::class)->var('shell.php');

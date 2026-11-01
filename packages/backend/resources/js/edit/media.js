@@ -10,6 +10,11 @@ const SEARCH_DELAY = 300;
  * bar with the media library, a search, uploads and the alternative text
  * for this place. The bar keeps one instance; fields and the settings
  * panel open it with open().
+ *
+ * Uploading one image for a field that has one already: if the image
+ * there is used at other places as well, the dialog asks whether the
+ * new one counts only here (a new medium) or everywhere (media.replace,
+ * decision 0146).
  */
 export class MediaPicker {
     constructor(bar) {
@@ -40,6 +45,8 @@ export class MediaPicker {
             page: 0,
             loading: true,
             uploading: null,
+            question: null,
+            replaced: false,
             problems: [],
             notices: [],
         };
@@ -97,6 +104,7 @@ export class MediaPicker {
     async upload(files) {
         const problems = [];
         const notices = [];
+        const current = this.state.value?.media ?? null;
 
         for (const [index, file] of files.entries()) {
             this.update({ uploading: this.labels.uploading.replace('{done}', String(index + 1)).replace('{total}', String(files.length)) });
@@ -111,18 +119,79 @@ export class MediaPicker {
                 continue;
             }
 
-            const created = await this.bar.run('media.create', { upload: answer.data.upload });
+            const elsewhere = files.length === 1 && current && this.bar.config.mayReplace ? await this.elsewhere(current) : 0;
 
-            if (created.ok && this.state) {
-                // The same file is already in the library: no second copy (decision 0146).
-                const others = this.state.items.filter((item) => item.id !== created.data.id);
-                this.update({ items: [created.data, ...others], total: this.state.total + (created.data.existing ? 0 : 1), chosen: created.data.id });
+            if (elsewhere > 0 && this.state) {
+                this.update({ uploading: null, problems, notices, question: { upload: answer.data.upload, name: file.name, media: current, places: elsewhere + 1 } });
 
-                if (created.data.existing) {
-                    notices.push(this.labels.alreadyInLibrary.replace('{name}', created.data.fileName));
-                }
-            } else if (!created.ok) {
-                problems.push(`${file.name}: ${this.bar.message?.text ?? this.labels.failed}`);
+                return;
+            }
+
+            await this.create(answer.data.upload, file.name, problems, notices);
+        }
+
+        if (this.state) {
+            this.update({ uploading: null, problems, notices });
+        }
+    }
+
+    /** How many other places use the medium, besides this page in this language. */
+    async elsewhere(id) {
+        let body = null;
+
+        try {
+            const response = await fetch(this.bar.config.queries + 'media.usages?' + new URLSearchParams({ id }), { headers: { Accept: 'application/json' }, credentials: 'same-origin' });
+            body = response.ok ? await response.json() : null;
+        } catch {
+            body = null;
+        }
+
+        const page = this.bar.config.page?.id ?? null;
+        const language = this.bar.config.language;
+
+        return (body?.data ?? []).filter((usage) => !(usage.type === 'page' && usage.id === page && usage.language === language)).length;
+    }
+
+    /** A new medium from the upload, or the one with the same file. */
+    async create(upload, name, problems, notices) {
+        const created = await this.bar.run('media.create', { upload });
+
+        if (created.ok && this.state) {
+            // The same file is already in the library: no second copy (decision 0146).
+            const others = this.state.items.filter((item) => item.id !== created.data.id);
+            this.update({ items: [created.data, ...others], total: this.state.total + (created.data.existing ? 0 : 1), chosen: created.data.id });
+
+            if (created.data.existing) {
+                notices.push(this.labels.alreadyInLibrary.replace('{name}', created.data.fileName));
+            }
+        } else if (!created.ok) {
+            problems.push(`${name}: ${this.bar.message?.text ?? this.labels.failed}`);
+        }
+    }
+
+    /** Answers the question: only here (a new medium) or everywhere (media.replace). */
+    async answer(everywhere) {
+        const question = this.state?.question;
+
+        if (!question) {
+            return;
+        }
+
+        const problems = [];
+        const notices = [];
+        this.update({ question: null, uploading: this.labels.uploading.replace('{done}', '1').replace('{total}', '1') });
+
+        if (!everywhere) {
+            await this.create(question.upload, question.name, problems, notices);
+        } else {
+            const replaced = await this.bar.run('media.replace', { id: question.media, upload: question.upload });
+
+            if (replaced.ok && this.state) {
+                const others = this.state.items.filter((item) => item.id !== replaced.data.id);
+                this.update({ items: [replaced.data, ...others], chosen: replaced.data.id, replaced: true });
+                notices.push(replaced.data.draft ? this.labels.replacedInDraft : this.labels.replacedEverywhere);
+            } else if (!replaced.ok) {
+                problems.push(`${question.name}: ${this.bar.message?.text ?? this.labels.failed}`);
             }
         }
 
@@ -162,8 +231,13 @@ export class MediaPicker {
         this.bar.renderRoot.querySelector('dialog.media')?.close();
         this.state = null;
         this.bar.requestUpdate();
-        then?.();
+        const saving = then?.();
         state?.done?.();
+
+        // A new file for every place: the page shows it once loaded again, like after undo.
+        if (state?.replaced) {
+            Promise.resolve(saving).finally(() => location.reload());
+        }
     }
 
     dialog() {
@@ -195,9 +269,16 @@ export class MediaPicker {
                 <div class="media-tools">
                     <label>${labels.search}
                         <input type="search" .value=${state.query} autocomplete="off" @input=${(event) => this.search(event.target.value)}></label>
-                    ${this.bar.config.mayUpload ? html`<button type="button" ?disabled=${state.uploading !== null} @click=${() => this.choose()}>${labels.upload}</button>` : nothing}
+                    ${this.bar.config.mayUpload ? html`<button type="button" ?disabled=${state.uploading !== null || state.question !== null} @click=${() => this.choose()}>${labels.upload}</button>` : nothing}
                 </div>
                 <p class="hint" role="status">${state.uploading ?? ''}</p>
+                ${state.question ? html`<div class="question" role="group" aria-labelledby="fb-media-question">
+                    <p id="fb-media-question">${labels.replaceWhere.replace('{name}', state.question.name)}</p>
+                    <div class="actions">
+                        <button type="button" @click=${() => this.answer(false)}>${labels.replaceHere}</button>
+                        <button type="button" class="primary" @click=${() => this.answer(true)}>${labels.replaceEverywhere.replace('{count}', String(state.question.places))}</button>
+                    </div>
+                </div>` : nothing}
                 ${state.problems.length > 0 ? html`<ul class="problems" role="alert">${state.problems.map((problem) => html`<li>${problem}</li>`)}</ul>` : nothing}
                 ${state.notices.length > 0 ? html`<ul class="notices" role="status">${state.notices.map((notice) => html`<li>${notice}</li>`)}</ul>` : nothing}
                 ${list}
@@ -208,7 +289,7 @@ export class MediaPicker {
                 <div class="actions">
                     ${state.value ? html`<button type="button" class="danger" @click=${() => this.close(state.remove)}>${labels.removeImage}</button>` : nothing}
                     <button type="button" @click=${() => this.close()}>${labels.cancel}</button>
-                    <button type="submit" class="primary" ?disabled=${!state.chosen}>${labels.apply}</button>
+                    <button type="submit" class="primary" ?disabled=${!state.chosen || state.question !== null}>${labels.apply}</button>
                 </div>
             </form>
         </dialog>`;
@@ -280,4 +361,15 @@ export const mediaStyles = css`
     .problems { margin: 0; padding-inline-start: var(--fb-space-4); color: var(--fb-danger-text); }
 
     .notices { margin: 0; padding-inline-start: var(--fb-space-4); color: var(--fb-text-muted); }
+
+    .question {
+        display: grid;
+        gap: var(--fb-space-3);
+        padding: var(--fb-space-3);
+        border: var(--fb-size-border) solid var(--fb-border);
+        border-radius: var(--fb-radius-md);
+        background: var(--fb-surface-2);
+    }
+
+    .question p { margin: 0; }
 `;
