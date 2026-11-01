@@ -25,8 +25,18 @@ final class ThemeScreenTest extends BackendTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->createUser('admin@example.org', ['admin']);
+        $this->session = $this->signIn('admin@example.org');
+    }
+
+    public function testEditorsDoNotSeeIt(): void
+    {
+        // Decision 0138: the design is for the whole website.
         $this->createUser('editor@example.org', ['editor']);
-        $this->session = $this->signIn('editor@example.org');
+        $editor = $this->signIn('editor@example.org');
+
+        self::assertSame(403, $this->request('GET', '/cms/theme', session: $editor)->getStatusCode());
+        self::assertStringNotContainsString('/cms/theme"', $this->html($this->request('GET', '/cms', session: $editor)), 'The menu hides it.');
     }
 
     public function testShowsTheDesignAndLeadsToTheWebsite(): void
