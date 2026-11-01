@@ -61,7 +61,7 @@ test('edits the website from the draft', async ({ page, request }) => {
     const title = page.locator('h1[data-fb-field="title"]');
     await expect(title).toHaveText(heading);
     await title.hover();
-    await expect(bar.locator('.outline .label')).toHaveText('Title');
+    await expect(bar.locator('.outline .label')).toHaveText('Überschrift');
     await title.focus();
     await expect(bar.locator('.outline')).toHaveCount(1);
 

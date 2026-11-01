@@ -156,8 +156,8 @@ test('copies and deletes blocks and edits list entries', async ({ page }) => {
     await panel.getByRole('button', { name: 'Eintrag hinzufügen' }).click();
     await expect(faq.locator('details')).toHaveCount(2);
     await panel.getByRole('button', { name: 'Eintrag 2', exact: true }).click();
-    await panel.getByLabel('Question').fill('Zwei?');
-    await panel.getByLabel('Question').press('Enter');
+    await panel.getByLabel('Frage').fill('Zwei?');
+    await panel.getByLabel('Frage').press('Enter');
     await expect(faq.locator('summary').nth(1)).toHaveText('Zwei?');
 
     await panel.getByRole('button', { name: 'Nach oben: Zwei?' }).click();
