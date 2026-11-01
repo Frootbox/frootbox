@@ -53,7 +53,8 @@ test('shows guests with a link the draft and nothing else', async ({ page, brows
     await expect(customer).toHaveURL(`/${slug}`);
     await expect(customer.getByRole('heading', { level: 1 })).toHaveText(draft);
     await expect(customer.locator('fb-editor-bar')).toHaveCount(0);
-    await expect(customer.locator('[data-fb-field], fb-field')).toHaveCount(0);
+    // Only light marks to comment on, nothing for editing (decision 0156).
+    await expect(customer.locator('fb-field, fb-area, [data-fb-type], [tabindex="0"][data-fb-field]')).toHaveCount(0);
     const note = customer.locator('fb-preview-note');
     await expect(note.getByText('Vorschau, noch nicht veröffentlicht')).toBeVisible();
 
