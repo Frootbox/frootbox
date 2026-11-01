@@ -449,6 +449,9 @@ There is nothing for the scope "{scope}".: „{scope}“ gibt es nicht.
 "Visitors still see the published version until you publish.": "Besucher sehen noch die veröffentlichte Fassung, bis Du veröffentlichst."
 "The page is not online yet. Visitors see it once you publish it.": "Die Seite ist noch nicht online. Besucher sehen sie, sobald Du sie veröffentlichst."
 "All changes are saved.": "Alle Änderungen sind gespeichert."
+"One field still needs something.": "Bei einem Feld fehlt noch etwas."
+"{count} fields still need something.": "Bei {count} Feldern fehlt noch etwas."
+"Go to the first one": "Zum ersten Feld"
 "Nothing to undo yet": "Noch nichts rückgängig zu machen"
 "Everything is published": "Alles ist veröffentlicht"
 "Edit on the website": "Auf der Website bearbeiten"
@@ -497,6 +500,12 @@ Options: Optionen
 'Entry {number}': 'Eintrag {number}'
 'Add an entry': 'Eintrag hinzufügen'
 'Remove the entry': 'Eintrag entfernen'
+'Entry {number} of "{list}"': 'Eintrag {number} von „{list}“'
+'Move forward': 'Nach vorne'
+'Move back': 'Nach hinten'
+'Add an entry after it': 'Eintrag danach einfügen'
+'The list needs at least {count} entries.': 'Die Liste braucht mindestens {count} Einträge.'
+'The list takes at most {count} entries.': 'Die Liste nimmt höchstens {count} Einträge auf.'
 'There is nothing to set for this block. Edit its content right on the page.': 'Für diesen Block gibt es nichts einzustellen. Seinen Inhalt bearbeitest Du direkt auf der Seite.'
 'There is no area "{area}" there.': 'Dort gibt es keinen Bereich „{area}“.'
 'There is no block "{block}".': 'Den Block „{block}“ gibt es nicht.'

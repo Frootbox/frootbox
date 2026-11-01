@@ -108,6 +108,7 @@ final class EditModeTest extends BackendTestCase
         self::assertSame('Bearbeiten', $config['labels']['edit']);
         self::assertSame('Rückgängig', $config['labels']['undo']);
         self::assertSame('Änderungen offen', $config['labels']['changed'], 'Says what visitors see, not what one typed (decision 0141).');
+        self::assertSame('Bei {count} Feldern fehlt noch etwas.', $config['labels']['problems'], 'Publishing names the fields it misses (decision 0143).');
         self::assertSame('Block darunter einfügen', $config['labels']['insertBelow']);
         self::assertSame('„{block}“ löschen?', $config['labels']['removeConfirm']);
         self::assertStringContainsString('.ProseMirror{', $editing);
@@ -117,6 +118,7 @@ final class EditModeTest extends BackendTestCase
             'id' => $this->about,
             'status' => 'changed',
             'locked' => false,
+            'layout' => 'acme/base/Page',
             'publish' => [$this->about],
             'offlineParents' => [],
             'mayPublish' => true,

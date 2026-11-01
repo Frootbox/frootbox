@@ -1,4 +1,5 @@
 import { css, html, nothing } from 'lit';
+import { entryAt, fieldsOf, markEntries, ownerOf, sideBySide } from './entries.js';
 import { icon } from './icons.js';
 
 /**
@@ -92,6 +93,9 @@ export const arrangingStyles = css`
     }
 
     .block-tools.inside { translate: -100% 0; }
+
+    /* Inside the corner of the entry, so it does not cover the buttons of the block. */
+    .entry-tools { translate: calc(-100% - var(--fb-space-1)) var(--fb-space-1); }
 
     .block-tools button {
         justify-content: center;
@@ -271,6 +275,8 @@ export class Arranging {
         this.bar = bar;
         /** The block whose buttons show. */
         this.block = null;
+        /** The list entry whose buttons show, inside that block (decision 0145). */
+        this.entry = null;
         this.confirming = false;
         /** The open dialog to pick a block: where it goes. */
         this.picker = null;
@@ -299,6 +305,7 @@ export class Arranging {
             }
         }
 
+        markEntries();
         document.addEventListener('keydown', this.onKey, true);
         document.addEventListener('click', this.onClick, true);
         this.restore();
@@ -312,7 +319,12 @@ export class Arranging {
     /** After loading again: the focus back on the block, the panel open again. */
     restore() {
         const state = readRestore(this.restoreKey);
-        const element = state?.block ? document.querySelector(`${BLOCK}[data-fb-block="${CSS.escape(state.block)}"]`) : null;
+        const block = state?.block ? document.querySelector(`${BLOCK}[data-fb-block="${CSS.escape(state.block)}"]`) : null;
+        // After a change of a list: the field of the entry in question.
+        const field = state?.field
+            ? [...(block ?? document).querySelectorAll(`[data-fb-field="${CSS.escape(state.field)}"]:not([data-fb-site])`)].find((item) => ownerOf(item) === block)
+            : null;
+        const element = field ?? block;
 
         if (!element) {
             return;
@@ -339,11 +351,22 @@ export class Arranging {
         }
 
         const block = target.closest(BLOCK);
+        const found = entryAt(target);
+        const entry = found && found.owner === block ? found : null;
 
         if (block !== this.block) {
             this.block = block;
             this.confirming = false;
             this.bar.requestUpdate();
+        }
+
+        if (entry?.element !== this.entry?.element) {
+            this.entry = entry;
+            this.bar.requestUpdate();
+
+            if (entry) {
+                this.describe().then(() => this.bar.requestUpdate());
+            }
         }
     }
 
@@ -357,8 +380,15 @@ export class Arranging {
         // Alt+F10 reaches the buttons of the block, in rich text its toolbar.
         if (event.key === 'F10' && event.altKey && !target.closest('[data-fb-type="richtext"]')) {
             const block = target.closest(BLOCK);
+            const entry = entryAt(target);
 
-            if (block) {
+            // In an entry its buttons come first, from there Alt+F10 again reaches those of the block.
+            if (entry && entry.owner === block) {
+                event.preventDefault();
+                this.select(target);
+                this.entryReturn = target;
+                this.focusTools('.entry-tools');
+            } else if (block) {
                 event.preventDefault();
                 this.select(block);
                 this.focusTools();
@@ -398,8 +428,8 @@ export class Arranging {
         return { parent: parent?.dataset.fbBlock ?? null, parentName: parent?.dataset.fbName ?? null, area: block.dataset.fbArea, after: block.dataset.fbBlock };
     }
 
-    focusTools() {
-        this.bar.updateComplete.then(() => this.bar.renderRoot.querySelector('.block-tools button:not([disabled])')?.focus());
+    focusTools(tools = '.block-tools') {
+        this.bar.updateComplete.then(() => this.bar.renderRoot.querySelector(`${tools} button:not([disabled])`)?.focus());
     }
 
     /** The buttons at the selected block, above its top end. */
@@ -447,6 +477,121 @@ export class Arranging {
     }
 
     /** Asks before deleting, in place of the buttons. */
+    /** The summary of the list of an entry from block.list or layout.list, once loaded. */
+    listOf(entry) {
+        const owner = entry.owner
+            ? this.blocks?.find((block) => block.name === entry.owner.dataset.fbName)
+            : this.layouts?.find((layout) => layout.name === this.bar.config.page?.layout);
+        let fields = owner?.fields ?? [];
+        let list = null;
+
+        for (const segment of entry.list.split('/')) {
+            if (/^\d+$/.test(segment)) {
+                continue;
+            }
+
+            list = fields.find((field) => field.name === segment) ?? null;
+            fields = list?.fields ?? [];
+        }
+
+        return list;
+    }
+
+    /**
+     * The buttons at the entry under the pointer or with the focus, at
+     * its top end (decision 0145): move it, add one after it, remove it.
+     */
+    entryTools() {
+        const entry = this.entry;
+
+        if (!entry?.element.isConnected || this.picker || this.panel?.busy) {
+            return nothing;
+        }
+
+        const rect = entry.element.getBoundingClientRect();
+
+        if (rect.bottom < 0 || rect.top > innerHeight || rect.width === 0) {
+            return nothing;
+        }
+
+        const labels = this.labels;
+        const list = this.listOf(entry);
+        const name = list?.label || labels.entry.replace('{number}', '').trim();
+        const number = String(entry.index + 1);
+        const full = list?.max != null && entry.count >= list.max;
+        const needed = (list?.min ?? 0) >= entry.count;
+        const across = sideBySide(entry);
+        const button = (glyph, label, action, disabled = false, why = '', tone = '') => html`<button type="button" class=${tone}
+            aria-label=${label} title=${disabled && why ? why : label} ?disabled=${disabled || this.busy} @click=${action}>${icon(glyph)}</button>`;
+
+        return html`<div class="block-tools entry-tools" role="toolbar"
+            aria-label=${labels.entryTools.replace('{number}', number).replace('{list}', name)}
+            style="inset-block-start: ${Math.max(rect.top, 0)}px; inset-inline-start: ${Math.min(rect.right, innerWidth)}px"
+            @keydown=${(event) => this.entryToolsKey(event)}>
+            ${button(across ? 'left' : 'up', labels.moveEarlier, () => this.moveEntry(entry, entry.index - 1), entry.index === 0)}
+            ${button(across ? 'right' : 'down', labels.moveLater, () => this.moveEntry(entry, entry.index + 1), entry.index >= entry.count - 1)}
+            ${button('plus', labels.insertEntry, () => this.addEntry(entry), full, labels.entriesMax.replace('{count}', String(list?.max)))}
+            ${button('trash', labels.removeEntry, () => this.removeEntry(entry), needed, labels.entriesMin.replace('{count}', String(list?.min)), 'danger')}
+        </div>`;
+    }
+
+    entryToolsKey(event) {
+        const buttons = [...this.bar.renderRoot.querySelectorAll('.entry-tools button:not([disabled])')];
+        const at = buttons.indexOf(this.bar.renderRoot.activeElement);
+
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            const back = this.entryReturn?.isConnected ? this.entryReturn : this.entry ? fieldsOf(this.entry)[0] : null;
+            back?.focus();
+        } else if (event.key === 'F10' && event.altKey) {
+            event.preventDefault();
+            this.focusTools();
+        } else if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+            event.preventDefault();
+            const step = event.key === 'ArrowRight' ? 1 : -1;
+            buttons[(at + step + buttons.length) % buttons.length]?.focus();
+        }
+    }
+
+    /** Where a field of an entry lies after the entry moved to another position. */
+    fieldAt(entry, index, field = null) {
+        const fields = fieldsOf(entry);
+        const list = this.listOf(entry);
+        const required = list ? fields.find((item) => !list.fields.find((summary) => item.dataset.fbField === `${entry.path}/${summary.name}`)?.optional) : null;
+        const chosen = field ?? required ?? fields[0];
+
+        return chosen ? `${entry.list}/${index}/${chosen.dataset.fbField.slice(entry.path.length + 1)}` : null;
+    }
+
+    entryInput(entry) {
+        return entry.owner ? { block: entry.owner.dataset.fbBlock } : {};
+    }
+
+    focusedField(entry) {
+        const active = document.activeElement?.closest?.('[data-fb-field]');
+
+        return active && entry.element.contains(active) ? active : null;
+    }
+
+    moveEntry(entry, to) {
+        const field = this.fieldAt(entry, to, this.focusedField(entry));
+
+        return this.change('page.move-list-entry', { ...this.entryInput(entry), path: entry.path, to }, () => entry.owner?.dataset.fbBlock ?? null, false, field);
+    }
+
+    addEntry(entry) {
+        const field = this.fieldAt(entry, entry.index + 1);
+
+        return this.change('page.add-list-entry', { ...this.entryInput(entry), path: entry.list, index: entry.index + 1 }, () => entry.owner?.dataset.fbBlock ?? null, false, field);
+    }
+
+    removeEntry(entry) {
+        const next = entry.index < entry.count - 1 ? entry.index : entry.index - 1;
+        const field = next >= 0 ? this.fieldAt(entry, next) : null;
+
+        return this.change('page.remove-list-entry', { ...this.entryInput(entry), path: entry.path }, () => entry.owner?.dataset.fbBlock ?? null, false, field);
+    }
+
     confirm(asking) {
         this.confirming = asking;
         this.bar.requestUpdate();
@@ -505,7 +650,7 @@ export class Arranging {
      * Runs an action that changes the structure and loads the page again,
      * with the focus on the block it names and the panel open if it was.
      */
-    async change(name, input, focus, panel = false) {
+    async change(name, input, focus, panel = false, field = null) {
         this.busy = true;
         this.bar.requestUpdate();
         await this.bar.editing?.flushAll();
@@ -525,7 +670,7 @@ export class Arranging {
         }
 
         this.bar.changed(result.data?.entry ?? null);
-        writeRestore(this.restoreKey, { block: focus(result.data ?? {}), panel });
+        writeRestore(this.restoreKey, { block: focus(result.data ?? {}), panel, field });
         location.reload();
 
         return true;

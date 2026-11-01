@@ -4,6 +4,7 @@ import { DesignPanel, designStyles } from './design.js';
 import { Editing } from './editing.js';
 import { icon } from './icons.js';
 import { MediaPicker, mediaStyles } from './media.js';
+import { placesOf } from './problems.js';
 
 const COLLAPSED = 'fb-editor-bar-collapsed';
 const THEME = 'fb-theme';
@@ -84,7 +85,11 @@ function kindOf(element) {
         return 'field';
     }
 
-    return element.hasAttribute('data-fb-block') ? 'block' : 'area';
+    if (element.hasAttribute('data-fb-block')) {
+        return 'block';
+    }
+
+    return element.hasAttribute('data-fb-entry') ? 'entry' : 'area';
 }
 
 /**
@@ -110,6 +115,7 @@ export class EditorBar extends LitElement {
         menu: { state: true },
         flash: { state: true },
         details: { state: true },
+        problems: { state: true },
     };
 
     static styles = [css`
@@ -321,7 +327,8 @@ export class EditorBar extends LitElement {
         }
 
         .details[data-tone="danger"] { color: var(--fb-danger-text); }
-        .details p { margin: 0; }
+        .details p, .details ul { margin: 0; }
+        .details ul { padding-inline-start: var(--fb-space-4); }
         .details button { justify-self: start; color: var(--fb-text); }
 
         [aria-disabled="true"] { cursor: default; opacity: 0.5; }
@@ -334,8 +341,11 @@ export class EditorBar extends LitElement {
             border-radius: var(--fb-radius-sm);
         }
 
-        .outline[data-kind="block"], .outline[data-kind="area"] { border-style: dashed; }
+        .outline[data-kind="block"], .outline[data-kind="area"], .outline[data-kind="entry"] { border-style: dashed; }
+        .outline[data-kind="entry"] .label { display: none; }
         .outline[data-kind="area"] { background: var(--fb-accent-soft); opacity: 0.8; }
+        .outline[data-kind="problem"] { border-color: var(--fb-danger); }
+        .outline[data-kind="problem"] .label { background: var(--fb-danger); color: var(--fb-on-danger); }
 
         .label {
             position: absolute;
@@ -557,6 +567,9 @@ export class EditorBar extends LitElement {
         this.flash = false;
         this.flashTimer = 0;
         this.details = false;
+        // What publishing found missing, with the places to mark (decision 0143).
+        this.problems = [];
+        this.problemsText = '';
         this.onOutside = (event) => {
             const path = event.composedPath();
 
@@ -576,7 +589,7 @@ export class EditorBar extends LitElement {
         this.design = new DesignPanel(this);
         this.frame = 0;
         this.redraw = () => {
-            if (this.frame === 0 && (this.current || this.showAll || this.toolbar || this.arranging?.block)) {
+            if (this.frame === 0 && (this.current || this.showAll || this.toolbar || this.arranging?.block || this.problems.length > 0)) {
                 this.frame = requestAnimationFrame(() => {
                     this.frame = 0;
                     this.requestUpdate();
@@ -676,7 +689,7 @@ export class EditorBar extends LitElement {
 
         const arranging = this.arranging;
 
-        return html`${this.outlines()}${arranging?.tools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.design.view()}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}${this.media.dialog()}`;
+        return html`${this.outlines()}${arranging?.tools() ?? nothing}${arranging?.entryTools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.design.view()}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}${this.media.dialog()}`;
     }
 
     round() {
@@ -709,7 +722,7 @@ export class EditorBar extends LitElement {
     get state() {
         const page = this.config.editing ? this.config.page : null;
 
-        if (this.message?.tone === 'danger') {
+        if (this.message?.tone === 'danger' || this.problems.length > 0) {
             return 'error';
         }
 
@@ -758,6 +771,10 @@ export class EditorBar extends LitElement {
     explanation(state, locked) {
         const labels = this.labels;
 
+        if (state === 'error' && this.problems.length > 0) {
+            return this.problemsView();
+        }
+
         if (state === 'error') {
             return html`<p>${this.message.text}</p>
                 ${this.message.reload ? html`<button type="button" @click=${() => location.reload()}>${labels.reload}</button>` : nothing}`;
@@ -768,6 +785,43 @@ export class EditorBar extends LitElement {
         return html`<p>${labels[`explain${state[0].toUpperCase()}${state.slice(1)}`]}</p>
             ${saved}
             ${locked ? html`<p>${labels.locked}.</p>` : nothing}`;
+    }
+
+    /**
+     * What publishing found missing: how many, a way to the first marked
+     * field, and those the page does not show by block and field.
+     */
+    problemsView() {
+        const labels = this.labels;
+        const count = this.problems.length;
+        const shown = this.problems.filter((problem) => problem.element?.isConnected);
+        const hidden = this.problems.filter((problem) => !problem.element?.isConnected);
+        const where = (problem) => [problem.block?.dataset.fbTitle, problem.path].filter(Boolean).join(' · ');
+
+        return html`<p>${this.problemsText}</p>
+            <p>${count === 1 ? labels.oneProblem : labels.problems.replace('{count}', count)}</p>
+            ${hidden.length > 0 ? html`<ul>${hidden.map((problem) => html`<li>${where(problem) ? `${where(problem)}: ` : ''}${problem.message}</li>`)}</ul>` : nothing}
+            ${shown.length > 0 ? html`<button type="button" data-fb-first-problem @click=${() => this.showProblem(shown[0].element)}>${labels.firstProblem}</button>` : nothing}`;
+    }
+
+    /** Scrolls to a marked field and puts the focus into it. */
+    showProblem(element) {
+        this.details = false;
+        element.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+        element.focus({ preventScroll: true });
+    }
+
+    /** A field got a value: its mark goes, and with the last one the error. */
+    solved(element) {
+        if (!this.problems.some((problem) => problem.element === element)) {
+            return;
+        }
+
+        this.problems = this.problems.filter((problem) => problem.element !== element);
+
+        if (this.problems.length === 0) {
+            this.details = false;
+        }
     }
 
     detailsKey(event) {
@@ -947,11 +1001,15 @@ export class EditorBar extends LitElement {
         }
 
         const selected = this.arranging?.block;
+        const entry = this.arranging?.entry?.element;
         const elements = this.showAll
-            ? [...document.querySelectorAll(MARKED)]
-            : [...new Set([selected, this.current].filter((element) => element?.isConnected))];
+            ? [...document.querySelectorAll(`${MARKED}, [data-fb-entry]`)]
+            : [...new Set([selected, entry, this.current].filter((element) => element?.isConnected))];
 
-        return elements.map((element) => {
+        // A field with a problem has its own outline.
+        const marked = new Set(this.problems.map((problem) => problem.element));
+
+        return html`${this.problemOutlines()}${elements.filter((element) => !marked.has(element)).map((element) => {
             const rect = element.getBoundingClientRect();
 
             if (rect.width === 0 && rect.height === 0) {
@@ -963,6 +1021,26 @@ export class EditorBar extends LitElement {
             return html`<div class="outline ${below ? 'below' : ''}" data-kind=${kindOf(element)}
                 style="inset-block-start: ${rect.top}px; inset-inline-start: ${rect.left}px; inline-size: ${rect.width}px; block-size: ${rect.height}px">
                 <span class="label">${labelOf(element)}</span>
+            </div>`;
+        })}`;
+    }
+
+    /**
+     * Fields that publishing found missing, in danger (decision 0143). The
+     * one under the pointer or with the focus says why, the others only
+     * their name, so labels in narrow places do not cover each other.
+     */
+    problemOutlines() {
+        return this.problems.filter((problem) => problem.element?.isConnected).map(({ element, message }) => {
+            const rect = element.getBoundingClientRect();
+
+            if (rect.width === 0 && rect.height === 0) {
+                return nothing;
+            }
+
+            return html`<div class="outline ${rect.top < 24 ? 'below' : ''}" data-kind="problem"
+                style="inset-block-start: ${rect.top}px; inset-inline-start: ${rect.left}px; inline-size: ${rect.width}px; block-size: ${rect.height}px">
+                <span class="label">${element === this.current ? `${labelOf(element)}: ${message}` : labelOf(element)}</span>
             </div>`;
         });
     }
@@ -1019,6 +1097,7 @@ export class EditorBar extends LitElement {
     async publish() {
         const page = this.config.page;
         this.busy = true;
+        this.problems = [];
         await this.editing?.flushAll();
 
         if (page.canPublish) {
@@ -1026,7 +1105,7 @@ export class EditorBar extends LitElement {
 
             if (!response?.ok) {
                 this.busy = false;
-                this.fail(response);
+                this.fail(response, true);
 
                 return;
             }
@@ -1040,7 +1119,7 @@ export class EditorBar extends LitElement {
 
             if (!response?.ok) {
                 this.busy = false;
-                this.fail(response);
+                this.fail(response, true);
 
                 return;
             }
@@ -1381,9 +1460,25 @@ export class EditorBar extends LitElement {
         }
     }
 
-    async fail(response) {
+    /**
+     * Shows why an action failed. For publishing, the fields it names are
+     * marked on the page (decision 0143).
+     */
+    async fail(response, places = false) {
         this.busy = false;
         const problem = response ? await response.json().catch(() => null) : null;
-        this.message = { tone: 'danger', text: problem?.detail ?? this.labels.failed };
+        const text = problem?.detail ?? this.labels.failed;
+        const errors = Array.isArray(problem?.errors) ? problem.errors : [];
+
+        if (places && errors.length > 0) {
+            this.problemsText = text;
+            this.problems = placesOf(errors, this.config.page, this.config.language);
+            this.message = { tone: 'info', text: `${text} ${errors.length === 1 ? this.labels.oneProblem : this.labels.problems.replace('{count}', errors.length)}` };
+            this.details = true;
+
+            return;
+        }
+
+        this.message = { tone: 'danger', text };
     }
 }

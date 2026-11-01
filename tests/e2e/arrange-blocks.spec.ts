@@ -176,7 +176,7 @@ test('copies and deletes blocks and edits list entries', async ({ page }) => {
     await removePage(page, id);
 });
 
-test('gives a new block its start entries with placeholders', async ({ page }) => {
+test('gives a new block its start entries with placeholders', async ({ page, browser }) => {
     const slug = `start-${unique()}`;
     const id = await openPage(page, slug, [
         { block: 'frootbox/theme-bohnenglueck/Text', fields: { body: text('Wir rösten langsam.') } },
@@ -203,9 +203,56 @@ test('gives a new block its start entries with placeholders', async ({ page }) =
     await save;
     await expect(title).toHaveText('Frisch geröstet');
 
-    // Empty entries keep the page from going live.
+    // Empty required fields keep the page from going live and are marked (decision 0143);
+    // entries nobody touched and optional fields do not (decision 0144).
     await bar.getByRole('button', { name: 'Veröffentlichen' }).click();
-    await expect(bar.getByRole('region', { name: 'Redaktionsleiste' }).getByRole('status')).toHaveText('Prüf die markierten Felder.');
+    await expect(bar.getByRole('region', { name: 'Redaktionsleiste' }).getByRole('status')).toHaveText('Prüf die markierten Felder. Bei einem Feld fehlt noch etwas.');
+    await expect(bar.locator('.outline[data-kind="problem"]')).toHaveCount(1);
+
+    // The way to the first one; with a value its mark goes.
+    const heading = features.locator('h2[data-fb-field="title"]');
+    await bar.getByRole('button', { name: 'Zum ersten Feld' }).click();
+    await expect(heading).toBeFocused();
+    const saved = page.waitForResponse((response) => response.url().endsWith('/page.update-field') && response.ok());
+    await page.keyboard.type('Darum wir');
+    await page.keyboard.press('Enter');
+    await saved;
+    await expect(bar.locator('.outline[data-kind="problem"]')).toHaveCount(0);
+    await expect(bar.locator('.state .visually-hidden')).toHaveText('Status: Änderungen offen');
+
+    // Emptied by hand, a field shows its placeholder again.
+    const second = features.locator('[data-fb-field="items/1/title"]');
+    await second.click();
+    await page.keyboard.type('x');
+    await page.keyboard.press('Backspace');
+    await expect(second).toBeEmpty();
+
+    // Buttons at the entry add, move and remove entries (decision 0145).
+    await title.hover();
+    const tools = bar.getByRole('toolbar', { name: 'Eintrag 1 von „Punkte“' });
+    await tools.getByRole('button', { name: 'Eintrag danach einfügen' }).click();
+    await expect(features.locator('.features__item')).toHaveCount(4);
+    await expect(features.locator('[data-fb-field="items/1/title"]')).toBeFocused();
+    await bar.getByRole('toolbar', { name: 'Eintrag 2 von „Punkte“' }).getByRole('button', { name: 'Nach vorne' }).click();
+    await expect(features.locator('[data-fb-field="items/1/title"]')).toHaveText('Frisch geröstet');
+    await expect(features.locator('[data-fb-field="items/0/title"]')).toBeFocused();
+    const first = bar.getByRole('toolbar', { name: 'Eintrag 1 von „Punkte“' });
+    await expect(first.getByRole('button', { name: 'Nach vorne' })).toBeDisabled();
+    await first.getByRole('button', { name: 'Eintrag entfernen' }).click();
+    await expect(features.locator('.features__item')).toHaveCount(3);
+    await expect(features.locator('[data-fb-field="items/0/title"]')).toBeFocused();
+    await expect(features.locator('[data-fb-field="items/0/title"]')).toHaveText('Frisch geröstet');
+
+    // Visitors get the entry with a value only, without empty elements.
+    const published = page.waitForResponse((response) => response.url().endsWith('/page.publish') && response.ok());
+    await bar.getByRole('button', { name: 'Veröffentlichen' }).click();
+    await published;
+    const guest = await browser.newPage();
+    await guest.goto(`/${slug}`);
+    await expect(guest.locator('.features__item')).toHaveCount(1);
+    await expect(guest.locator('.features__item')).toHaveText('Frisch geröstet');
+    expect(await guest.locator('.features').innerHTML()).not.toMatch(/<(p|span)[^>]*><\/\1>|fb:empty/);
+    await guest.close();
 
     await removePage(page, id);
 });

@@ -131,6 +131,8 @@ final readonly class EditorBar
             'id' => $id,
             'status' => $details->status->value,
             'locked' => null !== $details->visibility->lockedBy,
+            // For the bounds of its lists (decision 0145).
+            'layout' => ($details->draft ?? $details->published)?->layout,
             'publish' => $publish,
             'offlineParents' => array_map(static fn(string $ancestor): string => $tree->row($ancestor)['title'], $offline),
             // Whether the buttons come once a change makes a draft.
@@ -206,6 +208,9 @@ final readonly class EditorBar
             'explainChanged' => $t('Visitors still see the published version until you publish.'),
             'explainDraft' => $t('The page is not online yet. Visitors see it once you publish it.'),
             'allSaved' => $t('All changes are saved.'),
+            'oneProblem' => $t('One field still needs something.'),
+            'problems' => $t('{count} fields still need something.'),
+            'firstProblem' => $t('Go to the first one'),
             'nothingToUndo' => $t('Nothing to undo yet'),
             'allPublished' => $t('Everything is published'),
             'undo' => $t('Undo'),
@@ -283,6 +288,12 @@ final readonly class EditorBar
             'entry' => $t('Entry {number}'),
             'addEntry' => $t('Add an entry'),
             'removeEntry' => $t('Remove the entry'),
+            'entryTools' => $t('Entry {number} of "{list}"'),
+            'moveEarlier' => $t('Move forward'),
+            'moveLater' => $t('Move back'),
+            'insertEntry' => $t('Add an entry after it'),
+            'entriesMin' => $t('The list needs at least {count} entries.'),
+            'entriesMax' => $t('The list takes at most {count} entries.'),
             'noSettings' => $t('There is nothing to set for this block. Edit its content right on the page.'),
         ];
     }

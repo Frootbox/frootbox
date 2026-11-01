@@ -909,10 +909,34 @@ data from the JSON block `#fb-edit-config` in the head.
   empty areas. The bar draws them over the page with
   `getBoundingClientRect()`; the page itself only gets a rule without a
   layer for `fb-field`, `fb-area` and `[data-fb-field]`.
+- When publishing fails, every field it names gets an outline in
+  `--fb-danger` with its label in `--fb-danger` and `--fb-on-danger`
+  (decision 0143), also with "Show all places" off. The label names the
+  field; only the field in focus or under the mouse adds the reason. The
+  status shows the error and opens by itself: the message, how many
+  fields still need something, a list of the fields the page does not
+  show (block · field: reason) and the button "Go to the first one",
+  which scrolls the first one to the middle and focuses it. A field loses
+  its outline once a value for it is saved; with none left the
+  explanation closes.
+- List entries (decision 0145): the bar finds each entry from its fields
+  and marks it `data-fb-entry`. The entry under the pointer or with the
+  focus gets a dashed outline without a label and, inside its top end
+  corner, the same toolbar as a block (`.block-tools.entry-tools`):
+  "Move forward", "Move back" (arrows left and right when entries stand
+  side by side, else up and down), "Add an entry after it" and "Remove
+  the entry" in danger, without asking. At `min` and `max` the buttons
+  are disabled with the reason as tooltip. After a change the page loads
+  again with the focus in the entry. Alt+F10 in an entry reaches its
+  toolbar, again Alt+F10 that of the block, Escape goes back to the
+  field.
 
 Editing fields (decision 0122) keeps the look of the theme: the text is
 typed where it stands, nothing is replaced by a form.
 
+- An empty field shows its placeholder, else its label at half opacity;
+  a field emptied by hand is cleared, so it shows it again (decision
+  0144). Templates print optional fields without a condition.
 - `headline` and `text` become `contenteditable="plaintext-only"`. Enter
   ends a headline, Esc takes back what is not saved yet. Saving runs a
   second after the last input and when the field is left; the status

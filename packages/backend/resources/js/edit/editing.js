@@ -125,6 +125,11 @@ export class Editing {
         const element = this.field(event.target);
 
         if (element && PLAIN.includes(element.dataset.fbType)) {
+            // Browsers leave a <br> in a field emptied by hand; without it the placeholder shows again.
+            if (plainValue(element) === null && element.childNodes.length > 0) {
+                element.replaceChildren();
+            }
+
             this.later(element, () => plainValue(element));
         }
     }
@@ -281,6 +286,11 @@ export class Editing {
         }
 
         this.bar.changed(data.entry, site);
+
+        // A field publishing found missing is no longer marked once it has a value (decision 0143).
+        if (data.value !== null) {
+            this.bar.solved(element);
+        }
 
         return true;
     }
