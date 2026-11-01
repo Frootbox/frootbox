@@ -29,7 +29,9 @@ jobs:
       - uses: ramsey/composer-install@v3
       - run: npm ci
       - run: npx playwright test --project=visual --update-snapshots=all
-      - uses: actions/upload-artifact@v4
+      # Also when a test fails, so the pictures that worked are not lost.
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
         with:
           name: screenshots
           path: tests/e2e/__screenshots__/

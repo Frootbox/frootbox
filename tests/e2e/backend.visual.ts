@@ -28,10 +28,12 @@ for (const scheme of ['light', 'dark'] as const) {
 }
 
 test('design page', async ({ page }) => {
+    test.setTimeout(60_000);
     await signIn(page, '/cms/design');
 
-    // Building blocks in both modes side by side, then all tokens.
-    await expect(page).toHaveScreenshot('design.png', { fullPage: true });
+    // Building blocks in both modes side by side, then all tokens. The page
+    // is very long, so two equal pictures take longer than the usual 5 s.
+    await expect(page).toHaveScreenshot('design.png', { fullPage: true, timeout: 30_000 });
 });
 
 test('form with errors', async ({ page }) => {
