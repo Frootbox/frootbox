@@ -53,6 +53,28 @@ if (!in_array($environment, ['dev', 'prod'], true)) {
     exit(1);
 }
 
+// FROOTBOX_ADMIN_EMAIL, FROOTBOX_ADMIN_NAME and FROOTBOX_ADMIN_PASSWORD set the
+// superuser, so it stays the same after every reset. Without them it is
+// admin@example.test with a generated password.
+$adminEmail = trim(setting('FROOTBOX_ADMIN_EMAIL') ?? 'admin@example.test');
+$adminName = trim(setting('FROOTBOX_ADMIN_NAME') ?? ('admin@example.test' === $adminEmail ? 'Admin' : (string) strstr($adminEmail, '@', true)));
+
+// Checked with the rules of user.create before anything is deleted.
+$adminErrors = new Frootbox\Core\Action\Schema\InputValidator()->errors(
+    Frootbox\Core\Action\Descriptor::of(Frootbox\Core\User\CreateUser::class)->schema(),
+    ['email' => $adminEmail, 'name' => $adminName, 'roles' => ['superuser'], ...(null === setting('FROOTBOX_ADMIN_PASSWORD') ? [] : ['password' => setting('FROOTBOX_ADMIN_PASSWORD')])],
+);
+
+if ([] !== $adminErrors) {
+    fwrite(STDERR, "The superuser from sandbox.env or the shell is invalid, nothing was changed:\n");
+
+    foreach ($adminErrors as $pointer => $message) {
+        fwrite(STDERR, sprintf("  FROOTBOX_ADMIN_%s %s\n", strtoupper(ltrim($pointer, '/')), $message));
+    }
+
+    exit(1);
+}
+
 $sandbox = $root . '/' . $directory;
 $up = str_repeat('../', substr_count($directory, '/') + 1);
 
@@ -111,21 +133,9 @@ if (0 !== $exitCode) {
     exit($exitCode);
 }
 
-// FROOTBOX_ADMIN_EMAIL, FROOTBOX_ADMIN_NAME and FROOTBOX_ADMIN_PASSWORD set the
-// superuser, so it stays the same after every reset. Without them it is
-// admin@example.test with a generated password.
-$adminEmail = getenv('FROOTBOX_ADMIN_EMAIL');
-$adminEmail = false === $adminEmail || '' === trim($adminEmail) ? 'admin@example.test' : trim($adminEmail);
-$adminName = getenv('FROOTBOX_ADMIN_NAME');
-$admin = '--admin-email=' . escapeshellarg($adminEmail);
-
-if ((false === $adminName || '' === trim($adminName)) && 'admin@example.test' === $adminEmail) {
-    $admin .= ' --admin-name=Admin';
-}
-
 $commands = [
     // Writes .env, runs the migrations and creates the superuser.
-    'install --no-interaction --env=' . $environment . ' ' . $admin,
+    'install --no-interaction --env=' . $environment . ' --admin-email=' . escapeshellarg($adminEmail) . ' --admin-name=' . escapeshellarg($adminName),
     'seed frootbox/theme-bohnenglueck:demo/site.yaml',
 ];
 
@@ -175,6 +185,16 @@ function loadSettings(string $file): void
             putenv($name . '=' . $value);
         }
     }
+}
+
+/**
+ * A variable from the environment or sandbox.env, null if it is not set.
+ */
+function setting(string $name): ?string
+{
+    $value = getenv($name);
+
+    return false === $value || '' === trim($value) ? null : $value;
 }
 
 /**
