@@ -1,0 +1,24 @@
+{#- The message of an error page (decision 0132), in the frame of the backend or for a guest. Needs error and actions. -#}
+{% import '@backend/ui.twig' as ui %}
+<section class="fb-error-page" aria-labelledby="fb-error-title">
+    <span class="fb-error-page__icon">{{ icon(error.icon) }}</span>
+    <p class="fb-error-page__status">{{ t('Error {status}', {status: error.status}) }}</p>
+    <h1 class="fb-heading-1" id="fb-error-title">{{ error.title }}</h1>
+    <p class="fb-error-page__text">{{ error.text }}</p>
+    <div class="fb-cluster fb-error-page__actions">
+        {%- for action in actions %}{{ ui.button(action) }}{% endfor -%}
+    </div>
+    {% if error.details is not empty %}
+    <details class="fb-card fb-disclosure fb-error-page__details"{% if error.kind == 'failed' %} open{% endif %}>
+        <summary class="fb-disclosure__summary"><span>{{ t('Technical details') }}</span> <span class="fb-error-page__hint">{{ t('Only in development') }}</span></summary>
+        {% for detail in error.details %}
+        <div class="fb-error-page__exception">
+            <p class="fb-error-page__class">{{ detail.class }}</p>
+            <p class="fb-error-page__message">{{ detail.message }}</p>
+            <p class="fb-error-page__file">{{ detail.file }}:{{ detail.line }}</p>
+            <pre class="fb-error-page__trace">{{ detail.trace }}</pre>
+        </div>
+        {% endfor %}
+    </details>
+    {% endif %}
+</section>

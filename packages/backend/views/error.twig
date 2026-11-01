@@ -1,0 +1,18 @@
+{#- An error below backend.path for a signed-in user, in the frame with the menu (decision 0132). -#}
+{% extends '@backend/layout.twig' %}
+
+{% block title %}{{ error.title }}{% endblock %}
+
+{% block content %}
+{%- set current = fb.menu|map(group => group.entries)|reduce((all, entries) => all|merge(entries), [])|filter(entry => entry.current and entry.url != error.path) -%}
+{%- set current = current is empty ? null : current|first -%}
+{%- set overview = {label: t('Go to the dashboard'), href: path('backend.dashboard')} -%}
+{%- if error.kind == 'missing' and current -%}
+    {%- set actions = [{label: t('Go to {screen}', {screen: current.label}), href: current.url}, overview|merge({variant: 'outline'})] -%}
+{%- elseif error.kind == 'failed' -%}
+    {%- set actions = [{label: t('Try again'), href: error.again}, overview|merge({variant: 'outline'})] -%}
+{%- else -%}
+    {%- set actions = [overview] -%}
+{%- endif -%}
+{% include '@backend/error/message.twig' %}
+{% endblock %}

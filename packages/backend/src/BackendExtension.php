@@ -10,6 +10,7 @@ namespace Frootbox\Backend;
 
 use Frootbox\Backend\Http\AccountHandler;
 use Frootbox\Backend\Http\ActionHandler;
+use Frootbox\Backend\Http\BackendErrorPage;
 use Frootbox\Backend\Http\DashboardHandler;
 use Frootbox\Backend\Http\DesignHandler;
 use Frootbox\Backend\Http\EditModeHandler;
@@ -47,6 +48,9 @@ final class BackendExtension implements Extension
 
     public function register(Registry $registry): void
     {
+        // Errors below backend.path show inside the backend (decision 0132).
+        $registry->errorPage(BackendErrorPage::class);
+
         $registry->mount('backend.path', '/cms')
             ->get('/', DashboardHandler::class, 'backend.dashboard')
             ->route(['GET', 'POST'], '/login', LoginHandler::class, 'backend.login')

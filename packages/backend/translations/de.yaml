@@ -618,3 +618,19 @@ The fields of the website have no changes to discard.: Die Inhalte der Website h
 'The website has no field "{name}".': 'Die Website hat kein Feld „{name}“.'
 '"{name}" is no list with entries to change; a path looks like "links/0/text".': '„{name}“ ist keine Liste mit Einträgen; ein Pfad sieht so aus: „links/0/text“.'
 'The website has no language "{language}". Languages: {languages}.': 'Die Website hat keine Sprache „{language}“. Sprachen: {languages}.'
+
+# Error pages (decision 0132)
+"This does not exist (anymore)": "Das gibt es hier nicht (mehr)"
+"It may have been deleted, or the link is out of date.": "Vielleicht wurde es gelöscht, oder der Link ist veraltet."
+"You may not open this": "Das darfst Du nicht öffnen"
+"Your role does not allow it. Ask someone who manages users and roles.": "Deine Rolle erlaubt es nicht. Frag jemanden, der Benutzer und Rollen verwaltet."
+"Something went wrong": "Da ist etwas schiefgegangen"
+"Try it again in a moment. If it keeps happening, the error is in the log.": "Versuch es gleich noch einmal. Wenn es so bleibt, steht der Fehler im Protokoll."
+"That did not work": "Das hat nicht geklappt"
+"Go back and try again.": "Geh zurück und versuch es noch einmal."
+"Error {status}": "Fehler {status}"
+"Go to {screen}": "Zu {screen}"
+"Go to the dashboard": "Zur Übersicht"
+"Try again": "Noch einmal versuchen"
+"Technical details": "Technische Details"
+"Only in development": "Nur im Entwicklungsmodus"

@@ -1,0 +1,86 @@
+/* An error inside the backend (decision 0132): icon, status, title, text,
+   the way on and, in development, the technical details. */
+
+.fb-error-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fb-space-3);
+    align-items: flex-start;
+    max-width: var(--fb-size-form);
+    padding-block: var(--fb-space-8);
+}
+
+.fb-error-page__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--fb-size-row);
+    height: var(--fb-size-row);
+    margin-bottom: var(--fb-space-2);
+    border-radius: var(--fb-radius-full);
+    background: var(--fb-accent-soft);
+    color: var(--fb-accent-text);
+}
+
+.fb-error-page__status {
+    color: var(--fb-text-muted);
+    font-size: var(--fb-text-sm);
+    font-weight: var(--fb-weight-semibold);
+}
+
+.fb-error-page__text {
+    color: var(--fb-text-muted);
+}
+
+.fb-error-page__actions {
+    margin-top: var(--fb-space-3);
+}
+
+.fb-error-page__details {
+    align-self: stretch;
+    margin-top: var(--fb-space-6);
+}
+
+/* The hint goes below the label on a narrow screen. */
+.fb-error-page__details > .fb-disclosure__summary {
+    flex-wrap: wrap;
+    column-gap: var(--fb-space-3);
+    row-gap: 0;
+}
+
+.fb-error-page__hint {
+    color: var(--fb-text-muted);
+    font-size: var(--fb-text-sm);
+    font-weight: var(--fb-weight-regular);
+}
+
+.fb-error-page__exception {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fb-space-1);
+    padding: var(--fb-space-4) var(--fb-space-5);
+    border-top: var(--fb-size-border) solid var(--fb-border);
+}
+
+.fb-error-page__class,
+.fb-error-page__file {
+    color: var(--fb-text-muted);
+    font-size: var(--fb-text-sm);
+    overflow-wrap: anywhere;
+}
+
+.fb-error-page__message {
+    font-weight: var(--fb-weight-semibold);
+}
+
+.fb-error-page__trace {
+    max-height: calc(var(--fb-size-row) * 8);
+    margin-top: var(--fb-space-2);
+    padding: var(--fb-space-3);
+    overflow: auto;
+    border-radius: var(--fb-radius-sm);
+    background: var(--fb-bg);
+    font-family: var(--fb-font-mono);
+    font-size: var(--fb-text-xs);
+    white-space: pre;
+}

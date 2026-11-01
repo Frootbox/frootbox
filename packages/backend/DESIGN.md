@@ -583,6 +583,18 @@ the first entry. Centered, padding 56 px 24 px, dashed 2 px border
 `--fb-accent-soft`; title 18 px bold; text muted, at most 420 px wide;
 `action` takes the options of `ui.button()`.
 
+### Error page
+
+`@backend/error/message.twig`, rendered by `BackendErrorPage` for every
+error below the backend path (decision 0132). Signed in, it sits in the
+frame with the menu and marks the area; a guest gets a card like the
+sign-in. From top to bottom: the icon in a 56 px circle (`--fb-size-row`) in
+`--fb-accent-soft`, "Error 404" small and muted, the title as
+`.fb-heading-1`, a plain text and the way on (primary: back to the area
+or "Try again", outline: the dashboard). In development the technical
+details follow in a closed disclosure (open for 5xx), never live. Texts
+by status: missing (404, 410), forbidden (403), failed (5xx), other.
+
 ### Split
 
 ```html

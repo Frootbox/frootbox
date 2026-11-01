@@ -1,0 +1,16 @@
+{#- An error below backend.path for a guest, as a card like the sign-in (decision 0132). -#}
+{% extends '@backend/frame.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ error.title }}{% endblock %}
+
+{% block body %}
+<main class="fb-login">
+    <div class="fb-login__inner">
+        <div class="fb-login__brand">{{ ui.brand(fb) }}</div>
+        <div class="fb-card fb-login__card">
+            {% include '@backend/error/message.twig' with {actions: [{label: t('Sign in'), href: path('backend.login')}, {label: t('Go to the website'), href: '/', variant: 'outline'}]} %}
+        </div>
+    </div>
+</main>
+{% endblock %}

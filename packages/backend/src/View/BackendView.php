@@ -54,11 +54,21 @@ final class BackendView
      */
     public function render(ServerRequestInterface $request, string $template, array $context = [], int $status = 200): ResponseInterface
     {
-        $html = $this->twig()->render($template, ['fb' => $this->frame($request), ...$context]);
+        $html = $this->html($request, $template, $context);
 
         return self::secure($this->responses->createResponse($status))
             ->withHeader('Content-Type', 'text/html; charset=utf-8')
             ->withBody($this->streams->createStream($html));
+    }
+
+    /**
+     * The HTML of a screen without a response, e.g. for an error page.
+     *
+     * @param array<string, mixed> $context
+     */
+    public function html(ServerRequestInterface $request, string $template, array $context = []): string
+    {
+        return $this->twig()->render($template, ['fb' => $this->frame($request), ...$context]);
     }
 
     /**

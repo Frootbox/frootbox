@@ -12,13 +12,12 @@ use Frootbox\Backend\BackendExtension;
 use Frootbox\Backend\Security\Csrf;
 use Frootbox\Core\Action\Context;
 use Frootbox\Core\Action\CurrentContext;
+use Frootbox\Core\Application;
 use Frootbox\Core\Auth\AuthenticationMiddleware;
-use Frootbox\Core\Error\ErrorMiddleware;
 use Frootbox\Core\Extension\ExtensionPackage;
 use Frootbox\Core\Extension\Extensions;
 use Frootbox\Core\Http\MiddlewareDispatcher;
 use Frootbox\Core\Page\PageHandler;
-use Frootbox\Core\Routing\RoutingMiddleware;
 use Frootbox\Core\Tests\Support\NotesTestCase;
 use Frootbox\Core\User\CreateUser;
 use Nyholm\Psr7\ServerRequest;
@@ -108,7 +107,7 @@ abstract class BackendTestCase extends NotesTestCase
         // Every request starts as a guest, like a new PHP process.
         $this->get(CurrentContext::class)->set(Context::guest());
 
-        $middleware = [$this->get(ErrorMiddleware::class), $this->get(AuthenticationMiddleware::class), $this->get(RoutingMiddleware::class)];
+        $middleware = array_map($this->get(...), Application::MIDDLEWARE);
 
         return new MiddlewareDispatcher($middleware, $this->get(PageHandler::class))->handle($request);
     }

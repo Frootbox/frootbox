@@ -41,3 +41,12 @@ test('form with errors', async ({ page }) => {
 
     await expect(page).toHaveScreenshot('user-errors.png', { fullPage: true });
 });
+
+test('missing page', async ({ page }) => {
+    // Decision 0132: an old link inside the backend, e.g. after a reset.
+    await signIn(page);
+    await page.goto('/cms/pages/01JZZZZZZZZZZZZZZZZZZZZZZZ');
+    await expect(page.getByRole('heading', { name: 'Das gibt es hier nicht (mehr)' })).toBeVisible();
+
+    await expect(page).toHaveScreenshot('error-missing.png', { fullPage: true });
+});
