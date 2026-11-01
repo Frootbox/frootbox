@@ -284,9 +284,7 @@ class PreviewNote extends HTMLElement {
         window.addEventListener('scroll', this.onMove, { passive: true });
         window.addEventListener('resize', this.onMove);
 
-        if (this.settings.comments) {
-            this.load();
-        }
+        this.ready = this.settings.comments ? this.load() : Promise.resolve();
     }
 
     t(key, parameters = {}) {
@@ -304,7 +302,15 @@ class PreviewNote extends HTMLElement {
 
         if (this.settings.comments) {
             this.commentButton = h('button', { type: 'button', 'aria-pressed': 'false', onclick: () => (this.picking ? this.stopPicking() : this.startPicking()) }, this.t('comment'));
-            this.listButton = h('button', { type: 'button', 'aria-expanded': 'false', onclick: () => (this.panel?.dataset.view === 'list' ? this.closePanel() : this.showList()) }, this.t('comments'));
+            this.listButton = h('button', { type: 'button', 'aria-expanded': 'false', onclick: async () => {
+                if (this.panel?.dataset.view === 'list') {
+                    this.closePanel();
+                } else {
+                    // The threads load with the page; a quick click waits for them.
+                    await this.ready;
+                    this.showList();
+                }
+            } }, this.t('comments'));
             note.append(this.commentButton, this.listButton);
         }
 
