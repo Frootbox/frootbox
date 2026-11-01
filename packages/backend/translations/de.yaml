@@ -586,9 +586,6 @@ Page without title: Seite ohne Titel
 Fields of the website: Website-Felder
 Only in the draft: Nur im Entwurf
 'It is not used anywhere.': 'Es wird nirgends verwendet.'
-"It is used in {count} place. Pages that use it show nothing there any more.":
-  one: "Es wird an {count} Stelle verwendet. Seiten, die es verwenden, zeigen dort nichts mehr."
-  other: "Es wird an {count} Stellen verwendet. Seiten, die es verwenden, zeigen dort nichts mehr."
 # Drafts of media (decision 0147)
 Only with changes: Nur mit Änderungen
 Changes visitors do not see yet.: Änderungen, die Besucher noch nicht sehen.
@@ -616,6 +613,17 @@ There is no medium with this id.: Dieses Bild gibt es nicht.
 'The image here is used at other places as well. Should “{name}” replace it only here or everywhere?': 'Das Bild hier wird auch an anderen Stellen genutzt. Soll „{name}“ es nur hier ersetzen oder überall?'
 Only here: Nur hier
 Everywhere ({count} places): Überall ({count} Stellen)
+# Media drafts in the editor bar (decision 0147)
+Also changes {images} on other published pages.: Ändert {images} auch auf anderen veröffentlichten Seiten.
+'The page is published. The changes to {images} stay open: you may not publish images.': 'Die Seite ist veröffentlicht. Die Änderungen an {images} bleiben offen: Du darfst keine Bilder veröffentlichen.'
+# Deleting only without published use (decision 0147)
+The image cannot be deleted yet: Das Bild lässt sich noch nicht löschen
+"The image is used in {count} published place. Take it out there and publish, then delete it.":
+  one: "Das Bild wird an {count} veröffentlichten Stelle genutzt. Nimm es dort heraus und veröffentliche, dann kannst Du es löschen."
+  other: "Das Bild wird an {count} veröffentlichten Stellen genutzt. Nimm es dort heraus und veröffentliche, dann kannst Du es löschen."
+"It is used in {count} draft. It shows nothing there any more.":
+  one: "Es wird in {count} Entwurf genutzt. Dort zeigt es danach nichts mehr."
+  other: "Es wird in {count} Entwürfen genutzt. Dort zeigt es danach nichts mehr."
 The new file counts everywhere. Visitors see it once the image is published.: Die neue Datei gilt überall. Besucher sehen sie, sobald das Bild veröffentlicht ist.
 The new file counts everywhere.: Die neue Datei gilt überall.
 'The file cannot be read as an image.': 'Die Datei lässt sich nicht als Bild lesen.'

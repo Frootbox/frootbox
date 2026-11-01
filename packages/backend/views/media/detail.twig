@@ -1,6 +1,7 @@
 {#- The details of one medium: focus point, texts per language, tags, folder (decision 0126), where it is used and its file replaced (0146), its draft (0147). -#}
 {% import '@backend/ui.twig' as ui %}
 {% set editable = can('media.update') %}
+{% set live = usages|filter(usage => usage.published)|length %}
 <section class="fb-card fb-split__main" id="media-detail" aria-labelledby="media-detail-title">
     <div class="fb-card__header">
         <div class="fb-stack fb-stack--sm">
@@ -12,7 +13,6 @@
     </div>
 
     {% if medium.draft %}
-    {% set live = usages|filter(usage => usage.published)|length %}
     <div class="fb-card__body fb-stack fb-stack--sm">
         <p>{{ live > 0 ? t('Visitors see the changes once they are published. That changes the image in {count} published place.', {count: live}) : t('Visitors see the changes once they are published.') }}</p>
         <div class="fb-cluster">
@@ -129,12 +129,21 @@
         <form novalidate>
             <input type="hidden" name="id" value="{{ medium.id }}">
             <div class="fb-dialog__body">
+                {% if live > 0 %}
+                <h2 class="fb-dialog__title" id="media-delete-title">{{ t('The image cannot be deleted yet') }}</h2>
+                <p>{{ t('The image is used in {count} published place. Take it out there and publish, then delete it.', {count: live}) }}</p>
+                {% else %}
                 <h2 class="fb-dialog__title" id="media-delete-title">{{ t('Delete the image?') }}</h2>
-                <p>{% if usages is empty %}{{ t('It is not used anywhere.') }}{% else %}{{ t('It is used in {count} place. Pages that use it show nothing there any more.', {count: usages|length}) }}{% endif %}</p>
+                <p>{% if usages is empty %}{{ t('It is not used anywhere.') }}{% else %}{{ t('It is used in {count} draft. It shows nothing there any more.', {count: usages|length}) }}{% endif %}</p>
+                {% endif %}
             </div>
             <div class="fb-dialog__actions">
+                {% if live > 0 %}
+                {{ ui.button({label: t('Close'), variant: 'outline', attrs: {commandfor: 'media-delete', command: 'close', autofocus: true}}) }}
+                {% else %}
                 {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'media-delete', command: 'close', autofocus: true}}) }}
                 {{ ui.button({label: t('Delete'), variant: 'danger-solid', type: 'submit'}) }}
+                {% endif %}
             </div>
         </form>
     </fb-form>

@@ -20,10 +20,14 @@ use Frootbox\Core\Cache\PageCache;
 use Frootbox\Core\Config\Environment;
 use Frootbox\Core\Design\UpdateDesign;
 use Frootbox\Core\Extension\Extensions;
+use Frootbox\Core\Media\CreateMedium;
+use Frootbox\Core\Media\UpdateMedium;
+use Frootbox\Core\Media\Uploads;
 use Frootbox\Core\Page\CreatePage;
 use Frootbox\Core\Page\EditMode;
 use Frootbox\Core\Page\PublishPages;
 use Frootbox\Core\Page\UpdatePage;
+use Frootbox\Core\ProjectPaths;
 use Frootbox\Core\Site\UpdateSite;
 use Frootbox\Core\Tests\Support\FixtureSite;
 use Frootbox\Core\User\AssignRole;
@@ -157,6 +161,24 @@ final class EditModeTest extends BackendTestCase
         self::assertStringContainsString('data-fb-field="brand" data-fb-type="headline" data-fb-label="Name" data-fb-site', $html);
     }
 
+    public function testTellsTheBarAboutTheMediaDraftsOfThePage(): void
+    {
+        $medium = $this->medium();
+        $content = ['fields' => ['heading' => 'Bilder'], 'areas' => ['main' => [['block' => 'acme/media/Gallery', 'fields' => ['cover' => ['media' => $medium]]]]]];
+        $pictures = $this->runner()->run(new CreatePage('acme/base/Page', ['de' => ['title' => 'Bilder', 'content' => $content]], $this->start), Context::system())->id;
+        $other = $this->runner()->run(new CreatePage('acme/base/Page', ['de' => ['title' => 'Andere', 'content' => $content]], $this->start), Context::system())->id;
+        $this->runner()->run(new PublishPages([$pictures, $other]), Context::system());
+
+        self::assertSame(['drafts' => [], 'publish' => true, 'discard' => true], $this->bar($this->html($this->page('/bilder')))['media']);
+        self::assertSame([], $this->bar($this->html($this->page('/ueber-uns')))['media']['drafts'] ?? null);
+
+        $this->runner()->run(new UpdateMedium($medium, texts: ['de' => ['alt' => 'Neu']]), Context::system());
+        $config = $this->bar($this->html($this->page('/bilder')));
+        self::assertSame([['id' => $medium, 'name' => 'bild.png', 'elsewhere' => 1]], $config['media']['drafts'] ?? null, 'The other published page changes as well.');
+        self::assertSame('Ändert {images} auch auf anderen veröffentlichten Seiten.', $config['labels']['mediaElsewhere']);
+        self::assertSame([], $this->bar($this->html($this->page('/ueber-uns')))['media']['drafts'] ?? null, 'A page without the image has none.');
+    }
+
     public function testOffersEditorsNoDesign(): void
     {
         $this->createUser('jane@example.org', ['editor']);
@@ -210,7 +232,7 @@ final class EditModeTest extends BackendTestCase
 
     protected function extensions(): Extensions
     {
-        return new Extensions([self::backend(), ...array_values(iterator_to_array(FixtureSite::extensions('base', 'site')))], 'backend-edit-tests');
+        return new Extensions([self::backend(), ...array_values(iterator_to_array(FixtureSite::extensions('base', 'site', 'media')))], 'backend-edit-tests');
     }
 
     protected function config(): array
@@ -238,7 +260,7 @@ final class EditModeTest extends BackendTestCase
     }
 
     /**
-     * @return array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null}
+     * @return array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null}
      */
     private function bar(string $html): array
     {
@@ -246,8 +268,19 @@ final class EditModeTest extends BackendTestCase
         $config = json_decode($match[1], true, flags: \JSON_THROW_ON_ERROR);
         self::assertIsArray($config);
 
-        /** @var array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null} $config */
+        /** @var array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null} $config */
         return $config;
+    }
+
+    private function medium(): string
+    {
+        $image = imagecreatetruecolor(320, 200);
+        imagefilledrectangle($image, 0, 0, 160, 200, (int) imagecolorallocate($image, random_int(0, 255), random_int(0, 255), random_int(0, 255)));
+        $file = $this->get(ProjectPaths::class)->var('bar-' . bin2hex(random_bytes(4)) . '.png');
+        @mkdir(\dirname($file), 0o775, true);
+        imagepng($image, $file);
+
+        return $this->runner()->run(new CreateMedium($this->get(Uploads::class)->store($file, 'bild.png')), Context::system())->id;
     }
 
     private function createPage(?string $parentId, string $title): string

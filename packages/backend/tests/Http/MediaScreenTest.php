@@ -123,6 +123,26 @@ final class MediaScreenTest extends BackendTestCase
         self::assertStringContainsString('Datei, Fokuspunkt und Texte gehen zurück', $detail);
     }
 
+    public function testDeletesAnImageOnlyWithoutPublishedUse(): void
+    {
+        $id = $this->upload('hafen.jpg');
+        // As if a published page used it.
+        $this->connection()->executeStatement("INSERT INTO media_usages (media_id, owner_type, owner_id, language, published) VALUES (?, 'page', '01J00000000000000000000001', 'de', 1)", [$id]);
+
+        $detail = $this->html($this->request('GET', '/cms/media/' . $id, session: $this->session));
+        self::assertStringContainsString('Das Bild lässt sich noch nicht löschen', $detail);
+        self::assertStringContainsString('Das Bild wird an 1 veröffentlichten Stelle genutzt.', $detail);
+
+        $response = $this->request('POST', '/cms/actions/media.delete', session: $this->session, headers: [Csrf::HEADER => $this->csrfFor($this->session)], json: ['id' => $id]);
+        self::assertSame(409, $response->getStatusCode());
+        self::assertStringContainsString('Nimm es dort heraus und veröffentliche', (string) $response->getBody());
+
+        $this->connection()->executeStatement('UPDATE media_usages SET published = 0 WHERE media_id = ?', [$id]);
+        $detail = $this->html($this->request('GET', '/cms/media/' . $id, session: $this->session));
+        self::assertStringContainsString('Es wird in 1 Entwurf genutzt. Dort zeigt es danach nichts mehr.', $detail);
+        $this->action('media.delete', ['id' => $id], $this->session);
+    }
+
     public function testExplainsWhatIsWrongWithAFile(): void
     {
         $file = $this->get(ProjectPaths::class)->var('shell.php');

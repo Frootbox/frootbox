@@ -122,6 +122,7 @@ export class EditorBar extends LitElement {
         busy: { state: true },
         message: { state: true },
         confirming: { state: true },
+        confirmingPublish: { state: true },
         showAll: { state: true },
         current: { state: true },
         undo: { state: true },
@@ -605,6 +606,7 @@ export class EditorBar extends LitElement {
         this.busy = false;
         this.message = null;
         this.confirming = false;
+        this.confirmingPublish = false;
         this.showAll = false;
         this.current = null;
         this.undo = [];
@@ -887,14 +889,20 @@ export class EditorBar extends LitElement {
         this.flashTimer = setTimeout(() => { this.flash = false; }, 2000);
     }
 
-    /** What the drafts of the page and of the fields of the website allow (decision 0128). */
+    /**
+     * What the drafts of the page, of the fields of the website (decision
+     * 0128) and of the media the page uses (decision 0147) allow.
+     */
     drafts(page) {
         const site = this.siteDraft;
+        const media = this.mediaDrafts.length > 0;
+        // Media drafts count for those who may publish them; others publish only the page.
+        const mediaOpen = media && this.config.media.publish;
 
         return {
-            status: page.status === 'published' && site ? 'changed' : page.status,
-            canPublish: page.canPublish || (site && this.config.site.publish),
-            canDiscard: page.canDiscard || (site && this.config.site.discard),
+            status: page.status === 'published' && (site || mediaOpen) ? 'changed' : page.status,
+            canPublish: page.canPublish || (site && this.config.site.publish) || mediaOpen,
+            canDiscard: page.canDiscard || (site && this.config.site.discard) || (media && this.config.media.discard),
         };
     }
 
@@ -1020,6 +1028,12 @@ export class EditorBar extends LitElement {
             return html`<span class="note">${labels.readOnly}</span>`;
         }
 
+        if (this.confirmingPublish) {
+            return html`<span class="note">${labels.mediaElsewhere.replace('{images}', this.imageNames(this.mediaDrafts.filter((draft) => draft.elsewhere > 0)))}</span>
+                <button type="button" class="primary" ?disabled=${this.busy} @click=${() => this.publish(true)}>${labels.publish}</button>
+                <button type="button" data-fb-cancel @click=${() => this.cancelPublish()}>${labels.cancel}</button>`;
+        }
+
         if (this.confirming) {
             return html`<span class="note">${labels.discardConfirm}</span>
                 <button type="button" class="danger solid" ?disabled=${this.busy} @click=${() => this.discard()}>${labels.discardYes}</button>
@@ -1027,7 +1041,7 @@ export class EditorBar extends LitElement {
         }
 
         const { canPublish } = this.drafts(page);
-        const mayPublish = page.mayPublish || this.config.site?.publish;
+        const mayPublish = page.mayPublish || this.config.site?.publish || this.config.media?.publish;
         const undo = this.undo.length > 0;
 
         // Both stay in place without anything to do, so the bar keeps its width (decision 0140).
@@ -1193,9 +1207,49 @@ export class EditorBar extends LitElement {
         return Boolean(this.config?.site?.draft);
     }
 
-    /** Publishes the page and the fields of the website, whichever has a draft. */
-    async publish() {
+    /** The media the page uses that have a draft: [{ id, name, elsewhere }] (decision 0147). */
+    get mediaDrafts() {
+        return this.config?.media?.drafts ?? [];
+    }
+
+    /** After choosing an image with a draft for a field: it counts for the page now. */
+    mediaChosen(medium) {
+        if (!medium?.draft || !this.config.media || this.mediaDrafts.some((draft) => draft.id === medium.id)) {
+            return;
+        }
+
+        this.config = { ...this.config, media: { ...this.config.media, drafts: [...this.mediaDrafts, { id: medium.id, name: medium.fileName, elsewhere: 0 }] } };
+    }
+
+    imageNames(drafts) {
+        return drafts.map((draft) => `„${draft.name}“`).join(', ');
+    }
+
+    async cancelPublish() {
+        this.confirmingPublish = false;
+        await this.updateComplete;
+        this.renderRoot.querySelector('button.primary')?.focus();
+    }
+
+    /**
+     * Publishes the page, the fields of the website and the media the page
+     * uses, whichever has a draft. If a medium changes other published
+     * pages as well, the bar says so first (decision 0147).
+     */
+    async publish(confirmed = false) {
         const page = this.config.page;
+        const media = this.config.media;
+        const publishMedia = media?.publish && this.mediaDrafts.length > 0;
+
+        if (!confirmed && publishMedia && this.mediaDrafts.some((draft) => draft.elsewhere > 0)) {
+            this.confirmingPublish = true;
+            await this.updateComplete;
+            this.renderRoot.querySelector('[data-fb-cancel]')?.focus();
+
+            return;
+        }
+
+        this.confirmingPublish = false;
         this.busy = true;
         this.problems = [];
         await this.editing?.flushAll();
@@ -1227,18 +1281,35 @@ export class EditorBar extends LitElement {
             this.config = { ...this.config, site: { ...this.config.site, draft: false } };
         }
 
+        if (publishMedia) {
+            const response = await this.action('media.publish', { ids: this.mediaDrafts.map((draft) => draft.id) });
+
+            if (!response?.ok) {
+                this.busy = false;
+                this.fail(response, true);
+
+                return;
+            }
+
+            this.config = { ...this.config, media: { ...media, drafts: [] } };
+        }
+
         this.busy = false;
         this.forget();
-        this.message = { tone: 'info', text: this.labels.publishDone };
+        // Without the right to publish media, their drafts stay open; the bar names them.
+        this.message = this.mediaDrafts.length > 0
+            ? { tone: 'info', text: this.labels.mediaStayOpen.replace('{images}', this.imageNames(this.mediaDrafts)) }
+            : { tone: 'info', text: this.labels.publishDone };
     }
 
-    /** Discards the drafts of the page and of the fields of the website. */
+    /** Discards the drafts of the page, of the fields of the website and of the media the page uses. */
     async discard() {
         const page = this.config.page;
         this.busy = true;
         const steps = [
             ...(page.canDiscard ? [['page.discard', { id: page.id }]] : []),
             ...(this.siteDraft && this.config.site.discard ? [['site.discard', {}]] : []),
+            ...(this.config.media?.discard ? this.mediaDrafts.map((draft) => ['media.discard', { id: draft.id }]) : []),
         ];
 
         for (const [name, input] of steps) {

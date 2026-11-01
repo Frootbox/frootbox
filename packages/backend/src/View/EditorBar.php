@@ -17,6 +17,8 @@ use Frootbox\Core\Action\AccessDeniedException;
 use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Asset\PublicAssets;
 use Frootbox\Core\Language\Languages;
+use Frootbox\Core\Media\ListMedia;
+use Frootbox\Core\Media\ListMediumUsages;
 use Frootbox\Core\Page\EditMode;
 use Frootbox\Core\Page\PageStatus;
 use Frootbox\Core\Page\ShowPage;
@@ -72,6 +74,7 @@ final readonly class EditorBar
         }
 
         $id = null !== $event->target && $event->target->isPage() ? $event->target->id : null;
+        $page = null === $id ? null : $this->page($id, $event->head->language);
         $config = [
             'editing' => $this->mode->active(),
             'marking' => $this->mode->marking(),
@@ -87,7 +90,8 @@ final readonly class EditorBar
             'site' => $this->site(),
             'design' => $this->permissions->can('design.update') ? ['publish' => $this->permissions->can('design.publish'), 'discard' => $this->permissions->can('design.discard')] : null,
             'tokens' => $this->design->hostCss(),
-            'page' => null === $id ? null : $this->page($id, $event->head->language),
+            'page' => $page,
+            'media' => null === $id || null === $page ? null : $this->media($id),
             'labels' => $this->labels(),
         ];
 
@@ -149,6 +153,36 @@ final readonly class EditorBar
     }
 
     /**
+     * The media the page uses that have a draft (decision 0147), each with
+     * how many published places elsewhere it changes, and what the user may
+     * do with them; null without the right to see the media library.
+     *
+     * @return array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null
+     */
+    private function media(string $id): ?array
+    {
+        if (!$this->permissions->can('media.list')) {
+            return null;
+        }
+
+        $drafts = [];
+
+        foreach ($this->runner->ask(new ListMedia(changed: true, pageId: $id, perPage: 200))->items as $medium) {
+            $elsewhere = 0;
+
+            foreach ($this->runner->ask(new ListMediumUsages($medium->id)) as $usage) {
+                if ($usage->published && !('page' === $usage->type && $usage->id === $id)) {
+                    ++$elsewhere;
+                }
+            }
+
+            $drafts[] = ['id' => $medium->id, 'name' => $medium->fileName, 'elsewhere' => $elsewhere];
+        }
+
+        return ['drafts' => $drafts, 'publish' => $this->permissions->can('media.publish'), 'discard' => $this->permissions->can('media.discard')];
+    }
+
+    /**
      * The fields of the website (decision 0128): whether they have a draft
      * and what the user may do with it, null without the right to change
      * them.
@@ -186,6 +220,8 @@ final readonly class EditorBar
             'readOnly' => $t('You may not change this page.'),
             'publish' => $t('Publish'),
             'publishDone' => $t('The page is published.'),
+            'mediaElsewhere' => $t('Also changes {images} on other published pages.'),
+            'mediaStayOpen' => $t('The page is published. The changes to {images} stay open: you may not publish images.'),
             'offlineParents' => $t('These pages above it are not online yet and are published with it: {pages}.'),
             'discard' => $t('Discard the draft'),
             'discardConfirm' => $t('Discard the draft?'),

@@ -217,6 +217,7 @@ export class MediaPicker {
         }
 
         const value = { media: state.chosen };
+        this.bar.mediaChosen(state.items.find((item) => item.id === state.chosen));
 
         if (state.alt.trim() !== '') {
             value.alt = state.alt.trim();
