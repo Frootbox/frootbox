@@ -7,7 +7,7 @@
     "build": "npm run build --workspace=packages/backend",
     "watch": "npm run watch --workspace=packages/backend",
     "lint:css": "npm run lint:css --workspace=packages/backend",
-    "test:e2e": "playwright test --project=e2e",
+    "test:e2e": "playwright test --project=e2e --project=protection",
     "test:visual": "node tools/visual.mjs"
   },
   "devDependencies": {

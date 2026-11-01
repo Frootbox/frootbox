@@ -7,7 +7,8 @@ import { defineConfig, devices } from '@playwright/test';
 // The browser tests run against a fresh installation of the demo website,
 // built and served by tools/e2e.php. PHP is the PHP 8.5 binary to use.
 //
-// Two projects: "e2e" checks behavior and runs everywhere. "visual"
+// Three projects: "e2e" checks behavior and runs everywhere, "protection"
+// after it, because it locks the whole website. "visual"
 // compares screenshots of the backend with approved images; they are only
 // valid in the Playwright container on Linux (CI or `npm run test:visual`),
 // because fonts and rendering differ between systems.
@@ -30,7 +31,9 @@ export default defineConfig({
         toHaveScreenshot: { animations: 'disabled', caret: 'hide', scale: 'css' },
     },
     projects: [
-        { name: 'e2e', testIgnore: /\.visual\.ts$/, use: { ...devices['Desktop Chrome'] } },
+        { name: 'e2e', testIgnore: [/\.visual\.ts$/, /protection\.spec\.ts$/], use: { ...devices['Desktop Chrome'] } },
+        // The password protects the whole installation, so its tests run after all others.
+        { name: 'protection', testMatch: /protection\.spec\.ts$/, dependencies: ['e2e'], use: { ...devices['Desktop Chrome'] } },
         ...(process.platform === 'linux'
             ? [{ name: 'visual', testMatch: /\.visual\.ts$/, use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 800 } } }]
             : []),

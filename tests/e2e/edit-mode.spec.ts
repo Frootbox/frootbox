@@ -73,7 +73,7 @@ test('edits the website from the draft', async ({ page, request }) => {
     await expect(menu.getByRole('group', { name: 'Diese Seite' })).toBeVisible();
     await expect(menu.getByRole('menuitemcheckbox', { name: 'Alle Stellen zeigen' })).toBeFocused();
     await page.keyboard.press('End');
-    await expect(menu.getByRole('menuitem', { name: 'Design' })).toBeFocused();
+    await expect(menu.getByRole('menuitem', { name: 'Zugang und Vorschaulinks' })).toBeFocused();
     await page.keyboard.press('Escape');
     await expect(menu).toHaveCount(0);
     await expect(more).toBeFocused();
