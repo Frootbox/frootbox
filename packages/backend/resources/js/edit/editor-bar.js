@@ -134,17 +134,20 @@ export class EditorBar extends LitElement {
         problems: { state: true },
     };
 
+    // Rules of the theme for the host win over normal ones in :host, but
+    // not over important ones, so everything here is important (decision 0151).
     static styles = [css`
         :host {
-            all: initial;
-            position: fixed;
-            inset: 0;
-            z-index: var(--fb-layer-edit);
-            pointer-events: none;
-            font-family: var(--fb-font-family);
-            font-size: var(--fb-text-sm);
-            line-height: var(--fb-leading-tight);
-            color: var(--fb-text);
+            all: initial !important;
+            display: block !important;
+            position: fixed !important;
+            inset: 0 !important;
+            z-index: var(--fb-layer-edit) !important;
+            pointer-events: none !important;
+            font-family: var(--fb-font-family) !important;
+            font-size: var(--fb-text-sm) !important;
+            line-height: var(--fb-leading-tight) !important;
+            color: var(--fb-text) !important;
         }
 
         *, *::before, *::after { box-sizing: border-box; }
@@ -665,6 +668,7 @@ export class EditorBar extends LitElement {
 
     connectedCallback() {
         super.connectedCallback();
+        this.raise();
         document.addEventListener('pointerdown', this.onOutside, true);
         const theme = read(THEME);
 
@@ -689,6 +693,23 @@ export class EditorBar extends LitElement {
         if (location.hash === '#fb-design' && this.config?.design && this.config.editing) {
             history.replaceState(null, '', location.pathname + location.search);
             this.updateComplete.then(() => this.design.show());
+        }
+    }
+
+    /**
+     * Puts the bar into the top layer, where the window is its frame even
+     * if the theme sets a transform or filter on html or body (decision 0151).
+     * A manual popover closes neither with Escape nor with other popovers.
+     */
+    raise() {
+        if (typeof this.showPopover !== 'function') {
+            return;
+        }
+
+        this.popover = 'manual';
+
+        if (!this.matches(':popover-open')) {
+            this.showPopover();
         }
     }
 

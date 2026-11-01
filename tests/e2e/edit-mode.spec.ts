@@ -122,3 +122,49 @@ test('edits the website from the draft', async ({ page, request }) => {
     expect((await action(page, 'page.unpublish', { id })).status).toBe(200);
     expect((await action(page, 'page.delete', { id })).status).toBe(200);
 });
+
+test('keeps the bar in place against the styles of the theme', async ({ page }) => {
+    const slug = `abgeschirmt-${unique()}`;
+    const heading = `Abgeschirmt ${slug}`;
+
+    await signIn(page, '/cms/pages');
+    const start = await page.locator('#page-tree .fb-tree__item').first().getAttribute('data-id');
+    const created = await action(page, 'page.create', {
+        layout: 'frootbox/theme-bohnenglueck/Page',
+        translations: { de: { title: 'Abgeschirmt', slug, content: { fields: { title: heading } } } },
+        parentId: start,
+    });
+    expect(created.status).toBe(200);
+    const id: string = created.body.data.id;
+
+    await page.goto(`/cms/pages/${id}`);
+    await page.getByRole('button', { name: 'Auf der Website bearbeiten' }).click();
+    await expect(page).toHaveURL(`/${slug}`);
+
+    // Rules a theme might have (decision 0151): some hit the host, even
+    // with !important, and a transform on body moves position: fixed.
+    await page.addStyleTag({ content: `
+        body { transform: translateY(80px); filter: saturate(1.1); }
+        body > * { position: relative !important; max-inline-size: 300px !important; margin-inline: auto !important; }
+        fb-editor-bar { display: none !important; opacity: 0 !important; inset: auto !important; transition: all 5s !important; }
+    ` });
+
+    const bar = page.locator('fb-editor-bar');
+    const viewport = page.viewportSize()!;
+    const box = (await bar.locator('.bar').boundingBox())!;
+    expect(Math.abs(box.x + box.width / 2 - viewport.width / 2)).toBeLessThan(2);
+    expect(viewport.height - (box.y + box.height)).toBeGreaterThan(0);
+    expect(viewport.height - (box.y + box.height)).toBeLessThan(40);
+
+    // The outline lies exactly over the field, wherever the theme moved it.
+    const title = page.locator('h1[data-fb-field="title"]');
+    await title.hover();
+    const outline = (await bar.locator('.outline').boundingBox())!;
+    const field = (await title.boundingBox())!;
+    expect(Math.abs(outline.x - field.x)).toBeLessThan(2);
+    expect(Math.abs(outline.y - field.y)).toBeLessThan(2);
+    expect(Math.abs(outline.width - field.width)).toBeLessThan(2);
+
+    await page.goto(`/cms/pages/${id}`);
+    expect((await action(page, 'page.delete', { id })).status).toBe(200);
+});
