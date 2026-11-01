@@ -20,8 +20,8 @@ theme:
       dark: '#2b211c'
       line: '#e7ddd3'
     font:
-      body: 'system-ui, -apple-system, "Segoe UI", sans-serif'
-      heading: 'ui-serif, Georgia, "Times New Roman", serif'
+      body: sans
+      heading: serif
     radius: 14px
-    space: 'clamp(3rem, 8vw, 6rem)'
+    space: normal
     width: 72rem
