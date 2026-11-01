@@ -175,3 +175,37 @@ test('copies and deletes blocks and edits list entries', async ({ page }) => {
 
     await removePage(page, id);
 });
+
+test('gives a new block its start entries with placeholders', async ({ page }) => {
+    const slug = `start-${unique()}`;
+    const id = await openPage(page, slug, [
+        { block: 'frootbox/theme-bohnenglueck/Text', fields: { body: text('Wir rösten langsam.') } },
+    ]);
+    const bar = page.locator('fb-editor-bar');
+    const textBlock = page.locator('[data-fb-name="frootbox/theme-bohnenglueck/Text"]');
+    const features = page.locator('[data-fb-name="frootbox/theme-bohnenglueck/Features"]');
+    const picker = bar.getByRole('dialog', { name: 'Block einfügen' });
+
+    // Right after inserting, the block looks like itself (decision 0142).
+    await textBlock.hover();
+    await bar.getByRole('toolbar', { name: 'Block Text' }).getByRole('button', { name: 'Block darunter einfügen' }).click();
+    await picker.getByRole('button', { name: /^Vorteile/ }).click();
+    await expect(features.locator('.features__item')).toHaveCount(3);
+    const title = features.locator('[data-fb-field="items/0/title"]');
+    await expect(title).toHaveAttribute('data-fb-placeholder', 'Ein Vorteil in wenigen Worten');
+    await expect(title).toBeEmpty();
+
+    // Typed right into the placeholder.
+    const save = page.waitForResponse((response) => response.url().endsWith('/page.update-field') && response.ok());
+    await title.click();
+    await page.keyboard.type('Frisch geröstet');
+    await page.keyboard.press('Enter');
+    await save;
+    await expect(title).toHaveText('Frisch geröstet');
+
+    // Empty entries keep the page from going live.
+    await bar.getByRole('button', { name: 'Veröffentlichen' }).click();
+    await expect(bar.getByRole('region', { name: 'Redaktionsleiste' }).getByRole('status')).toHaveText('Prüf die markierten Felder.');
+
+    await removePage(page, id);
+});

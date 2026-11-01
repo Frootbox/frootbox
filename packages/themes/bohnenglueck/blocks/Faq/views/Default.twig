@@ -7,14 +7,15 @@ options:
     type: boolean
     label: Erste Antwort geöffnet
 fields:
-  title: { type: headline, label: Überschrift }
+  title: { type: headline, label: Überschrift, placeholder: "Häufige Fragen" }
   items:
     type: list
     label: Fragen
     min: 1
+    start: 3
     fields:
-      question: { type: headline, label: Frage }
-      answer: { type: richtext, label: Antwort }
+      question: { type: headline, label: Frage, placeholder: "Eine Frage, die oft gestellt wird" }
+      answer: { type: richtext, label: Antwort, placeholder: "Die Antwort in ein paar Sätzen" }
 #}
 <section class="section faq"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
   <div class="wrap faq__inner">

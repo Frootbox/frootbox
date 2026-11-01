@@ -4,8 +4,8 @@ description: Farbiges Band mit Überschrift, Satz und Button am Ende einer Seite
 options:
   anchor: { type: text, label: Anker für die Navigation }
 fields:
-  title: { type: headline, label: Überschrift }
-  text: { type: text, label: Text, optional: true }
+  title: { type: headline, label: Überschrift, placeholder: "Wozu lädst Du ein?" }
+  text: { type: text, label: Text, optional: true, placeholder: "Ein Satz, der zum Klick bewegt" }
   button: { type: link, label: Button }
 #}
 <section class="section"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
