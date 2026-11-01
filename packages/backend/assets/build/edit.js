@@ -934,9 +934,9 @@ var e=globalThis,t=e.ShadowRoot&&(e.ShadyCSS===void 0||e.ShadyCSS.nativeShadow)&
                 @click=${()=>this.choose(()=>{this.showAll=!this.showAll})}>${U(`places`)}${n.showAll}</button>`:F,t?M`<a role="menuitem" href=${t.backend}>${U(`external`)}${n.backend}</a>`:F,r?M`<button type="button" role="menuitem" class="danger" ?disabled=${this.busy}
                 @click=${()=>this.choose(()=>this.confirm())}>${U(`trash`)}${n.discard}</button>`:F].filter(e=>e!==F),a=[this.config.design&&e?M`<button type="button" role="menuitem"
                 @click=${()=>this.choose(()=>this.design.show())}>${U(`palette`)}${n.design}</button>`:F].filter(e=>e!==F);if(i.length===0&&a.length===0)return F;let o=(e,t,n)=>n.length===0?F:M`<div role="group" aria-labelledby=${e}>
-            <div class="menu-heading" id=${e} role="presentation">${t}</div>${n}</div>`;return M`<div class="more" @focusout=${e=>this.leaveMenu(e)}>
+            <div class="menu-heading" id=${e} role="presentation">${t}</div>${n}</div>`;return M`<div class="more" @focusout=${e=>this.leaveMenu(e)} @mousedown=${e=>e.preventDefault()}>
             <button type="button" data-fb-more aria-haspopup="menu" aria-expanded=${this.menu?`true`:`false`} aria-controls="fb-more-menu"
-                aria-label=${n.more} title=${n.more} @click=${()=>this.openMenu(!this.menu)}
+                aria-label=${n.more} title=${n.more} @click=${()=>this.menu?this.closeMenu():this.openMenu(!0)}
                 @keydown=${e=>this.moreKey(e)}>${U(`more`)}</button>
             ${this.menu?M`<div class="menu" id="fb-more-menu" role="menu" aria-label=${n.more} @keydown=${e=>this.menuKey(e)}>
                 ${o(`fb-more-page`,n.thisPage,i)}${o(`fb-more-site`,n.website,a)}

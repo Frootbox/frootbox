@@ -78,6 +78,13 @@ test('edits the website from the draft', async ({ page, request }) => {
     await expect(menu).toHaveCount(0);
     await expect(more).toBeFocused();
 
+    // Like Safari, pressing the mouse moves the focus away unless prevented;
+    // the menu must stay open until the click lands.
+    await page.evaluate(() => addEventListener('mousedown', (event) => {
+        if (!event.defaultPrevented) {
+            (document.querySelector('fb-editor-bar')?.shadowRoot?.activeElement as HTMLElement | null)?.blur();
+        }
+    }));
     await more.click();
     await menu.getByRole('menuitemcheckbox', { name: 'Alle Stellen zeigen' }).click();
     expect(await bar.locator('.outline').count()).toBeGreaterThan(1);

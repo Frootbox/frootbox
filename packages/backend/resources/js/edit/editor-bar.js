@@ -825,9 +825,11 @@ export class EditorBar extends LitElement {
         const group = (id, heading, items) => items.length === 0 ? nothing : html`<div role="group" aria-labelledby=${id}>
             <div class="menu-heading" id=${id} role="presentation">${heading}</div>${items}</div>`;
 
-        return html`<div class="more" @focusout=${(event) => this.leaveMenu(event)}>
+        // A click keeps the focus where it is: Safari would otherwise move it to the page on
+        // pressing the mouse, the menu would close, and the click would hit nothing.
+        return html`<div class="more" @focusout=${(event) => this.leaveMenu(event)} @mousedown=${(event) => event.preventDefault()}>
             <button type="button" data-fb-more aria-haspopup="menu" aria-expanded=${this.menu ? 'true' : 'false'} aria-controls="fb-more-menu"
-                aria-label=${labels.more} title=${labels.more} @click=${() => this.openMenu(!this.menu)}
+                aria-label=${labels.more} title=${labels.more} @click=${() => (this.menu ? this.closeMenu() : this.openMenu(true))}
                 @keydown=${(event) => this.moreKey(event)}>${icon('more')}</button>
             ${this.menu ? html`<div class="menu" id="fb-more-menu" role="menu" aria-label=${labels.more} @keydown=${(event) => this.menuKey(event)}>
                 ${group('fb-more-page', labels.thisPage, forPage)}${group('fb-more-site', labels.website, forSite)}
