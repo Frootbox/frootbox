@@ -6,6 +6,7 @@ import { Editing } from './editing.js';
 import { follow, registerFieldTools, toolsOf } from './field-tools.js';
 import { icon } from './icons.js';
 import { MediaPicker, mediaStyles } from './media.js';
+import { OutlinePanel, outlineStyles } from './outline.js';
 import { placesOf } from './problems.js';
 import { SharePreview, shareStyles } from './share.js';
 
@@ -490,6 +491,22 @@ export class EditorBar extends LitElement {
             padding-inline: var(--fb-space-1);
         }
 
+        .toolbar select {
+            min-block-size: var(--fb-size-control-sm);
+            padding-inline: var(--fb-space-2);
+            border: var(--fb-size-border) solid var(--fb-border);
+            border-radius: var(--fb-radius-sm);
+            background: var(--fb-surface);
+            color: inherit;
+            font: inherit;
+            font-size: var(--fb-text-sm);
+        }
+
+        .toolbar select:focus-visible {
+            outline: var(--fb-size-focus) solid var(--fb-focus);
+            outline-offset: var(--fb-size-focus-offset);
+        }
+
         dialog {
             pointer-events: auto;
             inline-size: min(calc(100vw - 2 * var(--fb-space-4)), var(--fb-size-dialog));
@@ -602,7 +619,7 @@ export class EditorBar extends LitElement {
         @media (prefers-reduced-motion: reduce) {
             * { transition: none !important; animation: none !important; }
         }
-    `, arrangingStyles, mediaStyles, designStyles, shareStyles, commentStyles];
+    `, arrangingStyles, mediaStyles, designStyles, shareStyles, commentStyles, outlineStyles];
 
     constructor() {
         super();
@@ -643,6 +660,7 @@ export class EditorBar extends LitElement {
         this.design = new DesignPanel(this);
         this.share = new SharePreview(this);
         this.comments = new CommentsPanel(this);
+        this.outline = new OutlinePanel(this);
         this.frame = 0;
         this.redraw = () => {
             if (this.frame === 0 && (this.current || this.showAll || this.toolbar || this.arranging?.block || this.problems.length > 0 || this.comments.threads.length > 0)) {
@@ -773,7 +791,7 @@ export class EditorBar extends LitElement {
 
         const arranging = this.arranging;
 
-        return html`${this.outlines()}${this.config.editing ? this.comments.pins() : nothing}${this.comments.pickHint()}${arranging?.tools() ?? nothing}${arranging?.entryTools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.design.view()}${this.comments.view()}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}${this.media.dialog()}${this.share.dialog()}`;
+        return html`${this.outlines()}${this.config.editing ? this.comments.pins() : nothing}${this.comments.pickHint()}${arranging?.tools() ?? nothing}${arranging?.entryTools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.design.view()}${this.comments.view()}${this.outline.view()}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}${this.media.dialog()}${this.share.dialog()}`;
     }
 
     round() {
@@ -955,6 +973,8 @@ export class EditorBar extends LitElement {
         const forPage = [
             this.marking ? html`<button type="button" role="menuitemcheckbox" aria-checked=${this.showAll ? 'true' : 'false'}
                 @click=${() => this.choose(() => { this.showAll = !this.showAll; })}>${icon('places')}${labels.showAll}</button>` : nothing,
+            editing && page ? html`<button type="button" role="menuitem"
+                @click=${() => this.choose(() => this.outline.show())}>${icon('outline')}${labels.outline}</button>` : nothing,
             page ? html`<a role="menuitem" href=${page.backend}>${icon('external')}${labels.backend}</a>` : nothing,
             canDiscard ? html`<button type="button" role="menuitem" class="danger" ?disabled=${this.busy}
                 @click=${() => this.choose(() => this.confirm())}>${icon('trash')}${labels.discard}</button>` : nothing,
@@ -1110,7 +1130,7 @@ export class EditorBar extends LitElement {
         // A field with a problem has its own outline.
         const marked = new Set(this.problems.map((problem) => problem.element));
 
-        return html`${this.problemOutlines()}${elements.filter((element) => !marked.has(element)).map((element) => {
+        return html`${this.showAll ? this.outline.badges() : nothing}${this.problemOutlines()}${elements.filter((element) => !marked.has(element)).map((element) => {
             const rect = element.getBoundingClientRect();
 
             if (rect.width === 0 && rect.height === 0) {
@@ -1465,7 +1485,7 @@ export class EditorBar extends LitElement {
     }
 
     focusToolbar() {
-        this.renderRoot.querySelector('.toolbar button')?.focus();
+        this.renderRoot.querySelector('.toolbar :is(button, select)')?.focus();
     }
 
     /** The floating toolbar of rich text, above the selection (decision 0122). */
@@ -1485,7 +1505,6 @@ export class EditorBar extends LitElement {
         const items = [
             ['bold', 'bold', labels.bold, () => run((chain) => chain.toggleBold())],
             ['italic', 'italic', labels.italic, () => run((chain) => chain.toggleItalic())],
-            ['heading', ['heading', { level: 2 }], labels.subheading, () => run((chain) => chain.toggleHeading({ level: 2 }))],
             ['list', 'bulletList', labels.bulletList, () => run((chain) => chain.toggleBulletList())],
             ['ordered', 'orderedList', labels.orderedList, () => run((chain) => chain.toggleOrderedList())],
             ['quote', 'blockquote', labels.quote, () => run((chain) => chain.toggleBlockquote())],
@@ -1496,6 +1515,7 @@ export class EditorBar extends LitElement {
             style="inset-block-start: ${top}px; inset-inline-start: ${left}px"
             @keydown=${(event) => this.toolbarKey(event, editor)}
             @focusout=${(event) => this.toolbarLeft(event, editor)}>
+            ${this.headingSelect(editor, run)}
             ${items.map(([name, active, label, action]) => {
                 const pressed = Array.isArray(active) ? editor.isActive(...active) : editor.isActive(active);
 
@@ -1505,8 +1525,33 @@ export class EditorBar extends LitElement {
         </div>`;
     }
 
+    /**
+     * Text or a heading by its rank (decision 0129), as many ranks as the
+     * field offers. The page decides the level.
+     */
+    headingSelect(editor, run) {
+        const ranks = editor.extensionManager.extensions.find((extension) => extension.name === 'heading')?.options.levels ?? [];
+
+        if (ranks.length === 0) {
+            return nothing;
+        }
+
+        const labels = this.labels;
+        const names = { 1: labels.heading, 2: labels.subheading, 3: labels.smallHeading };
+        const current = ranks.find((rank) => editor.isActive('heading', { level: rank })) ?? 0;
+        const change = (event) => {
+            const rank = Number(event.target.value);
+            run((chain) => (rank === 0 ? chain.setParagraph() : chain.setHeading({ level: rank })));
+        };
+
+        return html`<select aria-label=${labels.textStyle} title=${labels.textStyleHint} @change=${change}>
+            <option value="0" ?selected=${current === 0}>${labels.normalText}</option>
+            ${ranks.map((rank) => html`<option value=${rank} ?selected=${current === rank}>${names[rank]}</option>`)}
+        </select>`;
+    }
+
     toolbarKey(event, editor) {
-        const buttons = [...this.renderRoot.querySelectorAll('.toolbar button')];
+        const buttons = [...this.renderRoot.querySelectorAll('.toolbar :is(button, select)')];
         const at = buttons.indexOf(this.renderRoot.activeElement);
 
         if (event.key === 'Escape') {

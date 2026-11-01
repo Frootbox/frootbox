@@ -960,6 +960,7 @@ export class Arranging {
         const id = element.dataset.fbBlock;
         this.bar.design?.hide();
         this.bar.comments?.hide();
+        this.bar.outline?.hide();
         this.panel = { id, title: element.dataset.fbTitle ?? '', loading: true, busy: false };
         this.bar.requestUpdate();
 

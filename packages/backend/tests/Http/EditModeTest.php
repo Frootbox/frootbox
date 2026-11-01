@@ -115,6 +115,8 @@ final class EditModeTest extends BackendTestCase
         self::assertSame('Bei {count} Feldern fehlt noch etwas.', $config['labels']['problems'], 'Publishing names the fields it misses (decision 0143).');
         self::assertSame('Block darunter einfügen', $config['labels']['insertBelow']);
         self::assertSame('„{block}“ löschen?', $config['labels']['removeConfirm']);
+        self::assertSame('Gliederung', $config['labels']['outline'], 'The panel of decision 0129.');
+        self::assertSame('Unterüberschrift', $config['labels']['subheading'], 'Ranks, not levels (decision 0129).');
         self::assertStringContainsString('.ProseMirror{', $editing);
         self::assertStringContainsString('[data-fb-field]:empty::before{content:attr(data-fb-label)', $editing, 'Empty fields show their label.');
         self::assertStringContainsString('[data-fb-field][data-fb-placeholder]:empty::before{content:attr(data-fb-placeholder)}', $editing, 'Or their placeholder (decision 0142).');

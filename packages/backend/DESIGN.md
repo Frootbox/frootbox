@@ -928,8 +928,8 @@ data from the JSON block `#fb-edit-config` in the head.
 - "More" is a menu button (`aria-haspopup="menu"`) with an ellipsis. Its
   menu opens above it in `--fb-surface` with `--fb-radius-lg` and
   `--fb-shadow-lg`, in sections with a small heading in `--fb-text-muted`:
-  "This page" ("Show all places" as `menuitemcheckbox`, "Open in the
-  backend", "Discard the draft" in danger last) and "Website" ("Design"
+  "This page" ("Show all places" as `menuitemcheckbox`, "Outline",
+  "Open in the backend", "Discard the draft" in danger last) and "Website" ("Design"
   with `design.update`). An entry shows only with its right; without
   entries there is no menu. Arrow keys, Home and End move, Escape closes
   and returns to "More", Tab and a click outside close. "Discard the
@@ -1002,7 +1002,11 @@ typed where it stands, nothing is replaced by a form.
   of `--fb-size-control-sm` with icon and `aria-label`, active ones with
   `aria-pressed` in `--fb-accent-soft`. `role="toolbar"`, Alt+F10 reaches
   it from the text, arrow keys move between buttons, Esc goes back. Its
-  buttons keep the selection (no focus on mouse down).
+  buttons keep the selection (no focus on mouse down). First a native
+  `<select>` "Text style" (`--fb-size-control-sm`, `--fb-radius-sm`,
+  `--fb-text-sm`): "Text", "Heading", "Subheading", "Small heading", as
+  many ranks as the field offers (decision 0129); the page decides the
+  level, the editor shows it like visitors see it.
 - **Link dialog**: a modal `<dialog>` of `--fb-size-dialog` over
   `--fb-backdrop`. Text (only for link fields), "Address or page" with a
   search in the page tree, results as buttons with title and path, a
@@ -1075,6 +1079,16 @@ Arranging blocks (decision 0123), from `resources/js/edit/arranging.js`:
   "Mark as done" / "Open again" and "Delete thread" with a confirmation
   in place. Numbered pins mark the places; the one of the chosen thread
   has a focus ring.
+- **Outline** (menu "More", section This page, decision 0129): a side
+  panel like the comments with the headings of the draft from
+  `page.outline`, indented by level (`--fb-space-4` per level), each a
+  row button with the level ("H2", `--fb-text-xs` semibold muted) and its
+  text; a click scrolls to the heading and focuses its field. Notes below
+  a row in `--fb-text-muted`, the level of such a row in
+  `--fb-warning-text`; a page without h1 of its own gets a note in
+  `--fb-warning-bg` on top. With "Show all places" every heading on the
+  page carries a small badge with its level at its top end
+  (`--fb-text` on `--fb-surface`, `--fb-text-2xs`).
 
 ### Preview note
 

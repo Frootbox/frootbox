@@ -65,6 +65,7 @@ export class DesignPanel {
     async show() {
         this.bar.arranging?.closePanel?.();
         this.bar.comments?.hide();
+        this.bar.outline?.hide();
         this.state = { loading: true, design: null, busy: false, confirming: false };
         this.bar.requestUpdate();
         let body = null;

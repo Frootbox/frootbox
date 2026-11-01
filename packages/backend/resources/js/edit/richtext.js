@@ -4,8 +4,49 @@
  * server (decision 0097). Loaded on the first focus of such a field, as
  * a chunk of its own.
  */
-import { Editor } from '@tiptap/core';
+import { Editor, mergeAttributes } from '@tiptap/core';
+import Heading from '@tiptap/extension-heading';
 import StarterKit from '@tiptap/starter-kit';
+
+/**
+ * Headings store their rank (decision 0129): 1 „Überschrift“, 2
+ * „Unterüberschrift“, 3 „Kleine Überschrift“. The page decides the level,
+ * the editor shows them at the one the page gives rank 1, like visitors
+ * see them.
+ */
+const RankedHeading = Heading.extend({
+    addOptions() {
+        return { ...this.parent?.(), levels: [1, 2, 3], level: 2 };
+    },
+
+    parseHTML() {
+        // Copied from the page or this editor: the rank, not the level.
+        const ranked = [1, 2, 3, 4, 5, 6].map((level) => ({
+            tag: `h${level}[data-rank]`,
+            priority: 60,
+            getAttrs: (element) => {
+                const rank = Number(element.getAttribute('data-rank'));
+
+                return this.options.levels.includes(rank) ? { level: rank } : false;
+            },
+        }));
+
+        return [...ranked, ...this.parent?.() ?? []];
+    },
+
+    renderHTML({ node, HTMLAttributes }) {
+        const rank = this.options.levels.includes(node.attrs.level) ? node.attrs.level : this.options.levels[0];
+
+        return [`h${Math.min(6, this.options.level + rank - 1)}`, mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, { 'data-rank': rank }), 0];
+    },
+});
+
+/** The ranks a field offers, from data-fb-headings (3 if not given). */
+export function ranksOf(element) {
+    const count = Math.max(0, Math.min(3, Number(element.dataset.fbHeadings ?? 3)));
+
+    return [1, 2, 3].slice(0, count);
+}
 
 const EMPTY = { type: 'doc', content: [] };
 
@@ -47,6 +88,9 @@ export function clean(node) {
  * Tiptap renders from the stored value.
  */
 export function createEditor(element, value, { update, selection, blur }) {
+    const ranks = ranksOf(element);
+    const level = Math.max(1, Math.min(6, Number(element.dataset.fbHeadingLevel) || 2));
+
     return new Editor({
         element: { mount: element },
         content: value ?? EMPTY,
@@ -56,8 +100,7 @@ export function createEditor(element, value, { update, selection, blur }) {
                 trailingNode: false,
                 dropcursor: false,
                 gapcursor: false,
-                // The page has its h1; pasted ones become paragraphs.
-                heading: { levels: [2, 3, 4] },
+                heading: false,
                 link: {
                     openOnClick: false,
                     autolink: true,
@@ -67,6 +110,8 @@ export function createEditor(element, value, { update, selection, blur }) {
                     HTMLAttributes: { rel: null, target: null, class: null },
                 },
             }),
+            // Strg+Alt+1 to 3 and "# " to "### " give the ranks, Strg+Alt+0 text.
+            ...ranks.length > 0 ? [RankedHeading.configure({ levels: ranks, level })] : [],
         ],
         onUpdate: () => update(),
         // Each change may move the selection or what the toolbar shows active.
