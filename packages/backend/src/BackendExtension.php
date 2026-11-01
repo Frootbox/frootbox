@@ -15,6 +15,8 @@ use Frootbox\Backend\Http\DesignHandler;
 use Frootbox\Backend\Http\EditModeHandler;
 use Frootbox\Backend\Http\LoginHandler;
 use Frootbox\Backend\Http\LogoutHandler;
+use Frootbox\Backend\Http\Media\MediaHandler;
+use Frootbox\Backend\Http\Media\UploadHandler;
 use Frootbox\Backend\Http\Navigations\NavigationsHandler;
 use Frootbox\Backend\Http\Pages\NewPageHandler;
 use Frootbox\Backend\Http\Pages\PagesHandler;
@@ -58,6 +60,9 @@ final class BackendExtension implements Extension
             ->get('/pages/{id:' . self::ULID . '}', PagesHandler::class, 'backend.pages.show')
             ->get('/navigations', NavigationsHandler::class, 'backend.navigations')
             ->get('/navigations/{name:[a-z][a-z0-9-]{0,63}}', NavigationsHandler::class, 'backend.navigations.show')
+            ->get('/media', MediaHandler::class, 'backend.media')
+            ->get('/media/{id:' . self::ULID . '}', MediaHandler::class, 'backend.media.show')
+            ->post('/uploads', UploadHandler::class, 'backend.uploads')
             ->get('/redirects', RedirectsHandler::class, 'backend.redirects')
             ->get('/users', UsersHandler::class, 'backend.users')
             ->get('/users/new', UserHandler::class, 'backend.users.new')
@@ -74,6 +79,7 @@ final class BackendExtension implements Extension
 
         $registry->add(Screen::class, new Screen('Dashboard', 'backend.dashboard', Screen::CONTENT, 'dashboard', order: 0));
         $registry->add(Screen::class, new Screen('Pages', 'backend.pages', Screen::CONTENT, 'pages', PagesHandler::PERMISSION, order: 10));
+        $registry->add(Screen::class, new Screen('Media', 'backend.media', Screen::CONTENT, 'image', MediaHandler::PERMISSION, order: 20));
         $registry->add(Screen::class, new Screen('Navigations', 'backend.navigations', Screen::WEBSITE, 'navigation', NavigationsHandler::PERMISSION, order: 20));
         $registry->add(Screen::class, new Screen('Redirects', 'backend.redirects', Screen::WEBSITE, 'redirect', RedirectsHandler::PERMISSION, order: 30));
         $registry->add(Screen::class, new Screen('Users', 'backend.users', Screen::ADMINISTRATION, 'users', UsersHandler::PERMISSION, order: 100));

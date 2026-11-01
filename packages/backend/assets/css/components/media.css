@@ -1,0 +1,119 @@
+/* The media library (decision 0126): a grid of images, the drop zone of
+   <fb-upload> and the focus point of <fb-focus>. */
+
+.fb-media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(calc(var(--fb-space-16) * 2.25), 1fr));
+    gap: var(--fb-space-4);
+    padding: 0 var(--fb-space-5) var(--fb-space-5);
+}
+
+.fb-media-grid__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fb-space-2);
+    border-radius: var(--fb-radius-md);
+    color: inherit;
+    text-decoration: none;
+}
+
+.fb-media-grid__item img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border: var(--fb-size-border) solid var(--fb-border);
+    border-radius: var(--fb-radius-md);
+    background: var(--fb-surface-2);
+}
+
+.fb-media-grid__item[aria-current="true"] img,
+.fb-media-grid__item[aria-pressed="true"] img {
+    outline: var(--fb-size-indicator) solid var(--fb-accent);
+    outline-offset: var(--fb-size-focus-offset);
+}
+
+.fb-media-grid__item:hover img {
+    border-color: var(--fb-border-strong);
+}
+
+.fb-media-grid__item:focus-visible {
+    outline: var(--fb-size-focus) solid var(--fb-focus);
+    outline-offset: var(--fb-size-focus-offset);
+}
+
+.fb-media-grid__name {
+    overflow: hidden;
+    font-size: var(--fb-text-xs);
+    color: var(--fb-text-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+fb-upload {
+    position: relative;
+    display: block;
+}
+
+fb-upload > .fb-alert {
+    margin-bottom: var(--fb-space-4);
+}
+
+fb-upload[dragging]::after {
+    content: attr(data-fb-drop-label);
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--fb-space-6);
+    border: calc(var(--fb-size-border) * 2) dashed var(--fb-accent);
+    border-radius: var(--fb-radius-lg);
+    background: var(--fb-accent-soft);
+    color: var(--fb-accent-text);
+    font-weight: var(--fb-weight-semibold);
+    pointer-events: none;
+}
+
+fb-upload[busy] [data-fb-upload] {
+    opacity: .6;
+    pointer-events: none;
+}
+
+.fb-focus {
+    position: relative;
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    cursor: crosshair;
+}
+
+.fb-focus[disabled] {
+    cursor: default;
+}
+
+.fb-focus img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--fb-radius-md);
+}
+
+.fb-focus__marker {
+    position: absolute;
+    width: var(--fb-size-control-sm);
+    height: var(--fb-size-control-sm);
+    padding: 0;
+    border: calc(var(--fb-size-focus) * 1.5) solid var(--fb-inverse-text);
+    border-radius: var(--fb-radius-full);
+    background: transparent;
+    box-shadow: 0 0 0 var(--fb-size-focus) var(--fb-inverse-bg), inset 0 0 0 var(--fb-size-focus) var(--fb-inverse-bg);
+    cursor: grab;
+    translate: -50% -50%;
+}
+
+.fb-focus__marker:focus-visible {
+    outline: var(--fb-size-focus) solid var(--fb-focus);
+    outline-offset: var(--fb-size-focus-offset);
+}

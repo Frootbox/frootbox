@@ -11,7 +11,7 @@ import { icon } from './icons.js';
 
 const RESTORE = 'fb-edit-restore:';
 const BLOCK = '[data-fb-block]';
-const PANEL_FIELDS = ['headline', 'text', 'link'];
+const PANEL_FIELDS = ['headline', 'text', 'link', 'image'];
 
 /** The block around an element, null for the layout. */
 function parentOf(element) {
@@ -773,6 +773,12 @@ export class Arranging {
                     <span>${text}</span>${icon('link')}</button></div>`;
         }
 
+        if (field.type === 'image') {
+            return html`<div><span class="hint">${field.label}</span>
+                <button type="button" class="link-field" @click=${() => this.editImage(data, path, value)}>
+                    <span>${value?.media ? this.labels.imageChosen : this.labels.noImage}</span>${icon('image')}</button></div>`;
+        }
+
         const save = (event) => {
             const text = event.target.value.trim() === '' ? null : event.target.value;
             this.setField(data, path, value, text);
@@ -858,6 +864,17 @@ export class Arranging {
 
     listChange(name, data, input) {
         return this.panelChange(name, { block: data.id, ...input });
+    }
+
+    editImage(data, path, value) {
+        const button = this.bar.renderRoot.activeElement;
+
+        this.bar.media.open({
+            value,
+            apply: (chosen) => this.panelChange('page.update-field', { block: data.id, path, value: chosen, previous: value }),
+            remove: () => this.panelChange('page.update-field', { block: data.id, path, value: null, previous: value }),
+            done: () => button?.focus(),
+        });
     }
 
     editLink(data, path, value) {

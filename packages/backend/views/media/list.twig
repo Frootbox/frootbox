@@ -1,0 +1,146 @@
+{#- The media library: folders, a grid of media and the details of one (decision 0126). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ medium ? medium.fileName ~ ' · ' : '' }}{{ t('Media') }}{% endblock %}
+
+{% block content %}
+{% set base = path('backend.media') %}
+{% set back = base ~ query %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Media') }}</h1>
+            <p class="fb-muted">{{ t('Images for your pages. They become visible to visitors with the first published page that uses them.') }}</p>
+        </div>
+    </header>
+
+    <div class="fb-split">
+        <section class="fb-card fb-split__side" id="media-folders" aria-labelledby="media-folders-title">
+            <div class="fb-card__header fb-card__header--tight">
+                <h2 class="fb-heading-4" id="media-folders-title" tabindex="-1" data-fb-focus>{{ t('Folders') }}</h2>
+                {% if can('media.folder-create') %}{{ ui.button({label: t('New folder'), variant: 'ghost', small: true, icon: 'plus', icon_only: true, attrs: {commandfor: 'media-folder-new', command: 'show-modal', 'data-fb-fill': {parentId: current ? current.id : ''}|json_encode}}) }}{% endif %}
+            </div>
+            <ul>
+                <li class="fb-tree__row"><a class="fb-tree__link" href="{{ base }}"{% if folder is null %} aria-current="page"{% endif %}><span class="fb-tree__title">{{ t('All media') }}</span></a></li>
+                <li class="fb-tree__row"><a class="fb-tree__link" href="{{ base }}?folder=top"{% if folder == 'top' %} aria-current="page"{% endif %}><span class="fb-tree__title">{{ t('Outside of folders') }}</span></a></li>
+                {%- for row in folders %}
+                <li class="fb-tree__row" data-depth="{{ min(row.depth + 1, 6) }}">
+                    <a class="fb-tree__link" href="{{ base }}?folder={{ row.folder.id }}"{% if folder == row.folder.id %} aria-current="page"{% endif %}>
+                        <span class="fb-tree__title">{{ row.folder.name }}</span>
+                        <span class="fb-tree__meta">{{ row.folder.media }}</span>
+                    </a>
+                </li>
+                {%- endfor %}
+            </ul>
+            {% if current %}
+            <div class="fb-card__footer fb-cluster">
+                {% if can('media.folder-update') %}{{ ui.button({label: t('Rename'), variant: 'secondary', small: true, attrs: {commandfor: 'media-folder-edit', command: 'show-modal', 'data-fb-fill': {id: current.id, name: current.name}|json_encode}}) }}{% endif %}
+                {% if can('media.folder-delete') %}{{ ui.button({label: t('Delete the folder'), variant: 'ghost', small: true, icon: 'trash', attrs: {commandfor: 'media-folder-delete', command: 'show-modal', 'data-fb-fill': {id: current.id}|json_encode}}) }}{% endif %}
+            </div>
+            {% endif %}
+        </section>
+
+        {% if medium %}
+        {% include '@backend/media/detail.twig' %}
+        {% else %}
+        <fb-upload class="fb-split__main" url="{{ path('backend.uploads') }}" folder="{{ current ? current.id : '' }}" refresh="media-grid media-folders" label="{{ t('Drop images here to upload them') }}" progress="{{ t('Uploading {done} of {total} …') }}" done="{{ t('The images are uploaded.') }}"{% if not can('media.create') %} disabled{% endif %}>
+            <section class="fb-card" id="media-grid" aria-labelledby="media-grid-title">
+                <div class="fb-card__header">
+                    <h2 class="fb-heading-4" id="media-grid-title" tabindex="-1" data-fb-focus>{{ current ? current.name : (folder == 'top' ? t('Outside of folders') : t('All media')) }}</h2>
+                    {{ ui.badge('neutral', list.total) }}
+                    {% if can('media.create') %}
+                    {{ ui.button({label: t('Upload'), icon: 'plus', attrs: {'data-fb-upload': true}}) }}
+                    {% endif %}
+                </div>
+                <form class="fb-card__body fb-cluster" method="get" action="{{ base }}" role="search">
+                    {% if folder %}<input type="hidden" name="folder" value="{{ folder }}">{% endif %}
+                    {{ ui.field({label: t('Search'), name: 'q', type: 'search', value: search, placeholder: t('File name or text')}) }}
+                    {{ ui.field({label: t('Tag'), name: 'tag', value: tag, optional: true}) }}
+                    {{ ui.button({label: t('Search'), variant: 'secondary', type: 'submit', icon: 'search'}) }}
+                </form>
+                <p class="fb-visually-hidden" role="status" data-fb-upload-status></p>
+                {% if list.items is empty %}
+                <div class="fb-card__body">
+                    {{ ui.empty({icon: 'image', title: search or tag ? t('Nothing found') : t('No images yet'), text: search or tag ? t('Try another search.') : t('Upload images with the button or drop them here.')}) }}
+                </div>
+                {% else %}
+                <ul class="fb-media-grid">
+                    {%- for item in list.items %}
+                    <li>
+                        <a class="fb-media-grid__item" href="{{ base }}/{{ item.id }}{{ query }}">
+                            <img src="{{ item.preview }}" alt="" width="{{ item.width }}" height="{{ item.height }}" loading="lazy" decoding="async">
+                            <span class="fb-media-grid__name">{{ item.fileName }}</span>
+                        </a>
+                    </li>
+                    {%- endfor %}
+                </ul>
+                {% if pages > 1 %}
+                <nav class="fb-card__footer fb-cluster" aria-label="{{ t('Pages of the list') }}">
+                    {% set link = base ~ '?' ~ (filters|merge({page: ''})|url_encode) %}
+                    {% if list.page > 1 %}{{ ui.button({label: t('Back'), variant: 'secondary', small: true, href: link ~ (list.page - 1)}) }}{% endif %}
+                    <span class="fb-muted">{{ t('Page {page} of {pages}', {page: list.page, pages: pages}) }}</span>
+                    {% if list.page < pages %}{{ ui.button({label: t('Next'), variant: 'secondary', small: true, href: link ~ (list.page + 1)}) }}{% endif %}
+                </nav>
+                {% endif %}
+                {% endif %}
+            </section>
+        </fb-upload>
+        {% endif %}
+    </div>
+</div>
+
+{% if can('media.folder-create') %}
+<dialog class="fb-dialog" id="media-folder-new" aria-labelledby="media-folder-new-title">
+    <fb-form action="media.folder-create" refresh="media-folders" done="{{ t('The folder is created.') }}" reset>
+        <form novalidate>
+            <input type="hidden" name="parentId" data-empty="null">
+            <div class="fb-dialog__body fb-stack">
+                <h2 class="fb-dialog__title" id="media-folder-new-title">{{ current ? t('New folder in {folder}', {folder: current.name}) : t('New folder') }}</h2>
+                {{ ui.field({label: t('Name'), name: 'name', id: 'media-folder-new-name', required: true, autofocus: true}) }}
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'media-folder-new', command: 'close'}}) }}
+                {{ ui.button({label: t('Create'), type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if current and can('media.folder-update') %}
+<dialog class="fb-dialog" id="media-folder-edit" aria-labelledby="media-folder-edit-title">
+    <fb-form action="media.folder-update" refresh="media-folders media-grid" done="{{ t('The folder is saved.') }}">
+        <form novalidate>
+            <input type="hidden" name="id">
+            <div class="fb-dialog__body fb-stack">
+                <h2 class="fb-dialog__title" id="media-folder-edit-title">{{ t('Rename the folder') }}</h2>
+                {{ ui.field({label: t('Name'), name: 'name', id: 'media-folder-edit-name', required: true}) }}
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'media-folder-edit', command: 'close'}}) }}
+                {{ ui.button({label: t('Save'), type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if current and can('media.folder-delete') %}
+<dialog class="fb-dialog" id="media-folder-delete" aria-labelledby="media-folder-delete-title">
+    <fb-form action="media.folder-delete" next="{{ base }}" done="{{ t('The folder is deleted.') }}">
+        <form novalidate>
+            <input type="hidden" name="id">
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="media-folder-delete-title">{{ t('Delete the folder?') }}</h2>
+                <p>{{ t('Only an empty folder can be deleted. Move its images and folders elsewhere first.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'media-folder-delete', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Delete'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+{% endblock %}

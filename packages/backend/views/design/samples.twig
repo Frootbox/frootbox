@@ -187,6 +187,21 @@
 </div>
 
 <div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Media') }}</p>
+    {%- set picture = 'data:image/svg+xml,' ~ ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100"><rect width="160" height="100" fill="#8a4b2a"/><rect x="96" y="20" width="32" height="30" fill="#f5efe6"/></svg>'|url_encode) %}
+    {%- set square = 'data:image/svg+xml,' ~ ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#2b6a4b"/><circle cx="50" cy="50" r="22" fill="#f5efe6"/></svg>'|url_encode) %}
+    <fb-upload label="{{ t('Drop images here to upload them') }}" disabled>
+        <ul class="fb-media-grid">
+            <li><a class="fb-media-grid__item" href="#" aria-current="true"><img src="{{ picture }}" alt="" width="160" height="100"><span class="fb-media-grid__name">roester-am-hafen.jpg</span></a></li>
+            <li><a class="fb-media-grid__item" href="#"><img src="{{ square }}" alt="" width="100" height="100"><span class="fb-media-grid__name">bohnen.jpg</span></a></li>
+        </ul>
+    </fb-upload>
+    <fb-focus class="fb-focus" x="0.7" y="0.35" label="{{ t('Focus point') }}" position="{{ t('{x} % from the left, {y} % from the top') }}">
+        <img src="{{ picture }}" alt="" width="320" height="200">
+    </fb-focus>
+</div>
+
+<div class="fb-design-sample">
     <p class="fb-design-sample__title">{{ t('Menu') }}</p>
     <ul class="fb-nav__list">
         <li><a class="fb-nav__item" href="#" aria-current="page">{{ icon('dashboard') }}<span>{{ t('Dashboard') }}</span></a></li>

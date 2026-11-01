@@ -1,7 +1,7 @@
 /**
  * Editing of fields on the website (decision 0122): headline and text
- * right in the element, rich text with Tiptap, links with a dialog of
- * the bar. Every change is saved on its own with page.update-field, a
+ * right in the element, rich text with Tiptap, links and images with a
+ * dialog of the bar (decision 0126). Every change is saved on its own with page.update-field, a
  * second after the last input and when the field is left.
  */
 
@@ -150,6 +150,9 @@ export class Editing {
         } else if (type === 'link' && (event.key === 'Enter' || event.key === ' ')) {
             event.preventDefault();
             this.editLink(element);
+        } else if (type === 'image' && (event.key === 'Enter' || event.key === ' ')) {
+            event.preventDefault();
+            this.editImage(element);
         } else if (type === 'richtext' && event.key === 'F10' && event.altKey) {
             // Alt+F10 reaches the toolbar from the keyboard.
             event.preventDefault();
@@ -179,6 +182,9 @@ export class Editing {
         if (element?.dataset.fbType === 'link') {
             event.preventDefault();
             this.editLink(element);
+        } else if (element?.dataset.fbType === 'image') {
+            event.preventDefault();
+            this.editImage(element);
         }
     }
 
@@ -262,7 +268,7 @@ export class Editing {
             element.dataset.fbValue = JSON.stringify(data.value);
         }
 
-        if (element.dataset.fbType === 'link') {
+        if (element.dataset.fbType === 'link' || element.dataset.fbType === 'image') {
             element.innerHTML = data.html;
         }
 
@@ -292,6 +298,15 @@ export class Editing {
 
                 this.save(element, link);
             },
+            remove: () => this.save(element, null),
+            done: () => element.focus(),
+        });
+    }
+
+    editImage(element) {
+        this.bar.media.open({
+            value: this.savedValue(element),
+            apply: (value) => this.save(element, value),
             remove: () => this.save(element, null),
             done: () => element.focus(),
         });

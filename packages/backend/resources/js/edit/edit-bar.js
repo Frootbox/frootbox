@@ -2,6 +2,7 @@ import { LitElement, css, html, nothing } from 'lit';
 import { Arranging, arrangingStyles } from './arranging.js';
 import { Editing } from './editing.js';
 import { icon } from './icons.js';
+import { MediaPicker, mediaStyles } from './media.js';
 
 const COLLAPSED = 'fb-edit-bar-collapsed';
 const THEME = 'fb-theme';
@@ -409,7 +410,7 @@ export class EditBar extends LitElement {
         @media (prefers-reduced-motion: reduce) {
             * { transition: none !important; }
         }
-    `, arrangingStyles];
+    `, arrangingStyles, mediaStyles];
 
     constructor() {
         super();
@@ -427,6 +428,7 @@ export class EditBar extends LitElement {
         this.pages = null;
         this.editing = null;
         this.arranging = null;
+        this.media = new MediaPicker(this);
         this.frame = 0;
         this.redraw = () => {
             if (this.frame === 0 && (this.current || this.showAll || this.toolbar || this.arranging?.block)) {
@@ -506,7 +508,7 @@ export class EditBar extends LitElement {
 
         const arranging = this.arranging;
 
-        return html`${this.outlines()}${arranging?.tools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}`;
+        return html`${this.outlines()}${arranging?.tools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}${this.media.dialog()}`;
     }
 
     round() {

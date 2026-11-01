@@ -23,6 +23,7 @@ use Frootbox\Core\Tests\Support\NotesTestCase;
 use Frootbox\Core\User\CreateUser;
 use Nyholm\Psr7\ServerRequest;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * An installation with the backend that answers requests like
@@ -78,8 +79,9 @@ abstract class BackendTestCase extends NotesTestCase
      * @param array<string, mixed>|null  $json    a JSON body, as <fb-form> sends it
      * @param string|null                $raw     the body as it is, e.g. an encoded form
      * @param array<string, string>      $cookies more cookies, e.g. of the editing mode
+     * @param array<string, UploadedFileInterface> $files uploaded files of a multipart form
      */
-    protected function request(string $method, string $path, ?array $body = null, ?string $session = null, array $headers = [], ?array $json = null, string $address = '192.0.2.1', ?string $raw = null, array $cookies = []): ResponseInterface
+    protected function request(string $method, string $path, ?array $body = null, ?string $session = null, array $headers = [], ?array $json = null, string $address = '192.0.2.1', ?string $raw = null, array $cookies = [], array $files = []): ResponseInterface
     {
         if (null !== $json) {
             $headers += ['Content-Type' => 'application/json', 'Accept' => 'application/json'];
@@ -91,6 +93,10 @@ abstract class BackendTestCase extends NotesTestCase
 
         if (null !== $body) {
             $request = $request->withParsedBody($body);
+        }
+
+        if ([] !== $files) {
+            $request = $request->withUploadedFiles($files);
         }
 
         if (null !== $session) {

@@ -74,7 +74,11 @@ final readonly class ActionHandler implements RequestHandlerInterface
         return $this->json->respond(['data' => Normalizer::normalize($result)]);
     }
 
-    private function problem(ActionException $error): ResponseInterface
+    /**
+     * The error of an action as application/problem+json in the language
+     * of the backend, with the messages by field.
+     */
+    public function problem(ActionException $error): ResponseInterface
     {
         $problem = Problem::from($error, $this->environment->isDevelopment());
         $errors = $error instanceof InvalidInputException

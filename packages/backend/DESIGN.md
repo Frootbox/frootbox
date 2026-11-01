@@ -630,6 +630,47 @@ roots depth="…">` with the items (moves are saved at once) and a
 only for these kinds, `data-navigation-remove` on a button removes the
 item.
 
+### Media
+
+```html
+<fb-upload url="/cms/uploads" folder="01J…" refresh="media-grid" label="Drop images here to upload them"
+           progress="Uploading {done} of {total} …" done="The images are uploaded.">
+    <section class="fb-card" id="media-grid">
+        … <button class="fb-button fb-button--primary" type="button" data-fb-upload>Upload</button> …
+        <p class="fb-visually-hidden" role="status" data-fb-upload-status></p>
+        <ul class="fb-media-grid">
+            <li><a class="fb-media-grid__item" href="…"><img src="…" alt="" width="…" height="…"><span class="fb-media-grid__name">hafen.jpg</span></a></li>
+        </ul>
+    </section>
+</fb-upload>
+
+<fb-focus class="fb-focus" x="0.5" y="0.5" label="Focus point" position="{x} % from the left, {y} % from the top">
+    <img src="…" alt=""><input type="hidden" name="focusX"><input type="hidden" name="focusY">
+</fb-focus>
+```
+
+The media library (decision 0126). `.fb-media-grid` shows square tiles
+with the file name below; the image is decoration (`alt=""`), the name
+is the text of the link. The chosen tile has `aria-current="true"` or,
+as a button, `aria-pressed="true"`.
+
+- `<fb-upload>` uploads the files of the file dialog (a click on
+  `[data-fb-upload]` inside it) or of a drop onto it, one after another:
+  first to `url`, then `media.create` with the token and `folder`. While
+  files are dragged over it, a dashed outline shows `label`. The status
+  line says `progress`, errors come as an alert above, one line per
+  file; then `refresh` loads the parts again and `done` is the toast.
+  `disabled` takes nothing. `uploadMedium(url, file, folder)` does the
+  same for one file in a script.
+- `<fb-focus>` sets the focus point of an image: a click puts the round
+  marker there, the marker is a button and moves with the arrow keys in
+  steps of 5 %. Its label tells the position. The hidden fields inside
+  get the values from 0 to 1 for `<fb-form>`.
+
+In the editing mode the bar has its own dialog for images (`media.js`):
+the library with search and upload, the alternative text for the place
+and "Remove the image".
+
 ### Time
 
 `{{ ui.time(page.publishAt) }}` writes a `<time datetime="…">` that the

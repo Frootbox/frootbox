@@ -490,3 +490,73 @@ Options: Optionen
 'The list has no entry {index}.': 'Die Liste hat keinen Eintrag {index}.'
 'There is no block with this id in the area.': 'In diesem Bereich gibt es keinen Block mit dieser ID.'
 'A block cannot go into or next to itself.': 'Ein Block kann nicht in oder neben sich selbst stehen.'
+
+# Media (decision 0126)
+Media: Medien
+'Images for your pages. They become visible to visitors with the first published page that uses them.': 'Bilder für Deine Seiten. Besucher sehen sie, sobald eine veröffentlichte Seite sie verwendet.'
+Folders: Ordner
+New folder: Neuer Ordner
+'New folder in {folder}': 'Neuer Ordner in {folder}'
+All media: Alle Medien
+Outside of folders: Ohne Ordner
+Rename: Umbenennen
+Delete the folder: Ordner löschen
+'Drop images here to upload them': 'Bilder hier ablegen, um sie hochzuladen'
+'Uploading {done} of {total} …': 'Lade {done} von {total} hoch …'
+'The images are uploaded.': 'Die Bilder sind hochgeladen.'
+File name or text: Dateiname oder Text
+Tag: Schlagwort
+Tags: Schlagwörter
+Nothing found: Nichts gefunden
+Try another search.: Versuch es mit einer anderen Suche.
+No images yet: Noch keine Bilder
+Upload images with the button or drop them here.: Lade Bilder mit dem Button hoch oder leg sie hier ab.
+Pages of the list: Seiten der Liste
+Back: Zurück
+Next: Weiter
+'Page {page} of {pages}': 'Seite {page} von {pages}'
+Create: Anlegen
+The folder is created.: Der Ordner ist angelegt.
+The folder is saved.: Der Ordner ist gespeichert.
+The folder is deleted.: Der Ordner ist gelöscht.
+Rename the folder: Ordner umbenennen
+Delete the folder?: Ordner löschen?
+'Only an empty folder can be deleted. Move its images and folders elsewhere first.': 'Nur ein leerer Ordner lässt sich löschen. Verschieb seine Bilder und Ordner vorher woandershin.'
+Back to the overview: Zurück zur Übersicht
+Uploaded: Hochgeladen
+Visible: Sichtbar
+Not used on a published page yet: Noch auf keiner veröffentlichten Seite
+The image is saved.: Das Bild ist gespeichert.
+Focus point: Fokuspunkt
+'{x} % from the left, {y} % from the top': '{x} % von links, {y} % von oben'
+'Click on what matters most. Cut images keep this point in view.': 'Klick auf das Wichtigste im Bild. Zugeschnittene Bilder behalten diese Stelle im Blick.'
+Alternative text: Alternativtext
+'Describes the image for people who cannot see it. Leave it empty for pure decoration.': 'Beschreibt das Bild für Menschen, die es nicht sehen. Bei reiner Dekoration leer lassen.'
+'One per line, e.g. team or summer.': 'Eins pro Zeile, z. B. Team oder Sommer.'
+Folder: Ordner
+The image is deleted.: Das Bild ist gelöscht.
+Delete the image?: Bild löschen?
+Pages that use it show nothing there any more.: Seiten, die es verwenden, zeigen an der Stelle nichts mehr.
+'The file cannot be read as an image.': 'Die Datei lässt sich nicht als Bild lesen.'
+'The image has too many pixels, at most {max} million.': 'Das Bild hat zu viele Pixel, höchstens {max} Millionen.'
+'The file is no image of type JPEG, PNG, WebP or GIF.': 'Die Datei ist kein Bild im Format JPEG, PNG, WebP oder GIF.'
+'There is no upload with this token (any more). Upload the file first.': 'Diesen Upload gibt es nicht (mehr). Lade die Datei zuerst hoch.'
+'The folder is not empty. Move or delete what is in it first.': 'Der Ordner ist nicht leer. Verschieb oder lösch vorher seinen Inhalt.'
+'There is no folder with this id.': 'Diesen Ordner gibt es nicht.'
+'needs 1 to 200 characters.': 'braucht 1 bis 200 Zeichen.'
+'"{language}" is not a language of the website.': '„{language}“ ist keine Sprache der Website.'
+'must be text of at most {max} characters.': 'darf höchstens {max} Zeichen lang sein.'
+'must be text of 1 to 100 characters.': 'braucht 1 bis 100 Zeichen.'
+'has at most {max} tags.': 'hat höchstens {max} Schlagwörter.'
+'A folder cannot go into itself or a folder inside it.': 'Ein Ordner kann nicht in sich selbst oder einen seiner Unterordner.'
+Choose a file.: Wähl eine Datei aus.
+'The file is too large, at most {max} MB.': 'Die Datei ist zu groß, höchstens {max} MB.'
+'The upload was interrupted. Try again.': 'Der Upload wurde unterbrochen. Versuch es noch einmal.'
+Choose an image: Bild auswählen
+'No images yet. Upload the first one.': 'Noch keine Bilder. Lade das erste hoch.'
+Show more: Mehr anzeigen
+Alternative text for this place: Alternativtext für diese Stelle
+'Leave it empty to use the text from the media library.': 'Leer lassen, um den Text aus den Medien zu verwenden.'
+Remove the image: Bild entfernen
+Change the image: Bild ändern
+No image: Kein Bild

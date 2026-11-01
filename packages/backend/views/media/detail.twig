@@ -1,0 +1,67 @@
+{#- The details of one medium: focus point, texts per language, tags, folder (decision 0126). -#}
+{% import '@backend/ui.twig' as ui %}
+{% set editable = can('media.update') %}
+<section class="fb-card fb-split__main" id="media-detail" aria-labelledby="media-detail-title">
+    <div class="fb-card__header">
+        <div class="fb-stack fb-stack--sm">
+            <a class="fb-muted" href="{{ back }}">← {{ t('Back to the overview') }}</a>
+            <h2 class="fb-heading-4" id="media-detail-title" tabindex="-1" data-fb-focus>{{ medium.fileName }}</h2>
+            <p class="fb-muted">{{ medium.width }} × {{ medium.height }} px · {{ (medium.size / 1024)|round }} KB · {{ t('Uploaded') }} {{ ui.time(medium.createdAt) }}</p>
+        </div>
+        {{ medium.public ? ui.badge('published', t('Visible')) : ui.badge('draft', t('Not used on a published page yet')) }}
+    </div>
+
+    <fb-form action="media.update" refresh="media-detail" done="{{ t('The image is saved.') }}">
+        <form class="fb-card__body fb-stack" novalidate>
+            <input type="hidden" name="id" value="{{ medium.id }}">
+            <fb-focus class="fb-focus" x="{{ medium.focus.x }}" y="{{ medium.focus.y }}" label="{{ t('Focus point') }}" position="{{ t('{x} % from the left, {y} % from the top') }}"{% if not editable %} disabled{% endif %}>
+                <img src="{{ medium.preview }}" alt="" width="{{ medium.width }}" height="{{ medium.height }}">
+                <input type="hidden" name="focusX" data-type="number" value="{{ medium.focus.x }}">
+                <input type="hidden" name="focusY" data-type="number" value="{{ medium.focus.y }}">
+            </fb-focus>
+            <p class="fb-hint">{{ t('Click on what matters most. Cut images keep this point in view.') }}</p>
+
+            {% for language in languages %}
+            {% set text = medium.texts[language.code] ?? {alt: '', title: ''} %}
+            <fieldset class="fb-fieldset">
+                {% if languages|length > 1 %}<legend class="fb-fieldset__legend">{{ language.title }}</legend>{% endif %}
+                <div class="fb-stack fb-stack--sm">
+                    {{ ui.field({label: t('Alternative text'), name: 'texts.' ~ language.code ~ '.alt', id: 'media-alt-' ~ language.code, value: text.alt, hint: t('Describes the image for people who cannot see it. Leave it empty for pure decoration.'), disabled: not editable, attrs: {maxlength: 500}}) }}
+                    {{ ui.field({label: t('Title'), name: 'texts.' ~ language.code ~ '.title', id: 'media-title-' ~ language.code, value: text.title, optional: true, disabled: not editable, attrs: {maxlength: 200}}) }}
+                </div>
+            </fieldset>
+            {% endfor %}
+
+            {{ ui.field({label: t('Tags'), name: 'tags', id: 'media-tags', value: medium.tags|join("\n"), multiline: true, optional: true, hint: t('One per line, e.g. team or summer.'), disabled: not editable, attrs: {'data-type': 'lines', rows: 3}}) }}
+
+            {% set options = [{value: '', label: t('Outside of folders')}] %}
+            {% for row in folders %}{% set options = options|merge([{value: row.folder.id, label: row.indented}]) %}{% endfor %}
+            {{ ui.select({label: t('Folder'), name: 'folderId', id: 'media-folder', options: options, value: medium.folderId ?? '', disabled: not editable}) }}
+
+            {% if editable or can('media.delete') %}
+            <div class="fb-cluster">
+                {% if editable %}{{ ui.button({label: t('Save'), type: 'submit'}) }}{% endif %}
+                {% if can('media.delete') %}{{ ui.button({label: t('Delete'), variant: 'danger', icon: 'trash', attrs: {commandfor: 'media-delete', command: 'show-modal'}}) }}{% endif %}
+            </div>
+            {% endif %}
+        </form>
+    </fb-form>
+</section>
+
+{% if can('media.delete') %}
+<dialog class="fb-dialog" id="media-delete" aria-labelledby="media-delete-title">
+    <fb-form action="media.delete" next="{{ back }}" done="{{ t('The image is deleted.') }}">
+        <form novalidate>
+            <input type="hidden" name="id" value="{{ medium.id }}">
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="media-delete-title">{{ t('Delete the image?') }}</h2>
+                <p>{{ t('Pages that use it show nothing there any more.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'media-delete', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Delete'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
