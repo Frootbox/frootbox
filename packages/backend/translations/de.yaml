@@ -490,6 +490,17 @@ There is nothing for the scope "{scope}".: „{scope}“ gibt es nicht.
 Search: Suchen
 'Loading …': 'Lädt …'
 'No block fits here.': 'Hier passt kein Block hin.'
+Groups: Gruppen
+Headers: Kopfbereiche
+Headings: Überschriften
+Texts: Texte
+'Images and media': 'Bilder und Medien'
+Teasers: Teaser
+Callouts: Störer
+Lists: Listen
+Forms: Formulare
+Structure: Struktur
+Other: Weitere
 'The area "{area}" takes no more blocks.': 'Der Bereich „{area}“ nimmt keine weiteren Blöcke auf.'
 'Settings: {block}': 'Einstellungen: {block}'
 Close: Schließen

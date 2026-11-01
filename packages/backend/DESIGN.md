@@ -978,9 +978,22 @@ Arranging blocks (decision 0123), from `resources/js/edit/arranging.js`:
   focusable in the mode; Alt+F10 reaches the tools, arrow keys move
   between them, Esc goes back to the block.
 - **Block dialog**: the modal `<dialog>` like the link dialog, "Insert a
-  block", the area as a hint, one bordered button per block with title
-  and description (muted), a search field above seven blocks. Only blocks
-  the area allows; a full area says so. Clicking an empty area opens it.
+  block", the area as a hint, a grid of cards (bordered buttons) with
+  preview, title and description (muted), a search field above seven
+  blocks that also finds keywords and group names. Only blocks the area
+  allows; a full area says so. Clicking an empty area opens it. Up to
+  eight blocks the dialog is `--fb-size-form` wide; above it is
+  `--fb-size-content` wide, with the groups (decision 0148) as a list of
+  toggle buttons with counts at the start (`--fb-accent-soft` when
+  chosen, a scrolling row on narrow screens) and a fixed height, so it
+  does not jump between groups. While searching, the results come from
+  all groups.
+- **Previews** in cards and in the variant choice: 16:10, cut at the
+  bottom, framed with `--fb-border` and `--fb-radius-sm`. An SVG is drawn
+  with `<svg><use href="…#preview">` and so takes the colours of the
+  website; pictures are `<img alt="">`; without a file the symbol of the
+  group shows on `--fb-surface-2`. The panel shows variant previews only
+  when a variant has one.
 - **Settings panel**: a side panel at the inline end over the full
   height, `--fb-size-narrow` wide, `--fb-surface`, `--fb-radius-lg`,
   `--fb-shadow-lg`, not modal. Header with "Settings: <title>" and close,

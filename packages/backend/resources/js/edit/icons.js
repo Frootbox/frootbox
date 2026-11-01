@@ -31,6 +31,13 @@ const ICONS = {
     warning: svg`<path d="M10.3 4.2 2.6 17.5A2 2 0 0 0 4.3 20.5h15.4a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4"/><path d="M12 17v.5"/>`,
     check: svg`<path d="M20 6 9 17l-5-5"/>`,
     more: svg`<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>`,
+    text: svg`<path d="M4 6h16"/><path d="M4 10h16"/><path d="M4 14h16"/><path d="M4 18h10"/>`,
+    header: svg`<rect x="3" y="4" width="18" height="8" rx="1.5"/><path d="M3 16h18"/><path d="M3 20h12"/>`,
+    teaser: svg`<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10"/><path d="M7 13h6"/><path d="M7 16h4"/>`,
+    callout: svg`<path d="M4 10v4h3l7 4V6l-7 4z"/><path d="M18 9a4 4 0 0 1 0 6"/>`,
+    form: svg`<rect x="3" y="5" width="18" height="5" rx="1"/><rect x="3" y="14" width="11" height="5" rx="1"/>`,
+    columns: svg`<rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/>`,
+    block: svg`<rect x="4" y="4" width="16" height="16" rx="2"/>`,
     places: svg`<rect x="3" y="4" width="18" height="6" rx="1.5" stroke-dasharray="3 2"/><rect x="3" y="14" width="18" height="6" rx="1.5" stroke-dasharray="3 2"/>`,
 };
 

@@ -14,6 +14,30 @@ const RESTORE = 'fb-edit-restore:';
 const BLOCK = '[data-fb-block]';
 const PANEL_FIELDS = ['headline', 'text', 'link', 'image'];
 
+/** Up to this many blocks the picker shows them without groups (decision 0148). */
+const FEW_BLOCKS = 8;
+
+/** The symbol of a group, for blocks without a preview. */
+const GROUP_ICONS = { header: 'header', heading: 'heading', text: 'text', media: 'image', teaser: 'teaser', callout: 'callout', list: 'list', form: 'form', structure: 'columns' };
+
+/**
+ * The preview of a block or variant (decision 0148): an SVG drawn in the
+ * colours of the website through <use>, so it inherits the tokens of the
+ * page, a picture, or else the symbol of its group. Previews are
+ * decoration; the title stays text.
+ */
+function preview(url, group) {
+    if (!url) {
+        return html`<span class="preview none">${icon(GROUP_ICONS[group] ?? 'block')}</span>`;
+    }
+
+    if (new URL(url, location.href).pathname.endsWith('.svg')) {
+        return html`<span class="preview"><svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMin slice" aria-hidden="true" focusable="false"><use href="${url}#preview"></use></svg></span>`;
+    }
+
+    return html`<span class="preview"><img src=${url} alt="" loading="lazy" decoding="async"></span>`;
+}
+
 /** The block around an element, null for the layout. */
 function parentOf(element) {
     return element.parentElement?.closest(BLOCK) ?? null;
@@ -106,30 +130,104 @@ export const arrangingStyles = css`
     .block-tools button[disabled] { cursor: default; opacity: 0.4; }
     .block-tools .note { white-space: nowrap; }
 
-    .picker-list {
+    dialog.picker { inline-size: min(100% - var(--fb-space-8), var(--fb-size-form)); }
+    dialog.picker.grouped { inline-size: min(100% - var(--fb-space-8), var(--fb-size-content)); }
+
+    .picker-body {
         display: grid;
-        gap: var(--fb-space-1);
-        max-block-size: min(60vh, calc(8 * var(--fb-size-row)));
-        margin: 0;
-        padding: 0;
-        overflow-y: auto;
-        list-style: none;
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--fb-space-4);
+        align-items: start;
     }
 
-    .picker-list button {
-        display: grid;
-        gap: var(--fb-space-0);
+    /* Same height for every group, so the dialog does not jump. */
+    .grouped .picker-body {
+        grid-template-columns: auto minmax(0, 1fr);
+        block-size: min(60vh, calc(var(--fb-space-16) * 8));
+    }
+
+    .grouped .picker-body > ul { max-block-size: 100%; }
+
+    @media (max-width: 40rem) {
+        .grouped .picker-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+        .grouped .picker-groups { display: flex; overflow-x: auto; }
+        .grouped .picker-groups button { white-space: nowrap; }
+    }
+
+    .picker-groups, .picker-cards {
+        margin: 0;
+        padding: var(--fb-space-1);
+        overflow-y: auto;
+        list-style: none;
+        max-block-size: min(60vh, calc(var(--fb-space-16) * 8));
+    }
+
+    .picker-groups { display: grid; align-content: start; gap: var(--fb-space-0); }
+
+    .picker-groups button {
+        justify-content: space-between;
+        gap: var(--fb-space-4);
         inline-size: 100%;
-        padding-block: var(--fb-space-2);
+        border-color: transparent;
+        font-weight: var(--fb-weight-regular);
+        text-align: start;
+    }
+
+    .picker-groups button[aria-pressed="true"] {
+        background: var(--fb-accent-soft);
+        color: var(--fb-accent-text);
+        font-weight: var(--fb-weight-semibold);
+    }
+
+    .picker-groups .count { color: var(--fb-text-muted); font-size: var(--fb-text-xs); }
+
+    .picker-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(calc(var(--fb-space-16) * 3), 1fr));
+        gap: var(--fb-space-3);
+        align-content: start;
+    }
+
+    .picker-cards button {
+        display: grid;
+        align-content: start;
+        gap: var(--fb-space-1);
+        inline-size: 100%;
+        block-size: 100%;
+        padding: var(--fb-space-2);
         border-color: var(--fb-border);
         text-align: start;
     }
 
-    .picker-list small {
+    .picker-cards small {
         color: var(--fb-text-muted);
         font-weight: var(--fb-weight-regular);
         line-height: var(--fb-leading-snug);
     }
+
+    /* 16:10, cut at the bottom; it shows the website's own colours, so it gets a frame. */
+    .preview {
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        aspect-ratio: 16 / 10;
+        margin-block-end: var(--fb-space-1);
+        border: var(--fb-size-border) solid var(--fb-border);
+        border-radius: var(--fb-radius-sm);
+        background: var(--fb-surface-2);
+        color: var(--fb-text-muted);
+    }
+
+    .preview svg:not(.icon), .preview img {
+        inline-size: 100%;
+        block-size: 100%;
+        object-fit: cover;
+        object-position: top;
+    }
+
+    .preview.none .icon { inline-size: var(--fb-space-8); block-size: var(--fb-space-8); }
+
+    .panel label.choice .preview { inline-size: calc(var(--fb-space-16) * 1.5); margin: 0; }
 
     .panel {
         position: absolute;
@@ -691,9 +789,10 @@ export class Arranging {
     /** The blocks and layouts with what they allow, once per page view. */
     async describe() {
         if (!this.blocks) {
-            const [blocks, layouts] = await Promise.all([this.query('block.list'), this.query('layout.list')]);
+            const [blocks, layouts, groups] = await Promise.all([this.query('block.list'), this.query('layout.list'), this.query('block.groups')]);
             this.blocks = blocks ?? [];
             this.layouts = layouts ?? [];
+            this.groups = groups ?? [];
         }
     }
 
@@ -722,11 +821,12 @@ export class Arranging {
         const info = owner?.areas?.find((item) => item.name === target.area) ?? null;
         const count = siblingsOf(target.parent ? document.querySelector(`${BLOCK}[data-fb-block="${CSS.escape(target.parent)}"]`) : null, target.area).length;
         const choices = this.blocks.filter((block) => (info?.allow ? info.allow.includes(block.name) : !block.widget));
+        const groups = choices.length > FEW_BLOCKS ? this.groupsOf(choices) : [];
 
-        this.picker = { ...this.picker, loading: false, info, full: info?.max != null && count >= info.max, choices };
+        this.picker = { ...this.picker, loading: false, info, full: info?.max != null && count >= info.max, choices, groups, group: groups[0]?.name ?? null };
         this.bar.requestUpdate();
         await this.bar.updateComplete;
-        this.bar.renderRoot.querySelector('dialog.picker :is(input, .picker-list button)')?.focus();
+        this.bar.renderRoot.querySelector('dialog.picker :is(input, .picker-cards button)')?.focus();
     }
 
     closePicker() {
@@ -740,6 +840,29 @@ export class Arranging {
         element?.focus({ preventScroll: true });
     }
 
+    /**
+     * The blocks by group in the order of block.groups, those without a
+     * known group under "Other" at the end. One group alone is no group.
+     */
+    groupsOf(blocks) {
+        const labels = this.labels;
+        const known = new Set((this.groups ?? []).map((group) => group.name));
+        const groups = (this.groups ?? []).map((group) => ({
+            name: group.name,
+            title: labels.groups?.[group.name] ?? group.title,
+            blocks: blocks.filter((block) => block.group === group.name),
+        }));
+        groups.push({ name: '', title: labels.otherGroup, blocks: blocks.filter((block) => !known.has(block.group)) });
+        const filled = groups.filter((group) => group.blocks.length > 0);
+
+        return filled.length > 1 ? filled : [];
+    }
+
+    pickGroup(name) {
+        this.picker = { ...this.picker, group: name, query: '' };
+        this.bar.requestUpdate();
+    }
+
     /** The dialog to pick a block for an area. */
     pickerDialog() {
         const picker = this.picker;
@@ -750,9 +873,20 @@ export class Arranging {
 
         const labels = this.labels;
         const needle = picker.query.trim().toLowerCase();
-        const choices = (picker.choices ?? []).filter((block) => needle === ''
-            || block.title.toLowerCase().includes(needle) || block.description.toLowerCase().includes(needle));
+        const groups = picker.groups ?? [];
+        const groupTitle = (block) => groups.find((group) => group.blocks.includes(block))?.title ?? '';
+        const matches = (block) => [block.title, block.description, ...(block.keywords ?? []), groupTitle(block)]
+            .some((text) => text.toLowerCase().includes(needle));
+        let choices = picker.choices ?? [];
+
+        if (needle !== '') {
+            choices = choices.filter(matches);
+        } else if (groups.length > 0) {
+            choices = groups.find((group) => group.name === picker.group)?.blocks ?? [];
+        }
+
         const areaLabel = picker.info?.label || picker.area;
+        const shownGroup = needle === '' ? groups.find((group) => group.name === picker.group) : null;
         let body;
 
         if (picker.loading) {
@@ -766,14 +900,21 @@ export class Arranging {
                 ${picker.choices.length > 6 ? html`<label>${labels.search}
                     <input type="text" .value=${picker.query} autocomplete="off"
                         @input=${(event) => { this.picker = { ...this.picker, query: event.target.value }; this.bar.requestUpdate(); }}></label>` : nothing}
-                <ul class="picker-list">
-                    ${choices.map((block) => html`<li><button type="button" ?disabled=${this.busy} @click=${() => this.add(block)}>
-                        <span>${block.title}</span>${block.description ? html`<small>${block.description}</small>` : nothing}</button></li>`)}
-                    ${choices.length === 0 ? html`<li class="hint">${labels.noBlocks}</li>` : nothing}
-                </ul>`;
+                <div class="picker-body">
+                    ${groups.length > 0 ? html`<ul class="picker-groups" aria-label=${labels.blockGroups}>
+                        ${groups.map((group) => html`<li><button type="button" aria-pressed=${String(group === shownGroup)} @click=${() => this.pickGroup(group.name)}>
+                            <span>${group.title}</span><span class="count">${group.blocks.length}</span></button></li>`)}
+                    </ul>` : nothing}
+                    <ul class="picker-cards" aria-label=${shownGroup?.title ?? labels.addBlock}>
+                        ${choices.map((block) => html`<li><button type="button" ?disabled=${this.busy} @click=${() => this.add(block)}>
+                            ${preview(block.preview, block.group)}
+                            <span>${block.title}</span>${block.description ? html`<small>${block.description}</small>` : nothing}</button></li>`)}
+                        ${choices.length === 0 ? html`<li class="hint">${labels.noBlocks}</li>` : nothing}
+                    </ul>
+                </div>`;
         }
 
-        return html`<dialog class="picker" aria-labelledby="fb-picker-title" @cancel=${(event) => { event.preventDefault(); this.closePicker(); }}>
+        return html`<dialog class="picker ${(picker.groups ?? []).length > 0 ? 'grouped' : ''}" aria-labelledby="fb-picker-title" @cancel=${(event) => { event.preventDefault(); this.closePicker(); }}>
             <form @submit=${(event) => event.preventDefault()}>
                 <h2 id="fb-picker-title">${labels.addBlock}</h2>
                 ${areaLabel ? html`<p class="hint">${labels.intoArea.replace('{area}', areaLabel)}</p>` : nothing}
@@ -861,6 +1002,7 @@ export class Arranging {
         const options = variant?.options ?? [];
         const fields = summary.fields.filter((field) => PANEL_FIELDS.includes(field.type));
         const lists = summary.fields.filter((field) => field.type === 'list');
+        const withPreviews = summary.variants.some((item) => item.preview);
 
         if (summary.variants.length <= 1 && options.length === 0 && fields.length === 0 && lists.length === 0) {
             return html`<p class="hint">${labels.noSettings}</p>`;
@@ -872,6 +1014,7 @@ export class Arranging {
                 ${summary.variants.map((item) => html`<label class="choice">
                     <input type="radio" name="variant" .value=${item.name} .checked=${item.name === variant?.name}
                         @change=${() => this.setVariant(data, summary, item)}>
+                    ${withPreviews ? preview(item.preview, summary.group) : nothing}
                     <span>${item.title}${item.description ? html`<small>${item.description}</small>` : nothing}</span>
                 </label>`)}
             </fieldset>` : nothing}
