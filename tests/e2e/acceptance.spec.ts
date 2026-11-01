@@ -71,7 +71,7 @@ test('an editor changes a page on the website and publishes it', async ({ page, 
     await page.keyboard.type(' bestanden');
     await page.keyboard.press('Tab');
     await saved;
-    await expect(bar.locator('.badge[data-status]')).toHaveText('Status: Geändert');
+    await expect(bar.locator('.state .visually-hidden')).toHaveText('Status: Änderungen offen');
 
     // A section below the text, with an image in its column.
     const textBlock = page.locator('[data-fb-name="frootbox/theme-bohnenglueck/Text"]');
@@ -110,7 +110,7 @@ test('an editor changes a page on the website and publishes it', async ({ page, 
     // One button publishes the page and the footer.
     await bar.getByRole('button', { name: 'Veröffentlichen' }).click();
     await expect(bar.getByRole('status')).toHaveText('Die Seite ist veröffentlicht.');
-    await expect(bar.locator('.badge[data-status]')).toHaveText('Status: Veröffentlicht');
+    await expect(bar.locator('.state .visually-hidden')).toHaveText('Status: Veröffentlicht');
 
     // A guest sees all of it, without anything of the mode.
     const guest = await browser.newPage();

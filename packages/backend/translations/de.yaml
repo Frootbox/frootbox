@@ -79,7 +79,7 @@ Everything is published. New changes show up here until you publish them.: Alles
 # Status
 Published: Veröffentlicht
 Draft: Entwurf
-Changed: Geändert
+Pending changes: Änderungen offen
 Scheduled: Geplant
 Error: Fehler
 
@@ -441,6 +441,16 @@ There is nothing for the scope "{scope}".: „{scope}“ gibt es nicht.
 "Open in the backend": "Im Backend öffnen"
 "Collapse the editor bar": "Redaktionsleiste einklappen"
 "Show the editor bar": "Redaktionsleiste zeigen"
+"More options": "Mehr"
+"This page": "Diese Seite"
+"Show what went wrong": "Zeigen, was schiefging"
+"What does that mean?": "Was heißt das?"
+"Visitors see exactly this version.": "Besucher sehen genau diese Fassung."
+"Visitors still see the published version until you publish.": "Besucher sehen noch die veröffentlichte Fassung, bis Du veröffentlichst."
+"The page is not online yet. Visitors see it once you publish it.": "Die Seite ist noch nicht online. Besucher sehen sie, sobald Du sie veröffentlichst."
+"All changes are saved.": "Alle Änderungen sind gespeichert."
+"Nothing to undo yet": "Noch nichts rückgängig zu machen"
+"Everything is published": "Alles ist veröffentlicht"
 "Edit on the website": "Auf der Website bearbeiten"
 "Sign in to edit the website.": "Melde Dich an, um die Website zu bearbeiten."
 "Saving …": "Speichert …"

@@ -107,6 +107,7 @@ final class EditModeTest extends BackendTestCase
         self::assertSame('Redaktionsleiste', $config['labels']['bar'], 'Its name in docs and trainings (decision 0137).');
         self::assertSame('Bearbeiten', $config['labels']['edit']);
         self::assertSame('Rückgängig', $config['labels']['undo']);
+        self::assertSame('Änderungen offen', $config['labels']['changed'], 'Says what visitors see, not what one typed (decision 0141).');
         self::assertSame('Block darunter einfügen', $config['labels']['insertBelow']);
         self::assertSame('„{block}“ löschen?', $config['labels']['removeConfirm']);
         self::assertStringContainsString('.ProseMirror{', $editing);
@@ -151,6 +152,16 @@ final class EditModeTest extends BackendTestCase
         $html = $this->html($this->page('/ueber-uns'));
         self::assertSame(['draft' => true, 'publish' => true, 'discard' => true], $this->bar($html)['site']);
         self::assertStringContainsString('data-fb-field="brand" data-fb-type="headline" data-fb-label="Name" data-fb-site', $html);
+    }
+
+    public function testOffersEditorsNoDesign(): void
+    {
+        $this->createUser('jane@example.org', ['editor']);
+        $this->session = $this->signIn('jane@example.org');
+
+        $config = $this->bar($this->html($this->page('/ueber-uns')));
+        self::assertNull($config['design'], 'The design changes the whole website (decision 0138).');
+        self::assertNotNull($config['site'], 'The fields of the website stay with the editors.');
     }
 
     public function testShowsWhatAnEditorMayDo(): void

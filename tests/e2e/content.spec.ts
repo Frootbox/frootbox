@@ -68,14 +68,14 @@ test('creates, publishes and restores a page', async ({ page }) => {
 
     await detail(page).getByLabel('Titel').fill(`${title} neu`);
     await detail(page).getByRole('button', { name: 'Speichern' }).first().click();
-    await expect(status(page)).toHaveText('Geändert');
+    await expect(status(page)).toHaveText('Änderungen offen');
     await detail(page).getByRole('button', { name: 'Veröffentlichen' }).click();
     await expect(page.locator('#page-detail-title')).toHaveText(`${title} neu`);
 
     await detail(page).getByRole('button', { name: 'Version 1 wiederherstellen' }).click();
     await expect(page.locator('.fb-toast').last()).toHaveText('Version 1 steht jetzt im Entwurf.');
     await expect(page.locator('#page-detail-title')).toHaveText(title);
-    await expect(status(page)).toHaveText('Geändert');
+    await expect(status(page)).toHaveText('Änderungen offen');
 
     await detail(page).getByRole('button', { name: 'Entwurf verwerfen' }).click();
     await page.locator('#page-discard').getByRole('button', { name: 'Verwerfen' }).click();
@@ -256,7 +256,7 @@ test('edits the items of a navigation', async ({ page }) => {
     await expect(dialog).toBeHidden();
     await expect(items).toHaveCount(count + 1);
     await expect(items.last()).toHaveAttribute('data-title', '+49 40 987654');
-    await expect(page.locator('#navigation-detail .fb-badge').first()).toHaveText('Geändert');
+    await expect(page.locator('#navigation-detail .fb-badge').first()).toHaveText('Änderungen offen');
 
     // Up one place with the keyboard, then away again.
     await items.last().locator('.fb-tree__link').press('Alt+ArrowUp');

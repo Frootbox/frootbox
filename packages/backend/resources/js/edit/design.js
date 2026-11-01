@@ -85,7 +85,8 @@ export class DesignPanel {
     async close() {
         this.hide();
         await this.bar.updateComplete;
-        this.bar.renderRoot.querySelector('[data-fb-design]')?.focus();
+        // Back to the menu "More", where "Design" was chosen (decision 0139).
+        this.bar.renderRoot.querySelector('[data-fb-more]')?.focus();
     }
 
     /** Closes without moving the focus, e.g. when the settings of a block open. */
@@ -180,15 +181,6 @@ export class DesignPanel {
     }
 
     /** The button in the bar. */
-    button() {
-        if (!this.bar.config.design || !this.bar.config.editing) {
-            return nothing;
-        }
-
-        return html`<button type="button" data-fb-design aria-expanded=${this.open ? 'true' : 'false'}
-            @click=${() => (this.open ? this.close() : this.show())}>${icon('palette')}${this.labels.design}</button>`;
-    }
-
     view() {
         const state = this.state;
 

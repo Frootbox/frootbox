@@ -122,7 +122,7 @@
 
 {# The status of a page with its usual label. #}
 {% macro status(status) -%}
-    {%- set labels = {published: t('Published'), draft: t('Draft'), changed: t('Changed'), scheduled: t('Scheduled')} -%}
+    {%- set labels = {published: t('Published'), draft: t('Draft'), changed: t('Pending changes'), scheduled: t('Scheduled')} -%}
     {{ _self.badge(status, labels[status] ?? status) }}
 {%- endmacro %}
 

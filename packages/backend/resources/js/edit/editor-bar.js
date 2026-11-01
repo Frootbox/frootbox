@@ -107,6 +107,9 @@ export class EditorBar extends LitElement {
         undo: { state: true },
         link: { state: true },
         toolbar: { state: true },
+        menu: { state: true },
+        flash: { state: true },
+        details: { state: true },
     };
 
     static styles = [css`
@@ -136,6 +139,7 @@ export class EditorBar extends LitElement {
         }
 
         .bar {
+            --pad: var(--fb-space-2);
             display: flex;
             flex-wrap: wrap;
             align-items: center;
@@ -143,7 +147,7 @@ export class EditorBar extends LitElement {
             gap: var(--fb-space-2);
             inline-size: max-content;
             max-inline-size: calc(100vw - 2 * var(--fb-space-4));
-            padding: var(--fb-space-2);
+            padding: var(--pad);
             border-radius: var(--fb-radius-lg);
         }
 
@@ -156,22 +160,6 @@ export class EditorBar extends LitElement {
             border-radius: var(--fb-radius-full);
             color: var(--fb-accent-text);
             cursor: pointer;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            padding-inline: var(--fb-space-2);
-            font-weight: var(--fb-weight-bold);
-            font-size: var(--fb-text-md);
-        }
-
-        .brand img { block-size: var(--fb-size-icon); inline-size: auto; }
-
-        .divider {
-            align-self: stretch;
-            inline-size: var(--fb-size-border);
-            background: var(--fb-border);
         }
 
         button, a {
@@ -239,40 +227,106 @@ export class EditorBar extends LitElement {
         [role="switch"][aria-checked="true"] .switch-track { background: var(--fb-accent); }
         [role="switch"][aria-checked="true"] .switch-track::after { translate: var(--fb-size-check) 0; }
 
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--fb-space-1);
-            padding: var(--fb-space-1) var(--fb-space-2);
-            border-radius: var(--fb-radius-full);
-            font-size: var(--fb-text-xs);
-            font-weight: var(--fb-weight-semibold);
+        .note { padding-inline: var(--fb-space-2); color: var(--fb-text-muted); }
+
+        /*
+         * The status docks at the end of the bar (decision 0140). All its
+         * texts lie on top of each other in one grid cell and only the
+         * current one is visible, so its width is that of the longest text
+         * in every language and the bar never jumps.
+         */
+        .state-wrap {
+            position: relative;
+            display: flex;
+            align-self: stretch;
+            margin-block: calc(-1 * var(--pad));
+            margin-inline-end: calc(-1 * var(--pad));
         }
 
-        .badge::before {
-            content: "";
+        .state {
+            display: flex;
+            align-items: center;
+            gap: var(--fb-space-2);
+            padding-inline: var(--fb-space-4);
+            border: 0;
+            border-inline-start: var(--fb-size-border) solid var(--fb-border);
+            border-radius: 0;
+            border-start-end-radius: var(--fb-radius-lg);
+            border-end-end-radius: var(--fb-radius-lg);
+            font-weight: var(--fb-weight-semibold);
+            cursor: default;
+            transition: background-color var(--fb-motion-fast), color var(--fb-motion-fast);
+        }
+
+        button.state { cursor: pointer; }
+
+        .state[data-tone="success"] { background: var(--fb-success-bg); color: var(--fb-success-text); }
+        .state[data-tone="warning"] { background: var(--fb-warning-bg); color: var(--fb-warning-text); }
+        .state[data-tone="danger"], .state[data-tone="danger"]:hover { background: var(--fb-danger-bg); color: var(--fb-danger-text); }
+
+        .state-labels { display: grid; }
+
+        .state-labels > span {
+            grid-area: 1 / 1;
+            display: flex;
+            align-items: center;
+            gap: var(--fb-space-2);
+            white-space: nowrap;
+            visibility: hidden;
+        }
+
+        .state-labels > .current { visibility: visible; }
+
+        /* Dot, check and warning take the same room, so the check does not widen the bar. */
+        .state-mark {
+            display: grid;
+            place-items: center;
+            inline-size: var(--fb-size-icon-sm);
+            block-size: var(--fb-size-icon-sm);
+            flex: none;
+        }
+
+        .state-dot {
             inline-size: var(--fb-size-dot);
             block-size: var(--fb-size-dot);
+            flex: none;
             border-radius: var(--fb-radius-full);
             background: currentcolor;
         }
 
-        .badge[data-status="published"] { background: var(--fb-success-bg); color: var(--fb-success-text); }
-        .badge[data-status="draft"], .badge[data-status="changed"] { background: var(--fb-warning-bg); color: var(--fb-warning-text); }
-        .badge.locked { background: var(--fb-danger-bg); color: var(--fb-danger-text); }
-        .badge.locked::before { display: none; }
+        .state-dot.ring { background: transparent; box-shadow: inset 0 0 0 var(--fb-size-focus) currentcolor; }
 
-        .note { padding-inline: var(--fb-space-2); color: var(--fb-text-muted); }
+        /* Saving is no state of its own, the mark pulses (decision 0141). */
+        .state-dot.pulse { animation: fb-pulse calc(5 * var(--fb-motion-normal)) ease-in-out infinite; }
 
-        .message {
-            flex-basis: 100%;
-            padding: var(--fb-space-1) var(--fb-space-2);
-            text-align: center;
-            color: var(--fb-text-muted);
+        @keyframes fb-pulse {
+            50% { opacity: 0.25; }
         }
 
-        .message:empty { display: none; }
-        .message[data-tone="danger"] { color: var(--fb-danger-text); }
+        .details {
+            position: absolute;
+            inset-block-end: calc(100% + var(--fb-space-2));
+            inset-inline-end: 0;
+            display: grid;
+            gap: var(--fb-space-2);
+            inline-size: max-content;
+            max-inline-size: min(calc(100vw - 2 * var(--fb-space-4)), var(--fb-size-narrow));
+            padding: var(--fb-space-3);
+            background: var(--fb-surface);
+            border: var(--fb-size-border) solid var(--fb-border);
+            border-radius: var(--fb-radius-lg);
+            box-shadow: var(--fb-shadow-lg);
+            color: var(--fb-text);
+            font-weight: var(--fb-weight-regular);
+        }
+
+        .details[data-tone="danger"] { color: var(--fb-danger-text); }
+        .details p { margin: 0; }
+        .details button { justify-self: start; color: var(--fb-text); }
+
+        [aria-disabled="true"] { cursor: default; opacity: 0.5; }
+        [aria-disabled="true"]:hover { background: transparent; }
+        .primary[aria-disabled="true"], .primary[aria-disabled="true"]:hover { background: var(--fb-surface-2); color: var(--fb-text-muted); opacity: 1; }
 
         .outline {
             position: absolute;
@@ -310,7 +364,48 @@ export class EditorBar extends LitElement {
             white-space: nowrap;
         }
 
-        .message button { display: inline-flex; margin-inline-start: var(--fb-space-2); }
+
+        .more { position: relative; display: flex; }
+
+        .more > button { padding-inline: var(--fb-space-2); }
+
+        .menu {
+            position: absolute;
+            inset-block-end: calc(100% + 2 * var(--fb-space-2));
+            inset-inline-end: calc(-1 * var(--fb-space-2));
+            display: grid;
+            gap: var(--fb-space-0);
+            min-inline-size: calc(var(--fb-size-narrow) / 2);
+            padding: var(--fb-space-1);
+            background: var(--fb-surface);
+            border: var(--fb-size-border) solid var(--fb-border);
+            border-radius: var(--fb-radius-lg);
+            box-shadow: var(--fb-shadow-lg);
+        }
+
+        .menu [role="group"] { display: grid; gap: var(--fb-space-0); }
+
+        .menu [role="group"] + [role="group"] {
+            margin-block-start: var(--fb-space-1);
+            padding-block-start: var(--fb-space-1);
+            border-block-start: var(--fb-size-border) solid var(--fb-border);
+        }
+
+        .menu-heading {
+            padding: var(--fb-space-1) var(--fb-space-3);
+            color: var(--fb-text-muted);
+            font-size: var(--fb-text-xs);
+            font-weight: var(--fb-weight-semibold);
+        }
+
+        .menu [role^="menuitem"] {
+            justify-content: flex-start;
+            inline-size: 100%;
+            font-weight: var(--fb-weight-regular);
+            white-space: nowrap;
+        }
+
+        .menu [role="menuitemcheckbox"][aria-checked="true"] { background: var(--fb-accent-soft); color: var(--fb-accent-text); }
 
         .toolbar {
             position: absolute;
@@ -409,8 +504,40 @@ export class EditorBar extends LitElement {
 
         .actions { display: flex; flex-wrap: wrap; gap: var(--fb-space-2); justify-content: flex-end; }
 
+        /*
+         * On a phone the bar stays one line: the status is a dot like in
+         * the sitemap, the switch and "Undo" are icons (their text stays
+         * for screen readers and in the tooltip), and only "Publish" may
+         * shorten its text if the screen is very narrow.
+         */
+        @media (max-width: 30rem) {
+            .bar { --pad: var(--fb-space-1); flex-wrap: nowrap; gap: var(--fb-space-1); }
+            .bar > * { flex-shrink: 0; }
+            .bar > button { padding-inline: var(--fb-space-2); }
+            .state { padding-inline: var(--fb-space-1); }
+
+            .bar > .primary {
+                display: block;
+                flex-shrink: 1;
+                min-inline-size: 0;
+                overflow: hidden;
+                line-height: var(--fb-size-control-sm);
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .state-text, .button-text {
+                position: absolute;
+                inline-size: 1px;
+                block-size: 1px;
+                overflow: hidden;
+                clip-path: inset(50%);
+                white-space: nowrap;
+            }
+        }
+
         @media (prefers-reduced-motion: reduce) {
-            * { transition: none !important; }
+            * { transition: none !important; animation: none !important; }
         }
     `, arrangingStyles, mediaStyles, designStyles];
 
@@ -426,6 +553,21 @@ export class EditorBar extends LitElement {
         this.undo = [];
         this.link = null;
         this.toolbar = null;
+        this.menu = false;
+        this.flash = false;
+        this.flashTimer = 0;
+        this.details = false;
+        this.onOutside = (event) => {
+            const path = event.composedPath();
+
+            if (this.menu && !path.includes(this.renderRoot.querySelector('.more'))) {
+                this.menu = false;
+            }
+
+            if (this.details && !path.includes(this.renderRoot.querySelector('.state-wrap'))) {
+                this.details = false;
+            }
+        };
         this.saving = 0;
         this.pages = null;
         this.editing = null;
@@ -461,6 +603,7 @@ export class EditorBar extends LitElement {
 
     connectedCallback() {
         super.connectedCallback();
+        document.addEventListener('pointerdown', this.onOutside, true);
         const theme = read(THEME);
 
         if (theme === 'light' || theme === 'dark') {
@@ -489,6 +632,7 @@ export class EditorBar extends LitElement {
 
     disconnectedCallback() {
         super.disconnectedCallback();
+        document.removeEventListener('pointerdown', this.onOutside, true);
         this.editing?.stop();
         this.arranging?.stop();
         document.removeEventListener('pointerover', this.onPoint, true);
@@ -545,29 +689,225 @@ export class EditorBar extends LitElement {
         const labels = this.labels;
 
         return html`<div class="bar" role="region" aria-label=${labels.bar}>
-            ${this.brand()}
-            <span class="divider"></span>
-            <button type="button" role="switch" aria-checked=${editing ? 'true' : 'false'} ?disabled=${this.busy}
+            <button type="button" role="switch" aria-checked=${editing ? 'true' : 'false'} ?disabled=${this.busy} title=${labels.edit}
                 @click=${() => this.toggle(!editing)}>
-                <span class="switch-track" aria-hidden="true"></span>${labels.edit}
+                <span class="switch-track" aria-hidden="true"></span><span class="button-text">${labels.edit}</span>
             </button>
             ${editing ? this.pageControls(page) : nothing}
-            ${this.design.button()}
-            ${page ? html`<a href=${page.backend}>${icon('external')}${labels.backend}</a>` : nothing}
+            ${this.more()}
             <button type="button" aria-label=${labels.collapse} title=${labels.collapse} aria-expanded="true"
                 @click=${() => this.collapse(true)}>${icon('collapse')}</button>
-            <p class="message" role="status" data-tone=${this.message?.tone ?? 'info'}>${this.message?.text ?? ''}${this.message?.reload
-                ? html`<button type="button" @click=${() => location.reload()}>${labels.reload}</button>` : nothing}</p>
+            ${this.stateView()}
+            <p class="visually-hidden" role="status">${this.message?.text ?? ''}</p>
         </div>`;
     }
 
-    brand() {
-        const { brand } = this.config;
-        const logo = this.isDark() ? brand.logoDark ?? brand.logo : brand.logo;
+    /**
+     * What the status shows: only whether visitors see what one sees
+     * (decision 0141), an error first.
+     */
+    get state() {
+        const page = this.config.editing ? this.config.page : null;
 
-        return html`<span class="brand">${logo
-            ? html`<img src=${logo} alt=${brand.name}>`
-            : brand.name}</span>`;
+        if (this.message?.tone === 'danger') {
+            return 'error';
+        }
+
+        return page ? this.drafts(page).status : null;
+    }
+
+    stateView() {
+        const state = this.state;
+
+        if (state === null) {
+            return nothing;
+        }
+
+        const labels = this.labels;
+        const tones = { published: 'success', changed: 'warning', draft: 'warning', error: 'danger' };
+        const locked = this.config.editing && this.config.page?.locked;
+        const text = labels[state] ?? state;
+
+        // Saving only shows in the mark: it pulses, then a check stays for a moment.
+        const mark = (key) => {
+            if (key === 'error') {
+                return icon('warning');
+            }
+
+            if (key === state && this.flash && this.saving === 0) {
+                return icon('check');
+            }
+
+            return html`<span class="state-dot ${key === 'draft' ? 'ring' : ''} ${key === state && this.saving > 0 ? 'pulse' : ''}"></span>`;
+        };
+
+        return html`<div class="state-wrap" @keydown=${(event) => this.detailsKey(event)}>
+            <button type="button" class="state" data-state=${state} data-tone=${tones[state]}
+                title=${state === 'error' ? labels.showError : labels.explainStatus}
+                aria-expanded=${this.details ? 'true' : 'false'} aria-controls="fb-state-details"
+                @click=${() => { this.details = !this.details; }}>
+                <span class="visually-hidden">${labels.status}: ${text}${locked ? `, ${labels.locked}` : ''}</span>
+                ${locked ? icon('lock') : nothing}
+                <span class="state-labels" aria-hidden="true">${Object.keys(tones).map((key) => html`<span class=${key === state ? 'current' : ''}><span class="state-mark">${mark(key)}</span><span class="state-text">${labels[key] ?? key}</span></span>`)}</span>
+            </button>
+            ${this.details ? html`<div class="details" id="fb-state-details" data-tone=${tones[state]}>${this.explanation(state, locked)}</div>` : nothing}
+        </div>`;
+    }
+
+    /** What the status means, in a sentence or two (decision 0141). */
+    explanation(state, locked) {
+        const labels = this.labels;
+
+        if (state === 'error') {
+            return html`<p>${this.message.text}</p>
+                ${this.message.reload ? html`<button type="button" @click=${() => location.reload()}>${labels.reload}</button>` : nothing}`;
+        }
+
+        const saved = state === 'published' ? nothing : html`<p>${this.saving > 0 ? labels.saving : labels.allSaved}</p>`;
+
+        return html`<p>${labels[`explain${state[0].toUpperCase()}${state.slice(1)}`]}</p>
+            ${saved}
+            ${locked ? html`<p>${labels.locked}.</p>` : nothing}`;
+    }
+
+    detailsKey(event) {
+        if (event.key === 'Escape' && this.details) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.details = false;
+            this.renderRoot.querySelector('.state')?.focus();
+        }
+    }
+
+    /** "Saved" stays a moment, then the status of the page comes back. */
+    saved() {
+        clearTimeout(this.flashTimer);
+        this.flash = true;
+        this.flashTimer = setTimeout(() => { this.flash = false; }, 2000);
+    }
+
+    /** What the drafts of the page and of the fields of the website allow (decision 0128). */
+    drafts(page) {
+        const site = this.siteDraft;
+
+        return {
+            status: page.status === 'published' && site ? 'changed' : page.status,
+            canPublish: page.canPublish || (site && this.config.site.publish),
+            canDiscard: page.canDiscard || (site && this.config.site.discard),
+        };
+    }
+
+    /**
+     * The menu "More" (decision 0139): what is needed less often, in
+     * sections for this page and for the whole website, each entry only
+     * with its right. Without entries there is no menu.
+     */
+    more() {
+        const { editing, page } = this.config;
+        const labels = this.labels;
+        const canDiscard = editing && page && !this.confirming && this.drafts(page).canDiscard;
+        const forPage = [
+            this.marking ? html`<button type="button" role="menuitemcheckbox" aria-checked=${this.showAll ? 'true' : 'false'}
+                @click=${() => this.choose(() => { this.showAll = !this.showAll; })}>${icon('places')}${labels.showAll}</button>` : nothing,
+            page ? html`<a role="menuitem" href=${page.backend}>${icon('external')}${labels.backend}</a>` : nothing,
+            canDiscard ? html`<button type="button" role="menuitem" class="danger" ?disabled=${this.busy}
+                @click=${() => this.choose(() => this.confirm())}>${icon('trash')}${labels.discard}</button>` : nothing,
+        ].filter((item) => item !== nothing);
+        const forSite = [
+            this.config.design && editing ? html`<button type="button" role="menuitem"
+                @click=${() => this.choose(() => this.design.show())}>${icon('palette')}${labels.design}</button>` : nothing,
+        ].filter((item) => item !== nothing);
+
+        if (forPage.length === 0 && forSite.length === 0) {
+            return nothing;
+        }
+
+        const group = (id, heading, items) => items.length === 0 ? nothing : html`<div role="group" aria-labelledby=${id}>
+            <div class="menu-heading" id=${id} role="presentation">${heading}</div>${items}</div>`;
+
+        return html`<div class="more" @focusout=${(event) => this.leaveMenu(event)}>
+            <button type="button" data-fb-more aria-haspopup="menu" aria-expanded=${this.menu ? 'true' : 'false'} aria-controls="fb-more-menu"
+                aria-label=${labels.more} title=${labels.more} @click=${() => this.openMenu(!this.menu)}
+                @keydown=${(event) => this.moreKey(event)}>${icon('more')}</button>
+            ${this.menu ? html`<div class="menu" id="fb-more-menu" role="menu" aria-label=${labels.more} @keydown=${(event) => this.menuKey(event)}>
+                ${group('fb-more-page', labels.thisPage, forPage)}${group('fb-more-site', labels.website, forSite)}
+            </div>` : nothing}
+        </div>`;
+    }
+
+    get menuItems() {
+        return [...this.renderRoot.querySelectorAll('.menu [role^="menuitem"]')];
+    }
+
+    async openMenu(open, last = false) {
+        this.menu = open;
+
+        if (open) {
+            await this.updateComplete;
+            const items = this.menuItems;
+            (last ? items.at(-1) : items[0])?.focus();
+        }
+    }
+
+    async closeMenu() {
+        this.menu = false;
+        await this.updateComplete;
+        this.renderRoot.querySelector('[data-fb-more]')?.focus();
+    }
+
+    /** Runs an entry and closes the menu; the entry decides where the focus goes. */
+    choose(run) {
+        this.menu = false;
+        run();
+    }
+
+    moreKey(event) {
+        if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+            event.preventDefault();
+            this.openMenu(true, event.key === 'ArrowUp');
+        }
+    }
+
+    /** Arrow keys, Home and End move through the entries, Escape closes (menu pattern of the ARIA guide). */
+    menuKey(event) {
+        const items = this.menuItems;
+        const index = items.indexOf(this.renderRoot.activeElement);
+        const next = {
+            ArrowDown: (index + 1) % items.length,
+            ArrowUp: (index - 1 + items.length) % items.length,
+            Home: 0,
+            End: items.length - 1,
+        }[event.key];
+
+        if (next !== undefined) {
+            event.preventDefault();
+            items[next]?.focus();
+        } else if (event.key === 'Escape') {
+            event.preventDefault();
+            event.stopPropagation();
+            this.closeMenu();
+        } else if (event.key === 'Tab') {
+            this.menu = false;
+        }
+    }
+
+    leaveMenu(event) {
+        if (this.menu && !event.currentTarget.contains(event.relatedTarget)) {
+            this.menu = false;
+        }
+    }
+
+    /** "Discard the draft" asks in the bar first; the focus waits on "Cancel". */
+    async confirm() {
+        this.confirming = true;
+        await this.updateComplete;
+        this.renderRoot.querySelector('[data-fb-cancel]')?.focus();
+    }
+
+    async cancelConfirm() {
+        this.confirming = false;
+        await this.updateComplete;
+        this.renderRoot.querySelector('[data-fb-more]')?.focus();
     }
 
     pageControls(page) {
@@ -580,28 +920,22 @@ export class EditorBar extends LitElement {
         if (this.confirming) {
             return html`<span class="note">${labels.discardConfirm}</span>
                 <button type="button" class="danger solid" ?disabled=${this.busy} @click=${() => this.discard()}>${labels.discardYes}</button>
-                <button type="button" @click=${() => { this.confirming = false; }}>${labels.cancel}</button>`;
+                <button type="button" data-fb-cancel @click=${() => this.cancelConfirm()}>${labels.cancel}</button>`;
         }
 
-        // A draft of the fields of the website counts like one of the page (decision 0128).
-        const site = this.siteDraft;
-        const status = page.status === 'published' && site ? 'changed' : page.status;
-        const canPublish = page.canPublish || (site && this.config.site.publish);
-        const canDiscard = page.canDiscard || (site && this.config.site.discard);
+        const { canPublish } = this.drafts(page);
+        const mayPublish = page.mayPublish || this.config.site?.publish;
+        const undo = this.undo.length > 0;
 
+        // Both stay in place without anything to do, so the bar keeps its width (decision 0140).
         return html`
-            <span class="badge" data-status=${status}><span class="visually-hidden">${labels.status}: </span>${labels[status] ?? status}</span>
-            ${page.locked ? html`<span class="badge locked">${icon('lock')}${labels.locked}</span>` : nothing}
             ${this.config.marking ? nothing : html`<span class="note">${labels.readOnly}</span>`}
-            ${this.config.marking ? html`<button type="button" aria-pressed=${this.showAll ? 'true' : 'false'}
-                @click=${() => { this.showAll = !this.showAll; }}>${icon('places')}${labels.showAll}</button>` : nothing}
-            ${this.undo.length > 0 ? html`<button type="button" ?disabled=${this.busy}
-                @click=${() => this.undoLast()}>${icon('undo')}${labels.undo}</button>` : nothing}
-            ${canPublish ? html`<button type="button" class="primary" ?disabled=${this.busy}
-                title=${page.canPublish && page.offlineParents.length ? labels.offlineParents.replace('{pages}', page.offlineParents.join(', ')) : nothing}
-                @click=${() => this.publish()}>${labels.publish}</button>` : nothing}
-            ${canDiscard ? html`<button type="button" class="danger" ?disabled=${this.busy}
-                @click=${() => { this.confirming = true; }}>${labels.discard}</button>` : nothing}`;
+            ${this.config.marking ? html`<button type="button" ?disabled=${this.busy} aria-disabled=${undo ? 'false' : 'true'}
+                title=${undo ? labels.undo : labels.nothingToUndo}
+                @click=${() => { if (undo) { this.undoLast(); } }}>${icon('undo')}<span class="button-text">${labels.undo}</span></button>` : nothing}
+            ${mayPublish ? html`<button type="button" class="primary" ?disabled=${this.busy} aria-disabled=${canPublish ? 'false' : 'true'}
+                title=${!canPublish ? labels.allPublished : page.canPublish && page.offlineParents.length ? labels.offlineParents.replace('{pages}', page.offlineParents.join(', ')) : nothing}
+                @click=${() => { if (canPublish) { this.publish(); } }}>${labels.publish}</button>` : nothing}`;
     }
 
     /** Outlines with labels over the marked places, fixed to the viewport. */
@@ -638,14 +972,6 @@ export class EditorBar extends LitElement {
         if (element !== this.current) {
             this.current = element;
         }
-    }
-
-    isDark() {
-        if (this.dataset.theme) {
-            return this.dataset.theme === 'dark';
-        }
-
-        return matchMedia('(prefers-color-scheme: dark)').matches;
     }
 
     collapse(collapsed) {
@@ -761,6 +1087,11 @@ export class EditorBar extends LitElement {
      * "Saved" or why not, with "Load again" on a conflict (decision 0122).
      */
     async run(name, input) {
+        // Details of an error would turn into those of the page.
+        if (this.state === 'error') {
+            this.details = false;
+        }
+
         this.saving++;
         this.message = { tone: 'info', text: this.labels.saving };
         const response = await this.action(name, input);
@@ -770,6 +1101,7 @@ export class EditorBar extends LitElement {
         if (response?.ok) {
             if (this.saving === 0) {
                 this.message = { tone: 'info', text: this.labels.saved };
+                this.saved();
             }
 
             return { ok: true, data: body?.data };

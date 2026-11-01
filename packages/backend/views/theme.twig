@@ -62,7 +62,7 @@
                     <span class="fb-list__meta">{{ groups[token.type] }} · <code>--{{ token.name }}</code></span>
                 </span>
                 <span>{% if token.type == 'font' %}{{ fonts[token.value] ?? (token.options|filter(option => option.value == token.value)|first).label ?? token.value }}{% elseif token.type == 'choice' %}{{ (token.options|filter(option => option.value == token.value)|first).label ?? token.value }}{% else %}<code>{{ token.value }}</code>{% endif %}</span>
-                {% if token.value != token.published %}{{ ui.badge('changed', t('Changed')) }}{% endif %}
+                {% if token.value != token.published %}{{ ui.badge('changed', t('Pending changes')) }}{% endif %}
                 {% if token.contrast and not token.contrast.enough %}{{ ui.badge('danger', t('Contrast {ratio} : 1', {ratio: token.contrast.ratio|number_format(1, t('.'), '')})) }}{% endif %}
             </li>
             {%- endfor %}

@@ -56,7 +56,8 @@ test('edits the website from the draft', async ({ page, request }) => {
 
     const bar = page.locator('fb-editor-bar');
     await expect(bar.getByRole('switch', { name: 'Bearbeiten' })).toHaveAttribute('aria-checked', 'true');
-    await expect(bar.locator('.badge[data-status]')).toHaveText('Status: Entwurf');
+    await expect(bar.locator('.state .visually-hidden')).toHaveText('Status: Entwurf');
+    const width = (await bar.locator('.state').boundingBox())?.width;
 
     const title = page.locator('h1[data-fb-field="title"]');
     await expect(title).toHaveText(heading);
@@ -65,13 +66,42 @@ test('edits the website from the draft', async ({ page, request }) => {
     await title.focus();
     await expect(bar.locator('.outline')).toHaveCount(1);
 
-    await bar.getByRole('button', { name: 'Alle Stellen zeigen' }).click();
+    // Less frequent commands are in the menu "More" (decision 0139).
+    const more = bar.getByRole('button', { name: 'Mehr' });
+    await more.click();
+    const menu = bar.getByRole('menu', { name: 'Mehr' });
+    await expect(menu.getByRole('group', { name: 'Diese Seite' })).toBeVisible();
+    await expect(menu.getByRole('menuitemcheckbox', { name: 'Alle Stellen zeigen' })).toBeFocused();
+    await page.keyboard.press('End');
+    await expect(menu.getByRole('menuitem', { name: 'Design' })).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(menu).toHaveCount(0);
+    await expect(more).toBeFocused();
+
+    await more.click();
+    await menu.getByRole('menuitemcheckbox', { name: 'Alle Stellen zeigen' }).click();
     expect(await bar.locator('.outline').count()).toBeGreaterThan(1);
 
     // Publish from the bar.
     await bar.getByRole('button', { name: 'Veröffentlichen' }).click();
     await expect(bar.getByRole('status')).toHaveText('Die Seite ist veröffentlicht.');
-    await expect(bar.locator('.badge[data-status]')).toHaveText('Status: Veröffentlicht');
+    await expect(bar.locator('.state .visually-hidden')).toHaveText('Status: Veröffentlicht');
+
+    // The bar keeps its width: the status only changes text and colour, and
+    // "Publish" stays in place, muted (decision 0140).
+    expect((await bar.locator('.state').boundingBox())?.width).toBe(width);
+    const publish = bar.getByRole('button', { name: 'Veröffentlichen' });
+    await expect(publish).toHaveAttribute('aria-disabled', 'true');
+    await expect(publish).toHaveAttribute('title', 'Alles ist veröffentlicht');
+
+    // A click on the status says what it means (decision 0141).
+    const state = bar.getByRole('button', { name: 'Status: Veröffentlicht' });
+    await state.click();
+    await expect(state).toHaveAttribute('aria-expanded', 'true');
+    await expect(bar.locator('#fb-state-details')).toHaveText('Besucher sehen genau diese Fassung.');
+    await page.keyboard.press('Escape');
+    await expect(bar.locator('#fb-state-details')).toHaveCount(0);
+    await expect(state).toBeFocused();
     expect(await (await request.get(`/${slug}`)).text()).toContain(heading);
 
     // Switched off, the page is as visitors see it, with the bar to switch back.

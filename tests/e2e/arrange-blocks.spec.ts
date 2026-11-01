@@ -65,7 +65,7 @@ test('adds, moves and sets up blocks on the website', async ({ page, browser }, 
     await expect(picker.getByRole('button', { name: /^Überschrift/ })).toHaveCount(0);
     await picker.getByRole('button', { name: /^Abschnitt/ }).click();
     await expect(section).toBeFocused();
-    await expect(bar.locator('.badge[data-status]')).toHaveText('Status: Geändert');
+    await expect(bar.locator('.state .visually-hidden')).toHaveText('Status: Änderungen offen');
 
     // Two columns from the panel, which stays open after loading again.
     await bar.getByRole('toolbar', { name: 'Block Abschnitt' }).getByRole('button', { name: 'Einstellungen des Blocks' }).click();

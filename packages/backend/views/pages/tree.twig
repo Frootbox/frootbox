@@ -1,6 +1,6 @@
 {#- The sitemap as <fb-tree>; links load the details with htmx (decisions 0116, 0135). One line per page: the status as a dot, a label only where it is not "published". Whole levels open while they fit (decision 0136), else branches open along the current page; <fb-tree> remembers what was opened or closed. -#}
 {% macro rows(rows, current, movable, open, levels) %}
-    {%- set labels = {published: t('Published'), draft: t('Draft'), changed: t('Changed'), scheduled: t('Scheduled')} -%}
+    {%- set labels = {published: t('Published'), draft: t('Draft'), changed: t('Pending changes'), scheduled: t('Scheduled')} -%}
     {%- for row in rows %}
     {%- set branch = row.children is not empty -%}
     {%- set expanded = row.depth < levels or row.id in open -%}

@@ -853,15 +853,53 @@ with `all: initial` on the host and the tokens of the backend on
 data from the JSON block `#fb-edit-config` in the head.
 
 - Floats at the bottom in the middle, `--fb-surface`, `--fb-radius-lg`,
-  `--fb-shadow-lg`, above everything (`--fb-layer-edit`). It wraps on
-  narrow screens and never moves the layout of the page; the page only
+  `--fb-shadow-lg`, above everything (`--fb-layer-edit`). It never moves
+  the layout of the page; the page only
   gets room at its end (`padding-block-end` on `body`, the measured
   height of the bar plus 2rem), so the footer can be reached.
-- Content: brand, switch "Edit" (`role="switch"`), status of the page as
-  a badge, "Locked for visitors", "Show all places" (`aria-pressed`),
-  "Publish" (primary), "Discard the draft" (danger, asks in the bar),
-  "Open in the backend", collapse. Messages appear in a `role="status"`
-  line inside the bar.
+- Content (decision 0139): only commands for the page in view, in order
+  of use. Switch "Edit" (`role="switch"`), "Undo", "Publish" (primary),
+  "More", collapse, and the status docked at the end. No logo: whoever
+  sees the bar is signed in. Editing off leaves the switch, "More" and
+  collapse.
+- The bar keeps its width while one works (decision 0140). "Undo" and
+  "Publish" stay in place with nothing to do, muted with
+  `aria-disabled="true"` and a tooltip that says why; they stay
+  reachable by keyboard.
+- The status sits flush at the end, separated by `--fb-border`, with the
+  end radii of the bar. It answers one question, whether visitors see
+  what one sees (decision 0141): published (dot, `--fb-success-bg`),
+  pending changes (dot, `--fb-warning-bg`), draft (ring,
+  `--fb-warning-bg`); an error (warning, `--fb-danger-bg`) goes first.
+  It only changes text, mark and colour. All texts lie in one grid cell
+  and only the current one is visible, and every mark has the room of
+  `--fb-size-icon-sm`, so the block is as wide as its longest text in
+  every language. Locked for visitors is a lock in the block.
+- Saving is no state: while it saves the mark pulses (five times
+  `--fb-motion-normal`, none with reduced motion), then a check stands in
+  its place for 2 s. Screen readers read "Status: …"; "Saving …",
+  "Saved" and other messages go as sentences to a visually hidden
+  `role="status"`.
+- The status is a button (`aria-expanded`, tooltip "What does that
+  mean?", "Show what went wrong" on an error). It opens a short
+  explanation above it in `--fb-surface` with `--fb-shadow-lg`: what
+  visitors see, for pending changes and drafts whether all is saved, the
+  lock; on an error the message in `--fb-danger-text` with "Reload" if
+  needed. Escape and a click outside close it.
+- Below 30rem the bar stays one line: the status shows only its mark,
+  "Edit" and "Undo" only their icon (text for screen readers and in the
+  tooltip), the padding shrinks to `--fb-space-1`, and only "Publish"
+  may shorten its text with an ellipsis.
+- "More" is a menu button (`aria-haspopup="menu"`) with an ellipsis. Its
+  menu opens above it in `--fb-surface` with `--fb-radius-lg` and
+  `--fb-shadow-lg`, in sections with a small heading in `--fb-text-muted`:
+  "This page" ("Show all places" as `menuitemcheckbox`, "Open in the
+  backend", "Discard the draft" in danger last) and "Website" ("Design"
+  with `design.update`). An entry shows only with its right; without
+  entries there is no menu. Arrow keys, Home and End move, Escape closes
+  and returns to "More", Tab and a click outside close. "Discard the
+  draft" asks in the bar with the focus on "Cancel"; closing the design
+  panel returns to "More".
 - Collapsed it is a round button of `--fb-size-control` with the pencil;
   the browser keeps that in `localStorage` (`fb-editor-bar-collapsed`).
 - Light or dark follows the choice of the appearance switch (`fb-theme`),
@@ -902,7 +940,7 @@ typed where it stands, nothing is replaced by a form.
 - Fields of the website (`data-fb-site`, decision 0128), e.g. in the
   footer, look and behave like fields of the page and are saved with
   `site.update-field`. Their draft counts like one of the page: the
-  badge says "Changed", "Publish" and "Discard the draft" act on both.
+  status says "Pending changes", "Publish" and "Discard the draft" act on both.
 
 Arranging blocks (decision 0123), from `resources/js/edit/arranging.js`:
 

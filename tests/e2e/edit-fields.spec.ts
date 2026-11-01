@@ -71,7 +71,7 @@ test('edits fields on the website', async ({ page, request }) => {
     await save;
     await expect(title).toHaveText(`${heading} am Hafen`);
     await expect(bar.getByRole('status')).toHaveText('Gespeichert');
-    await expect(bar.locator('.badge[data-status]')).toHaveText('Status: Geändert');
+    await expect(bar.locator('.state .visually-hidden')).toHaveText('Status: Änderungen offen');
     expect(await (await request.get(`/${slug}`)).text()).not.toContain('am Hafen');
 
     // Escape takes back what is not saved yet.
@@ -153,6 +153,12 @@ test('tells when someone else changed the field', async ({ page }) => {
     await page.keyboard.press('Enter');
     await expect(bar.getByRole('status')).toContainText('Jemand hat das Feld inzwischen geändert.');
 
+    // The status only says "Error"; its button shows what went wrong (decision 0140).
+    const error = bar.getByRole('button', { name: 'Status: Fehler' });
+    await expect(error).toHaveAttribute('aria-expanded', 'false');
+    await error.click();
+    await expect(error).toHaveAttribute('aria-expanded', 'true');
+    await expect(bar.locator('#fb-state-details')).toContainText('Jemand hat das Feld inzwischen geändert.');
     await bar.getByRole('button', { name: 'Neu laden' }).click();
     await expect(title).toHaveText('Von jemand anderem');
 

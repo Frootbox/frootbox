@@ -29,7 +29,7 @@ test('changes the colours on the website and publishes them', async ({ page, bro
     await hex.press('Enter');
     expect(await primary(page)).toBe('#225588');
     await expect(panel.getByText('Nur Du siehst die Änderungen, bis Du sie veröffentlichst.')).toBeVisible();
-    await expect(bar.getByText('Gespeichert')).toBeVisible();
+    await expect(bar.getByRole('region', { name: 'Redaktionsleiste' }).getByRole('status')).toHaveText('Gespeichert');
 
     // A light main colour is hard to read with white text on it.
     await hex.fill('#eeeeee');
@@ -41,7 +41,7 @@ test('changes the colours on the website and publishes them', async ({ page, bro
 
     await panel.getByRole('combobox', { name: 'Schrift für Überschriften' }).selectOption('rounded');
     await panel.getByRole('slider', { name: 'Rundung der Ecken' }).fill('4');
-    await expect(bar.getByText('Gespeichert')).toBeVisible();
+    await expect(bar.getByRole('region', { name: 'Redaktionsleiste' }).getByRole('status')).toHaveText('Gespeichert');
 
     // Visitors still see the published design.
     const guest = await browser.newPage();
