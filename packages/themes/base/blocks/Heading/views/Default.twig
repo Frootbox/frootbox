@@ -1,16 +1,23 @@
 {# frootbox
 title: Überschrift
-description: Eine Überschrift in einer Spalte.
+description: Eine Überschrift in einer Spalte. Ihre Ebene ergibt sich aus der Stelle, an der sie steht.
 group: heading
 keywords: [Titel]
 widget: true
 options:
-  level:
+  role:
     type: choice
-    label: Stufe
-    choices: { h2: Überschrift 2, h3: Überschrift 3 }
-    default: h2
+    label: Rolle
+    choices: { heading: Überschrift, sub: Unterüberschrift }
+    default: heading
+  size:
+    type: choice
+    label: Größe
+    choices: { auto: Automatisch, large: Groß, medium: Mittel, small: Klein }
+    default: auto
 fields:
   text: { type: headline, label: Überschrift }
 #}
-<{{ options.level }} class="base-heading base-heading--{{ options.level }}">{{ field('text') }}</{{ options.level }}>
+{# The widget has no main heading of its own: rank 0 stands at the level of its column, rank 2 one below. #}
+{% set size = options.size == 'auto' ? (options.role == 'sub' ? 'medium' : 'large') : options.size %}
+{{ heading('text', options.role == 'sub' ? 2 : 0, {class: 'base-heading base-heading--' ~ size}) }}

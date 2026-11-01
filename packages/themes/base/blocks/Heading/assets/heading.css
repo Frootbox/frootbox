@@ -1,3 +1,4 @@
 .base-heading { margin: 0; font-family: var(--font-heading); line-height: 1.15; text-wrap: balance; }
-.base-heading--h2 { font-size: clamp(1.6rem, 3.5vw, 2.3rem); }
-.base-heading--h3 { font-size: clamp(1.25rem, 2.5vw, 1.5rem); }
+.base-heading--large { font-size: clamp(1.6rem, 3.5vw, 2.3rem); }
+.base-heading--medium { font-size: clamp(1.25rem, 2.5vw, 1.5rem); }
+.base-heading--small { font-size: 1.1rem; }

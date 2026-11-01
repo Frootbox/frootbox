@@ -14,8 +14,8 @@ with columns and the first widgets (decisions 0120 and 0124).
 |---|---|
 | `frootbox.yaml` | Theme manifest with default tokens: colours, fonts, radius, spacing, width |
 | `blocks/Section` | Section with columns. Variants by split: `Default` (one column), `Two`, `Three`, `OneTwo`, `TwoOne`. Areas `first`, `second`, `third` for widgets. Options `spacing` (small, medium, large) and `background` (none, surface, primary). Columns stack on narrow screens |
-| `blocks/Heading` | Widget: a heading, option `level` (`h2`, `h3`) |
-| `blocks/Text` | Widget: rich text |
+| `blocks/Heading` | Widget: a heading. Option `role` (`heading`, `sub`) decides its place in the outline, the level follows from where it stands (decision 0129). Option `size` (`auto`, `large`, `medium`, `small`) only changes how it looks, `auto` follows the role |
+| `blocks/Text` | Widget: rich text. Its headings carry their rank as `data-rank` and look the same at every level |
 | `blocks/Button` | Widget: a link as a button, option `style` (`primary`, `secondary`) |
 
 Widgets have `widget: true` in their schema: they only go into areas that
