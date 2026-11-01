@@ -109,6 +109,8 @@ jobs:
           php-version: ${{ env.PHP_VERSION }}
           extensions: pdo_sqlite
           coverage: none
+      # tools/sandbox.php reads sandbox.env and checks the superuser with the packages of the repository.
+      - uses: ramsey/composer-install@v3
       - uses: actions/setup-node@v5
         with:
           node-version: 24
@@ -170,6 +172,8 @@ jobs:
           php-version: ${{ env.PHP_VERSION }}
           extensions: pdo_sqlite
           coverage: none
+      - if: steps.approved.outputs.found == 'true'
+        uses: ramsey/composer-install@v3
       - if: steps.approved.outputs.found == 'true'
         run: npm ci
       - if: steps.approved.outputs.found == 'true'

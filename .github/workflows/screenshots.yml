@@ -26,6 +26,7 @@ jobs:
           php-version: ${{ env.PHP_VERSION }}
           extensions: pdo_sqlite
           coverage: none
+      - uses: ramsey/composer-install@v3
       - run: npm ci
       - run: npx playwright test --project=visual --update-snapshots=all
       - uses: actions/upload-artifact@v4
