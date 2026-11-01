@@ -1,20 +1,29 @@
 title: 'Basis'
 description: 'Basis-Theme: Tokens und Bausteine, auf denen Themes aufbauen'
 theme:
+  # Tokens with a type can be changed in the editing mode (decision 0127),
+  # child themes change the value with the short form.
   tokens:
     color:
-      bg: '#ffffff'
-      surface: '#f5f5f4'
-      text: '#1c1917'
-      muted: '#57534e'
-      primary: '#1d4ed8'
-      primary-contrast: '#ffffff'
-      accent: '#f59e0b'
+      bg: { value: '#ffffff', type: color, label: Hintergrund }
+      surface: { value: '#f5f5f4', type: color, label: Flächen }
+      text: { value: '#1c1917', type: color, label: Text, contrast: bg }
+      muted: { value: '#57534e', type: color, label: Gedämpfter Text, contrast: bg }
+      primary: { value: '#1d4ed8', type: color, label: Hauptfarbe, contrast: primary-contrast }
+      primary-contrast: { value: '#ffffff', type: color, label: Text auf der Hauptfarbe }
+      accent: { value: '#f59e0b', type: color, label: Akzent }
       dark: '#1c1917'
-      line: '#e7e5e4'
+      line: { value: '#e7e5e4', type: color, label: Linien }
     font:
-      body: 'system-ui, -apple-system, "Segoe UI", sans-serif'
-      heading: 'system-ui, -apple-system, "Segoe UI", sans-serif'
-    radius: 8px
-    space: 'clamp(3rem, 8vw, 6rem)'
-    width: 72rem
+      body: { value: sans, type: font, label: Schrift für Text }
+      heading: { value: sans, type: font, label: Schrift für Überschriften }
+    radius: { value: 8px, type: length, label: Rundung der Ecken, min: 0, max: 32, step: 1, unit: px }
+    space:
+      value: normal
+      type: choice
+      label: Abstand zwischen Abschnitten
+      options:
+        compact: { label: Eng, value: 'clamp(2rem, 5vw, 4rem)' }
+        normal: { label: Normal, value: 'clamp(3rem, 8vw, 6rem)' }
+        wide: { label: Weit, value: 'clamp(4rem, 11vw, 8rem)' }
+    width: { value: 72rem, type: length, label: Breite des Inhalts, min: 48, max: 90, step: 1, unit: rem }
