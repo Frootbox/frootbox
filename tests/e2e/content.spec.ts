@@ -31,6 +31,8 @@ async function createPage(page: Page, title: string, parent: string | null = nul
     const slug = await page.getByLabel('Adresse').inputValue();
     await page.getByRole('button', { name: 'Als Entwurf anlegen' }).click();
     await expect(page).toHaveURL(/\/cms\/pages\/[0-9A-Z]{26}$/);
+    // The forms remember their state once their script runs (decision 0130).
+    await page.waitForFunction(() => customElements.get('fb-form') !== undefined);
     const id = page.url().split('/').pop() ?? '';
 
     const status = await page.evaluate(async ([id, title]) => {
