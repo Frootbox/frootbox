@@ -87,7 +87,7 @@ test('uploads an image, sets its focus and shows it on a published page', async 
 
     const field = page.locator('[data-fb-type="image"]');
     await field.click();
-    const bar = page.locator('fb-edit-bar');
+    const bar = page.locator('fb-editor-bar');
     const dialog = bar.getByRole('dialog', { name: 'Bild auswählen' });
     await dialog.getByLabel('Suchen').fill(name);
     await dialog.getByRole('button', { name: `${name}.jpg` }).click();

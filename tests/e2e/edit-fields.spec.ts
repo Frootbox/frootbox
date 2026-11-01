@@ -59,7 +59,7 @@ test('edits fields on the website', async ({ page, request }) => {
     // Short, so it stays on one line and End reaches its end.
     const heading = `Rösterei ${Math.floor(Math.random() * 1000)}`;
     const id = await openPage(page, slug, heading);
-    const bar = page.locator('fb-edit-bar');
+    const bar = page.locator('fb-editor-bar');
 
     // A headline: typed in place, Enter ends it, it saves itself.
     const title = page.locator('h1[data-fb-field="title"]');
@@ -135,11 +135,11 @@ test('tells when someone else changed the field', async ({ page }) => {
     const slug = `konflikt-${unique()}`;
     const heading = `Konflikt ${Math.floor(Math.random() * 1000)}`;
     const id = await openPage(page, slug, heading);
-    const bar = page.locator('fb-edit-bar');
+    const bar = page.locator('fb-editor-bar');
 
     // Meanwhile someone else changes the headline.
     const other = await page.evaluate(async ([id, heading]) => {
-        const bar = document.querySelector('fb-edit-bar') as any;
+        const bar = document.querySelector('fb-editor-bar') as any;
         const response = await bar.action('page.update-field', { id, language: 'de', path: 'title', value: 'Von jemand anderem', previous: heading });
 
         return response.status;

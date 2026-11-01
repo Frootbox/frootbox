@@ -18,7 +18,7 @@ test('changes the colours on the website and publishes them', async ({ page, bro
 
     await page.getByRole('button', { name: 'Auf der Website gestalten' }).click();
     await expect(page).toHaveURL('/');
-    const bar = page.locator('fb-edit-bar');
+    const bar = page.locator('fb-editor-bar');
     const panel = bar.getByRole('region', { name: 'Design der Website' });
     await expect(panel.getByRole('heading', { name: 'Design der Website' })).toBeFocused();
     await expect(panel.getByRole('group', { name: 'Farben' })).toBeVisible();

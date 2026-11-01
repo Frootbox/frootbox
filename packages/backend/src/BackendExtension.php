@@ -28,7 +28,7 @@ use Frootbox\Backend\Http\Users\RoleHandler;
 use Frootbox\Backend\Http\Users\RolesHandler;
 use Frootbox\Backend\Http\Users\UserHandler;
 use Frootbox\Backend\Http\Users\UsersHandler;
-use Frootbox\Backend\View\EditBar;
+use Frootbox\Backend\View\EditorBar;
 use Frootbox\Core\Api\ApiHandler;
 use Frootbox\Core\Extension\Extension;
 use Frootbox\Core\Extension\Registry;
@@ -77,7 +77,7 @@ final class BackendExtension implements Extension
             ->get('/roles/new', RoleHandler::class, 'backend.roles.new')
             ->get('/roles/{name:[a-z][a-z0-9-]*}', RoleHandler::class, 'backend.roles.show');
 
-        $registry->listen(BuildingHead::class, EditBar::class);
+        $registry->listen(BuildingHead::class, EditorBar::class);
 
         $registry->import('lit', 'assets/build/lit.js');
         $registry->import('htmx.org', 'assets/build/htmx.js');

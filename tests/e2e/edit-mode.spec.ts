@@ -54,7 +54,7 @@ test('edits the website from the draft', async ({ page, request }) => {
     await page.getByRole('button', { name: 'Auf der Website bearbeiten' }).click();
     await expect(page).toHaveURL(`/${slug}`);
 
-    const bar = page.locator('fb-edit-bar');
+    const bar = page.locator('fb-editor-bar');
     await expect(bar.getByRole('switch', { name: 'Bearbeiten' })).toHaveAttribute('aria-checked', 'true');
     await expect(bar.locator('.badge[data-status]')).toHaveText('Status: Entwurf');
 

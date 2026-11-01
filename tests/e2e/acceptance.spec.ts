@@ -60,7 +60,7 @@ test('an editor changes a page on the website and publishes it', async ({ page, 
     await expect(page.getByRole('heading', { level: 2, name: 'Abnahme' })).toBeVisible();
     await page.getByRole('button', { name: 'Auf der Website bearbeiten' }).click();
     await expect(page).toHaveURL(`/${slug}`);
-    const bar = page.locator('fb-edit-bar');
+    const bar = page.locator('fb-editor-bar');
     const heading = page.locator('h1[data-fb-field="title"]');
     await expect(heading).toHaveAttribute('contenteditable', 'plaintext-only');
 
@@ -122,7 +122,7 @@ test('an editor changes a page on the website and publishes it', async ({ page, 
     await expect.poll(() => picture.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
     await guest.goto('/');
     await expect(guest.locator('.site-footer')).toContainText(`Abnahme ${id}`);
-    expect(await guest.locator('[data-fb-field], [data-fb-block], fb-edit-bar').count()).toBe(0);
+    expect(await guest.locator('[data-fb-field], [data-fb-block], fb-editor-bar').count()).toBe(0);
     await guest.close();
 
     // Back to the footer as before, without the page.

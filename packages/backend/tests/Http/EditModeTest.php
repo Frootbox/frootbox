@@ -13,7 +13,7 @@ use Frootbox\Backend\Http\EditModeHandler;
 use Frootbox\Backend\Http\Pages\PagesHandler;
 use Frootbox\Backend\Security\Csrf;
 use Frootbox\Backend\Tests\Support\BackendTestCase;
-use Frootbox\Backend\View\EditBar;
+use Frootbox\Backend\View\EditorBar;
 use Frootbox\Core\Action\Context;
 use Frootbox\Core\Auth\AuthenticationMiddleware;
 use Frootbox\Core\Cache\PageCache;
@@ -31,7 +31,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use Psr\Http\Message\ResponseInterface;
 
 #[CoversClass(EditModeHandler::class)]
-#[CoversClass(EditBar::class)]
+#[CoversClass(EditorBar::class)]
 #[CoversClass(Tokens::class)]
 #[CoversClass(PagesHandler::class)]
 final class EditModeTest extends BackendTestCase
@@ -104,6 +104,7 @@ final class EditModeTest extends BackendTestCase
         self::assertSame('/cms/actions/', $config['actions']);
         self::assertSame('/cms/queries/', $config['queries']);
         self::assertSame('de', $config['language']);
+        self::assertSame('Redaktionsleiste', $config['labels']['bar'], 'Its name in docs and trainings (decision 0137).');
         self::assertSame('Bearbeiten', $config['labels']['edit']);
         self::assertSame('Rückgängig', $config['labels']['undo']);
         self::assertSame('Block darunter einfügen', $config['labels']['insertBelow']);

@@ -435,12 +435,12 @@ With all pages below it.: Mit allen Seiten darunter.
 Give the role: Rolle vergeben
 There is no kind of scope "{scope}".: Für „{scope}“ lassen sich keine Rollen vergeben.
 There is nothing for the scope "{scope}".: „{scope}“ gibt es nicht.
-"Editing mode": "Bearbeitungsmodus"
+"Editor bar": "Redaktionsleiste"
 "You may not change this page.": "Diese Seite darfst Du nicht ändern."
 "Show all places": "Alle Stellen zeigen"
 "Open in the backend": "Im Backend öffnen"
-"Collapse the bar": "Leiste einklappen"
-"Show the bar": "Leiste zeigen"
+"Collapse the editor bar": "Redaktionsleiste einklappen"
+"Show the editor bar": "Redaktionsleiste zeigen"
 "Edit on the website": "Auf der Website bearbeiten"
 "Sign in to edit the website.": "Melde Dich an, um die Website zu bearbeiten."
 "Saving …": "Speichert …"

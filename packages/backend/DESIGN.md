@@ -841,10 +841,12 @@ semibold.
 (`fb-theme`) until phase 2, an inline script applies it before the first
 paint. It fires `fb-theme-change` with `detail.theme`.
 
-### Edit bar
+### Editor bar
 
-`<fb-edit-bar>` is the bar of the editing mode on pages of the website,
-not on backend screens (decision 0119). It lives in its own shadow DOM
+`<fb-editor-bar>`, the editor bar (German "Redaktionsleiste", decision
+0137), is the bar of the editing mode on pages of the website, not on
+backend screens (decision 0119). Docs and trainings call it by that name;
+"toolbar" is only the bar of rich text. It lives in its own shadow DOM
 with `all: initial` on the host and the tokens of the backend on
 `:host`, so neither the theme nor the backend CSS reaches it. The script
 `edit.js` brings Lit along (no import map on theme pages) and reads its
@@ -861,7 +863,7 @@ data from the JSON block `#fb-edit-config` in the head.
   "Open in the backend", collapse. Messages appear in a `role="status"`
   line inside the bar.
 - Collapsed it is a round button of `--fb-size-control` with the pencil;
-  the browser keeps that in `localStorage` (`fb-edit-bar-collapsed`).
+  the browser keeps that in `localStorage` (`fb-editor-bar-collapsed`).
 - Light or dark follows the choice of the appearance switch (`fb-theme`),
   else the system.
 - Marked places get an outline of `--fb-size-focus` in `--fb-accent` with

@@ -53,7 +53,7 @@ test('adds, moves and sets up blocks on the website', async ({ page, browser }, 
     const id = await openPage(page, slug, [
         { block: 'frootbox/theme-bohnenglueck/Text', fields: { body: text('Wir rösten langsam.') } },
     ]);
-    const bar = page.locator('fb-edit-bar');
+    const bar = page.locator('fb-editor-bar');
     const textBlock = page.locator('[data-fb-name="frootbox/theme-bohnenglueck/Text"]');
     const section = page.locator('[data-fb-name="frootbox/theme-base/Section"]');
     const picker = bar.getByRole('dialog', { name: 'Block einfügen' });
@@ -133,7 +133,7 @@ test('copies and deletes blocks and edits list entries', async ({ page }) => {
     const id = await openPage(page, slug, [
         { block: 'frootbox/theme-bohnenglueck/Faq', fields: { title: 'Fragen', items: [{ question: 'Eins?', answer: text('Ja.') }] } },
     ]);
-    const bar = page.locator('fb-edit-bar');
+    const bar = page.locator('fb-editor-bar');
     const faq = page.locator('[data-fb-name="frootbox/theme-bohnenglueck/Faq"]');
     const tools = bar.getByRole('toolbar', { name: 'Block FAQ' });
 

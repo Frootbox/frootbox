@@ -27,13 +27,13 @@ use Frootbox\Core\View\BuildingHead;
 use Frootbox\RichText\Html;
 
 /**
- * Puts the bar of the editing mode into pages of the website for users
- * who may see pages (decision 0119): its data as JSON, the tokens of the
+ * Puts the editor bar into pages of the website for users who may see
+ * pages (decisions 0119, 0137): its data as JSON, the tokens of the
  * backend for its shadow DOM, a small rule without a layer for the
  * marked places and the script edit.js, which brings Lit along. Guests
  * get nothing of it.
  */
-final readonly class EditBar
+final readonly class EditorBar
 {
     public const string SCRIPT = BackendExtension::ROOT . '/assets/build/edit.js';
 
@@ -173,7 +173,7 @@ final readonly class EditBar
         $t = $this->translator->get(...);
 
         return [
-            'bar' => $t('Editing mode'),
+            'bar' => $t('Editor bar'),
             'edit' => $t('Edit'),
             'status' => $t('Status'),
             'published' => $t('Published'),
@@ -191,8 +191,8 @@ final readonly class EditBar
             'discardDone' => $t('The draft is discarded.'),
             'showAll' => $t('Show all places'),
             'backend' => $t('Open in the backend'),
-            'collapse' => $t('Collapse the bar'),
-            'expand' => $t('Show the bar'),
+            'collapse' => $t('Collapse the editor bar'),
+            'expand' => $t('Show the editor bar'),
             'failed' => $t('The server cannot be reached. Check the connection and try again.'),
             'saving' => $t('Saving …'),
             'saved' => $t('Saved'),

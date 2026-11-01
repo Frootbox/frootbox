@@ -5,7 +5,7 @@ import { Editing } from './editing.js';
 import { icon } from './icons.js';
 import { MediaPicker, mediaStyles } from './media.js';
 
-const COLLAPSED = 'fb-edit-bar-collapsed';
+const COLLAPSED = 'fb-editor-bar-collapsed';
 const THEME = 'fb-theme';
 const UNDO = 'fb-edit-undo:';
 
@@ -88,13 +88,14 @@ function kindOf(element) {
 }
 
 /**
- * <fb-edit-bar>: the bar of the editing mode on the website (decision
- * 0119). It floats at the bottom over the theme, lives in its own shadow
- * DOM with the tokens of the backend and draws the outlines of the
- * marked places itself, so no CSS of the theme touches it. Its data come
- * from the JSON block #fb-edit-config that the backend puts into the head.
+ * <fb-editor-bar>: the editor bar of the editing mode on the website
+ * (decisions 0119, 0137). It floats at the bottom over the theme, lives
+ * in its own shadow DOM with the tokens of the backend and draws the
+ * outlines of the marked places itself, so no CSS of the theme touches
+ * it. Its data come from the JSON block #fb-edit-config that the backend
+ * puts into the head.
  */
-export class EditBar extends LitElement {
+export class EditorBar extends LitElement {
     static properties = {
         config: { attribute: false },
         collapsed: { state: true },
