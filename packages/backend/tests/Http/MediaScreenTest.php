@@ -131,6 +131,8 @@ final class MediaScreenTest extends BackendTestCase
     private function image(): string
     {
         $image = imagecreatetruecolor(64, 48);
+        // Each image differs, or the library would find it again (decision 0146).
+        imagefilledrectangle($image, 0, 0, 31, 47, (int) imagecolorallocate($image, random_int(0, 255), random_int(0, 255), random_int(0, 255)));
         $file = $this->get(ProjectPaths::class)->var('upload-' . bin2hex(random_bytes(4)) . '.jpg');
         @mkdir(\dirname($file), 0o775, true);
         imagejpeg($image, $file);
