@@ -1,6 +1,6 @@
 title: Abschnitt
-description: Spalten mit Überschriften, Texten und Buttons. Auf schmalen Bildschirmen stehen die Spalten untereinander.
+description: Spalten mit Überschriften, Texten, Bildern und Buttons. Auf schmalen Bildschirmen stehen die Spalten untereinander.
 areas:
-  first: { label: Erste Spalte, allow: [Heading, Text, Button] }
-  second: { label: Zweite Spalte, allow: [Heading, Text, Button] }
-  third: { label: Dritte Spalte, allow: [Heading, Text, Button] }
+  first: { label: Erste Spalte, allow: [Heading, Text, Image, Button] }
+  second: { label: Zweite Spalte, allow: [Heading, Text, Image, Button] }
+  third: { label: Dritte Spalte, allow: [Heading, Text, Image, Button] }
