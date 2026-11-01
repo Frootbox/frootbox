@@ -24,7 +24,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * The media library: folders, the media of one folder or a search, and
  * the details of one medium (decision 0126).
  *
- *     /cms/media?folder=01J…&q=hafen&tag=team&unused=1&page=2
+ *     /cms/media?folder=01J…&q=hafen&tag=team&unused=1&changed=1&page=2
  *     /cms/media/01J…       the details, with the same filters
  */
 final readonly class MediaHandler implements RequestHandlerInterface
@@ -53,6 +53,7 @@ final readonly class MediaHandler implements RequestHandlerInterface
         $search = self::text($query['q'] ?? null);
         $tag = self::text($query['tag'] ?? null);
         $unused = null !== self::text($query['unused'] ?? null);
+        $changed = null !== self::text($query['changed'] ?? null);
         $page = max(1, (int) self::text($query['page'] ?? null));
         $folders = $this->runner->ask(new ListMediaFolders());
         $folderIds = array_map(static fn(FolderSummary $summary): string => $summary->id, $folders);
@@ -69,11 +70,12 @@ final readonly class MediaHandler implements RequestHandlerInterface
             tag: $tag,
             search: $search,
             unused: $unused,
+            changed: $changed,
             page: $page,
             perPage: self::PER_PAGE,
         ));
 
-        $filters = array_filter(['folder' => $folder, 'q' => $search, 'tag' => $tag, 'unused' => $unused ? '1' : null], static fn(?string $value): bool => null !== $value);
+        $filters = array_filter(['folder' => $folder, 'q' => $search, 'tag' => $tag, 'unused' => $unused ? '1' : null, 'changed' => $changed ? '1' : null], static fn(?string $value): bool => null !== $value);
 
         return $this->view->render($request, '@backend/media/list.twig', [
             'folders' => self::tree($folders),
@@ -82,6 +84,7 @@ final readonly class MediaHandler implements RequestHandlerInterface
             'search' => $search ?? '',
             'tag' => $tag ?? '',
             'unused' => $unused,
+            'changed' => $changed,
             'list' => $list,
             'pages' => max(1, (int) ceil($list->total / self::PER_PAGE)),
             'filters' => $filters,

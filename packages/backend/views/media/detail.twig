@@ -1,4 +1,4 @@
-{#- The details of one medium: focus point, texts per language, tags, folder (decision 0126), where it is used (0146). -#}
+{#- The details of one medium: focus point, texts per language, tags, folder (decision 0126), where it is used (0146), its draft (0147). -#}
 {% import '@backend/ui.twig' as ui %}
 {% set editable = can('media.update') %}
 <section class="fb-card fb-split__main" id="media-detail" aria-labelledby="media-detail-title">
@@ -8,8 +8,32 @@
             <h2 class="fb-heading-4" id="media-detail-title" tabindex="-1" data-fb-focus>{{ medium.fileName }}</h2>
             <p class="fb-muted">{{ medium.width }} × {{ medium.height }} px · {{ (medium.size / 1024)|round }} KB · {{ t('Uploaded') }} {{ ui.time(medium.createdAt) }}</p>
         </div>
-        {{ medium.public ? ui.badge('published', t('Visible')) : ui.badge('draft', t('Not used on a published page yet')) }}
+        {% if medium.draft %}{{ ui.status('changed') }}{% else %}{{ medium.public ? ui.badge('published', t('Visible')) : ui.badge('draft', t('Not used on a published page yet')) }}{% endif %}
     </div>
+
+    {% if medium.draft %}
+    {% set live = usages|filter(usage => usage.published)|length %}
+    <div class="fb-card__body fb-stack fb-stack--sm">
+        <p>{{ live > 0 ? t('Visitors see the changes once they are published. That changes the image in {count} published place.', {count: live}) : t('Visitors see the changes once they are published.') }}</p>
+        <div class="fb-cluster">
+            {% if can('media.publish') %}
+            <fb-form action="media.publish" refresh="media-detail" done="{{ t('The changes to the image are published.') }}">
+                <form novalidate>
+                    <input type="hidden" name="ids[]" value="{{ medium.id }}">
+                    {{ ui.button({label: t('Publish'), type: 'submit'}) }}
+                </form>
+            </fb-form>
+            {% endif %}
+            {% if can('media.discard') %}
+            {{ ui.button({label: t('Discard the changes'), variant: 'danger', attrs: {commandfor: 'media-discard', command: 'show-modal'}}) }}
+            {% endif %}
+        </div>
+    </div>
+    {% elseif medium.public %}
+    <div class="fb-card__body">
+        <p class="fb-hint">{{ t('Changes to the focus point and the texts wait in a draft until you publish them.') }}</p>
+    </div>
+    {% endif %}
 
     <fb-form action="media.update" refresh="media-detail" done="{{ t('The image is saved.') }}">
         <form class="fb-card__body fb-stack" novalidate>
@@ -70,6 +94,24 @@
         {% endif %}
     </div>
 </section>
+
+{% if medium.draft and can('media.discard') %}
+<dialog class="fb-dialog" id="media-discard" aria-labelledby="media-discard-title">
+    <fb-form action="media.discard" refresh="media-detail" done="{{ t('The changes to the image are discarded.') }}">
+        <form novalidate>
+            <input type="hidden" name="id" value="{{ medium.id }}">
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="media-discard-title">{{ t('Discard the changes?') }}</h2>
+                <p>{{ t('Focus point and texts go back to what visitors see.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'media-discard', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Discard'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
 
 {% if can('media.delete') %}
 <dialog class="fb-dialog" id="media-delete" aria-labelledby="media-delete-title">

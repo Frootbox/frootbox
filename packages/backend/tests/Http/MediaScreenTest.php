@@ -75,6 +75,32 @@ final class MediaScreenTest extends BackendTestCase
         self::assertSame(404, $this->request('GET', '/cms/media/01JZZZZZZZZZZZZZZZZZZZZZZZ', session: $this->session)->getStatusCode());
     }
 
+    public function testShowsAndPublishesTheDraftOfAPublicImage(): void
+    {
+        $id = $this->upload('hafen.jpg');
+        // As if a published page used it.
+        $this->connection()->executeStatement('UPDATE media SET public = ? WHERE id = ?', [1, $id]);
+
+        self::assertStringContainsString('warten im Entwurf, bis Du sie veröffentlichst.', $this->html($this->request('GET', '/cms/media/' . $id, session: $this->session)));
+
+        $this->action('media.update', ['id' => $id, 'focusX' => 0.2, 'focusY' => 0.5], $this->session);
+        $detail = $this->html($this->request('GET', '/cms/media/' . $id, session: $this->session));
+        self::assertStringContainsString('Änderungen offen', $detail);
+        self::assertStringContainsString('Besucher sehen die Änderungen erst nach dem Veröffentlichen.', $detail);
+        self::assertStringContainsString('<fb-form action="media.publish" refresh="media-detail"', $detail);
+        self::assertStringContainsString('<dialog class="fb-dialog" id="media-discard"', $detail);
+        self::assertStringContainsString('<fb-focus class="fb-focus" x="0.2" y="0.5"', $detail, 'The form shows the draft.');
+
+        $changed = $this->html($this->request('GET', '/cms/media?changed=1', session: $this->session));
+        self::assertStringContainsString('hafen.jpg', $changed);
+        self::assertStringContainsString('name="changed" value="1" checked', $changed);
+
+        $this->action('media.publish', ['ids' => [$id]], $this->session);
+        $detail = $this->html($this->request('GET', '/cms/media/' . $id, session: $this->session));
+        self::assertStringNotContainsString('Änderungen offen', $detail);
+        self::assertStringNotContainsString('id="media-discard"', $detail);
+    }
+
     public function testExplainsWhatIsWrongWithAFile(): void
     {
         $file = $this->get(ProjectPaths::class)->var('shell.php');

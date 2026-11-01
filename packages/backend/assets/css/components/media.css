@@ -42,6 +42,10 @@
     outline-offset: var(--fb-size-focus-offset);
 }
 
+.fb-media-grid__item .fb-badge {
+    align-self: flex-start;
+}
+
 .fb-media-grid__name {
     overflow: hidden;
     font-size: var(--fb-text-xs);

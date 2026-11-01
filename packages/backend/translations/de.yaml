@@ -578,6 +578,18 @@ Only in the draft: Nur im Entwurf
 "It is used in {count} place. Pages that use it show nothing there any more.":
   one: "Es wird an {count} Stelle verwendet. Seiten, die es verwenden, zeigen dort nichts mehr."
   other: "Es wird an {count} Stellen verwendet. Seiten, die es verwenden, zeigen dort nichts mehr."
+# Drafts of media (decision 0147)
+Only with changes: Nur mit Änderungen
+Changes visitors do not see yet.: Änderungen, die Besucher noch nicht sehen.
+"Visitors see the changes once they are published. That changes the image in {count} published place.":
+  one: "Besucher sehen die Änderungen erst nach dem Veröffentlichen. Das ändert das Bild an {count} veröffentlichten Stelle."
+  other: "Besucher sehen die Änderungen erst nach dem Veröffentlichen. Das ändert das Bild an {count} veröffentlichten Stellen."
+Visitors see the changes once they are published.: Besucher sehen die Änderungen erst nach dem Veröffentlichen.
+The changes to the image are published.: Die Änderungen am Bild sind veröffentlicht.
+The changes to the image are discarded.: Die Änderungen am Bild sind verworfen.
+'Changes to the focus point and the texts wait in a draft until you publish them.': 'Änderungen an Fokuspunkt und Texten warten im Entwurf, bis Du sie veröffentlichst.'
+Focus point and texts go back to what visitors see.: Fokuspunkt und Texte gehen zurück auf das, was Besucher sehen.
+Discard the changes?: Änderungen verwerfen?
 'The file cannot be read as an image.': 'Die Datei lässt sich nicht als Bild lesen.'
 'The image has too many pixels, at most {max} million.': 'Das Bild hat zu viele Pixel, höchstens {max} Millionen.'
 'The file is no image of type JPEG, PNG, WebP or GIF.': 'Die Datei ist kein Bild im Format JPEG, PNG, WebP oder GIF.'
