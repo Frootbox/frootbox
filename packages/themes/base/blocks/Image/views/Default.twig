@@ -6,4 +6,4 @@ fields:
   image: { type: image, label: Bild, sizes: "(min-width: 72rem) 36rem, (min-width: 48rem) 50vw, 100vw" }
   caption: { type: text, label: Bildunterschrift, optional: true }
 #}
-<figure class="base-image">{{ field('image') }}{% if value('caption') %}<figcaption>{{ field('caption') }}</figcaption>{% endif %}</figure>
+<figure class="base-image">{{ field('image') }}<figcaption>{{ field('caption') }}</figcaption></figure>
