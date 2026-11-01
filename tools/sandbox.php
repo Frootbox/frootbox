@@ -143,6 +143,22 @@ if ('prod' === $environment) {
     $commands[] = 'assets:publish';
 }
 
+// Own test content after the demo, only for the sandbox itself: seed files
+// from FROOTBOX_SANDBOX_SEED, separated by commas, relative to the repo.
+if ('sandbox' === $directory) {
+    foreach (array_filter(array_map(trim(...), explode(',', setting('FROOTBOX_SANDBOX_SEED') ?? '')), static fn(string $file): bool => '' !== $file) as $file) {
+        $path = str_starts_with($file, '/') ? $file : dirname(__DIR__) . '/' . $file;
+
+        if (!is_file($path)) {
+            fwrite(STDERR, "FROOTBOX_SANDBOX_SEED: there is no file {$file}.\n");
+
+            exit(1);
+        }
+
+        $commands[] = 'seed ' . escapeshellarg($path);
+    }
+}
+
 foreach ($commands as $command) {
     passthru(sprintf('%s %s %s', escapeshellarg(PHP_BINARY), escapeshellarg($sandbox . '/bin/frootbox'), $command), $exitCode);
 

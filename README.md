@@ -44,7 +44,10 @@ and shows its password once. To keep your own superuser after
 and set `FROOTBOX_ADMIN_EMAIL`, `FROOTBOX_ADMIN_NAME` and
 `FROOTBOX_ADMIN_PASSWORD` there; variables in the shell win. It runs the demo theme Bohnenglück in German
 and English with its demo website from
-`packages/themes/bohnenglueck/demo/site.yaml`. Its console is `sandbox/bin/frootbox`, for example
+`packages/themes/bohnenglueck/demo/site.yaml`. Own test content, e.g. a
+large website, follows after the demo: put seed files into `local/`
+(ignored by Git) and list them in `FROOTBOX_SANDBOX_SEED`, separated by
+commas. Its console is `sandbox/bin/frootbox`, for example
 `php sandbox/bin/frootbox about` or `php sandbox/bin/frootbox migrate`.
 
 Browser tests use [Playwright](https://playwright.dev) and need Node.js.

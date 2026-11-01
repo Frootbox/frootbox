@@ -13,6 +13,9 @@
 /sandbox/
 /sandbox.env
 
+# Own local test content, e.g. seed files of real websites
+/local/
+
 # Browser-Tests
 /node_modules/
 /var/
