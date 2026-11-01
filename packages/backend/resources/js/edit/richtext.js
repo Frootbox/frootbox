@@ -4,7 +4,7 @@
  * server (decision 0097). Loaded on the first focus of such a field, as
  * a chunk of its own.
  */
-import { Editor, mergeAttributes } from '@tiptap/core';
+import { Editor, Extension, mergeAttributes } from '@tiptap/core';
 import Heading from '@tiptap/extension-heading';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
@@ -91,11 +91,12 @@ const RankedHeading = Heading.extend({
                 }
             }
 
-            // Another rank or level makes a new element.
+            // Another rank, direction or level makes a new element.
             return {
                 dom,
                 contentDOM: dom,
-                update: (updated, next) => updated.type === node.type && rankOf(updated, this.options.levels) === rank && (levelOf(next) ?? level) === level,
+                update: (updated, next) => updated.type === node.type && rankOf(updated, this.options.levels) === rank
+                    && updated.attrs.dir === node.attrs.dir && (levelOf(next) ?? level) === level,
             };
         };
     },
@@ -130,6 +131,64 @@ const RankedHeading = Heading.extend({
         })];
     },
 });
+
+/** Blocks that may run the other way than the text around them (decision 0133). */
+const DIRECTIONAL = ['paragraph', 'heading', 'blockquote'];
+
+/**
+ * An optional "dir" on paragraphs, headings and quotes, stored only where
+ * a block runs the other way, e.g. an English quote in Arabic text.
+ */
+const BlockDirection = Extension.create({
+    name: 'blockDirection',
+
+    addGlobalAttributes() {
+        return [{
+            types: DIRECTIONAL,
+            attributes: {
+                dir: {
+                    default: null,
+                    parseHTML: (element) => (['ltr', 'rtl'].includes(element.getAttribute('dir')) ? element.getAttribute('dir') : null),
+                    renderHTML: (attributes) => (attributes.dir ? { dir: attributes.dir } : {}),
+                },
+            },
+        }];
+    },
+
+    addCommands() {
+        return {
+            // The other direction than the field, or back to the one of the field.
+            toggleBlockDirection: () => ({ editor, state, tr }) => {
+                const back = hasOtherDirection(editor);
+                const other = getComputedStyle(editor.view.dom).direction === 'rtl' ? 'ltr' : 'rtl';
+                const { from, to } = state.selection;
+
+                tr.doc.nodesBetween(from, to, (node, pos) => {
+                    if (DIRECTIONAL.includes(node.type.name)) {
+                        tr.setNodeMarkup(pos, undefined, { ...node.attrs, dir: back ? null : other });
+                    }
+                });
+
+                return true;
+            },
+        };
+    },
+});
+
+/** Whether the text at the cursor runs the other way than the field. */
+function hasOtherDirection(editor) {
+    const { $from } = editor.state.selection;
+
+    for (let depth = $from.depth; depth > 0; depth--) {
+        const node = $from.node(depth);
+
+        if (DIRECTIONAL.includes(node.type.name) && node.attrs.dir) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 /** The ranks a field offers, from data-fb-headings (3 if not given). */
 export function ranksOf(element) {
@@ -202,6 +261,7 @@ export function createEditor(element, value, { update, selection, blur }) {
             }),
             // Strg+Alt+1 to 3 and "# " to "### " give the ranks, Strg+Alt+0 text.
             ...ranks.length > 0 ? [RankedHeading.configure({ levels: ranks, flow })] : [],
+            BlockDirection,
         ],
         onUpdate: () => update(),
         // Each change may move the selection or what the toolbar shows active.

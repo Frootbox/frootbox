@@ -313,6 +313,7 @@ final readonly class EditorBar
             'bulletList' => $t('List'),
             'orderedList' => $t('Numbered list'),
             'quote' => $t('Quote'),
+            'otherDirection' => $t('Other writing direction'),
             'link' => $t('Link'),
             'linkText' => $t('Text'),
             'linkTarget' => $t('Address or page'),

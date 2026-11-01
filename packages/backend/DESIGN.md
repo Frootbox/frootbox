@@ -1006,7 +1006,11 @@ typed where it stands, nothing is replaced by a form.
   `<select>` "Text style" (`--fb-size-control-sm`, `--fb-radius-sm`,
   `--fb-text-sm`): "Text", "Heading", "Subheading", "Small heading", as
   many ranks as the field offers (decision 0129); the page decides the
-  level, the editor shows it like visitors see it.
+  level, the editor shows it like visitors see it. Last "Other writing
+  direction" (icon `direction`, pressed while the block has its own
+  `dir`): turns paragraphs, headings and quotes of the selection the
+  other way than the field, e.g. English in Arabic, and back (decision
+  0133).
 - **Link dialog**: a modal `<dialog>` of `--fb-size-dialog` over
   `--fb-backdrop`. Text (only for link fields), "Address or page" with a
   search in the page tree, results as buttons with title and path, a

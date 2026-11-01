@@ -14,6 +14,20 @@ const COLLAPSED = 'fb-editor-bar-collapsed';
 const THEME = 'fb-theme';
 const UNDO = 'fb-edit-undo:';
 
+
+/** Whether the block at the cursor runs the other way than its field (decision 0133). */
+function otherDirection(editor) {
+    const { $from } = editor.state.selection;
+
+    for (let depth = $from.depth; depth > 0; depth--) {
+        if ($from.node(depth).attrs.dir) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 /** What the bar marks: fields, blocks and empty areas (decision 0119). */
 const MARKED = '[data-fb-field], [data-fb-block], fb-area[data-fb-area]';
 
@@ -1509,6 +1523,8 @@ export class EditorBar extends LitElement {
             ['ordered', 'orderedList', labels.orderedList, () => run((chain) => chain.toggleOrderedList())],
             ['quote', 'blockquote', labels.quote, () => run((chain) => chain.toggleBlockquote())],
             ['link', 'link', labels.link, () => this.richLink(editor)],
+            // For a paragraph in another language, e.g. English in Arabic (decision 0133).
+            ['direction', () => otherDirection(editor), labels.otherDirection, () => run((chain) => chain.toggleBlockDirection())],
         ];
 
         return html`<div class="toolbar ${below ? 'below' : ''}" role="toolbar" aria-label=${labels.formatting}
@@ -1517,7 +1533,7 @@ export class EditorBar extends LitElement {
             @focusout=${(event) => this.toolbarLeft(event, editor)}>
             ${this.headingSelect(editor, run)}
             ${items.map(([name, active, label, action]) => {
-                const pressed = Array.isArray(active) ? editor.isActive(...active) : editor.isActive(active);
+                const pressed = typeof active === 'function' ? active() : Array.isArray(active) ? editor.isActive(...active) : editor.isActive(active);
 
                 return html`<button type="button" aria-label=${label} title=${label} aria-pressed=${pressed ? 'true' : 'false'}
                     @mousedown=${(event) => event.preventDefault()} @click=${action}>${icon(name)}</button>`;
