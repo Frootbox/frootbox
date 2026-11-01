@@ -273,6 +273,28 @@ final class RichTextTest extends TestCase
         ], array_map(strval(...), $read->violations));
     }
 
+    public function testLetsThePageDecideTheLevelOfARank(): void
+    {
+        $seen = [];
+        $richText = RichText::standard()->withNode(new Heading([1, 2, 3], static function (int $rank, string $content) use (&$seen): int {
+            $seen[] = $content;
+
+            return min(6, $rank + 2);
+        }));
+
+        $document = self::doc(
+            ['type' => 'heading', 'attrs' => ['level' => 1], 'content' => [self::text('Beans')]],
+            ['type' => 'heading', 'attrs' => ['level' => 2], 'content' => [self::text('From <Kenya>')]],
+            ['type' => 'heading', 'attrs' => ['level' => 4], 'content' => [self::text('Too deep')]],
+        );
+
+        $read = $richText->read($document);
+
+        self::assertSame('<h3 data-rank="1">Beans</h3><h4 data-rank="2">From &lt;Kenya&gt;</h4><h3 data-rank="1">Too deep</h3>', $read->toHtml());
+        self::assertSame(['Beans', 'From &lt;Kenya&gt;', 'Too deep'], $seen);
+        self::assertSame(['/content/2/attrs/level: must be one of 1, 2, 3'], array_map(strval(...), $read->violations));
+    }
+
     public function testAttributesCheckTheirValues(): void
     {
         self::assertSame([5, null], Attribute::integer(1, min: 0, max: 10)->clean(5));

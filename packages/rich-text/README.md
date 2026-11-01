@@ -79,6 +79,16 @@ $richText = RichText::standard()
     ->withMark(new Link(['https']));  // https links only
 ```
 
+With a function for the level, the stored level of a heading is a rank
+and the page decides the level, e.g. from where the text stands. The rank
+goes along as `data-rank` for the styles:
+
+```php
+$richText = RichText::standard()
+    ->withNode(new Heading([1, 2, 3], fn(int $rank, string $content): int => $rank + 1));
+// {"type": "heading", "attrs": {"level": 1}, …} becomes <h2 data-rank="1">…</h2>
+```
+
 Attributes check their values with `Attribute::integer()`,
 `Attribute::choice()`, `Attribute::text()` and `Attribute::url()`. Marks
 implement `MarkType` with `open()` and `close()`.
