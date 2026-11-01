@@ -202,6 +202,14 @@
 </div>
 
 <div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Design') }}</p>
+    <ul>
+        <li class="fb-list__item"><span class="fb-swatch" style="--fb-swatch: #8a4b2a" aria-hidden="true"></span><span class="fb-list__main"><span class="fb-list__title">Hauptfarbe</span><span class="fb-list__meta"><code>--color-primary</code></span></span><code>#8a4b2a</code></li>
+        <li class="fb-list__item"><span class="fb-swatch" style="--fb-swatch: #e8b04b" aria-hidden="true"></span><span class="fb-list__main"><span class="fb-list__title">Akzent</span><span class="fb-list__meta"><code>--color-accent</code></span></span><code>#e8b04b</code>{{ ui.badge('danger', t('Contrast {ratio} : 1', {ratio: 2.1|number_format(1, t('.'), '')})) }}</li>
+    </ul>
+</div>
+
+<div class="fb-design-sample">
     <p class="fb-design-sample__title">{{ t('Menu') }}</p>
     <ul class="fb-nav__list">
         <li><a class="fb-nav__item" href="#" aria-current="page">{{ icon('dashboard') }}<span>{{ t('Dashboard') }}</span></a></li>

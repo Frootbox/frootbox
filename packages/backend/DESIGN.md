@@ -671,6 +671,24 @@ In the editing mode the bar has its own dialog for images (`media.js`):
 the library with search and upload, the alternative text for the place
 and "Remove the image".
 
+### Swatch
+
+```html
+<span class="fb-swatch" style="--fb-swatch: #8a4b2a" aria-hidden="true"></span>
+```
+
+A colour of the website, e.g. on the screen "Design" (decision 0127).
+The colour comes from the data through `--fb-swatch`, never from a rule
+of the backend; the text next to it names the colour, so the swatch is
+hidden from screen readers.
+
+In the editing mode the bar has the panel "Design" (`design.js`): the
+tokens of the theme by type (colour picker with hex field, font select,
+slider with unit, choice), each change shows on the page at once and is
+saved into the draft a moment later. A colour read against another one
+warns below 4.5 : 1. The menu entry "Design" opens the website with
+`#fb-design`, which opens the panel.
+
 ### Time
 
 `{{ ui.time(page.publishAt) }}` writes a `<time datetime="…">` that the

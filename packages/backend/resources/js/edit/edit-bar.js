@@ -1,5 +1,6 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { Arranging, arrangingStyles } from './arranging.js';
+import { DesignPanel, designStyles } from './design.js';
 import { Editing } from './editing.js';
 import { icon } from './icons.js';
 import { MediaPicker, mediaStyles } from './media.js';
@@ -410,7 +411,7 @@ export class EditBar extends LitElement {
         @media (prefers-reduced-motion: reduce) {
             * { transition: none !important; }
         }
-    `, arrangingStyles, mediaStyles];
+    `, arrangingStyles, mediaStyles, designStyles];
 
     constructor() {
         super();
@@ -429,6 +430,7 @@ export class EditBar extends LitElement {
         this.editing = null;
         this.arranging = null;
         this.media = new MediaPicker(this);
+        this.design = new DesignPanel(this);
         this.frame = 0;
         this.redraw = () => {
             if (this.frame === 0 && (this.current || this.showAll || this.toolbar || this.arranging?.block)) {
@@ -476,6 +478,12 @@ export class EditBar extends LitElement {
             addEventListener('scroll', this.redraw, { passive: true, capture: true });
             addEventListener('resize', this.redraw, { passive: true });
         }
+
+        // The menu entry "Design" of the backend opens the website with the panel.
+        if (location.hash === '#fb-design' && this.config?.design && this.config.editing) {
+            history.replaceState(null, '', location.pathname + location.search);
+            this.updateComplete.then(() => this.design.show());
+        }
     }
 
     disconnectedCallback() {
@@ -487,6 +495,16 @@ export class EditBar extends LitElement {
         document.removeEventListener('focusin', this.onFocus, true);
         removeEventListener('scroll', this.redraw, { capture: true });
         removeEventListener('resize', this.redraw);
+    }
+
+    /** Panels end above the bar, whose height changes with its content. */
+    updated() {
+        const bar = this.renderRoot.querySelector('.bar, .round');
+        const height = bar ? `${Math.ceil(bar.getBoundingClientRect().height)}px` : '0px';
+
+        if (this.style.getPropertyValue('--bar-block-size') !== height) {
+            this.style.setProperty('--bar-block-size', height);
+        }
     }
 
     get marking() {
@@ -508,7 +526,7 @@ export class EditBar extends LitElement {
 
         const arranging = this.arranging;
 
-        return html`${this.outlines()}${arranging?.tools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}${this.media.dialog()}`;
+        return html`${this.outlines()}${arranging?.tools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.design.view()}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}${this.media.dialog()}`;
     }
 
     round() {
@@ -528,6 +546,7 @@ export class EditBar extends LitElement {
                 <span class="switch-track" aria-hidden="true"></span>${labels.edit}
             </button>
             ${editing ? this.pageControls(page) : nothing}
+            ${this.design.button()}
             ${page ? html`<a href=${page.backend}>${icon('external')}${labels.backend}</a>` : nothing}
             <button type="button" aria-label=${labels.collapse} title=${labels.collapse} aria-expanded="true"
                 @click=${() => this.collapse(true)}>${icon('collapse')}</button>

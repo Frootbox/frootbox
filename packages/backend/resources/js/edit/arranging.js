@@ -129,7 +129,8 @@ export const arrangingStyles = css`
 
     .panel {
         position: absolute;
-        inset-block: var(--fb-space-4);
+        inset-block-start: var(--fb-space-4);
+        inset-block-end: calc(var(--bar-block-size, 0px) + 2 * var(--fb-space-4));
         inset-inline-end: var(--fb-space-4);
         display: flex;
         flex-direction: column;
@@ -650,6 +651,7 @@ export class Arranging {
 
     async openPanel(element) {
         const id = element.dataset.fbBlock;
+        this.bar.design?.hide();
         this.panel = { id, title: element.dataset.fbTitle ?? '', loading: true, busy: false };
         this.bar.requestUpdate();
 

@@ -1,0 +1,13 @@
+/* A colour of the website, e.g. on the screen "Design" (decision 0127).
+   The colour itself comes from the data as --fb-swatch on the element. */
+
+.fb-swatch {
+    display: inline-block;
+    flex: none;
+    inline-size: var(--fb-size-icon);
+    block-size: var(--fb-size-icon);
+    border: var(--fb-size-border) solid var(--fb-border-strong);
+    border-radius: var(--fb-radius-sm);
+    background: var(--fb-swatch, transparent);
+    vertical-align: middle;
+}

@@ -81,6 +81,7 @@ final readonly class EditBar
             'pages' => $this->router->path('backend.pages'),
             'uploads' => $this->router->path('backend.uploads'),
             'mayUpload' => $this->permissions->can('media.create'),
+            'design' => $this->permissions->can('design.update') ? ['publish' => $this->permissions->can('design.publish'), 'discard' => $this->permissions->can('design.discard')] : null,
             'tokens' => $this->design->hostCss(),
             'brand' => ['name' => $this->design->brand()->name, 'logo' => $this->design->logo(), 'logoDark' => $this->design->logo(true)],
             'page' => null === $id ? null : $this->page($id, $event->head->language),
@@ -143,7 +144,7 @@ final readonly class EditBar
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, string|array<string, string>> Texts by key, the names of the system fonts by font
      */
     private function labels(): array
     {
@@ -191,6 +192,25 @@ final readonly class EditBar
             'newWindow' => $t('Open in a new window'),
             'apply' => $t('Apply'),
             'removeLink' => $t('Remove the link'),
+            'design' => $t('Design'),
+            'designTitle' => $t('Design of the website'),
+            'designDraft' => $t('Only you see the changes until you publish them.'),
+            'designLive' => $t('Visitors see this design.'),
+            'designColors' => $t('Colours'),
+            'designFonts' => $t('Fonts'),
+            'designSizes' => $t('Sizes'),
+            'designMore' => $t('More'),
+            'designReset' => $t('Back to the value of the theme'),
+            'designResetOf' => $t('Reset {token}'),
+            'designHex' => $t('Hex value of {token}'),
+            'designContrast' => $t('Only {ratio} : 1 against “{other}”. Text needs at least 4.5 : 1 to be easy to read.'),
+            'designPublish' => $t('Publish the design'),
+            'designDiscard' => $t('Discard the changes'),
+            'designDiscardConfirm' => $t('Discard all changes to the design?'),
+            'designIsPublished' => $t('The design is published.'),
+            'designIsDiscarded' => $t('The changes to the design are discarded.'),
+            'designNone' => $t('The theme has no settings for the design.'),
+            'fontNames' => ['sans' => $t('Sans-serif'), 'serif' => $t('Serif'), 'rounded' => $t('Rounded'), 'mono' => $t('Monospace')],
             'chooseImage' => $t('Choose an image'),
             'mediaLibrary' => $t('Media'),
             'upload' => $t('Upload'),

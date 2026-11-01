@@ -22,6 +22,7 @@ use Frootbox\Backend\Http\Pages\NewPageHandler;
 use Frootbox\Backend\Http\Pages\PagesHandler;
 use Frootbox\Backend\Http\QueryHandler;
 use Frootbox\Backend\Http\Redirects\RedirectsHandler;
+use Frootbox\Backend\Http\Theme\ThemeHandler;
 use Frootbox\Backend\Http\Users\RoleHandler;
 use Frootbox\Backend\Http\Users\RolesHandler;
 use Frootbox\Backend\Http\Users\UserHandler;
@@ -64,6 +65,7 @@ final class BackendExtension implements Extension
             ->get('/media/{id:' . self::ULID . '}', MediaHandler::class, 'backend.media.show')
             ->post('/uploads', UploadHandler::class, 'backend.uploads')
             ->get('/redirects', RedirectsHandler::class, 'backend.redirects')
+            ->get('/theme', ThemeHandler::class, 'backend.theme')
             ->get('/users', UsersHandler::class, 'backend.users')
             ->get('/users/new', UserHandler::class, 'backend.users.new')
             ->get('/users/{id:\d+}', UserHandler::class, 'backend.users.show')
@@ -80,6 +82,7 @@ final class BackendExtension implements Extension
         $registry->add(Screen::class, new Screen('Dashboard', 'backend.dashboard', Screen::CONTENT, 'dashboard', order: 0));
         $registry->add(Screen::class, new Screen('Pages', 'backend.pages', Screen::CONTENT, 'pages', PagesHandler::PERMISSION, order: 10));
         $registry->add(Screen::class, new Screen('Media', 'backend.media', Screen::CONTENT, 'image', MediaHandler::PERMISSION, order: 20));
+        $registry->add(Screen::class, new Screen('Design', 'backend.theme', Screen::WEBSITE, 'palette', ThemeHandler::PERMISSION, order: 10));
         $registry->add(Screen::class, new Screen('Navigations', 'backend.navigations', Screen::WEBSITE, 'navigation', NavigationsHandler::PERMISSION, order: 20));
         $registry->add(Screen::class, new Screen('Redirects', 'backend.redirects', Screen::WEBSITE, 'redirect', RedirectsHandler::PERMISSION, order: 30));
         $registry->add(Screen::class, new Screen('Users', 'backend.users', Screen::ADMINISTRATION, 'users', UsersHandler::PERMISSION, order: 100));

@@ -1,0 +1,120 @@
+{#- The design of the website (decision 0127): the values now, the draft and earlier versions. Changing happens on the website. -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Design') }}{% endblock %}
+
+{% block content %}
+{% set refresh = 'design-status design-values design-versions' %}
+{% set groups = {color: t('Colours'), font: t('Fonts'), length: t('Sizes'), choice: t('More')} %}
+{% set fonts = {sans: t('Sans-serif'), serif: t('Serif'), rounded: t('Rounded'), mono: t('Monospace')} %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Design') }}</h1>
+            <p class="fb-muted">{{ design.theme ? t('Colours, fonts and sizes of the theme {theme}. You change them on the website and see the effect right away.', {theme: design.theme}) : t('No theme is active.') }}</p>
+        </div>
+        {% if design.tokens is not empty and can('design.update') %}
+        <form method="post" action="{{ path('backend.edit-mode') }}">
+            <input type="hidden" name="_csrf" value="{{ fb.csrf }}">
+            <input type="hidden" name="on" value="1">
+            <input type="hidden" name="next" value="{{ website }}">
+            {{ ui.button({label: t('Design on the website'), type: 'submit', icon: 'palette'}) }}
+        </form>
+        {% endif %}
+    </header>
+
+    <section class="fb-card" id="design-status" aria-labelledby="design-status-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="design-status-title" tabindex="-1" data-fb-focus>{{ t('Status') }}</h2>
+            {{ ui.status(design.draft ? (design.version ? 'changed' : 'draft') : 'published') }}
+        </div>
+        <div class="fb-card__body fb-stack">
+            <p>{{ design.draft ? t('There are changes visitors do not see yet.') : (design.version ? t('Visitors see version {number}.', {number: design.version}) : t('Visitors see the design of the theme.')) }}</p>
+            {% if design.draft %}
+            <div class="fb-cluster">
+                {% if can('design.publish') %}
+                <fb-form action="design.publish" refresh="{{ refresh }}" done="{{ t('The design is published.') }}">
+                    <form novalidate>{{ ui.button({label: t('Publish the design'), type: 'submit'}) }}</form>
+                </fb-form>
+                {% endif %}
+                {% if can('design.discard') %}
+                {{ ui.button({label: t('Discard the changes'), variant: 'danger', attrs: {commandfor: 'design-discard', command: 'show-modal'}}) }}
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="fb-card" id="design-values" aria-labelledby="design-values-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="design-values-title">{{ design.draft ? t('Values in the draft') : t('Values') }}</h2>
+        </div>
+        {% if design.tokens is empty %}
+            {{ ui.empty({icon: 'palette', title: t('The theme has no settings for the design.'), text: t('A theme describes in its frootbox.yaml which tokens editors may change.')}) }}
+        {% else %}
+        <ul>
+            {%- for token in design.tokens %}
+            <li class="fb-list__item">
+                {% if token.type == 'color' %}<span class="fb-swatch" style="--fb-swatch: {{ token.css }}" aria-hidden="true"></span>{% endif %}
+                <span class="fb-list__main">
+                    <span class="fb-list__title">{{ token.label }}</span>
+                    <span class="fb-list__meta">{{ groups[token.type] }} · <code>--{{ token.name }}</code></span>
+                </span>
+                <span>{% if token.type == 'font' %}{{ fonts[token.value] ?? (token.options|filter(option => option.value == token.value)|first).label ?? token.value }}{% elseif token.type == 'choice' %}{{ (token.options|filter(option => option.value == token.value)|first).label ?? token.value }}{% else %}<code>{{ token.value }}</code>{% endif %}</span>
+                {% if token.value != token.published %}{{ ui.badge('changed', t('Changed')) }}{% endif %}
+                {% if token.contrast and not token.contrast.enough %}{{ ui.badge('danger', t('Contrast {ratio} : 1', {ratio: token.contrast.ratio|number_format(1, t('.'), '')})) }}{% endif %}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+    </section>
+
+    {% if versions is not null %}
+    <section class="fb-card" id="design-versions" aria-labelledby="design-versions-title">
+        <div class="fb-card__header"><h2 class="fb-heading-4" id="design-versions-title">{{ t('Versions') }}</h2></div>
+        {% if versions is empty %}
+        <div class="fb-card__body"><p class="fb-muted">{{ t('Not published yet.') }}</p></div>
+        {% else %}
+        <ul>
+            {%- for version in versions %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title">{{ t('Version {number}', {number: version.version}) }}</span>
+                    <span class="fb-list__meta">{{ ui.time(version.publishedAt) }}</span>
+                </span>
+                {% if version.current %}
+                    {{ ui.badge('neutral', t('Online')) }}
+                {% elseif can('design.restore') %}
+                <fb-form action="design.restore" refresh="{{ refresh }}" done="{{ t('Version {number} is in the draft now.', {number: version.version}) }}">
+                    <form novalidate>
+                        <input type="hidden" name="version" value="{{ version.version }}" data-type="number">
+                        {{ ui.button({label: t('Restore'), type: 'submit', variant: 'ghost', small: true, icon: 'restore', attrs: {'aria-label': t('Restore version {number}', {number: version.version})}}) }}
+                    </form>
+                </fb-form>
+                {% endif %}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+    </section>
+    {% endif %}
+</div>
+
+{% if can('design.discard') %}
+<dialog class="fb-dialog" id="design-discard" aria-labelledby="design-discard-title">
+    <fb-form action="design.discard" refresh="{{ refresh }}" done="{{ t('The changes to the design are discarded.') }}">
+        <form novalidate>
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="design-discard-title">{{ t('Discard all changes to the design?') }}</h2>
+                <p>{{ t('The website keeps the published design.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Keep the changes'), variant: 'secondary', attrs: {commandfor: 'design-discard', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Discard'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+{% endblock %}

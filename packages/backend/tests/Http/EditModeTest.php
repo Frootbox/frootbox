@@ -18,6 +18,7 @@ use Frootbox\Core\Action\Context;
 use Frootbox\Core\Auth\AuthenticationMiddleware;
 use Frootbox\Core\Cache\PageCache;
 use Frootbox\Core\Config\Environment;
+use Frootbox\Core\Design\UpdateDesign;
 use Frootbox\Core\Extension\Extensions;
 use Frootbox\Core\Page\CreatePage;
 use Frootbox\Core\Page\EditMode;
@@ -125,6 +126,20 @@ final class EditModeTest extends BackendTestCase
         ], $config['page']);
     }
 
+    public function testShowsTheDraftOfTheDesignInTheMode(): void
+    {
+        $this->runner()->run(new UpdateDesign(['radius' => '12px']), Context::system());
+
+        self::assertStringContainsString('--radius:4px;', $this->html($this->request('GET', '/ueber-uns')), 'Guests see the published design.');
+        $editing = $this->html($this->page('/ueber-uns'));
+        self::assertStringContainsString('--radius:12px;', $editing);
+
+        $config = $this->bar($editing);
+        self::assertSame(['publish' => true, 'discard' => true], $config['design']);
+        self::assertSame('Design', $config['labels']['design']);
+        self::assertSame(['sans' => 'Serifenlos', 'serif' => 'Mit Serifen', 'rounded' => 'Abgerundet', 'mono' => 'Gleichbreit'], $config['labels']['fontNames']);
+    }
+
     public function testShowsWhatAnEditorMayDo(): void
     {
         $id = $this->createUser('jane@example.org', []);
@@ -135,6 +150,7 @@ final class EditModeTest extends BackendTestCase
         $start = $this->bar($this->html($this->page('/')));
         self::assertFalse($start['marking'], 'Outside the branch nothing is marked.');
         self::assertNull($start['page'], 'And the bar shows nothing of the page.');
+        self::assertNull($start['design'], 'The design is one for the website, a branch is not enough.');
 
         $config = $this->bar($this->html($this->page('/ueber-uns/team')));
         self::assertTrue($config['marking']);
@@ -194,7 +210,7 @@ final class EditModeTest extends BackendTestCase
     }
 
     /**
-     * @return array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, tokens: string, labels: array<string, string>, page: array<string, mixed>|null}
+     * @return array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null}
      */
     private function bar(string $html): array
     {
@@ -202,7 +218,7 @@ final class EditModeTest extends BackendTestCase
         $config = json_decode($match[1], true, flags: \JSON_THROW_ON_ERROR);
         self::assertIsArray($config);
 
-        /** @var array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, tokens: string, labels: array<string, string>, page: array<string, mixed>|null} $config */
+        /** @var array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null} $config */
         return $config;
     }
 

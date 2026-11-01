@@ -560,3 +560,51 @@ Alternative text for this place: Alternativtext für diese Stelle
 Remove the image: Bild entfernen
 Change the image: Bild ändern
 No image: Kein Bild
+
+# Design (decision 0127)
+Design: Design
+Design of the website: Design der Website
+Colours: Farben
+Fonts: Schriften
+Sizes: Maße
+More: Weiteres
+Sans-serif: Serifenlos
+Serif: Mit Serifen
+Rounded: Abgerundet
+Monospace: Gleichbreit
+'Colours, fonts and sizes of the theme {theme}. You change them on the website and see the effect right away.': 'Farben, Schriften und Maße des Themes {theme}. Du änderst sie auf der Website und siehst sofort, wie es wirkt.'
+No theme is active.: Es ist kein Theme aktiv.
+Design on the website: Auf der Website gestalten
+There are changes visitors do not see yet.: Es gibt Änderungen, die Besucher noch nicht sehen.
+Visitors see version {number}.: Besucher sehen Version {number}.
+Visitors see the design of the theme.: Besucher sehen das Design des Themes.
+The design is published.: Das Design ist veröffentlicht.
+Publish the design: Design veröffentlichen
+Discard the changes: Änderungen verwerfen
+Values in the draft: Werte im Entwurf
+Values: Werte
+The theme has no settings for the design.: Das Theme hat keine Einstellungen für das Design.
+A theme describes in its frootbox.yaml which tokens editors may change.: Ein Theme beschreibt in seiner frootbox.yaml, welche Tokens Redakteure ändern dürfen.
+'Contrast {ratio} : 1': 'Kontrast {ratio} : 1'
+# The decimal point in numbers.
+'.': ','
+The changes to the design are discarded.: Die Änderungen am Design sind verworfen.
+Discard all changes to the design?: Alle Änderungen am Design verwerfen?
+The website keeps the published design.: Die Website behält das veröffentlichte Design.
+Keep the changes: Änderungen behalten
+Only you see the changes until you publish them.: Nur Du siehst die Änderungen, bis Du sie veröffentlichst.
+Visitors see this design.: Besucher sehen dieses Design.
+Back to the value of the theme: Zurück zum Wert des Themes
+Reset {token}: '{token} zurücksetzen'
+Hex value of {token}: Hex-Wert von {token}
+'Only {ratio} : 1 against “{other}”. Text needs at least 4.5 : 1 to be easy to read.': 'Nur {ratio} : 1 zu „{other}“. Text braucht mindestens 4,5 : 1, damit er gut lesbar ist.'
+'must be a colour like #1d4ed8.': 'muss eine Farbe wie #1d4ed8 sein.'
+'must be one of the fonts {fonts}.': 'muss eine der Schriften {fonts} sein.'
+'must be one of {options}.': 'muss eins von {options} sein.'
+'must be a number in {unit}, e.g. 12{unit}.': 'muss eine Zahl in {unit} sein, z. B. 12{unit}.'
+'must be between {min} and {max} {unit}.': 'muss zwischen {min} und {max} {unit} liegen.'
+'The theme has no token "{name}" to change.': 'Das Theme hat keinen änderbaren Token „{name}“.'
+The design has no changes to publish.: Das Design hat keine Änderungen zum Veröffentlichen.
+The design has no changes to discard.: Das Design hat keine Änderungen zum Verwerfen.
+The design has no version {version}.: Das Design hat keine Version {version}.
+'No theme is active, set one in config/app.yaml.': 'Es ist kein Theme aktiv, trag eins in config/app.yaml ein.'
