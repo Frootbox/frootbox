@@ -8,8 +8,8 @@ options:
     label: Breite
     choices: { narrow: Schmal, wide: Breit }
 fields:
-  title: { type: headline, optional: true }
-  body: { type: richtext }
+  title: { type: headline, label: Überschrift, optional: true }
+  body: { type: richtext, label: Text }
 #}
 <section class="text text--{{ options.width }}"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
   {% if value('title') %}<h2>{{ field('title') }}</h2>{% endif %}

@@ -2,9 +2,9 @@
 title: Zitat
 description: Ein Kundenstimme oder Leitsatz, groß gesetzt.
 fields:
-  quote: { type: text, multiline: true }
-  author: { type: headline }
-  role: { type: headline, optional: true }
+  quote: { type: text, label: Zitat, multiline: true }
+  author: { type: headline, label: Name }
+  role: { type: headline, label: Rolle, optional: true }
 #}
 <figure class="quote">
   <blockquote><p>{{ field('quote') }}</p></blockquote>

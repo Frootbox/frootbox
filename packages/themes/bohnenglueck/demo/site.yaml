@@ -422,3 +422,17 @@
 
 # The old shop moved: /shop leads to the coffees.
 - redirect.create: { path: /shop, target: 'page:${coffees.id}' }
+
+# Name and footer of the website, the same on every page (decision 0128).
+- site.update:
+    language: de
+    fields:
+      brand: Bohnenglück
+      address: Bohnenglück Kaffeerösterei · Hafenstraße 12 · 20457 Hamburg
+      note: Gebaut mit Frootbox 2 – Demo-Theme Bohnenglück.
+- site.update:
+    language: en
+    fields:
+      address: Bohnenglück coffee roastery · Hafenstraße 12 · 20457 Hamburg, Germany
+      note: Built with Frootbox 2 – demo theme Bohnenglück.
+- site.publish: {}

@@ -1,8 +1,8 @@
 title: Hero
 description: Großer Einstieg mit Überschrift, Text und bis zu zwei Buttons.
 fields:
-  eyebrow: { type: headline, optional: true, maxLength: 60 }
-  title: { type: headline, maxLength: 120 }
-  text: { type: text, multiline: true, optional: true }
-  button: { type: link, optional: true }
-  secondary: { type: link, optional: true }
+  eyebrow: { type: headline, label: Dachzeile, optional: true, maxLength: 60 }
+  title: { type: headline, label: Überschrift, maxLength: 120 }
+  text: { type: text, label: Text, multiline: true, optional: true }
+  button: { type: link, label: Button, optional: true }
+  secondary: { type: link, label: Zweiter Button, optional: true }

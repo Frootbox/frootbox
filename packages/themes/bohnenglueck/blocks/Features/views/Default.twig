@@ -9,16 +9,17 @@ options:
     choices: { 2: Zwei, 3: Drei, 4: Vier }
     default: 3
 fields:
-  title: { type: headline }
-  intro: { type: text, optional: true }
+  title: { type: headline, label: Überschrift }
+  intro: { type: text, label: Einleitung, optional: true }
   items:
     type: list
+    label: Punkte
     min: 1
     max: 8
     fields:
-      icon: { type: headline, maxLength: 4, description: Ein Emoji }
-      title: { type: headline }
-      text: { type: text, multiline: true }
+      icon: { type: headline, label: Symbol, maxLength: 4, description: Ein Emoji }
+      title: { type: headline, label: Titel }
+      text: { type: text, label: Text, multiline: true }
 #}
 <section class="section features"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
   <div class="wrap">

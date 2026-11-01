@@ -8,6 +8,11 @@ theme:
       options:
         button: { type: boolean, label: Als Button }
     footer: Footer
+  # Content that is the same on every page (decision 0128).
+  fields:
+    brand: { type: headline, label: Name der Website, maxLength: 60 }
+    address: { type: text, label: Adresse im Footer, maxLength: 200 }
+    note: { type: text, label: Hinweis im Footer, maxLength: 200 }
   tokens:
     color:
       bg: '#fbf7f2'

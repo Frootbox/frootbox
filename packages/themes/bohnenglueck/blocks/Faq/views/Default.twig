@@ -7,13 +7,14 @@ options:
     type: boolean
     label: Erste Antwort geöffnet
 fields:
-  title: { type: headline }
+  title: { type: headline, label: Überschrift }
   items:
     type: list
+    label: Fragen
     min: 1
     fields:
-      question: { type: headline }
-      answer: { type: richtext }
+      question: { type: headline, label: Frage }
+      answer: { type: richtext, label: Antwort }
 #}
 <section class="section faq"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
   <div class="wrap faq__inner">
