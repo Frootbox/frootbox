@@ -16,8 +16,14 @@ const unique = () => `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
  * The layout needs a heading before publishing; until the editing mode
  * (phase 4) the test fills it through the action.
  */
-async function createPage(page: Page, title: string): Promise<{ id: string; slug: string }> {
-    await signIn(page, '/cms/pages/new');
+async function createPage(page: Page, title: string, parent: string | null = null): Promise<{ id: string; slug: string }> {
+    // A page below another one is made by someone already signed in.
+    if (parent === null) {
+        await signIn(page, '/cms/pages/new');
+    } else {
+        await page.goto(`/cms/pages/new?parent=${parent}`);
+    }
+
     // The address follows the title once the scripts run.
     await page.waitForLoadState('domcontentloaded');
     await page.getByLabel('Titel').fill(title);
@@ -75,18 +81,27 @@ test('creates, publishes and restores a page', async ({ page }) => {
 });
 
 test('moves a page with the keyboard', async ({ page }) => {
-    const title = `Verschieben ${unique()}`;
-    await createPage(page, title);
+    // In a branch of its own: tests running at the same time add pages
+    // below the start page, which must not get a subpage from this one.
+    const name = unique();
+    const branch = await createPage(page, `Verschieben ${name}`);
+    await createPage(page, `Erste ${name}`, branch.id);
+    await createPage(page, `Zweite ${name}`, branch.id);
+    const link = () => page.locator('#page-tree').getByRole('link', { name: new RegExp(`Zweite ${name}`) });
+    // The keys work once the script of the tree runs.
+    await page.waitForFunction(() => customElements.get('fb-tree') !== undefined);
 
-    const link = page.locator('#page-tree').getByRole('link', { name: new RegExp(title) });
-    await link.press('Alt+ArrowUp');
+    await link().press('Alt+ArrowUp');
+    await expect(page.locator('.fb-toast').last()).toContainText(`„Zweite ${name}“ steht jetzt unter „Verschieben ${name}“, an Stelle 1 von 2`);
+    await expect(link()).toBeFocused();
 
-    await expect(page.locator('.fb-toast').last()).toContainText(`„${title}“ steht jetzt unter „Bohnenglück“`);
-    await expect(page.locator('#page-tree').getByRole('link', { name: new RegExp(title) })).toBeFocused();
+    await page.keyboard.press('Alt+ArrowDown');
+    await expect(page.locator('.fb-toast').last()).toContainText(`„Zweite ${name}“ steht jetzt unter „Verschieben ${name}“, an Stelle 2 von 2`);
+    await expect(link()).toBeFocused();
 
     await page.keyboard.press('Alt+ArrowRight');
-    await expect(page.locator('.fb-toast').last()).toContainText(`„${title}“ steht jetzt unter`);
-    await expect(page.locator('#page-tree').getByRole('link', { name: new RegExp(title) })).toBeFocused();
+    await expect(page.locator('.fb-toast').last()).toContainText(`„Zweite ${name}“ steht jetzt unter „Erste ${name}“`);
+    await expect(link()).toBeFocused();
 });
 
 test('locks a page for visitors right away', async ({ page }) => {

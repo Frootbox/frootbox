@@ -41,7 +41,7 @@
         "design-doc": "@php tools/design-doc.php",
         "serve": [
             "Composer\\Config::disableProcessTimeout",
-            "@php -S localhost:8000 -t sandbox/public"
+            "@php -S localhost:8000 -t sandbox/public sandbox/public/index.php"
         ],
         "check": [
             "@cs",

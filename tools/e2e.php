@@ -51,10 +51,11 @@ if (0 !== $exitCode) {
 // Several workers, as the tests run in parallel. The requests go to a log.
 putenv('PHP_CLI_SERVER_WORKERS=4');
 passthru(sprintf(
-    '%s -S %s -t %s 2>> %s',
+    '%s -S %s -t %s %s 2>> %s',
     escapeshellarg(PHP_BINARY),
     escapeshellarg($listen),
     escapeshellarg($root . '/var/e2e/public'),
+    escapeshellarg($root . '/var/e2e/public/index.php'),
     escapeshellarg($root . '/var/e2e/var/log/server.log'),
 ), $exitCode);
 

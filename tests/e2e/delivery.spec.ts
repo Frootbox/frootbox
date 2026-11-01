@@ -40,16 +40,21 @@ test('answers 404 for unknown pages', async ({ page }) => {
 });
 
 test('caches pages for visitors', async ({ request }) => {
-    // The cache keeps each host apart: a host of its own starts empty.
-    const headers = { Host: `cache-${Date.now()}.test:8100` };
+    // Any change clears the cache, and the other tests change pages at the
+    // same time. So a pair of requests may start over, each time on a host
+    // of its own: the cache keeps hosts apart, a new one starts empty.
+    let headers = {};
 
-    const first = await request.get('/kontakt', { headers });
-    expect(first.status()).toBe(200);
-    expect(first.headers()['x-frootbox-cache']).toBe('miss');
+    await expect(async () => {
+        headers = { Host: `cache-${Date.now()}-${Math.floor(Math.random() * 1000)}.test:8100` };
+        const first = await request.get('/kontakt', { headers });
+        expect(first.status()).toBe(200);
+        expect(first.headers()['x-frootbox-cache']).toBe('miss');
 
-    const second = await request.get('/kontakt?utm_source=test', { headers });
-    expect(second.headers()['x-frootbox-cache']).toBe('hit');
-    expect(await second.text()).toBe(await first.text());
+        const second = await request.get('/kontakt?utm_source=test', { headers });
+        expect(second.headers()['x-frootbox-cache']).toBe('hit');
+        expect(await second.text()).toBe(await first.text());
+    }).toPass({ timeout: 15_000 });
 
     const signedIn = await request.get('/kontakt', { headers: { ...headers, Authorization: 'Bearer test' } });
     expect(signedIn.headers()['x-frootbox-cache']).toBeUndefined();
