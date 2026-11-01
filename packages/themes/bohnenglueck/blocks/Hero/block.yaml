@@ -1,5 +1,7 @@
 title: Hero
 description: Großer Einstieg mit Überschrift, Text und bis zu zwei Buttons.
+group: header
+keywords: [Einstieg, Bühne, Kopfbereich]
 fields:
   eyebrow: { type: headline, label: Dachzeile, optional: true, maxLength: 60 }
   title: { type: headline, label: Überschrift, maxLength: 120, placeholder: "Worum geht es auf dieser Seite?" }

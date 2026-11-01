@@ -1,5 +1,7 @@
 title: Zwei Spalten
 description: Zwei Bereiche nebeneinander, auf schmalen Bildschirmen untereinander.
+group: structure
+keywords: [Spalten, nebeneinander]
 areas:
   left: { label: Links, allow: [Text, Quote] }
   right: { label: Rechts, allow: [Text, Quote] }
