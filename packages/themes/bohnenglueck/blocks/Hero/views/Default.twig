@@ -9,12 +9,12 @@ options:
 #}
 <section class="hero hero--center hero--{{ options.tone }}"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
   <div class="wrap hero__inner">
-    {% if value('eyebrow') %}<p class="eyebrow">{{ field('eyebrow') }}</p>{% endif %}
+    <p class="eyebrow">{{ field('eyebrow') }}</p>
     <h1>{{ field('title') }}</h1>
-    {% if value('text') %}<p class="hero__text">{{ field('text') }}</p>{% endif %}
+    <p class="hero__text">{{ field('text') }}</p>
     <div class="hero__actions">
-      {% if value('button') %}<span class="button-field">{{ field('button') }}</span>{% endif %}
-      {% if value('secondary') %}<span class="button-field button-field--ghost">{{ field('secondary') }}</span>{% endif %}
+      <span class="button-field">{{ field('button') }}</span>
+      <span class="button-field button-field--ghost">{{ field('secondary') }}</span>
     </div>
   </div>
 </section>

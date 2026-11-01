@@ -18,13 +18,13 @@ fields:
     max: 8
     start: 3
     fields:
-      icon: { type: headline, label: Symbol, maxLength: 4, description: Ein Emoji, placeholder: "✨" }
+      icon: { type: headline, label: Symbol, optional: true, maxLength: 4, description: Ein Emoji, placeholder: "✨" }
       title: { type: headline, label: Titel, placeholder: "Ein Vorteil in wenigen Worten" }
-      text: { type: text, label: Text, multiline: true, placeholder: "Ein, zwei Sätze, was dahintersteckt" }
+      text: { type: text, label: Text, multiline: true, optional: true, placeholder: "Ein, zwei Sätze, was dahintersteckt" }
 #}
 <section class="section features"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
   <div class="wrap">
-    <header class="section__head"><h2>{{ field('title') }}</h2>{% if value('intro') %}<p>{{ field('intro') }}</p>{% endif %}</header>
+    <header class="section__head"><h2>{{ field('title') }}</h2><p>{{ field('intro') }}</p></header>
     <ul class="features__grid" style="--columns: {{ options.columns }}">
       {% for item in field('items') %}
         <li class="features__item"><span class="features__icon" aria-hidden="true">{{ item.field('icon') }}</span><h3>{{ item.field('title') }}</h3><p>{{ item.field('text') }}</p></li>

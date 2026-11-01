@@ -10,7 +10,7 @@ fields:
 #}
 <section class="section"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
   <div class="wrap cta">
-    <div><h2>{{ field('title') }}</h2>{% if value('text') %}<p>{{ field('text') }}</p>{% endif %}</div>
+    <div><h2>{{ field('title') }}</h2><p>{{ field('text') }}</p></div>
     <div class="button-field">{{ field('button') }}</div>
   </div>
 </section>

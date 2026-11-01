@@ -12,6 +12,6 @@ fields:
   body: { type: richtext, label: Text, placeholder: "Schreib hier Deinen Text" }
 #}
 <section class="text text--{{ options.width }}"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
-  {% if value('title') %}<h2>{{ field('title') }}</h2>{% endif %}
+  <h2>{{ field('title') }}</h2>
   <div class="text__body">{{ field('body') }}</div>
 </section>
