@@ -189,6 +189,13 @@ fields:
       title: { type: headline, placeholder: "A benefit in a few words" }
 ```
 
+Print fields without a condition, e.g. `<p>{{ field('text') }}</p>`.
+While editing, an empty field keeps its element and shows its placeholder.
+Visitors get neither the empty field nor an element that held only empty
+fields. Use `value()` for attributes and conditions. Entries of a list
+that nobody filled are left out for visitors and are not checked on
+publishing, unless the list needs them to reach its `min`.
+
 `bin/frootbox blocks` lists what is available, `blocks:check` checks all
 schemas and templates, `cache:clear` empties `var/cache` after a deployment.
 
