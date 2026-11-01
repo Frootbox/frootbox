@@ -712,3 +712,8 @@ The fields of the website have no changes to discard.: Die Inhalte der Website h
 "Try again": "Noch einmal versuchen"
 "Technical details": "Technische Details"
 "Only in development": "Nur im Entwicklungsmodus"
+# Buttons on the tab of a field (decision 0150)
+'Edit the link': 'Link bearbeiten'
+'Open the link': 'Link öffnen'
+'Open the link, also with Ctrl-click or Cmd-click on it': 'Link öffnen, auch mit Strg- oder Cmd-Klick darauf'
+'Field {field}': 'Feld {field}'

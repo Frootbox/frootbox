@@ -2,6 +2,7 @@ import { LitElement, css, html, nothing } from 'lit';
 import { Arranging, arrangingStyles } from './arranging.js';
 import { DesignPanel, designStyles } from './design.js';
 import { Editing } from './editing.js';
+import { follow, registerFieldTools, toolsOf } from './field-tools.js';
 import { icon } from './icons.js';
 import { MediaPicker, mediaStyles } from './media.js';
 import { placesOf } from './problems.js';
@@ -56,6 +57,15 @@ function isAddress(text) {
     return /^([a-z][a-z0-9+.-]*:|\/|#|\?)/i.test(text) || isDomain(text);
 }
 
+/** The address typed into the link dialog as a URL, "example.com" as https. */
+function addressUrl(text) {
+    try {
+        return new URL(isDomain(text) && !/^[a-z][a-z0-9+.-]*:/i.test(text) ? `https://${text}` : text, location.href);
+    } catch {
+        return null;
+    }
+}
+
 function isDomain(text) {
     return /^[\w-]+(\.[\w-]+)+(\/\S*)?$/.test(text);
 }
@@ -101,6 +111,11 @@ function kindOf(element) {
  * puts into the head.
  */
 export class EditorBar extends LitElement {
+    /** Buttons for the tab of a field type, e.g. of an extension (decision 0150). */
+    static fieldTools(type, factory) {
+        registerFieldTools(type, factory);
+    }
+
     static properties = {
         config: { attribute: false },
         collapsed: { state: true },
@@ -360,6 +375,37 @@ export class EditorBar extends LitElement {
             white-space: nowrap;
         }
 
+        /* The tab of the field under the pointer or with the focus carries its buttons (decision 0150). */
+        .label.tools {
+            display: flex;
+            align-items: center;
+            padding: 0;
+            pointer-events: auto;
+        }
+
+        .label.tools > span { padding-inline: var(--fb-space-2); }
+
+        .label.tools button {
+            display: grid;
+            place-items: center;
+            min-inline-size: var(--fb-space-6);
+            min-block-size: var(--fb-space-6);
+            padding: 0;
+            border: 0;
+            border-inline-start: var(--fb-size-border) solid var(--fb-accent-hover);
+            border-radius: 0;
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        .label.tools button:last-child { border-start-end-radius: var(--fb-radius-sm); }
+        .label.tools button:hover { background: var(--fb-accent-hover); }
+        .label.tools button:focus-visible { outline-offset: calc(-1 * var(--fb-size-focus)); outline-color: var(--fb-on-accent); }
+        .label.tools button[disabled] { cursor: default; opacity: 0.5; }
+        .label.tools .icon { inline-size: var(--fb-size-icon-sm); block-size: var(--fb-size-icon-sm); }
+        .outline.below .label.tools button:last-child { border-start-end-radius: 0; border-end-end-radius: var(--fb-radius-sm); }
+
         .outline.below .label {
             inset-block: 100% auto;
             border-radius: 0 0 var(--fb-radius-sm) var(--fb-radius-sm);
@@ -513,6 +559,7 @@ export class EditorBar extends LitElement {
         }
 
         .actions { display: flex; flex-wrap: wrap; gap: var(--fb-space-2); justify-content: flex-end; }
+        .actions .open { margin-inline-end: auto; }
 
         /*
          * On a phone the bar stays one line: the status is a dot like in
@@ -1020,7 +1067,7 @@ export class EditorBar extends LitElement {
 
             return html`<div class="outline ${below ? 'below' : ''}" data-kind=${kindOf(element)}
                 style="inset-block-start: ${rect.top}px; inset-inline-start: ${rect.left}px; inline-size: ${rect.width}px; block-size: ${rect.height}px">
-                <span class="label">${labelOf(element)}</span>
+                ${this.fieldTab(element, labelOf(element))}
             </div>`;
         })}`;
     }
@@ -1040,12 +1087,65 @@ export class EditorBar extends LitElement {
 
             return html`<div class="outline ${rect.top < 24 ? 'below' : ''}" data-kind="problem"
                 style="inset-block-start: ${rect.top}px; inset-inline-start: ${rect.left}px; inline-size: ${rect.width}px; block-size: ${rect.height}px">
-                <span class="label">${element === this.current ? `${labelOf(element)}: ${message}` : labelOf(element)}</span>
+                ${this.fieldTab(element, element === this.current ? `${labelOf(element)}: ${message}` : labelOf(element))}
             </div>`;
         });
     }
 
+    /**
+     * The tab over a marked place; for the current field with buttons it
+     * is a toolbar (decision 0150).
+     */
+    fieldTab(element, text) {
+        const tools = element === this.current && element.hasAttribute('data-fb-field') && this.editing ? toolsOf(element, this) : [];
+
+        if (tools.length === 0) {
+            return html`<span class="label">${text}</span>`;
+        }
+
+        return html`<div class="label tools" role="toolbar" aria-label=${this.labels.fieldTools.replace('{field}', labelOf(element))}
+            @keydown=${(event) => this.fieldToolsKey(event, element)}>
+            <span>${text}</span>
+            ${tools.map((tool) => html`<button type="button" class=${tool.tone ?? ''} aria-label=${tool.label} title=${tool.title ?? tool.label}
+                ?disabled=${tool.disabled || this.busy} @click=${() => tool.run()}>${icon(tool.icon)}</button>`)}
+        </div>`;
+    }
+
+    /** Whether a field has buttons on its tab, for Alt+F10. */
+    hasFieldTools(field) {
+        return toolsOf(field, this).length > 0;
+    }
+
+    focusFieldTools(field) {
+        this.current = field;
+        this.requestUpdate();
+        this.updateComplete.then(() => this.renderRoot.querySelector('.label.tools button:not([disabled])')?.focus());
+    }
+
+    fieldToolsKey(event, field) {
+        const buttons = [...this.renderRoot.querySelectorAll('.label.tools button:not([disabled])')];
+        const at = buttons.indexOf(this.renderRoot.activeElement);
+
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            field.focus();
+        } else if (event.key === 'F10' && event.altKey) {
+            // On to the buttons of the entry and the block.
+            event.preventDefault();
+            this.arranging?.reachTools(field);
+        } else if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+            event.preventDefault();
+            const step = event.key === 'ArrowRight' ? 1 : -1;
+            buttons[(at + step + buttons.length) % buttons.length]?.focus();
+        }
+    }
+
     point(target) {
+        // The pointer on the bar, e.g. on the buttons of a tab, keeps the current place.
+        if (target === this) {
+            return;
+        }
+
         this.arranging?.select(target);
         const element = target instanceof Element ? target.closest(MARKED) : null;
 
@@ -1389,6 +1489,10 @@ export class EditorBar extends LitElement {
             ? this.pages.filter((item) => item.title.toLowerCase().includes(needle) || item.path.includes(needle)).slice(0, 8)
             : [];
         const valid = page !== null || (query !== '' && isAddress(query));
+        // Open what is saved or typed, in a new tab, so the dialog stays (decision 0150).
+        const openUrl = page
+            ? (link.openUrl && link.href === `page:${page.id}` ? link.openUrl : null)
+            : (valid ? addressUrl(query) : null);
         const update = (changes) => {
             this.link = { ...this.link, ...changes };
         };
@@ -1415,6 +1519,7 @@ export class EditorBar extends LitElement {
                 <label class="check"><input type="checkbox" .checked=${link.newWindow}
                     @change=${(event) => update({ newWindow: event.target.checked })}>${labels.newWindow}</label>
                 <div class="actions">
+                    ${openUrl ? html`<button type="button" class="open" @click=${() => follow(openUrl, true)}>${icon('external')}${labels.openLink}</button>` : nothing}
                     ${link.existing ? html`<button type="button" class="danger" @click=${() => this.closeLink(link.remove)}>${labels.removeLink}</button>` : nothing}
                     <button type="button" @click=${() => this.closeLink()}>${labels.cancel}</button>
                     <button type="submit" class="primary" ?disabled=${!valid}>${labels.apply}</button>

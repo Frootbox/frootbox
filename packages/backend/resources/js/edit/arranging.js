@@ -475,21 +475,15 @@ export class Arranging {
             return;
         }
 
-        // Alt+F10 reaches the buttons of the block, in rich text its toolbar.
+        // Alt+F10 reaches the buttons of the field, then of the entry and the block; in rich text its toolbar.
         if (event.key === 'F10' && event.altKey && !target.closest('[data-fb-type="richtext"]')) {
-            const block = target.closest(BLOCK);
-            const entry = entryAt(target);
+            const field = target.closest('[data-fb-field]');
 
-            // In an entry its buttons come first, from there Alt+F10 again reaches those of the block.
-            if (entry && entry.owner === block) {
+            if (field && this.bar.hasFieldTools(field)) {
                 event.preventDefault();
-                this.select(target);
-                this.entryReturn = target;
-                this.focusTools('.entry-tools');
-            } else if (block) {
+                this.bar.focusFieldTools(field);
+            } else if (this.reachTools(target)) {
                 event.preventDefault();
-                this.select(block);
-                this.focusTools();
             }
 
             return;
@@ -501,6 +495,33 @@ export class Arranging {
             event.preventDefault();
             this.openPicker(this.targetIn(area));
         }
+    }
+
+    /**
+     * Focuses the buttons of the entry around an element, else of its
+     * block. In an entry they come first; from there Alt+F10 again
+     * reaches those of the block.
+     */
+    reachTools(target) {
+        const block = target.closest(BLOCK);
+        const entry = entryAt(target);
+
+        if (entry && entry.owner === block) {
+            this.select(target);
+            this.entryReturn = target;
+            this.focusTools('.entry-tools');
+
+            return true;
+        }
+
+        if (block) {
+            this.select(block);
+            this.focusTools();
+
+            return true;
+        }
+
+        return false;
     }
 
     click(event) {

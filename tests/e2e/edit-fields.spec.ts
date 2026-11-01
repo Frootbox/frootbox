@@ -164,3 +164,53 @@ test('tells when someone else changed the field', async ({ page }) => {
 
     await removePage(page, id);
 });
+
+test('offers the buttons of a field on its label', async ({ page, context }) => {
+    const slug = `knoepfe-${unique()}`;
+    const id = await openPage(page, slug, `Knöpfe ${Math.floor(Math.random() * 1000)}`);
+    const bar = page.locator('fb-editor-bar');
+
+    // The button of the call to action leads to the start page.
+    const button = page.locator('[data-fb-field="button"]');
+    await button.click();
+    const dialog = bar.getByRole('dialog', { name: 'Link' });
+    await dialog.getByLabel('Adresse oder Seite').fill('/');
+    let save = saved(page);
+    await dialog.getByRole('button', { name: 'Übernehmen' }).click();
+    await save;
+    await expect(button.locator('a')).toHaveAttribute('href', '/');
+
+    // On hover its label carries the buttons; it is required, so no remove.
+    await button.hover();
+    const tools = bar.getByRole('toolbar', { name: 'Feld Button' });
+    await expect(tools.getByRole('button')).toHaveCount(2);
+    await expect(tools.getByRole('button', { name: 'Link bearbeiten' })).toBeVisible();
+    await expect(tools.getByRole('button', { name: 'Link öffnen' })).toHaveAttribute('title', /Strg- oder Cmd-Klick/);
+
+    // The keyboard reaches them from the field, Escape goes back.
+    await button.focus();
+    await page.keyboard.press('Alt+F10');
+    await expect(tools.getByRole('button', { name: 'Link bearbeiten' })).toBeFocused();
+    await page.keyboard.press('ArrowRight');
+    await expect(tools.getByRole('button', { name: 'Link öffnen' })).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(button).toBeFocused();
+
+    // Ctrl-click follows the link in a new tab instead of editing it.
+    const opened = context.waitForEvent('page');
+    await button.click({ modifiers: ['ControlOrMeta'] });
+    const tab = await opened;
+    await tab.waitForLoadState();
+    expect(new URL(tab.url()).pathname).toBe('/');
+    await tab.close();
+    await expect(dialog).toBeHidden();
+
+    // "Open the link" follows a page of the website in this tab, still in the mode.
+    await button.hover();
+    await tools.getByRole('button', { name: 'Link öffnen' }).click();
+    await expect(page).toHaveURL('/');
+    await expect(page.locator('fb-editor-bar')).toBeAttached();
+    await expect(page.locator('[data-fb-field]').first()).toBeAttached();
+
+    await removePage(page, id);
+});

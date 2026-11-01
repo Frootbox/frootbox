@@ -6,6 +6,8 @@
  * input and when the field is left.
  */
 
+import { follow, linkOf } from './field-tools.js';
+
 const PLAIN = ['headline', 'text'];
 const DELAY = 1000;
 
@@ -185,7 +187,11 @@ export class Editing {
             event.preventDefault();
         }
 
-        if (element?.dataset.fbType === 'link') {
+        if (element?.dataset.fbType === 'link' && (event.ctrlKey || event.metaKey)) {
+            // Ctrl-click or Cmd-click follows the link like in the browser (decision 0150).
+            event.preventDefault();
+            follow(linkOf(element), true);
+        } else if (element?.dataset.fbType === 'link') {
             event.preventDefault();
             this.editLink(element);
         } else if (element?.dataset.fbType === 'image') {
@@ -318,6 +324,7 @@ export class Editing {
             },
             remove: () => this.save(element, null),
             done: () => element.focus(),
+            openUrl: linkOf(element),
         });
     }
 

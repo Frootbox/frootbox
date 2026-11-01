@@ -930,6 +930,23 @@ data from the JSON block `#fb-edit-config` in the head.
   again with the focus in the entry. Alt+F10 in an entry reaches its
   toolbar, again Alt+F10 that of the block, Escape goes back to the
   field.
+- **Field tools** (decision 0150): the label of the field under the
+  pointer or with the focus carries the buttons of its type and becomes
+  a `role="toolbar"` named "Field <label>". Icon buttons of
+  `--fb-space-6` (24 px) in `--fb-accent` with a line in
+  `--fb-accent-hover` between them, hover `--fb-accent-hover`, focus
+  outline in `--fb-on-accent`, `aria-label` and tooltip. The label stays
+  while the pointer moves onto it. `link`: "Edit the link", "Open the
+  link", "Remove the link" (only optional fields with a value); `image`:
+  "Choose an image" or "Change the image", "Remove the image"
+  (likewise). Clicking the field still edits it. "Open the link"
+  follows a page of the website in the same tab (the mode goes on),
+  another address in a new tab; Ctrl-click or Cmd-click on the field
+  opens a new tab, the tooltip of the button says so. Alt+F10 in a field reaches its tools first, then
+  those of the entry and the block; arrow keys move, Escape goes back to
+  the field. Field types of extensions add buttons with
+  `customElements.get('fb-editor-bar').fieldTools(type, factory)`, see
+  `resources/js/edit/field-tools.js`.
 
 Editing fields (decision 0122) keeps the look of the theme: the text is
 typed where it stands, nothing is replaced by a form.
@@ -955,8 +972,10 @@ typed where it stands, nothing is replaced by a form.
   `--fb-backdrop`. Text (only for link fields), "Address or page" with a
   search in the page tree, results as buttons with title and path, a
   chosen page as a soft accent row with a button to remove it, "Open in
-  a new window", then "Remove the link" (danger), "Cancel" and "Apply"
-  (primary). Addresses like `example.com` get `https://`.
+  a new window", then "Open the link" (quiet, at the start, while the
+  target is a saved page or an address; always in a new tab), "Remove
+  the link" (danger), "Cancel" and "Apply" (primary). Addresses like
+  `example.com` get `https://`.
 - Themes output link fields with `{{ field() }}` so they can be edited;
   own markup with `value()` is shown but not editable on the page, only
   in the settings of the block.
