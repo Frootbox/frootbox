@@ -205,6 +205,8 @@ test('gives a new block its start entries with placeholders', async ({ page, bro
     await bar.getByRole('toolbar', { name: 'Block Text' }).getByRole('button', { name: 'Block darunter einfügen' }).click();
     await picker.getByRole('button', { name: /^Vorteile/ }).click();
     await expect(features.locator('.features__item')).toHaveCount(3);
+    // After loading again the new block has the focus; only then click into it.
+    await expect(features).toBeFocused();
     const title = features.locator('[data-fb-field="items/0/title"]');
     await expect(title).toHaveAttribute('data-fb-placeholder', 'Ein Vorteil in wenigen Worten');
     await expect(title).toBeEmpty();
