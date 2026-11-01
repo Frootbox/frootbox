@@ -10,7 +10,7 @@ options:
 <section class="hero hero--center hero--{{ options.tone }}"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
   <div class="wrap hero__inner">
     <p class="eyebrow">{{ field('eyebrow') }}</p>
-    <h1>{{ field('title') }}</h1>
+    {{ heading('title', 0, {class: 'hero__title'}) }}
     <p class="hero__text">{{ field('text') }}</p>
     <div class="hero__actions">
       <span class="button-field">{{ field('button') }}</span>

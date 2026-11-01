@@ -1,6 +1,6 @@
 .text { container-type: inline-size; }
 .text--narrow { max-inline-size: 40rem; }
-.text h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-block-end: 1rem; }
+.text__title { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-block-end: 1rem; }
 .text__body > * + * { margin-block-start: 1rem; }
 .text__body ul { padding-inline-start: 1.2rem; }
 .text__body li::marker { color: var(--color-primary); }

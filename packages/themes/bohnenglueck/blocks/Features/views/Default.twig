@@ -26,10 +26,10 @@ fields:
 #}
 <section class="section features"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
   <div class="wrap">
-    <header class="section__head"><h2>{{ field('title') }}</h2><p>{{ field('intro') }}</p></header>
+    <header class="section__head">{{ heading('title', 0, {class: 'section__title'}) }}<p>{{ field('intro') }}</p></header>
     <ul class="features__grid" style="--columns: {{ options.columns }}">
       {% for item in field('items') %}
-        <li class="features__item"><span class="features__icon" aria-hidden="true">{{ item.field('icon') }}</span><h3>{{ item.field('title') }}</h3><p>{{ item.field('text') }}</p></li>
+        <li class="features__item"><span class="features__icon" aria-hidden="true">{{ item.field('icon') }}</span>{{ item.heading('title', 1, {class: 'features__title'}) }}<p>{{ item.field('text') }}</p></li>
       {% endfor %}
     </ul>
   </div>

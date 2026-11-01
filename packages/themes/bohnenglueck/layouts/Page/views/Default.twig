@@ -22,7 +22,7 @@ areas:
       {% endif %}
       {# A page without translation shows the text of another language. #}
       {% set lang = content_language() != language() ? ' lang="' ~ content_language() ~ '"' : '' %}
-      <h1{{ lang|raw }}>{{ field('title') }}</h1>
+      {{ heading('title', 0, {class: 'page-head__title', lang: content_language() != language() ? content_language() : null}) }}
       <p class="page-head__intro"{{ lang|raw }}>{{ field('intro') }}</p>
     </div>
   </div>

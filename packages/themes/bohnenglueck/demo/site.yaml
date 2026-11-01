@@ -122,7 +122,7 @@
                           { type: paragraph, content: [{ type: text, text: 'Langsam und in kleinen Mengen: Jede Sorte bekommt ihr eigenes Röstprofil, das wir nach dem Probieren anpassen.' }] } ] }
                   second:
                     - block: frootbox/theme-base/Heading
-                      options: { level: h3 }
+                      options: { role: sub }
                       fields: { text: Selbst probieren }
                     - block: frootbox/theme-base/Button
                       fields: { link: { target: 'page:${coffees.id}', text: Zu unseren Sorten } }
@@ -164,7 +164,7 @@
                           { type: paragraph, content: [{ type: text, text: 'Slowly and in small batches: every coffee gets its own roast profile, which we adjust after tasting.' }] } ] }
                   second:
                     - block: frootbox/theme-base/Heading
-                      options: { level: h3 }
+                      options: { role: sub }
                       fields: { text: Taste for yourself }
                     - block: frootbox/theme-base/Button
                       fields: { link: { target: 'page:${coffees.id}', text: To our coffees } }

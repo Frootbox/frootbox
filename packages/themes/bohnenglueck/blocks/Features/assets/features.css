@@ -6,5 +6,5 @@
 .features__item { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius); padding: 1.75rem; transition: transform .2s ease; }
 .features__item:hover { transform: translateY(-4px); }
 .features__icon { display: grid; place-items: center; inline-size: 3rem; aspect-ratio: 1; border-radius: calc(var(--radius) * .75); background: color-mix(in srgb, var(--color-accent) 25%, var(--color-surface)); font-size: 1.5rem; margin-block-end: 1rem; }
-.features__item h3 { font-size: 1.25rem; margin-block-end: .4rem; }
+.features__title { font-size: 1.25rem; margin-block-end: .4rem; }
 .features__item p { color: var(--color-muted); }

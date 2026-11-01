@@ -33,7 +33,7 @@
 .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: .8rem; font-weight: 700; color: var(--color-primary); }
 .section { padding-block: var(--space); }
 .section__head { max-inline-size: 42rem; margin-block-end: 2.5rem; }
-.section__head h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); }
+.section__title { font-size: clamp(1.8rem, 4vw, 2.6rem); }
 .section__head p { color: var(--color-muted); margin-block-start: .75rem; font-size: 1.1rem; }
 
 /* Language switcher */

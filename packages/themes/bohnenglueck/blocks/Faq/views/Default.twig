@@ -21,9 +21,9 @@ fields:
 #}
 <section class="section faq"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
   <div class="wrap faq__inner">
-    <header class="section__head"><h2>{{ field('title') }}</h2></header>
+    <header class="section__head">{{ heading('title', 0, {class: 'section__title'}) }}</header>
     {% for item in field('items') %}
-      <details name="faq"{{ options.open and loop.first ? ' open' }}><summary>{{ item.field('question') }}</summary><div class="faq__answer">{{ item.field('answer') }}</div></details>
+      <details name="faq"{{ options.open and loop.first ? ' open' }}><summary>{{ item.heading('question', 1, {class: 'faq__question'}) }}</summary><div class="faq__answer">{{ item.field('answer') }}</div></details>
     {% endfor %}
   </div>
 </section>
