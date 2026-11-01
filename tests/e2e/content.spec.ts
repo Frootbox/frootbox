@@ -124,6 +124,41 @@ test('locks a page for visitors right away', async ({ page }) => {
     expect((await page.request.get(`/${slug}`)).status()).toBe(200);
 });
 
+test('marks unsaved changes and asks before they get lost', async ({ page }) => {
+    // Decision 0130: the save button turns primary while its form is changed.
+    const title = `Ungespeichert ${unique()}`;
+    await createPage(page, title);
+    const form = detail(page).locator('fb-form[action="page.update"]').first();
+    const save = form.getByRole('button', { name: 'Speichern' });
+    const visibility = detail(page).locator('fb-form[action="page.update"]').nth(1);
+
+    await expect(save).toHaveClass(/fb-button--tonal/);
+    await form.getByLabel('Titel').fill(`${title} neu`);
+    await expect(save).toHaveClass(/fb-button--primary/);
+    await expect(form.getByRole('status')).toHaveText('Nicht gespeichert');
+
+    await form.getByLabel('Titel').fill(title);
+    await expect(save).toHaveClass(/fb-button--tonal/);
+    await expect(form.getByRole('status')).toHaveText('');
+
+    // Another page in the tree asks first; staying keeps the change.
+    await form.getByLabel('Titel').fill(`${title} neu`);
+    await visibility.getByLabel('Suchmaschinen').selectOption({ index: 1 });
+    page.once('dialog', (dialog) => {
+        expect(dialog.message()).toBe('Deine Änderungen sind nicht gespeichert. Trotzdem verlassen?');
+        void dialog.dismiss();
+    });
+    await page.locator('#page-tree').getByRole('link', { name: /Über uns/ }).click();
+    await expect(form.getByLabel('Titel')).toHaveValue(`${title} neu`);
+
+    // Saving one form keeps the changes of the other.
+    await save.click();
+    await expect(page.locator('#page-detail-title')).toHaveText(`${title} neu`);
+    await expect(detail(page).locator('fb-form[action="page.update"]').first().getByRole('button', { name: 'Speichern' })).toHaveClass(/fb-button--tonal/);
+    await expect(visibility).toHaveAttribute('dirty');
+    await expect(visibility.getByRole('status')).toHaveText('Nicht gespeichert');
+});
+
 test('edits the items of a navigation', async ({ page }) => {
     await signIn(page, '/cms/navigations/footer');
     const items = page.locator('#navigation-tree .fb-tree__item');

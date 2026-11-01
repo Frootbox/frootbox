@@ -90,7 +90,7 @@
                             <input type="hidden" name="name" value="{{ details.name }}">
                             <input type="hidden" name="from" value="{{ source.code }}">
                             <input type="hidden" name="to" value="{{ language.code }}">
-                            {{ ui.button({label: t('Copy from {language}', {language: source.title}), type: 'submit', variant: 'secondary'}) }}
+                            {{ ui.button({label: t('Copy from {language}', {language: source.title}), type: 'submit', variant: 'outline'}) }}
                         </form>
                     </fb-form>
                     {% endfor %}
@@ -116,7 +116,7 @@
 
         {% if editable %}
         <div class="fb-card__body">
-            {{ ui.button({label: t('Add an item'), variant: 'secondary', icon: 'plus', attrs: {commandfor: 'navigation-item', command: 'show-modal', 'data-fb-fill': {_path: '', type: 'target', depth: 1}|json_encode}}) }}
+            {{ ui.button({label: t('Add an item'), variant: 'tonal', icon: 'plus', attrs: {commandfor: 'navigation-item', command: 'show-modal', 'data-fb-fill': {_path: '', type: 'target', depth: 1}|json_encode}}) }}
         </div>
 
         <dialog class="fb-dialog" id="navigation-item" aria-labelledby="navigation-item-title">
@@ -145,7 +145,7 @@
                     </div>
                     <div class="fb-dialog__actions">
                         {{ ui.button({label: t('Remove'), variant: 'danger', attrs: {'data-navigation-remove': true}}) }}
-                        {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'navigation-item', command: 'close'}}) }}
+                        {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'navigation-item', command: 'close'}}) }}
                         {{ ui.button({label: t('Save'), type: 'submit'}) }}
                     </div>
                 </form>
@@ -164,7 +164,7 @@
                     <p>{{ details.published is empty ? t('The navigation was never published and is empty afterwards.') : t('Your changes to this navigation are lost. The published version stays.') }}</p>
                 </div>
                 <div class="fb-dialog__actions">
-                    {{ ui.button({label: t('Keep the draft'), variant: 'secondary', attrs: {commandfor: 'navigation-discard', command: 'close', autofocus: true}}) }}
+                    {{ ui.button({label: t('Keep the draft'), variant: 'outline', attrs: {commandfor: 'navigation-discard', command: 'close', autofocus: true}}) }}
                     {{ ui.button({label: t('Discard'), variant: 'danger-solid', type: 'submit'}) }}
                 </div>
             </form>

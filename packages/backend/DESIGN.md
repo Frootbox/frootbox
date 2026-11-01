@@ -13,7 +13,9 @@ one-off markup in a screen.
 ## Principles
 
 - **Calm and airy.** Much white space, few accents. One primary button per
-  screen. The accent color marks what is selected or the main way forward.
+  screen at rest; a save button turns primary while its form is changed
+  (see [Saving](#saving)). The accent color marks what is selected or the
+  main way forward.
   The gradient of the logo stays in the logo.
 - **Large targets.** Everything you can click is at least
   `--fb-size-control` (44 px) high. Only toolbars and rows of lists may
@@ -60,7 +62,8 @@ tables below. A test fails while they are behind.
 | --- | --- | --- | --- |
 | `--fb-accent` | `#8637ff` | `#a57cff` | Primary buttons, selected items, tab and tree markers |
 | `--fb-accent-hover` | `#6f1ff0` | `#b996ff` | Primary buttons on hover |
-| `--fb-accent-soft` | `#f1e9ff` | `#261d4a` | Background of the current menu item and of hints |
+| `--fb-accent-soft` | `#f1e9ff` | `#261d4a` | Background of the current menu item, of hints and of tonal buttons |
+| `--fb-accent-soft-hover` | `#e6d8ff` | `#33275f` | Tonal buttons on hover |
 | `--fb-accent-text` | `#5b17c6` | `#cfb9ff` | Links and text in the accent color |
 | `--fb-on-accent` | `#ffffff` | `#0a1621` | Text on accent |
 | `--fb-focus` | `#8637ff` | `#b996ff` | Focus ring |
@@ -74,7 +77,7 @@ tables below. A test fails while they are behind.
 | `--fb-surface-2` | `#eef1f6` | `#172c40` | Hover, segmented controls, disabled fields |
 | `--fb-input-bg` | `#ffffff` | `#0d1c2a` | Background of fields |
 | `--fb-border` | `#dce2ea` | `#233a50` | Dividers and card borders |
-| `--fb-border-strong` | `#b4bfcc` | `#3a5671` | Borders of fields and secondary buttons |
+| `--fb-border-strong` | `#b4bfcc` | `#3a5671` | Borders of fields and outline buttons |
 | `--fb-text` | `#002337` | `#e6edf4` | Text |
 | `--fb-text-muted` | `#4f6273` | `#a1b2c3` | Secondary text, hints, section labels |
 | `--fb-success-bg` | `#e2f5ea` | `#11372a` | Status "published" |
@@ -217,6 +220,7 @@ tables below. A test fails while they are behind.
 | `text-muted` | `surface-2` | 5.57 | 6.58 |
 | `accent-text` | `surface` | 8.81 | 9.37 |
 | `accent-text` | `accent-soft` | 7.49 | 8.87 |
+| `accent-text` | `accent-soft-hover` | 6.56 | 7.54 |
 | `on-accent` | `accent` | 5.24 | 6.03 |
 | `on-accent` | `accent-hover` | 6.71 | 7.71 |
 | `success-text` | `success-bg` | 6.83 | 8.29 |
@@ -267,12 +271,13 @@ attributes (`true` writes only the name, `false` and `null` nothing).
 
 ### Button
 
-`ui.button({label, variant, type, href, icon, icon_only, small, block, disabled, attrs})`
+`ui.button({label, variant, type, href, icon, icon_only, small, block, disabled, saves, attrs})`
 
 | Variant | Use | Look |
 | --- | --- | --- |
-| `primary` | The main action, once per screen | `--fb-accent` background, `--fb-on-accent` text; hover `--fb-accent-hover` |
-| `secondary` | Further actions | `--fb-surface`, border `--fb-border-strong`; hover `--fb-surface-2` |
+| `primary` | The main action, once per screen at rest; also a save button while its form is changed | `--fb-accent` background, `--fb-on-accent` text; hover `--fb-accent-hover` |
+| `tonal` | Important second actions that lead forward (e.g. "Edit on the website"), a save button at rest; a few per screen, never in dialogs | `--fb-accent-soft` background, `--fb-accent-text` text; hover `--fb-accent-soft-hover` |
+| `outline` | Every other action: cancel, paging, opening a dialog | `--fb-surface`, border `--fb-border-strong`; hover `--fb-surface-2` |
 | `ghost` | Quiet actions in toolbars and lists | transparent; hover `--fb-surface-2` |
 | `danger` | Deleting, inside a confirmation flow | border `--fb-border-strong`, text `--fb-danger-text`; hover `--fb-danger-bg` |
 | `danger-solid` | The confirm button of a dangerous dialog | `--fb-danger` background, `--fb-on-danger` text |
@@ -497,6 +502,46 @@ once below. A field for a new password gets a ghost button with
 `data-fb-generate="<field id>"`, which fills in a random password and
 shows it.
 
+### Saving
+
+Nothing in the backend saves by itself (decision 0130). A button that is
+the action itself (e.g. "Lock for visitors") says that it acts at once.
+A form that edits something has three states:
+
+| State | Look |
+| --- | --- |
+| At rest | The save button is `tonal` and can be clicked |
+| Changed | The button is `primary`, next to it `.fb-form__status` says "Not saved" (`--fb-accent-text`, a `--fb-size-dot` dot in `--fb-accent`) |
+| Saved | Back to rest, with the toast of `done` |
+
+```twig
+<div class="fb-form__actions">
+    {{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}
+    <p class="fb-form__note">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p>
+</div>
+```
+
+- `saves: true` marks the save button (`data-fb-saves`) and makes it
+  `tonal` (decision 0131). Other buttons in a form, e.g. "Create the
+  token", do not get the status.
+- `<fb-form>` remembers the input as it would be sent when it loads and
+  after success. While the input differs it has `dirty`, its save
+  buttons turn `primary`, and it adds the status (`role="status"`) after
+  the first of them. Setting a value back
+  makes it calm again.
+- A form that creates something and a dialog keep their primary button.
+- `.fb-form__actions` with such a button is set apart: 8 px more space
+  and a `--fb-border` line above, 16 px padding.
+- A hint about saving goes into that row as `.fb-form__note` (14 px,
+  `--fb-text-muted`), not between the fields.
+- With a changed form, leaving the page or replacing its part through
+  htmx (e.g. a click in the page tree) asks first. Forms in closed
+  dialogs do not count. `refresh` keeps the values of other changed
+  forms in the parts it loads again.
+- A script that sets a field fires `input` on it, so the form notices.
+- More than one changed form shows more than one primary button: each
+  of them has to be saved.
+
 Helpers for forms, started by `backend.js`:
 
 - `data-fb-fill='{"id": 3, "path": "/old"}'` on a button that opens a
@@ -566,7 +611,7 @@ edges; its header and a `.fb-muted` text keep the padding.
 <div class="fb-missing">
     <p class="fb-missing__title">No version in English yet</p>
     <p class="fb-muted">…what visitors see meanwhile…</p>
-    {{ ui.button({label: 'Add the version in English', variant: 'secondary', icon: 'plus'}) }}
+    {{ ui.button({label: 'Add the version in English', variant: 'tonal', icon: 'plus'}) }}
 </div>
 ```
 

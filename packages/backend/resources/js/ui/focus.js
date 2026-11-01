@@ -70,10 +70,19 @@ export class Focus extends LitElement {
         for (const [name, value] of [['focusX', this.x], ['focusY', this.y]]) {
             const field = this.querySelector(`input[name="${name}"]`);
 
-            if (field) {
-                field.value = String(Math.round(value * 1000) / 1000);
+            const text = String(Math.round(value * 1000) / 1000);
+
+            if (field && field.value !== text) {
+                field.value = text;
+
+                // A moved point is a change of the form (decision 0130), the first render is not.
+                if (this.rendered) {
+                    field.dispatchEvent(new Event('input', { bubbles: true }));
+                }
             }
         }
+
+        this.rendered = true;
     }
 
     move(x, y) {

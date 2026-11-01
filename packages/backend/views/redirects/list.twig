@@ -33,7 +33,7 @@
                 </span>
                 {{ ui.badge('neutral', redirect.permanent ? '301' : '302') }}
                 {% if can('redirect.update') %}
-                {{ ui.button({label: t('Edit'), variant: 'secondary', small: true, attrs: {commandfor: 'redirect-edit', command: 'show-modal', 'aria-label': t('Edit {path}', {path: redirect.path}), 'data-fb-fill': {id: redirect.id, path: redirect.path, target: redirect.target, location: redirect.location, permanent: redirect.permanent, _destination: redirect.target ? 'page' : 'url'}|json_encode}}) }}
+                {{ ui.button({label: t('Edit'), variant: 'outline', small: true, attrs: {commandfor: 'redirect-edit', command: 'show-modal', 'aria-label': t('Edit {path}', {path: redirect.path}), 'data-fb-fill': {id: redirect.id, path: redirect.path, target: redirect.target, location: redirect.location, permanent: redirect.permanent, _destination: redirect.target ? 'page' : 'url'}|json_encode}}) }}
                 {% endif %}
                 {% if can('redirect.delete') %}
                 {{ ui.button({label: t('Delete'), variant: 'ghost', small: true, icon: 'close', icon_only: true, attrs: {commandfor: 'redirect-delete', command: 'show-modal', 'aria-label': t('Delete {path}', {path: redirect.path}), 'data-fb-fill': {id: redirect.id}|json_encode}}) }}
@@ -51,7 +51,7 @@
                 <h2 class="fb-heading-4" id="not-found-title" tabindex="-1" data-fb-focus>{{ t('Not found') }}</h2>
                 <p class="fb-muted">{{ t('Addresses visitors asked for and found nothing, the most frequent first.') }}</p>
             </div>
-            {% if not_found is not empty and can('not-found.clear') %}{{ ui.button({label: t('Clear the log'), variant: 'secondary', small: true, attrs: {commandfor: 'not-found-clear', command: 'show-modal'}}) }}{% endif %}
+            {% if not_found is not empty and can('not-found.clear') %}{{ ui.button({label: t('Clear the log'), variant: 'outline', small: true, attrs: {commandfor: 'not-found-clear', command: 'show-modal'}}) }}{% endif %}
         </div>
         {% if not_found is empty %}
             <p class="fb-card__body fb-muted">{{ t('Nothing so far.') }}</p>
@@ -64,7 +64,7 @@
                     <span class="fb-list__meta">{% set last = t('last on {time}')|split('{time}') %}{{ t(['{count} visit', '{count} visits'], {count: entry.hits}) }} · {{ last[0] }}{{ ui.time(entry.lastSeenAt) }}{{ last[1] ?? '' }}</span>
                 </span>
                 {% if can('redirect.create') %}
-                {{ ui.button({label: t('Redirect'), variant: 'secondary', small: true, icon: 'redirect', attrs: {commandfor: 'redirect-new', command: 'show-modal', 'aria-label': t('Redirect {path}', {path: entry.path}), 'data-fb-fill': {path: entry.path}|json_encode}}) }}
+                {{ ui.button({label: t('Redirect'), variant: 'outline', small: true, icon: 'redirect', attrs: {commandfor: 'redirect-new', command: 'show-modal', 'aria-label': t('Redirect {path}', {path: entry.path}), 'data-fb-fill': {path: entry.path}|json_encode}}) }}
                 {% endif %}
             </li>
             {%- endfor %}
@@ -83,7 +83,7 @@
                 {% include '@backend/redirects/form.twig' with {prefix: 'redirect-new'} %}
             </div>
             <div class="fb-dialog__actions">
-                {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'redirect-new', command: 'close'}}) }}
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'redirect-new', command: 'close'}}) }}
                 {{ ui.button({label: t('Save'), type: 'submit'}) }}
             </div>
         </form>
@@ -101,7 +101,7 @@
                 {% include '@backend/redirects/form.twig' with {prefix: 'redirect-edit'} %}
             </div>
             <div class="fb-dialog__actions">
-                {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'redirect-edit', command: 'close'}}) }}
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'redirect-edit', command: 'close'}}) }}
                 {{ ui.button({label: t('Save'), type: 'submit'}) }}
             </div>
         </form>
@@ -119,7 +119,7 @@
                 <p>{{ t('Visitors with the old address find nothing afterwards.') }}</p>
             </div>
             <div class="fb-dialog__actions">
-                {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'redirect-delete', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'redirect-delete', command: 'close', autofocus: true}}) }}
                 {{ ui.button({label: t('Delete'), variant: 'danger-solid', type: 'submit'}) }}
             </div>
         </form>
@@ -136,7 +136,7 @@
                 <p>{{ t('The list starts again. This cannot be undone.') }}</p>
             </div>
             <div class="fb-dialog__actions">
-                {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'not-found-clear', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'not-found-clear', command: 'close', autofocus: true}}) }}
                 {{ ui.button({label: t('Clear the log'), variant: 'danger-solid', type: 'submit'}) }}
             </div>
         </form>

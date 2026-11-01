@@ -15,12 +15,16 @@
 {%- endmacro %}
 
 {#
-    variant: primary (one per screen), secondary, ghost, danger, danger-solid
+    variant: primary (one per screen at rest), tonal (important second actions),
+    outline, ghost, danger, danger-solid (decision 0131)
+    saves: the save button of a form that edits something, tonal at rest and
+    primary while the form is changed (decision 0130)
     type: button, submit; href makes it a link
     icon: name in assets/icons; icon_only hides the label visually
 #}
 {% macro button(options) -%}
-    {%- set o = {label: '', variant: 'primary', type: 'button', href: null, icon: null, icon_only: false, small: false, block: false, disabled: false, attrs: {}}|merge(options) -%}
+    {%- set o = {label: '', variant: (options.saves ?? false) ? 'tonal' : 'primary', type: 'button', href: null, icon: null, icon_only: false, small: false, block: false, disabled: false, saves: false, attrs: {}}|merge(options) -%}
+    {%- set o = o|merge({attrs: o.saves ? o.attrs|merge({'data-fb-saves': true}) : o.attrs}) -%}
     {%- set classes = ['fb-button', 'fb-button--' ~ o.variant]
         |merge(o.small ? ['fb-button--small'] : [])
         |merge(o.block ? ['fb-button--block'] : [])

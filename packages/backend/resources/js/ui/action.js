@@ -65,8 +65,10 @@ export async function refresh(ids, { url = window.location.href, active = docume
         }
 
         const hadFocus = active instanceof Element && current.contains(active);
+        const unsaved = keepUnsaved(current);
         const adopted = document.adoptNode(replacement);
         current.replaceWith(adopted);
+        unsaved(adopted);
         adopted.dispatchEvent(new CustomEvent('fb-refreshed', { bubbles: true }));
 
         if (hadFocus) {
@@ -87,6 +89,71 @@ export async function refresh(ids, { url = window.location.href, active = docume
     }
 
     return true;
+}
+
+/**
+ * Keeps the values of changed forms (decision 0130) when an element is
+ * replaced, e.g. the page details after saving one of its forms. Returns
+ * a function that puts them into the forms of the new element, matched by
+ * action, base and order.
+ */
+function keepUnsaved(root) {
+    // "page.update||0" for the first form of that action, so forms that
+    // appear or disappear meanwhile do not shift the others.
+    const keys = (forms) => {
+        const counts = new Map();
+
+        return forms.map((form) => {
+            const name = `${form.getAttribute('action')}|${form.getAttribute('base') ?? ''}`;
+            const index = counts.get(name) ?? 0;
+            counts.set(name, index + 1);
+
+            return `${name}|${index}`;
+        });
+    };
+    const kept = new Map();
+    const forms = [...root.querySelectorAll('fb-form')];
+    const formKeys = keys(forms);
+
+    forms.forEach((form, index) => {
+        if (form.hasAttribute('dirty') && form.querySelector('form')) {
+            kept.set(formKeys[index], [...form.querySelector('form').elements]
+                .filter((field) => field.name && !field.disabled && field.type !== 'submit' && field.type !== 'button')
+                .map((field) => ({ name: field.name, type: field.type, value: field.value, checked: field.checked })));
+        }
+    });
+
+    return (replacement) => {
+        if (kept.size === 0) {
+            return;
+        }
+
+        const replaced = [...replacement.querySelectorAll('fb-form')];
+        const replacedKeys = keys(replaced);
+
+        replaced.forEach((form, index) => {
+            const fields = kept.get(replacedKeys[index]);
+            const element = form.querySelector('form');
+
+            if (!fields || !element) {
+                return;
+            }
+
+            for (const field of fields) {
+                for (const target of element.querySelectorAll(`[name="${CSS.escape(field.name)}"]`)) {
+                    if (target.type === 'checkbox' || target.type === 'radio') {
+                        if (target.value === field.value) {
+                            target.checked = field.checked;
+                        }
+                    } else if (target.type === field.type) {
+                        target.value = field.value;
+                    }
+                }
+            }
+
+            form.check?.();
+        });
+    };
 }
 
 function meta(name) {

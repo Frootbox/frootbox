@@ -6,13 +6,14 @@
     <p class="fb-design-sample__title">{{ t('Buttons') }}</p>
     <div class="fb-cluster">
         {{ ui.button({label: t('Publish')}) }}
-        {{ ui.button({label: t('Preview'), variant: 'secondary'}) }}
+        {{ ui.button({label: t('Edit on the website'), variant: 'tonal', icon: 'pencil'}) }}
+        {{ ui.button({label: t('Preview'), variant: 'outline'}) }}
         {{ ui.button({label: t('Cancel'), variant: 'ghost'}) }}
         {{ ui.button({label: t('Delete'), variant: 'danger'}) }}
         {{ ui.button({label: t('Delete for good'), variant: 'danger-solid'}) }}
     </div>
     <div class="fb-cluster">
-        {{ ui.button({label: t('New page'), icon: 'plus', variant: 'secondary', small: true}) }}
+        {{ ui.button({label: t('New page'), icon: 'plus', variant: 'outline', small: true}) }}
         {{ ui.button({label: t('Edit'), icon: 'pencil', variant: 'ghost', icon_only: true}) }}
         {{ ui.button({label: t('Publish'), disabled: true}) }}
     </div>
@@ -62,6 +63,20 @@
 </div>
 
 <div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Saving') }}</p>
+    {{ ui.field({label: t('Title'), name: 'title', id: id ~ '-saved', value: 'Über uns'}) }}
+    <div class="fb-form__actions">
+        {{ ui.button({label: t('Save'), type: 'button', saves: true}) }}<span class="fb-form__status" role="status"></span>
+        <p class="fb-form__note">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p>
+    </div>
+    {{ ui.field({label: t('Title'), name: 'title', id: id ~ '-changed', value: 'Über uns und mehr'}) }}
+    <div class="fb-form__actions">
+        {{ ui.button({label: t('Save'), type: 'button', variant: 'primary', saves: true}) }}<span class="fb-form__status" role="status">{{ t('Not saved') }}</span>
+        <p class="fb-form__note">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p>
+    </div>
+</div>
+
+<div class="fb-design-sample">
     <p class="fb-design-sample__title">{{ t('Status') }}</p>
     <div class="fb-cluster">
         {{ ui.status('published') }}
@@ -87,8 +102,8 @@
     <section class="fb-card">
         <div class="fb-card__header"><h3 class="fb-heading-4">{{ t('Waiting to be published') }}</h3>{{ ui.badge('neutral', '2') }}</div>
         <ul>
-            <li class="fb-list__item"><span class="fb-list__main"><a class="fb-list__title fb-list__link" href="#">Kaffee</a><span class="fb-list__meta">/kaffee</span></span>{{ ui.status('changed') }}{{ ui.button({label: t('Open'), variant: 'secondary', small: true}) }}</li>
-            <li class="fb-list__item"><span class="fb-list__main"><span class="fb-list__title">Rösterei</span><span class="fb-list__meta">/roesterei</span></span>{{ ui.status('draft') }}{{ ui.button({label: t('Open'), variant: 'secondary', small: true}) }}</li>
+            <li class="fb-list__item"><span class="fb-list__main"><a class="fb-list__title fb-list__link" href="#">Kaffee</a><span class="fb-list__meta">/kaffee</span></span>{{ ui.status('changed') }}{{ ui.button({label: t('Open'), variant: 'outline', small: true}) }}</li>
+            <li class="fb-list__item"><span class="fb-list__main"><span class="fb-list__title">Rösterei</span><span class="fb-list__meta">/roesterei</span></span>{{ ui.status('draft') }}{{ ui.button({label: t('Open'), variant: 'outline', small: true}) }}</li>
         </ul>
         <div class="fb-card__footer">{{ ui.button({label: t('Publish all')}) }}</div>
     </section>
@@ -117,7 +132,7 @@
             <p class="fb-muted">{{ t('Your changes to this page are lost. The published version stays.') }}</p>
         </div>
         <div class="fb-dialog__actions">
-            {{ ui.button({label: t('Keep the draft'), variant: 'secondary'}) }}
+            {{ ui.button({label: t('Keep the draft'), variant: 'outline'}) }}
             {{ ui.button({label: t('Discard'), variant: 'danger-solid'}) }}
         </div>
     </div>
@@ -174,7 +189,7 @@
                 <div class="fb-missing">
                     <p class="fb-missing__title">{{ t('No version in {language} yet', {language: 'English'}) }}</p>
                     <p class="fb-muted">{{ t('Visitors in this language see the page in another language.') }}</p>
-                    {{ ui.button({label: t('Add the version in {language}', {language: 'English'}), variant: 'secondary', icon: 'plus'}) }}
+                    {{ ui.button({label: t('Add the version in {language}', {language: 'English'}), variant: 'outline', icon: 'plus'}) }}
                 </div>
             </div>
             <section class="fb-section">

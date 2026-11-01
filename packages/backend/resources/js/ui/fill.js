@@ -48,6 +48,11 @@ export function bindFills(root = document) {
 
             updateSwitches(form);
         }
+
+        // The filled values are the saved state of the dialog (decision 0130).
+        for (const fbForm of dialog.querySelectorAll('fb-form')) {
+            fbForm.remember?.();
+        }
     });
 
     root.addEventListener('change', (event) => {

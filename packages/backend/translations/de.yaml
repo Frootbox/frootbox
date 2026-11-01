@@ -133,6 +133,7 @@ Fields: Felder
 Choices: Auswahl
 Messages: Meldungen
 Form: Formular
+Saving: Speichern
 Disclosure: Aufklapper
 List in a card: Liste in einer Karte
 Tabs: Tabs
@@ -187,6 +188,8 @@ Copy the token now: Kopier das Token jetzt
 It is shown only this once. Whoever has it acts as you.: Es wird nur dieses eine Mal angezeigt. Wer es hat, handelt in Deinem Namen.
 Done: Fertig
 The server cannot be reached. Check the connection and try again.: Der Server ist nicht erreichbar. Prüf die Verbindung und versuch es noch einmal.
+Not saved: Nicht gespeichert
+Your changes are not saved. Leave anyway?: Deine Änderungen sind nicht gespeichert. Trotzdem verlassen?
 
 # Users
 Users: Benutzer

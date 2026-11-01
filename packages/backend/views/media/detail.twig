@@ -40,7 +40,7 @@
 
             {% if editable or can('media.delete') %}
             <div class="fb-cluster">
-                {% if editable %}{{ ui.button({label: t('Save'), type: 'submit'}) }}{% endif %}
+                {% if editable %}{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}{% endif %}
                 {% if can('media.delete') %}{{ ui.button({label: t('Delete'), variant: 'danger', icon: 'trash', attrs: {commandfor: 'media-delete', command: 'show-modal'}}) }}{% endif %}
             </div>
             {% endif %}
@@ -58,7 +58,7 @@
                 <p>{{ t('Pages that use it show nothing there any more.') }}</p>
             </div>
             <div class="fb-dialog__actions">
-                {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'media-delete', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'media-delete', command: 'close', autofocus: true}}) }}
                 {{ ui.button({label: t('Delete'), variant: 'danger-solid', type: 'submit'}) }}
             </div>
         </form>

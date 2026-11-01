@@ -43,7 +43,7 @@
                     <fb-form action="account.revoke-token" next="{{ path('backend.account') }}" done="{{ t('The session is ended.') }}">
                         <form novalidate>
                             <input type="hidden" name="id" value="{{ session.id }}" data-type="number">
-                            {{ ui.button({label: t('Sign out'), variant: 'secondary', small: true, type: 'submit', attrs: {'aria-label': t('Sign out {device}', {device: device(session.name) ?? t('Unknown device')})}}) }}
+                            {{ ui.button({label: t('Sign out'), variant: 'outline', small: true, type: 'submit', attrs: {'aria-label': t('Sign out {device}', {device: device(session.name) ?? t('Unknown device')})}}) }}
                         </form>
                     </fb-form>
                 {% endif %}
@@ -85,13 +85,13 @@
                 <form class="fb-stack" novalidate>
                     {{ ui.field({label: t('New token for'), name: 'name', required: true, placeholder: t('e.g. Deploy script')}) }}
                     {{ ui.field({label: t('Valid for days'), name: 'days', type: 'number', optional: true, hint: t('Empty: until you revoke it.'), attrs: {min: 1, max: 3650, inputmode: 'numeric'}}) }}
-                    <div class="fb-form__actions">{{ ui.button({label: t('Create the token'), variant: 'secondary', type: 'submit', icon: 'plus'}) }}</div>
+                    <div class="fb-form__actions">{{ ui.button({label: t('Create the token'), variant: 'outline', type: 'submit', icon: 'plus'}) }}</div>
                 </form>
             </fb-form>
             <div class="fb-stack fb-stack--sm" id="fb-new-token" hidden>
                 {{ ui.alert({tone: 'warning', title: t('Copy the token now'), text: t('It is shown only this once. Whoever has it acts as you.')}) }}
                 <code class="fb-secret" data-fb-value="token"></code>
-                <div>{{ ui.button({label: t('Done'), variant: 'secondary', href: path('backend.account')}) }}</div>
+                <div>{{ ui.button({label: t('Done'), variant: 'outline', href: path('backend.account')}) }}</div>
             </div>
         </div>
     </section>

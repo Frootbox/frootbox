@@ -58,7 +58,7 @@ final class TokensTest extends TestCase
         $tokens = Tokens::fromFile();
 
         self::assertSame('Frootbox', $tokens->brand['name']);
-        self::assertSame(['accent', 'accent-hover', 'accent-soft', 'accent-text', 'on-accent', 'focus'], array_map(static fn(Token $token): string => $token->name, $tokens->brandColors()));
+        self::assertSame(['accent', 'accent-hover', 'accent-soft', 'accent-soft-hover', 'accent-text', 'on-accent', 'focus'], array_map(static fn(Token $token): string => $token->name, $tokens->brandColors()));
     }
 
     public function testABrandReplacesOnlyBrandColors(): void
@@ -70,7 +70,7 @@ final class TokensTest extends TestCase
         self::assertSame('#f4f6f9', $tokens->color('bg')->in('light'));
 
         $this->expectException(DesignException::class);
-        $this->expectExceptionMessage('The brand "Acme" sets the color "bg", but brands can only set accent, accent-hover, accent-soft, accent-text, on-accent, focus.');
+        $this->expectExceptionMessage('The brand "Acme" sets the color "bg", but brands can only set accent, accent-hover, accent-soft, accent-soft-hover, accent-text, on-accent, focus.');
         Tokens::fromFile()->withBrand(new Brand('Acme', colors: ['bg' => '#000000']));
     }
 

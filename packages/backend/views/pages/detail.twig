@@ -33,10 +33,10 @@
                 <input type="hidden" name="_csrf" value="{{ fb.csrf }}">
                 <input type="hidden" name="on" value="1">
                 <input type="hidden" name="next" value="{{ page.edit }}">
-                {{ ui.button({label: t('Edit on the website'), type: 'submit', variant: 'secondary', icon: 'pencil'}) }}
+                {{ ui.button({label: t('Edit on the website'), type: 'submit', variant: 'tonal', icon: 'pencil'}) }}
             </form>
             {% endif %}
-            {% if page.url %}{{ ui.button({label: t('View on the website'), href: page.url, variant: 'secondary', icon: 'external', attrs: {target: '_blank', rel: 'noopener'}}) }}{% endif %}
+            {% if page.url %}{{ ui.button({label: t('View on the website'), href: page.url, variant: 'outline', icon: 'external', attrs: {target: '_blank', rel: 'noopener'}}) }}{% endif %}
             {% if has_draft and can('page.publish', {ids: page.publish}) %}
                 {% if page.offline_parents is empty %}
                 <fb-form action="page.publish" refresh="{{ refresh }}" done="{{ t('The page is published.') }}">
@@ -76,8 +76,7 @@
                     {{ ui.field({label: t('Address'), name: 'translations.' ~ page.language.code ~ '.slug', id: 'page-slug', value: translation.slug, prefix: page.prefix, required: true, disabled: not editable, hint: t('If the address changes, the old one redirects to the new one.')}) }}
                 {% endif %}
                 {% if editable %}
-                <p class="fb-muted">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p>
-                <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', variant: 'secondary'}) }}</div>
+                <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}<p class="fb-form__note">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p></div>
                 {% endif %}
             </form>
         </fb-form>
@@ -97,7 +96,7 @@
                 <form novalidate>
                     <input type="hidden" name="id" value="{{ page.id }}">
                     <input type="hidden" name="translations.{{ page.language.code }}.title" value="{{ source.title ?? row.title }}">
-                    {{ ui.button({label: t('Add the version in {language}', {language: page.language.title}), type: 'submit', variant: 'secondary', icon: 'plus'}) }}
+                    {{ ui.button({label: t('Add the version in {language}', {language: page.language.title}), type: 'submit', variant: 'tonal', icon: 'plus'}) }}
                 </form>
             </fb-form>
             {% endif %}
@@ -113,7 +112,7 @@
                 <input type="hidden" name="id" value="{{ page.id }}">
                 {{ ui.field({label: t('Publish on'), name: 'publishAt', id: 'page-publish-at', type: 'datetime-local', optional: true, value: details.publishAt ? details.publishAt|date('Y-m-d\\TH:i') : '', disabled: not has_draft, hint: has_draft ? t('The draft goes online by itself.') : t('Only for a draft.'), attrs: {'data-type': 'datetime', 'data-value': details.publishAt ? details.publishAt|date('c') : null}}) }}
                 {{ ui.field({label: t('Take offline on'), name: 'unpublishAt', id: 'page-unpublish-at', type: 'datetime-local', optional: true, value: details.unpublishAt ? details.unpublishAt|date('Y-m-d\\TH:i') : '', disabled: not published, hint: published ? t('The page and its subpages go offline by themselves.') : t('Only for a published page.'), attrs: {'data-type': 'datetime', 'data-value': details.unpublishAt ? details.unpublishAt|date('c') : null}}) }}
-                {% if has_draft or published %}<div class="fb-form__actions">{{ ui.button({label: t('Save the times'), type: 'submit', variant: 'secondary'}) }}</div>{% endif %}
+                {% if has_draft or published %}<div class="fb-form__actions">{{ ui.button({label: t('Save the times'), type: 'submit', saves: true}) }}</div>{% endif %}
             </form>
         </fb-form>
     </section>
@@ -130,7 +129,7 @@
                 <fb-form action="page.unlock" refresh="{{ refresh }}" done="{{ t('The page is unlocked.') }}">
                     <form novalidate>
                         <input type="hidden" name="id" value="{{ page.id }}">
-                        {{ ui.button({label: t('Unlock'), type: 'submit', variant: 'secondary'}) }}
+                        {{ ui.button({label: t('Unlock'), type: 'submit', variant: 'outline'}) }}
                     </form>
                 </fb-form>
                 {% endif %}
@@ -138,7 +137,7 @@
                 {{ ui.alert({tone: 'warning', title: t('Locked for visitors'), text: t('The lock comes from {page} above. It can be lifted there.', {page: page.inherited.locked}), live: 'none'}) }}
             {% elseif can_lock %}
                 <p class="fb-muted">{{ t('A locked page stays published, visitors get a notice instead. It works right away.') }}</p>
-                <div class="fb-cluster">{{ ui.button({label: t('Lock for visitors'), variant: 'secondary', icon: 'lock', attrs: {commandfor: 'page-lock', command: 'show-modal'}}) }}</div>
+                <div class="fb-cluster">{{ ui.button({label: t('Lock for visitors'), variant: 'outline', icon: 'lock', attrs: {commandfor: 'page-lock', command: 'show-modal'}}) }}</div>
             {% elseif not published and can('page.lock', {id: page.id}) %}
                 <p class="fb-muted">{{ t('Only a published page can be locked.') }}</p>
             {% endif %}
@@ -155,8 +154,7 @@
                     {{ ui.select({label: t('Search engines'), name: 'excludeFromSearchEngines', id: 'page-search-engines', options: reach, value: exclusions.excludeFromSearchEngines.value, disabled: not editable, hint: page.inherited.searchEngines ? t('Left out anyway through {page} above.', {page: page.inherited.searchEngines}) : t('Left out pages tell search engines not to list them.')}) }}
                     {{ ui.select({label: t('Search on the website'), name: 'excludeFromSiteSearch', id: 'page-site-search', options: reach, value: exclusions.excludeFromSiteSearch.value, disabled: not editable, hint: page.inherited.siteSearch ? t('Left out anyway through {page} above.', {page: page.inherited.siteSearch}) : t('Applies as soon as a search module is installed.')}) }}
                     {% if editable %}
-                    <p class="fb-muted">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p>
-                    <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', variant: 'secondary'}) }}</div>
+                    <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}<p class="fb-form__note">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p></div>
                     {% endif %}
                 </form>
             </fb-form>
@@ -201,7 +199,7 @@
     <section class="fb-section" aria-labelledby="page-more-title">
         <h3 class="fb-heading-4" id="page-more-title">{{ t('Offline and delete') }}</h3>
         <div class="fb-cluster">
-            {% if can_unpublish %}{{ ui.button({label: t('Take offline'), variant: 'secondary', attrs: {commandfor: 'page-unpublish', command: 'show-modal'}}) }}{% endif %}
+            {% if can_unpublish %}{{ ui.button({label: t('Take offline'), variant: 'outline', attrs: {commandfor: 'page-unpublish', command: 'show-modal'}}) }}{% endif %}
             {% if can_delete %}{{ ui.button({label: t('Delete the page'), variant: 'danger', attrs: {commandfor: 'page-delete', command: 'show-modal'}}) }}{% endif %}
         </div>
         {% if not row.start and page.has_children and can('page.delete', {id: page.id}) %}<p class="fb-muted">{{ t('A page with subpages cannot be deleted. Move or delete them first.') }}</p>{% endif %}
@@ -218,7 +216,7 @@
                     <p>{{ t('These pages above it are not online yet and are published with it: {pages}.', {pages: page.offline_parents|join(', ')}) }}</p>
                 </div>
                 <div class="fb-dialog__actions">
-                    {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'page-publish', command: 'close', autofocus: true}}) }}
+                    {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'page-publish', command: 'close', autofocus: true}}) }}
                     {{ ui.button({label: t('Publish all'), type: 'submit'}) }}
                 </div>
             </form>
@@ -236,7 +234,7 @@
                     <p>{{ published ? t('Your changes to this page are lost. The published version stays.') : t('The page was never published and is gone afterwards.') }}</p>
                 </div>
                 <div class="fb-dialog__actions">
-                    {{ ui.button({label: t('Keep the draft'), variant: 'secondary', attrs: {commandfor: 'page-discard', command: 'close', autofocus: true}}) }}
+                    {{ ui.button({label: t('Keep the draft'), variant: 'outline', attrs: {commandfor: 'page-discard', command: 'close', autofocus: true}}) }}
                     {{ ui.button({label: t('Discard'), variant: 'danger-solid', type: 'submit'}) }}
                 </div>
             </form>
@@ -254,7 +252,7 @@
                     <p>{{ t('Visitors no longer find the page and its subpages. They stay as drafts and can be published again.') }}</p>
                 </div>
                 <div class="fb-dialog__actions">
-                    {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'page-unpublish', command: 'close', autofocus: true}}) }}
+                    {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'page-unpublish', command: 'close', autofocus: true}}) }}
                     {{ ui.button({label: t('Take offline'), variant: 'danger-solid', type: 'submit'}) }}
                 </div>
             </form>
@@ -273,7 +271,7 @@
                     {% if page.has_children %}{{ ui.check({label: t('Also lock the subpages'), name: 'branch', id: 'page-lock-branch'}) }}{% endif %}
                 </div>
                 <div class="fb-dialog__actions">
-                    {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'page-lock', command: 'close', autofocus: true}}) }}
+                    {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'page-lock', command: 'close', autofocus: true}}) }}
                     {{ ui.button({label: t('Lock'), type: 'submit'}) }}
                 </div>
             </form>
@@ -291,7 +289,7 @@
                     <p>{{ t('The page leaves the tree and the website. Visitors no longer find it.') }}</p>
                 </div>
                 <div class="fb-dialog__actions">
-                    {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'page-delete', command: 'close', autofocus: true}}) }}
+                    {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'page-delete', command: 'close', autofocus: true}}) }}
                     {{ ui.button({label: t('Delete for good'), variant: 'danger-solid', type: 'submit'}) }}
                 </div>
             </form>

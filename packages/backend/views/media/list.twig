@@ -35,7 +35,7 @@
             </ul>
             {% if current %}
             <div class="fb-card__footer fb-cluster">
-                {% if can('media.folder-update') %}{{ ui.button({label: t('Rename'), variant: 'secondary', small: true, attrs: {commandfor: 'media-folder-edit', command: 'show-modal', 'data-fb-fill': {id: current.id, name: current.name}|json_encode}}) }}{% endif %}
+                {% if can('media.folder-update') %}{{ ui.button({label: t('Rename'), variant: 'outline', small: true, attrs: {commandfor: 'media-folder-edit', command: 'show-modal', 'data-fb-fill': {id: current.id, name: current.name}|json_encode}}) }}{% endif %}
                 {% if can('media.folder-delete') %}{{ ui.button({label: t('Delete the folder'), variant: 'ghost', small: true, icon: 'trash', attrs: {commandfor: 'media-folder-delete', command: 'show-modal', 'data-fb-fill': {id: current.id}|json_encode}}) }}{% endif %}
             </div>
             {% endif %}
@@ -57,7 +57,7 @@
                     {% if folder %}<input type="hidden" name="folder" value="{{ folder }}">{% endif %}
                     {{ ui.field({label: t('Search'), name: 'q', type: 'search', value: search, placeholder: t('File name or text')}) }}
                     {{ ui.field({label: t('Tag'), name: 'tag', value: tag, optional: true}) }}
-                    {{ ui.button({label: t('Search'), variant: 'secondary', type: 'submit', icon: 'search'}) }}
+                    {{ ui.button({label: t('Search'), variant: 'outline', type: 'submit', icon: 'search'}) }}
                 </form>
                 <p class="fb-visually-hidden" role="status" data-fb-upload-status></p>
                 {% if list.items is empty %}
@@ -78,9 +78,9 @@
                 {% if pages > 1 %}
                 <nav class="fb-card__footer fb-cluster" aria-label="{{ t('Pages of the list') }}">
                     {% set link = base ~ '?' ~ (filters|merge({page: ''})|url_encode) %}
-                    {% if list.page > 1 %}{{ ui.button({label: t('Back'), variant: 'secondary', small: true, href: link ~ (list.page - 1)}) }}{% endif %}
+                    {% if list.page > 1 %}{{ ui.button({label: t('Back'), variant: 'outline', small: true, href: link ~ (list.page - 1)}) }}{% endif %}
                     <span class="fb-muted">{{ t('Page {page} of {pages}', {page: list.page, pages: pages}) }}</span>
-                    {% if list.page < pages %}{{ ui.button({label: t('Next'), variant: 'secondary', small: true, href: link ~ (list.page + 1)}) }}{% endif %}
+                    {% if list.page < pages %}{{ ui.button({label: t('Next'), variant: 'outline', small: true, href: link ~ (list.page + 1)}) }}{% endif %}
                 </nav>
                 {% endif %}
                 {% endif %}
@@ -100,7 +100,7 @@
                 {{ ui.field({label: t('Name'), name: 'name', id: 'media-folder-new-name', required: true, autofocus: true}) }}
             </div>
             <div class="fb-dialog__actions">
-                {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'media-folder-new', command: 'close'}}) }}
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'media-folder-new', command: 'close'}}) }}
                 {{ ui.button({label: t('Create'), type: 'submit'}) }}
             </div>
         </form>
@@ -118,7 +118,7 @@
                 {{ ui.field({label: t('Name'), name: 'name', id: 'media-folder-edit-name', required: true}) }}
             </div>
             <div class="fb-dialog__actions">
-                {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'media-folder-edit', command: 'close'}}) }}
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'media-folder-edit', command: 'close'}}) }}
                 {{ ui.button({label: t('Save'), type: 'submit'}) }}
             </div>
         </form>
@@ -136,7 +136,7 @@
                 <p>{{ t('Only an empty folder can be deleted. Move its images and folders elsewhere first.') }}</p>
             </div>
             <div class="fb-dialog__actions">
-                {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'media-folder-delete', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'media-folder-delete', command: 'close', autofocus: true}}) }}
                 {{ ui.button({label: t('Delete'), variant: 'danger-solid', type: 'submit'}) }}
             </div>
         </form>

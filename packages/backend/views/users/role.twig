@@ -26,7 +26,7 @@
             {{ ui.field({label: t('Permissions'), name: 'permissions', multiline: true, value: (role.permissions ?? [])|join("\n"), disabled: not editable, hint: t('One rule per line: "page.*" allows everything with pages, "-page.delete" takes deleting away again, "*" allows everything.'), attrs: {'data-type': 'lines', rows: 8, spellcheck: 'false'}}) }}
             {% if editable %}
             <div class="fb-form__actions">
-                {{ ui.button({label: role ? t('Save') : t('Create the role'), type: 'submit'}) }}
+                {{ ui.button({label: role ? t('Save') : t('Create the role'), type: 'submit', saves: role is not null}) }}
                 {{ ui.button({label: t('Cancel'), variant: 'ghost', href: path('backend.roles')}) }}
             </div>
             {% endif %}
@@ -67,7 +67,7 @@
                     <p>{{ t('Every user loses the role and its permissions.') }}</p>
                 </div>
                 <div class="fb-dialog__actions">
-                    {{ ui.button({label: t('Cancel'), variant: 'secondary', attrs: {commandfor: 'fb-delete-role', command: 'close', autofocus: true}}) }}
+                    {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'fb-delete-role', command: 'close', autofocus: true}}) }}
                     {{ ui.button({label: t('Delete for good'), variant: 'danger-solid', type: 'submit'}) }}
                 </div>
             </form>

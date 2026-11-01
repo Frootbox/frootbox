@@ -3,7 +3,7 @@
 //
 //     import { ThemeSwitch, showToast } from '@frootbox/ui';
 export { ThemeSwitch } from './theme-switch.js';
-export { Form, formInput, showPendingToast } from './form.js';
+export { Form, formInput, guardUnsaved, showPendingToast } from './form.js';
 export { showToast } from './toast.js';
 export { Tree } from './tree.js';
 export { Navigation } from './navigation.js';

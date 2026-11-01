@@ -16,7 +16,8 @@ brand:
   color:
     accent: { light: '#8637ff', dark: '#a57cff', use: "Primary buttons, selected items, tab and tree markers" }
     accent-hover: { light: '#6f1ff0', dark: '#b996ff', use: "Primary buttons on hover" }
-    accent-soft: { light: '#f1e9ff', dark: '#261d4a', use: "Background of the current menu item and of hints" }
+    accent-soft: { light: '#f1e9ff', dark: '#261d4a', use: "Background of the current menu item, of hints and of tonal buttons" }
+    accent-soft-hover: { light: '#e6d8ff', dark: '#33275f', use: "Tonal buttons on hover" }
     accent-text: { light: '#5b17c6', dark: '#cfb9ff', use: "Links and text in the accent color" }
     on-accent: { light: '#ffffff', dark: '#0a1621', use: "Text on accent" }
     focus: { light: '#8637ff', dark: '#b996ff', use: "Focus ring" }
@@ -28,7 +29,7 @@ system:
     surface-2: { light: '#eef1f6', dark: '#172c40', use: "Hover, segmented controls, disabled fields" }
     input-bg: { light: '#ffffff', dark: '#0d1c2a', use: "Background of fields" }
     border: { light: '#dce2ea', dark: '#233a50', use: "Dividers and card borders" }
-    border-strong: { light: '#b4bfcc', dark: '#3a5671', use: "Borders of fields and secondary buttons" }
+    border-strong: { light: '#b4bfcc', dark: '#3a5671', use: "Borders of fields and outline buttons" }
     text: { light: '#002337', dark: '#e6edf4', use: "Text" }
     text-muted: { light: '#4f6273', dark: '#a1b2c3', use: "Secondary text, hints, section labels" }
     success-bg: { light: '#e2f5ea', dark: '#11372a', use: "Status \"published\"" }
@@ -138,6 +139,7 @@ contrast:
   - [text-muted, surface-2]
   - [accent-text, surface]
   - [accent-text, accent-soft]
+  - [accent-text, accent-soft-hover]
   - [on-accent, accent]
   - [on-accent, accent-hover]
   - [success-text, success-bg]

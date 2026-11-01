@@ -23,6 +23,7 @@ export function generatePasswords(root = document) {
         event.preventDefault();
         field.type = 'text';
         field.value = randomPassword();
+        field.dispatchEvent(new Event('input', { bubbles: true }));
         field.focus();
         field.select();
     });

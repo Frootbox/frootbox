@@ -1,5 +1,6 @@
-/* Buttons: primary (one per screen), secondary, ghost, danger and
-   danger-solid; small and block as modifiers. */
+/* Buttons by weight (decision 0131): primary (one per screen at rest),
+   tonal, outline, ghost, then danger and danger-solid; small and block as
+   modifiers. */
 
 .fb-button {
     display: inline-flex;
@@ -37,12 +38,22 @@
     color: var(--fb-on-accent);
 }
 
-.fb-button--secondary {
+.fb-button--tonal {
+    background: var(--fb-accent-soft);
+    color: var(--fb-accent-text);
+}
+
+.fb-button--tonal:hover:not(:disabled) {
+    background: var(--fb-accent-soft-hover);
+    color: var(--fb-accent-text);
+}
+
+.fb-button--outline {
     border-color: var(--fb-border-strong);
     background: var(--fb-surface);
 }
 
-.fb-button--secondary:hover:not(:disabled),
+.fb-button--outline:hover:not(:disabled),
 .fb-button--ghost:hover:not(:disabled) {
     background: var(--fb-surface-2);
     color: var(--fb-text);

@@ -157,6 +157,11 @@ export function formInput(form) {
  * - base: a JSON pointer whose errors belong to the fields of this form,
  *   e.g. "/items/de/2" when the form edits one item of a list
  *
+ * Unsaved changes (decision 0130): the form remembers its input when it
+ * loads and after success. While the input differs, it has the attribute
+ * dirty, its save buttons (data-fb-saves, decisions 0130 and 0131) turn
+ * from tonal to primary and a status next to them says so. Fields changed by a script count once it fires "input".
+ *
  * A form in a <dialog> closes it after success.
  * Errors appear at their field and as a summary at the top, which gets
  * the focus. Fires "fb-form-input" with detail.input before sending (a
@@ -175,6 +180,7 @@ export class Form extends LitElement {
         refresh: {},
         base: {},
         busy: { type: Boolean, reflect: true },
+        dirty: { type: Boolean, reflect: true },
     };
 
     constructor() {
@@ -188,7 +194,10 @@ export class Form extends LitElement {
         this.refresh = null;
         this.base = '';
         this.busy = false;
+        this.dirty = false;
+        this.saved = null;
         this.onSubmit = this.onSubmit.bind(this);
+        this.onChange = this.onChange.bind(this);
     }
 
     createRenderRoot() {
@@ -202,15 +211,78 @@ export class Form extends LitElement {
     connectedCallback() {
         super.connectedCallback();
         this.addEventListener('submit', this.onSubmit);
+        this.addEventListener('input', this.onChange);
+        this.addEventListener('change', this.onChange);
 
         for (const field of this.querySelectorAll('input[data-type="datetime"][data-value]')) {
             field.value = localTime(field.dataset.value);
         }
+
+        this.remember();
+
+        // Building blocks inside may set their fields after their first render.
+        setTimeout(() => {
+            if (!this.dirty) {
+                this.remember();
+            }
+        });
     }
 
     disconnectedCallback() {
         this.removeEventListener('submit', this.onSubmit);
+        this.removeEventListener('input', this.onChange);
+        this.removeEventListener('change', this.onChange);
         super.disconnectedCallback();
+    }
+
+    /** Takes the current input as the saved state, e.g. after loading or saving. */
+    remember() {
+        this.saved = this.form ? JSON.stringify(formInput(this.form)) : null;
+        this.setDirty(false);
+    }
+
+    /** Compares the input with the saved state. */
+    check() {
+        if (this.form && this.saved !== null) {
+            this.setDirty(JSON.stringify(formInput(this.form)) !== this.saved);
+        }
+    }
+
+    onChange(event) {
+        if (event.target instanceof Element && event.target.closest('fb-form') === this) {
+            // After the other listeners, e.g. the one that fills in a slug.
+            queueMicrotask(() => this.check());
+        }
+    }
+
+    /**
+     * Save buttons turn from tonal to primary while the form is changed,
+     * and the status next to the first one says so.
+     */
+    setDirty(dirty) {
+        this.dirty = dirty;
+        const buttons = [...(this.form?.querySelectorAll('[type="submit"][data-fb-saves]') ?? [])];
+
+        for (const button of buttons) {
+            button.classList.toggle('fb-button--primary', dirty);
+            button.classList.toggle('fb-button--tonal', !dirty);
+        }
+
+        if (buttons.length === 0) {
+            return;
+        }
+
+        let status = this.querySelector('.fb-form__status');
+
+        if (!status) {
+            // The live region exists before its text changes, so it is read out.
+            status = document.createElement('span');
+            status.className = 'fb-form__status';
+            status.setAttribute('role', 'status');
+            buttons[0].after(status);
+        }
+
+        status.textContent = dirty ? (document.body?.dataset.fbUnsaved || 'Not saved') : '';
     }
 
     async onSubmit(event) {
@@ -243,6 +315,8 @@ export class Form extends LitElement {
             return;
         }
 
+        this.remember();
+
         const data = result.data;
         const success = new CustomEvent('fb-form-success', { detail: { data }, bubbles: true, cancelable: true });
 
@@ -266,6 +340,7 @@ export class Form extends LitElement {
 
         if (this.reset) {
             form.reset();
+            this.remember();
         }
 
         // A dialog gives the focus back to the button that opened it.
@@ -448,6 +523,36 @@ export class Form extends LitElement {
 
         return copy.textContent.trim();
     }
+}
+
+/**
+ * Asks before unsaved changes get lost (decision 0130): when the page is
+ * left and when htmx replaces an element with a changed form in it, e.g.
+ * after a click in the page tree. Forms in closed dialogs do not count.
+ */
+export function guardUnsaved() {
+    const unsaved = (root) => [...root.querySelectorAll('fb-form[dirty]')].some((form) => !form.closest('dialog:not([open])'));
+
+    window.addEventListener('beforeunload', (event) => {
+        if (unsaved(document)) {
+            event.preventDefault();
+            event.returnValue = '';
+        }
+    });
+
+    document.addEventListener('htmx:confirm', (event) => {
+        const target = event.detail?.target;
+
+        if (!(target instanceof Element) || !unsaved(target)) {
+            return;
+        }
+
+        event.preventDefault();
+
+        if (window.confirm(document.body?.dataset.fbLeave || 'Your changes are not saved. Leave anyway?')) {
+            event.detail.issueRequest(true);
+        }
+    });
 }
 
 /** A toast that the form before the redirect asked for. */
