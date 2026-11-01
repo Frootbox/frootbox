@@ -175,6 +175,20 @@ replaces single files of other blocks under
 `overrides/<vendor>/<package>/blocks/<Name>/`. Field types are an
 extension point: `$registry->fieldType()` with `#[AsFieldType]`; the core
 brings `headline`, `text`, `richtext`, `link` and `list`.
+A field may name a `placeholder`, shown in the empty field while
+editing and never to visitors. A list field begins with `start` empty
+entries when a block is added (else with `min`), so a new block looks like
+itself right away:
+
+```yaml
+fields:
+  items:
+    type: list
+    start: 3
+    fields:
+      title: { type: headline, placeholder: "A benefit in a few words" }
+```
+
 `bin/frootbox blocks` lists what is available, `blocks:check` checks all
 schemas and templates, `cache:clear` empties `var/cache` after a deployment.
 
