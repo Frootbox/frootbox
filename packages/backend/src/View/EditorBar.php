@@ -256,6 +256,7 @@ final readonly class EditorBar
             'uploading' => $t('Uploading {done} of {total} …'),
             'noMedia' => $t('No images yet. Upload the first one.'),
             'noMediaFound' => $t('Nothing found'),
+            'alreadyInLibrary' => $t('“{name}” is already in the media library. The image there is used.'),
             'loadMore' => $t('Show more'),
             'altHere' => $t('Alternative text for this place'),
             'altHereHint' => $t('Leave it empty to use the text from the media library.'),

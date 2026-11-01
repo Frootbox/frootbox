@@ -41,6 +41,7 @@ export class MediaPicker {
             loading: true,
             uploading: null,
             problems: [],
+            notices: [],
         };
         this.load(1);
         this.bar.requestUpdate();
@@ -95,6 +96,7 @@ export class MediaPicker {
     /** Uploads the files one after another and chooses the last one. */
     async upload(files) {
         const problems = [];
+        const notices = [];
 
         for (const [index, file] of files.entries()) {
             this.update({ uploading: this.labels.uploading.replace('{done}', String(index + 1)).replace('{total}', String(files.length)) });
@@ -112,14 +114,20 @@ export class MediaPicker {
             const created = await this.bar.run('media.create', { upload: answer.data.upload });
 
             if (created.ok && this.state) {
-                this.update({ items: [created.data, ...this.state.items], total: this.state.total + 1, chosen: created.data.id });
+                // The same file is already in the library: no second copy (decision 0146).
+                const others = this.state.items.filter((item) => item.id !== created.data.id);
+                this.update({ items: [created.data, ...others], total: this.state.total + (created.data.existing ? 0 : 1), chosen: created.data.id });
+
+                if (created.data.existing) {
+                    notices.push(this.labels.alreadyInLibrary.replace('{name}', created.data.fileName));
+                }
             } else if (!created.ok) {
                 problems.push(`${file.name}: ${this.bar.message?.text ?? this.labels.failed}`);
             }
         }
 
         if (this.state) {
-            this.update({ uploading: null, problems });
+            this.update({ uploading: null, problems, notices });
         }
     }
 
@@ -191,6 +199,7 @@ export class MediaPicker {
                 </div>
                 <p class="hint" role="status">${state.uploading ?? ''}</p>
                 ${state.problems.length > 0 ? html`<ul class="problems" role="alert">${state.problems.map((problem) => html`<li>${problem}</li>`)}</ul>` : nothing}
+                ${state.notices.length > 0 ? html`<ul class="notices" role="status">${state.notices.map((notice) => html`<li>${notice}</li>`)}</ul>` : nothing}
                 ${list}
                 <label>${labels.altHere}
                     <input type="text" .value=${state.alt} maxlength="500" aria-describedby="fb-media-alt-hint"
@@ -269,4 +278,6 @@ export const mediaStyles = css`
     }
 
     .problems { margin: 0; padding-inline-start: var(--fb-space-4); color: var(--fb-danger-text); }
+
+    .notices { margin: 0; padding-inline-start: var(--fb-space-4); color: var(--fb-text-muted); }
 `;

@@ -564,6 +564,20 @@ Folder: Ordner
 The image is deleted.: Das Bild ist gelöscht.
 Delete the image?: Bild löschen?
 Pages that use it show nothing there any more.: Seiten, die es verwenden, zeigen an der Stelle nichts mehr.
+# Media used more than once (decision 0146)
+'“{name}” is already in the media library. The image there is used.': '„{name}“ liegt schon in den Medien. Das Bild von dort wird verwendet.'
+'“{name}” is already in the media library and was not added again.': '„{name}“ liegt schon in den Medien und wurde nicht noch einmal angelegt.'
+Only unused: Nur unbenutzte
+'Used on no page and in no field of the website, not even in a draft.': 'Auf keiner Seite und in keinem Website-Feld verwendet, auch nicht im Entwurf.'
+Used on: Verwendet auf
+'Not used anywhere, not even in a draft.': 'Nirgends verwendet, auch nicht im Entwurf.'
+Page without title: Seite ohne Titel
+Fields of the website: Website-Felder
+Only in the draft: Nur im Entwurf
+'It is not used anywhere.': 'Es wird nirgends verwendet.'
+"It is used in {count} place. Pages that use it show nothing there any more.":
+  one: "Es wird an {count} Stelle verwendet. Seiten, die es verwenden, zeigen dort nichts mehr."
+  other: "Es wird an {count} Stellen verwendet. Seiten, die es verwenden, zeigen dort nichts mehr."
 'The file cannot be read as an image.': 'Die Datei lässt sich nicht als Bild lesen.'
 'The image has too many pixels, at most {max} million.': 'Das Bild hat zu viele Pixel, höchstens {max} Millionen.'
 'The file is no image of type JPEG, PNG, WebP or GIF.': 'Die Datei ist kein Bild im Format JPEG, PNG, WebP oder GIF.'

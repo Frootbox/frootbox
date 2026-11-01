@@ -56,11 +56,17 @@ final class MediaScreenTest extends BackendTestCase
         $found = $this->html($this->request('GET', '/cms/media?q=hafen', session: $this->session));
         self::assertStringNotContainsString('anna.jpg', $found);
 
+        $unused = $this->html($this->request('GET', '/cms/media?unused=1', session: $this->session));
+        self::assertStringContainsString('anna.jpg', $unused, 'No page uses them yet.');
+        self::assertStringContainsString('name="unused" value="1" checked', $unused);
+
         $detail = $this->html($this->request('GET', '/cms/media/' . $id . '?folder=' . $folderId, session: $this->session));
         self::assertStringContainsString('<fb-focus class="fb-focus" x="0.5" y="0.5"', $detail);
         self::assertMatchesRegularExpression('/name="texts\.[a-z-]+\.alt"/', $detail);
         self::assertStringContainsString('href="/cms/media?folder=' . $folderId . '"', $detail, 'The way back keeps the filter.');
         self::assertStringContainsString('<option value="' . $folderId . '" selected>Team</option>', $detail);
+        self::assertStringContainsString('Nirgends verwendet, auch nicht im Entwurf.', $detail);
+        self::assertStringContainsString('Es wird nirgends verwendet.', $detail);
 
         $updated = $this->action('media.update', ['id' => $id, 'focusX' => 0.2, 'focusY' => 0.8, 'tags' => ['team']], $this->session)['data'];
         self::assertIsArray($updated);

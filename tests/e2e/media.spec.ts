@@ -11,9 +11,13 @@ import { action, signIn } from './admin';
 
 const unique = () => `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-/** A JPEG drawn by the browser: brown with a light square at the right. */
+/**
+ * A JPEG drawn by the browser: brown with a light square at the right and
+ * a corner of a random color, so each one differs (the library finds the
+ * same file again, decision 0146).
+ */
 async function photo(page: Page, name: string): Promise<{ name: string; mimeType: string; buffer: Buffer }> {
-    const data = await page.evaluate(() => {
+    const data = await page.evaluate((corner) => {
         const canvas = document.createElement('canvas');
         canvas.width = 1600;
         canvas.height = 1000;
@@ -22,9 +26,11 @@ async function photo(page: Page, name: string): Promise<{ name: string; mimeType
         context.fillRect(0, 0, 1600, 1000);
         context.fillStyle = '#f5efe6';
         context.fillRect(1000, 200, 300, 300);
+        context.fillStyle = corner;
+        context.fillRect(0, 0, 40, 40);
 
         return canvas.toDataURL('image/jpeg', 0.9);
-    });
+    }, `#${Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')}`);
 
     return { name, mimeType: 'image/jpeg', buffer: Buffer.from(data.split(',')[1], 'base64') };
 }
@@ -39,10 +45,18 @@ test('uploads an image, sets its focus and shows it on a published page', async 
     await page.waitForFunction(() => customElements.get('fb-upload') !== undefined);
     const chooser = page.waitForEvent('filechooser');
     await page.getByRole('button', { name: 'Hochladen' }).click();
-    await (await chooser).setFiles(await photo(page, `${name}.jpg`));
+    const file = await photo(page, `${name}.jpg`);
+    await (await chooser).setFiles(file);
     await expect(page.getByText('Die Bilder sind hochgeladen.')).toBeVisible();
     const tile = page.getByRole('link', { name: `${name}.jpg` });
     await expect(tile).toBeVisible();
+
+    // The same file again under another name is not added a second time.
+    const again = page.waitForEvent('filechooser');
+    await page.getByRole('button', { name: 'Hochladen' }).click();
+    await (await again).setFiles({ ...file, name: `${name}-kopie.jpg` });
+    await expect(page.getByRole('status').filter({ hasText: `„${name}.jpg“ liegt schon in den Medien und wurde nicht noch einmal angelegt.` })).toBeVisible();
+    await expect(page.getByRole('link', { name: `${name}-kopie.jpg` })).toHaveCount(0);
 
     // A file that is no image says so.
     const refused = page.waitForEvent('filechooser');

@@ -1,4 +1,4 @@
-{#- The details of one medium: focus point, texts per language, tags, folder (decision 0126). -#}
+{#- The details of one medium: focus point, texts per language, tags, folder (decision 0126), where it is used (0146). -#}
 {% import '@backend/ui.twig' as ui %}
 {% set editable = can('media.update') %}
 <section class="fb-card fb-split__main" id="media-detail" aria-labelledby="media-detail-title">
@@ -46,6 +46,29 @@
             {% endif %}
         </form>
     </fb-form>
+
+    <div class="fb-card__body fb-stack fb-stack--sm" id="media-usages">
+        <h3 class="fb-heading-4">{{ t('Used on') }}</h3>
+        {% if usages is empty %}
+        <p class="fb-muted">{{ t('Not used anywhere, not even in a draft.') }}</p>
+        {% else %}
+        <ul class="fb-list">
+            {%- for usage in usages %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    {% if usage.type == 'page' %}
+                    <a class="fb-list__title fb-list__link" href="{{ path('backend.pages.show', {id: usage.id}) }}">{{ usage.title ?: t('Page without title') }}</a>
+                    {% else %}
+                    <span class="fb-list__title">{{ t('Fields of the website') }}</span>
+                    {% endif %}
+                    {% if languages|length > 1 %}<span class="fb-list__meta">{{ (languages|filter(language => language.code == usage.language)|first).title ?? usage.language }}</span>{% endif %}
+                </span>
+                {{ usage.published ? ui.badge('published', t('Published')) : ui.badge('draft', t('Only in the draft')) }}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+    </div>
 </section>
 
 {% if can('media.delete') %}
@@ -55,7 +78,7 @@
             <input type="hidden" name="id" value="{{ medium.id }}">
             <div class="fb-dialog__body">
                 <h2 class="fb-dialog__title" id="media-delete-title">{{ t('Delete the image?') }}</h2>
-                <p>{{ t('Pages that use it show nothing there any more.') }}</p>
+                <p>{% if usages is empty %}{{ t('It is not used anywhere.') }}{% else %}{{ t('It is used in {count} place. Pages that use it show nothing there any more.', {count: usages|length}) }}{% endif %}</p>
             </div>
             <div class="fb-dialog__actions">
                 {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'media-delete', command: 'close', autofocus: true}}) }}

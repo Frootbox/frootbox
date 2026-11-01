@@ -14,6 +14,7 @@ use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Media\FolderSummary;
 use Frootbox\Core\Media\ListMedia;
 use Frootbox\Core\Media\ListMediaFolders;
+use Frootbox\Core\Media\ListMediumUsages;
 use Frootbox\Core\Media\ShowMedium;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -23,7 +24,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * The media library: folders, the media of one folder or a search, and
  * the details of one medium (decision 0126).
  *
- *     /cms/media?folder=01J…&q=hafen&tag=team&page=2
+ *     /cms/media?folder=01J…&q=hafen&tag=team&unused=1&page=2
  *     /cms/media/01J…       the details, with the same filters
  */
 final readonly class MediaHandler implements RequestHandlerInterface
@@ -51,6 +52,7 @@ final readonly class MediaHandler implements RequestHandlerInterface
         $folder = self::text($query['folder'] ?? null);
         $search = self::text($query['q'] ?? null);
         $tag = self::text($query['tag'] ?? null);
+        $unused = null !== self::text($query['unused'] ?? null);
         $page = max(1, (int) self::text($query['page'] ?? null));
         $folders = $this->runner->ask(new ListMediaFolders());
         $folderIds = array_map(static fn(FolderSummary $summary): string => $summary->id, $folders);
@@ -61,15 +63,17 @@ final readonly class MediaHandler implements RequestHandlerInterface
 
         $id = $request->getAttribute('id');
         $medium = \is_string($id) ? $this->runner->ask(new ShowMedium($id)) : null;
+        $usages = null === $medium ? [] : $this->runner->ask(new ListMediumUsages($medium->id));
         $list = $this->runner->ask(new ListMedia(
             folderId: null === $folder ? null : (self::TOP === $folder ? '' : $folder),
             tag: $tag,
             search: $search,
+            unused: $unused,
             page: $page,
             perPage: self::PER_PAGE,
         ));
 
-        $filters = array_filter(['folder' => $folder, 'q' => $search, 'tag' => $tag], static fn(?string $value): bool => null !== $value);
+        $filters = array_filter(['folder' => $folder, 'q' => $search, 'tag' => $tag, 'unused' => $unused ? '1' : null], static fn(?string $value): bool => null !== $value);
 
         return $this->view->render($request, '@backend/media/list.twig', [
             'folders' => self::tree($folders),
@@ -77,11 +81,13 @@ final readonly class MediaHandler implements RequestHandlerInterface
             'current' => array_find($folders, static fn(FolderSummary $summary): bool => $summary->id === $folder),
             'search' => $search ?? '',
             'tag' => $tag ?? '',
+            'unused' => $unused,
             'list' => $list,
             'pages' => max(1, (int) ceil($list->total / self::PER_PAGE)),
             'filters' => $filters,
             'query' => [] === $filters ? '' : '?' . http_build_query($filters),
             'medium' => $medium,
+            'usages' => $usages,
             'languages' => $this->languages->all(),
         ]);
     }

@@ -44,7 +44,7 @@
         {% if medium %}
         {% include '@backend/media/detail.twig' %}
         {% else %}
-        <fb-upload class="fb-split__main" url="{{ path('backend.uploads') }}" folder="{{ current ? current.id : '' }}" refresh="media-grid media-folders" label="{{ t('Drop images here to upload them') }}" progress="{{ t('Uploading {done} of {total} …') }}" done="{{ t('The images are uploaded.') }}"{% if not can('media.create') %} disabled{% endif %}>
+        <fb-upload class="fb-split__main" url="{{ path('backend.uploads') }}" folder="{{ current ? current.id : '' }}" refresh="media-grid media-folders" label="{{ t('Drop images here to upload them') }}" progress="{{ t('Uploading {done} of {total} …') }}" done="{{ t('The images are uploaded.') }}" existing="{{ t('“{name}” is already in the media library and was not added again.') }}"{% if not can('media.create') %} disabled{% endif %}>
             <section class="fb-card" id="media-grid" aria-labelledby="media-grid-title">
                 <div class="fb-card__header">
                     <h2 class="fb-heading-4" id="media-grid-title" tabindex="-1" data-fb-focus>{{ current ? current.name : (folder == 'top' ? t('Outside of folders') : t('All media')) }}</h2>
@@ -57,12 +57,13 @@
                     {% if folder %}<input type="hidden" name="folder" value="{{ folder }}">{% endif %}
                     {{ ui.field({label: t('Search'), name: 'q', type: 'search', value: search, placeholder: t('File name or text')}) }}
                     {{ ui.field({label: t('Tag'), name: 'tag', value: tag, optional: true}) }}
+                    {{ ui.check({label: t('Only unused'), name: 'unused', id: 'media-unused', checked: unused, hint: t('Used on no page and in no field of the website, not even in a draft.')}) }}
                     {{ ui.button({label: t('Search'), variant: 'outline', type: 'submit', icon: 'search'}) }}
                 </form>
                 <p class="fb-visually-hidden" role="status" data-fb-upload-status></p>
                 {% if list.items is empty %}
                 <div class="fb-card__body">
-                    {{ ui.empty({icon: 'image', title: search or tag ? t('Nothing found') : t('No images yet'), text: search or tag ? t('Try another search.') : t('Upload images with the button or drop them here.')}) }}
+                    {{ ui.empty({icon: 'image', title: search or tag or unused ? t('Nothing found') : t('No images yet'), text: search or tag or unused ? t('Try another search.') : t('Upload images with the button or drop them here.')}) }}
                 </div>
                 {% else %}
                 <ul class="fb-media-grid">

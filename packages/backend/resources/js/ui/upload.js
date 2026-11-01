@@ -59,8 +59,12 @@ export async function uploadMedium(url, file, folderId = null) {
  * - progress and done: texts for the status and the toast
  * - disabled: no uploads, e.g. without the permission
  *
- * Errors appear as an alert above the content, one line per file.
- * Fires "fb-uploaded" with detail.media, the new media.
+ * - existing: the note for a file that is already in the library, with
+ *   {name} (decision 0146); such a file is not added a second time
+ *
+ * Errors appear as an alert above the content, one line per file, notes
+ * on files already in the library as a calm alert. Fires "fb-uploaded"
+ * with detail.media, the new media.
  */
 export class Upload extends LitElement {
     static properties = {
@@ -70,6 +74,7 @@ export class Upload extends LitElement {
         label: {},
         progress: {},
         done: {},
+        existing: {},
         disabled: { type: Boolean, reflect: true },
         dragging: { type: Boolean, reflect: true },
         busy: { type: Boolean, reflect: true },
@@ -83,6 +88,7 @@ export class Upload extends LitElement {
         this.label = 'Drop images here to upload them';
         this.progress = 'Uploading {done} of {total} …';
         this.done = null;
+        this.existing = '{name} is already in the media library.';
         this.disabled = false;
         this.dragging = false;
         this.busy = false;
@@ -188,15 +194,18 @@ export class Upload extends LitElement {
         }
 
         this.busy = true;
-        this.querySelector(':scope > .fb-alert')?.remove();
+        this.querySelectorAll(':scope > .fb-alert').forEach((alert) => alert.remove());
         const media = [];
         const problems = [];
+        const known = [];
 
         for (const [index, file] of files.entries()) {
             this.status(this.progress.replace('{done}', String(index + 1)).replace('{total}', String(files.length)));
             const result = await uploadMedium(this.url, file, this.folder);
 
-            if (result.ok) {
+            if (result.ok && result.data.existing) {
+                known.push(this.existing.replace('{name}', result.data.fileName));
+            } else if (result.ok) {
                 media.push(result.data);
             } else {
                 // The message of the file itself says more than "check the fields".
@@ -207,8 +216,12 @@ export class Upload extends LitElement {
         this.busy = false;
         this.status('');
 
+        if (known.length > 0) {
+            this.showAlert(known, 'info');
+        }
+
         if (problems.length > 0) {
-            this.showProblems(problems);
+            this.showAlert(problems, 'danger');
         }
 
         if (media.length === 0) {
@@ -226,16 +239,16 @@ export class Upload extends LitElement {
         }
     }
 
-    showProblems(problems) {
+    showAlert(lines, tone) {
         const alert = document.createElement('div');
         alert.className = 'fb-alert';
-        alert.dataset.tone = 'danger';
-        alert.setAttribute('role', 'alert');
+        alert.dataset.tone = tone;
+        alert.setAttribute('role', tone === 'danger' ? 'alert' : 'status');
         const list = document.createElement('ul');
 
-        for (const problem of problems) {
+        for (const line of lines) {
             const item = document.createElement('li');
-            item.textContent = problem;
+            item.textContent = line;
             list.append(item);
         }
 
