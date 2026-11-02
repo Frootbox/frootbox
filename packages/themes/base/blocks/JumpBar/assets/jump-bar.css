@@ -1,0 +1,39 @@
+/*
+ * Jump bar (decision 0196): stays below the head while scrolling, one
+ * line that scrolls sideways when the marks do not fit. A child theme with
+ * a sticky head sets --base-sticky-top to its height.
+ */
+.base-jump-bar {
+  position: sticky;
+  inset-block-start: var(--base-sticky-top, 0);
+  z-index: 4;
+  border-block-end: var(--border);
+  background: var(--color-bg);
+}
+.base-jump-bar__list {
+  display: flex;
+  gap: var(--space-2xs);
+  inline-size: min(100% - 2 * var(--gutter), var(--width));
+  margin: 0 auto;
+  padding: var(--space-2xs) 0;
+  overflow-x: auto;
+  list-style: none;
+  scrollbar-width: thin;
+}
+.base-jump-bar a {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  min-block-size: 2.75rem;
+  padding-inline: var(--space-s);
+  border: var(--border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--size-s);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.base-jump-bar a:hover { border-color: currentColor; }
+.base-jump-bar__hint { margin: 0; padding: var(--space-s); border: 1px dashed var(--color-line); color: var(--color-muted); font-size: var(--size-s); }

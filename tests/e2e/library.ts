@@ -40,6 +40,7 @@ export const PAGES = {
     table: '/table',
     code: '/code',
     onPrimary: '/on-primary',
+    jumpBar: '/jump-bar',
     landing: '/aktion',
 };
 

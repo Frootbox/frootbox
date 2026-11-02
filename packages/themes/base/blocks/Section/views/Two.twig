@@ -12,8 +12,13 @@ options:
     label: Background
     choices: { none: None, surface: Surface, primary: Accent }
     default: none
+  jumpMark:
+    type: text
+    label: Jump mark
+    description: A short name for the jump bar and for links to this place, e.g. For agencies. Leave empty for none.
+    default: ''
 #}
-<section class="base-section base-full base-section--{{ options.spacing }} base-section--{{ options.background }}">
+<section{{ {id: jump_mark()}|attributes }} class="base-section base-full base-section--{{ options.spacing }} base-section--{{ options.background }}">
   <div class="base-section__grid base-section__grid--two">
     <div class="base-section__column">{{ area('first') }}</div>
     <div class="base-section__column">{{ area('second') }}</div>

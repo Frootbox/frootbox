@@ -162,3 +162,19 @@ test('shows a video with poster that starts only on request', async ({ page }) =
     await expect.poll(() => video.evaluate((element: HTMLVideoElement) => element.readyState)).toBeGreaterThanOrEqual(1);
     expect(await video.evaluate((element: HTMLVideoElement) => [element.paused, Math.round(element.duration)])).toEqual([true, 4]);
 });
+
+test('jumps to a section and keeps the jump bar in view', async ({ page }) => {
+    await page.goto(PAGES.jumpBar);
+    const bar = page.getByRole('navigation', { name: 'Auf dieser Seite' });
+    await bar.getByRole('link', { name: 'Für Firmen' }).click();
+
+    await expect(page).toHaveURL(/#fuer-firmen$/);
+    const heading = page.getByRole('heading', { name: 'Kaffee fürs Büro' });
+    await expect(heading).toBeInViewport();
+
+    // The bar stays at the top and does not cover the heading (decision 0196).
+    const barBox = (await bar.boundingBox())!;
+    const headingBox = (await heading.boundingBox())!;
+    expect(barBox.y).toBeLessThanOrEqual(1);
+    expect(headingBox.y).toBeGreaterThanOrEqual(barBox.y + barBox.height);
+});

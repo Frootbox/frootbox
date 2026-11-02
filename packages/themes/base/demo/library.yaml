@@ -605,6 +605,24 @@
               - {"block":"frootbox/theme-base/Section","variant":"Two","options":{"background":"primary"},"areas":{"first":[{"block":"frootbox/theme-base/Pricing","fields":{"title":"Unsere Abos","items":[{"name":"Klein","price":"14 €","period":"pro Lieferung","text":"Für eine Person.","features":"250 g Kaffee\nVersand frei","link":{"url":"https://example.org/","text":"Klein wählen"},"badge":""},{"name":"Mittel","price":"24 €","period":"pro Lieferung","text":"Für Paare.","features":"500 g Kaffee\nVersand frei","link":{"url":"https://example.org/","text":"Mittel wählen"},"badge":"Beliebt"}]}}],"second":[{"block":"frootbox/theme-base/Table","fields":{"title":"Öffnungszeiten","table":{"rows":[["Tag","Laden"],["Montag bis Freitag","8–18 Uhr"],["Samstag","9–14 Uhr"]],"headerRow":true,"headerColumn":true},"note":"An Feiertagen bleibt alles zu."}},{"block":"frootbox/theme-base/CallToAction","options":{"background":"surface"},"fields":{"title":"Lust auf eine Verkostung?","text":"Jeden ersten Freitag im Monat.","link":{"url":"https://example.org/","text":"Platz reservieren"}}}]}}
   as: on_primary
 - page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Sprungleiste
+        slug: jump-bar
+        content:
+          fields:
+            title: Sprungleiste
+            intro: 'Abschnitte mit Sprungmarke; die Leiste füllt sich von selbst und bleibt beim Scrollen stehen.'
+          areas:
+            main:
+              - {"block":"frootbox/theme-base/JumpBar"}
+              - {"block":"frootbox/theme-base/Section","variant":"Default","options":{"jumpMark":"Rösterei"},"areas":{"first":[{"block":"frootbox/theme-base/TextWithHeading","fields":{"title":"Die Rösterei am Hafen","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Wir rösten jeden Montag in kleinen Mengen, damit jede Sorte ihren eigenen Charakter behält. Die Bohnen kommen von Höfen, die wir seit Jahren kennen."}]}]}}},{"block":"frootbox/theme-base/TextWithHeading","fields":{"title":"Unser Handwerk","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Wir rösten jeden Montag in kleinen Mengen, damit jede Sorte ihren eigenen Charakter behält. Die Bohnen kommen von Höfen, die wir seit Jahren kennen."}]}]}}}]}}
+              - {"block":"frootbox/theme-base/Section","variant":"Two","options":{"background":"surface","jumpMark":"Sorten und Abos"},"areas":{"first":[{"block":"frootbox/theme-base/TextWithHeading","fields":{"title":"Hafenmorgen","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Wir rösten jeden Montag in kleinen Mengen, damit jede Sorte ihren eigenen Charakter behält. Die Bohnen kommen von Höfen, die wir seit Jahren kennen."}]}]}}}],"second":[{"block":"frootbox/theme-base/TextWithHeading","fields":{"title":"Speicherstadt","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Wir rösten jeden Montag in kleinen Mengen, damit jede Sorte ihren eigenen Charakter behält. Die Bohnen kommen von Höfen, die wir seit Jahren kennen."}]}]}}}]}}
+              - {"block":"frootbox/theme-base/Section","variant":"Default","options":{"jumpMark":"Für Firmen"},"areas":{"first":[{"block":"frootbox/theme-base/TextWithHeading","fields":{"title":"Kaffee fürs Büro","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Wir rösten jeden Montag in kleinen Mengen, damit jede Sorte ihren eigenen Charakter behält. Die Bohnen kommen von Höfen, die wir seit Jahren kennen."}]}]}}},{"block":"frootbox/theme-base/TextWithHeading","fields":{"title":"Lieferung und Rechnung","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Wir rösten jeden Montag in kleinen Mengen, damit jede Sorte ihren eigenen Charakter behält. Die Bohnen kommen von Höfen, die wir seit Jahren kennen."}]}]}}}]}}
+  as: jump_bar
+- page.create:
     layout: frootbox/theme-base/Start
     parentId: '${start.id}'
     translations:
@@ -676,6 +694,7 @@
       - '${table.id}'
       - '${code.id}'
       - '${on_primary.id}'
+      - '${jump_bar.id}'
       - '${page_header.id}'
       - '${landing.id}'
       - '${imprint.id}'
@@ -772,6 +791,9 @@
             -
               type: target
               target: 'page:${table.id}'
+            -
+              type: target
+              target: 'page:${jump_bar.id}'
         -
           type: target
           target: 'page:${landing.id}'
