@@ -2,7 +2,8 @@
   A navigation of the theme (decision 0106) with up to two levels. The
   second level opens with <details>, without a script. An entry of the
   main navigation with the option "button" stands out as a button
-  (decision 0188).
+  (decision 0188). Phone numbers keep their order in right-to-left
+  languages. The footer uses the macro "link" for its columns.
 
     {% include '@theme/navigation.twig' with { items: navigation('main'), name: 'main', label: t('Main navigation') } %}
 #}
@@ -11,7 +12,7 @@
     <span class="base-nav__heading">{{ item.label }}</span>
   {%- else -%}
     {%- set classes = [(item.options.button ?? false) ? 'base-nav__button', not item.current and item.active ? 'is-active']|filter(name => name) -%}
-    <a href="{{ item.url }}"{% if item.current %} aria-current="page"{% endif %}{% if classes %} class="{{ classes|join(' ') }}"{% endif %}{% if item.newWindow %} target="_blank" rel="noopener"{% endif %}>{{ item.label }}</a>
+    <a href="{{ item.url }}"{% if item.current %} aria-current="page"{% endif %}{% if classes %} class="{{ classes|join(' ') }}"{% endif %}{% if item.newWindow %} target="_blank" rel="noopener"{% endif %}{% if item.url starts with 'tel:' %} dir="ltr"{% endif %}>{{ item.label }}</a>
   {%- endif -%}
 {% endmacro %}
 {% if items %}

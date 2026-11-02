@@ -114,4 +114,6 @@ theme:
       depth: 2
       options:
         button: { type: boolean, label: As a button }
-    footer: Footer
+    footer:
+      title: Footer
+      depth: 2

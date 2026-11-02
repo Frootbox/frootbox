@@ -1,21 +1,59 @@
 {#
-  The foot of every page: name, address, the footer navigation, profiles
-  and a note (decision 0128). A value from the first language keeps its
-  lang and dir, e.g. the German address on an Arabic page (decision 0170).
+  The foot of every page: name, address, the footer navigation, profiles,
+  a note and the languages (decision 0128). A value from the first
+  language keeps its lang and dir, e.g. the German address on an Arabic
+  page (decision 0170).
+
+  An entry of the footer navigation with entries below becomes a column
+  with its label as the title, the others stay a row of links below the
+  columns (decision 0195).
 #}
+{% import '@theme/navigation.twig' as nav %}
+{% set items = navigation('footer') %}
+{% set columns = items|filter(item => item.children) %}
 <footer class="base-footer">
   <div class="base-footer__inner base-wrap">
     <div class="base-footer__site">
       <p class="base-footer__brand"{{ site_attributes('brand')|attributes }}>{{ site_field('brand') }}</p>
       <p class="base-footer__address"{{ site_attributes('address')|attributes }}>{{ site_field('address') }}</p>
     </div>
-    {% include '@theme/navigation.twig' with { items: navigation('footer'), name: 'footer', label: t('Footer navigation') } %}
+    {% if columns %}
+      {% set links = items|filter(item => not item.children) %}
+      <nav class="base-nav base-nav--footer base-footer__nav" aria-label="{{ t('Footer navigation') }}">
+        <div class="base-footer__columns">
+          {% for column in columns %}
+            <div class="base-footer__column">
+              <p class="base-footer__heading" id="base-footer-{{ loop.index }}">
+                {%- if column.url is null %}{{ column.label }}{% else %}{{ nav.link(column) }}{% endif -%}
+              </p>
+              <ul aria-labelledby="base-footer-{{ loop.index }}">
+                {% for child in column.children %}
+                  <li>{{ nav.link(child) }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endfor %}
+        </div>
+        {% if links %}
+          <ul class="base-nav__list">
+            {% for link in links %}
+              <li>{{ nav.link(link) }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </nav>
+    {% else %}
+      {% include '@theme/navigation.twig' with { items: items, name: 'footer', label: t('Footer navigation') } %}
+    {% endif %}
     {% set profiles = site_field('profiles') %}
     {% if profiles|length > 0 %}
       <ul class="base-footer__profiles" aria-label="{{ t('Profiles in social networks') }}"{{ site_attributes('profiles')|attributes }}>
         {% for profile in profiles %}<li>{{ profile.field('link') }}</li>{% endfor %}
       </ul>
     {% endif %}
-    <p class="base-footer__note"{{ site_attributes('note')|attributes }}>{{ site_field('note') }}</p>
+    <div class="base-footer__bottom">
+      <p class="base-footer__note"{{ site_attributes('note')|attributes }}>{{ site_field('note') }}</p>
+      {% include '@theme/languages.twig' %}
+    </div>
   </div>
 </footer>

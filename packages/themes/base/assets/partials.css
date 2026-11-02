@@ -124,7 +124,7 @@
 .base-breadcrumb li + li::before { content: "/"; margin-inline-end: var(--space-2xs); opacity: 0.6; }
 .base-breadcrumb a { color: inherit; }
 
-/* Foot: name and address, then the links, profiles and the note. */
+/* Foot: name and address, then the links, profiles, the note and the languages. */
 .base-footer { margin-block-start: var(--space); border-block-start: var(--border); background: var(--color-surface); color: var(--color-muted); font-size: var(--size-s); }
 .base-footer__inner { display: flex; flex-wrap: wrap; align-items: start; justify-content: space-between; gap: var(--space-m) var(--space-xl); padding-block: var(--space-xl); }
 .base-footer__site { display: flex; flex-direction: column; gap: var(--space-3xs); }
@@ -133,7 +133,20 @@
 .base-footer .base-nav a { color: inherit; }
 .base-footer__profiles { display: flex; flex-wrap: wrap; gap: var(--space-2xs); margin: 0; padding: 0; list-style: none; }
 .base-footer__profiles a { display: inline-flex; align-items: center; min-block-size: 2.75rem; color: inherit; }
-.base-footer__note { flex-basis: 100%; }
+/* Columns of the footer navigation (decision 0195): as many next to each other as fit. */
+.base-footer__nav { display: flex; flex: 1 1 30rem; flex-direction: column; gap: var(--space-m); }
+.base-footer__columns { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(10rem, 100%), 1fr)); gap: var(--space-m) var(--space-xl); }
+.base-footer__heading { margin: 0 0 var(--space-3xs); color: var(--color-text); font-weight: 700; }
+.base-footer .base-footer__column a { display: inline-flex; min-block-size: 2rem; padding-inline: 0; color: inherit; }
+.base-footer .base-footer__column a:hover { background: none; text-decoration: underline; text-underline-offset: 0.18em; }
+/* Note and languages at the bottom, the languages at the end of the line. */
+.base-footer__bottom { display: flex; flex-basis: 100%; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2xs) var(--space-m); }
+.base-footer__note { margin: 0; }
+/* Links with room for hover stand on the edge with their text, as the columns do. */
+.base-footer :is(.base-footer__nav > .base-nav__list, .base-languages) { margin-inline: calc(-1 * var(--space-2xs)); }
+.base-footer .base-languages :is(a, span) { color: inherit; }
+.base-footer .base-languages [aria-current] { color: var(--color-text); }
+.base-footer .base-languages a:hover { background: var(--color-bg); }
 
 /* The error page (decision 0189): like the head of a subpage, with a way back. */
 .base-error__head { display: flex; flex-direction: column; align-items: start; gap: var(--space-s); padding-block: var(--space-2xl) var(--space-xl); }

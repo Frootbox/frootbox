@@ -781,11 +781,28 @@
     items:
       de:
         -
+          type: heading
+          label: Bibliothek
+          children:
+            -
+              type: target
+              target: 'page:${table.id}'
+            -
+              type: target
+              target: 'page:${code.id}'
+        -
+          type: heading
+          label: Kontakt
+          children:
+            -
+              type: email
+              email: hallo@example.org
+            -
+              type: phone
+              phone: '+49 40 123456'
+        -
           type: target
           target: 'page:${imprint.id}'
-        -
-          type: email
-          email: hallo@example.org
 - navigation.publish:
     names:
       - main
