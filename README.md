@@ -212,17 +212,25 @@ group: header
 keywords: [Stage, Intro]
 ```
 
-`example:` gives the block content for the design page under `/_design`,
-in the same form as a block on a page (`fields`, `areas`, `options`). The
-page shows every block the theme offers in each variant with its example,
-next to the tokens, the plain elements and rich text, in the frame of the
-website and in the draft. It is open to users who may see the design and
-to guests with a preview link, never to search engines.
+`examples:` gives the block content for the design page under `/_design`,
+each entry in the same form as a block on a page (`fields`, `areas`,
+`options`), for every variant or with `variant:` for one. The page shows
+every block the theme offers in each variant with its examples, next to
+the tokens, the plain elements and rich text, in the frame of the website
+and in the draft. It is open to users who may see the design and to
+guests with a preview link, never to search engines. Texts are English and
+go through the translations of the block's package and the themes. Image,
+video and file fields take `sample:` with a path in `assets/` of a theme
+(the child first) or of the block's package instead of a medium.
 
 ```yaml
-example:
-  fields:
-    title: Fresh coffee, roasted next door
+examples:
+  - fields:
+      title: Fresh coffee, roasted next door
+  - variant: Split
+    options: { side: end }
+    fields:
+      image: { sample: examples/landscape.jpg, alt: Coffee beans }
 ```
 
 `bin/frootbox blocks` lists what is available, `blocks:check` checks all
