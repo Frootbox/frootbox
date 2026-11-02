@@ -26,22 +26,23 @@ if (spawnSync('docker', ['info'], { stdio: 'ignore' }).status !== 0) {
     process.exit(1);
 }
 
-const server = spawn(php, ['tools/e2e.php'], {
-    cwd: root,
-    env: { ...process.env, E2E_LISTEN: '0.0.0.0:8100' },
-    stdio: ['ignore', 'ignore', 'inherit'],
-});
+// The demo website and the base theme alone (decision 0163).
+const servers = [
+    spawn(php, ['tools/e2e.php'], { cwd: root, env: { ...process.env, E2E_LISTEN: '0.0.0.0:8100' }, stdio: ['ignore', 'ignore', 'inherit'] }),
+    spawn(php, ['tools/e2e.php', '--base'], { cwd: root, env: { ...process.env, E2E_LISTEN: '0.0.0.0:8101' }, stdio: ['ignore', 'ignore', 'inherit'] }),
+];
 
 let exitCode = 1;
 
 try {
-    await waitFor('http://127.0.0.1:8100/', 300_000);
+    await Promise.all([waitFor('http://127.0.0.1:8100/', 300_000), waitFor('http://127.0.0.1:8101/', 300_000)]);
 
     const result = spawnSync('docker', [
         'run', '--rm', '--ipc=host',
         '--add-host=host.docker.internal:host-gateway',
         '-v', `${root}:/work`, '-w', '/work',
         '-e', 'PLAYWRIGHT_BASE_URL=http://host.docker.internal:8100',
+        '-e', 'PLAYWRIGHT_LIBRARY_URL=http://host.docker.internal:8101',
         '-e', 'CI',
         image,
         'npx', 'playwright', 'test', '--project=visual', ...process.argv.slice(2),
@@ -49,7 +50,7 @@ try {
 
     exitCode = result.status ?? 1;
 } finally {
-    server.kill();
+    servers.forEach((server) => server.kill());
 }
 
 process.exit(exitCode);
@@ -58,8 +59,10 @@ async function waitFor(url, timeout) {
     const end = Date.now() + timeout;
 
     while (Date.now() < end) {
-        if (server.exitCode !== null) {
-            throw new Error(`tools/e2e.php ended with ${server.exitCode}.`);
+        const ended = servers.find((server) => server.exitCode !== null);
+
+        if (ended) {
+            throw new Error(`tools/e2e.php ended with ${ended.exitCode}.`);
         }
 
         try {

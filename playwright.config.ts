@@ -38,14 +38,24 @@ export default defineConfig({
             ? [{ name: 'visual', testMatch: /\.visual\.ts$/, use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 800 } } }]
             : []),
     ],
+    // The demo website on 8100, the base theme alone on 8101 (decision 0163).
     webServer: external
         ? undefined
-        : {
-              command: `"${php}" tools/e2e.php`,
-              url: 'http://127.0.0.1:8100/',
-              timeout: 300_000,
-              // Always a fresh installation, the tests rely on its state.
-              reuseExistingServer: false,
-              stdout: 'ignore',
-          },
+        : [
+              {
+                  command: `"${php}" tools/e2e.php`,
+                  url: 'http://127.0.0.1:8100/',
+                  timeout: 300_000,
+                  // Always a fresh installation, the tests rely on its state.
+                  reuseExistingServer: false,
+                  stdout: 'ignore',
+              },
+              {
+                  command: `"${php}" tools/e2e.php --base`,
+                  url: 'http://127.0.0.1:8101/',
+                  timeout: 300_000,
+                  reuseExistingServer: false,
+                  stdout: 'ignore',
+              },
+          ],
 });

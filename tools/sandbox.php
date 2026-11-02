@@ -27,6 +27,8 @@ declare(strict_types=1);
  *        --dir=var/e2e   another folder in the repository
  *        --env=prod      live operation instead of development
  *        --url=http://…  the address of the website
+ *        --theme=base    the base theme alone with its sample website
+ *                        instead of Bohnenglück (decision 0163)
  */
 
 $root = dirname(__DIR__);
@@ -35,14 +37,25 @@ $skeleton = $root . '/skeleton';
 require $root . '/vendor/autoload.php';
 
 loadSettings($root . '/sandbox.env');
-$options = getopt('', ['reset', 'dir:', 'env:', 'url:']);
+$options = getopt('', ['reset', 'dir:', 'env:', 'url:', 'theme:']);
 $reset = isset($options['reset']);
 $directory = is_string($options['dir'] ?? null) ? trim($options['dir'], '/') : 'sandbox';
 $environment = is_string($options['env'] ?? null) ? $options['env'] : 'dev';
 $url = is_string($options['url'] ?? null) ? $options['url'] : null;
+$themes = [
+    'bohnenglueck' => ['name' => 'Bohnenglück', 'package' => 'frootbox/theme-bohnenglueck', 'seed' => 'demo/site.yaml'],
+    'base' => ['name' => 'Basis', 'package' => 'frootbox/theme-base', 'seed' => 'demo/library.yaml'],
+];
+$theme = $themes[is_string($options['theme'] ?? null) ? $options['theme'] : 'bohnenglueck'] ?? null;
 
 if (1 !== preg_match('#^[a-z0-9_-]+(/[a-z0-9_-]+)*$#', $directory)) {
     fwrite(STDERR, "--dir must be a folder in the repository, e.g. var/e2e.\n");
+
+    exit(1);
+}
+
+if (null === $theme) {
+    fwrite(STDERR, "--theme must be bohnenglueck or base.\n");
 
     exit(1);
 }
@@ -102,14 +115,14 @@ $composer['repositories'] = [
     ['type' => 'path', 'url' => $up . 'packages/*', 'options' => ['symlink' => true]],
     ['type' => 'path', 'url' => $up . 'packages/themes/*', 'options' => ['symlink' => true]],
 ];
-$composer['require'] = [...(is_array($composer['require'] ?? null) ? $composer['require'] : []), 'frootbox/theme-bohnenglueck' => '^0.1@dev'];
+$composer['require'] = [...(is_array($composer['require'] ?? null) ? $composer['require'] : []), $theme['package'] => '^0.1@dev'];
 
 file_put_contents(
     $composerFile,
     json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . "\n",
 );
 
-configure($sandbox . '/config/app.yaml', $url);
+configure($sandbox . '/config/app.yaml', $url, $theme['name'], $theme['package']);
 
 $composerBinary = getenv('COMPOSER_BINARY');
 
@@ -136,7 +149,7 @@ if (0 !== $exitCode) {
 $commands = [
     // Writes .env, runs the migrations and creates the superuser.
     'install --no-interaction --env=' . $environment . ' --admin-email=' . escapeshellarg($adminEmail) . ' --admin-name=' . escapeshellarg($adminName),
-    'seed frootbox/theme-bohnenglueck:demo/site.yaml',
+    'seed ' . $theme['package'] . ':' . $theme['seed'],
 ];
 
 if ('prod' === $environment) {
@@ -214,15 +227,15 @@ function setting(string $name): ?string
 }
 
 /**
- * Makes Bohnenglück the theme and adds English.
+ * Sets the name and the theme and adds English.
  */
-function configure(string $file, ?string $url): void
+function configure(string $file, ?string $url, string $name, string $theme): void
 {
     $yaml = (string) file_get_contents($file);
     $replacements = [
-        '/^  name: .*$/m' => '  name: Bohnenglück',
+        '/^  name: .*$/m' => '  name: ' . $name,
         '/^  # en: (\{.*?\})\s*#.*$/m' => '  en: $1',
-        '/^# theme: .*$/m' => 'theme: frootbox/theme-bohnenglueck',
+        '/^# theme: .*$/m' => 'theme: ' . $theme,
     ];
 
     if (null !== $url) {

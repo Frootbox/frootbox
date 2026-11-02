@@ -1,0 +1,176 @@
+# A sample website of the base theme, for
+#
+#     php bin/frootbox seed frootbox/theme-base:demo/library.yaml
+#
+# Each subpage shows one block at the three places of decision 0163: across
+# the full width, in one of two columns and in a narrow column of a third.
+# The browser tests take screenshots of them. Needs the language de.
+
+- page.create:
+    layout: frootbox/theme-base/Start
+    translations:
+      de:
+        title: Basis
+        content:
+          areas:
+            main:
+              - { block: frootbox/theme-base/Section, variant: Default, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Die Bibliothek des Basis-Themes' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Jede Unterseite zeigt einen Block an drei Stellen: über die ganze Breite, in einer von zwei Spalten und in einer schmalen Spalte.' }] }] } } }, { block: frootbox/theme-base/Button, options: { style: primary }, fields: { link: { url: /heading, text: 'Zur Überschrift' } } }] } }
+              - { block: frootbox/theme-base/Section, variant: Three, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: sub, size: auto }, fields: { text: Einfach } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }], second: [{ block: frootbox/theme-base/Heading, options: { role: sub, size: auto }, fields: { text: Barrierefrei } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }], third: [{ block: frootbox/theme-base/Heading, options: { role: sub, size: auto }, fields: { text: 'In jeder Sprache' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }] } }
+  as: start
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Überschrift
+        slug: heading
+        content:
+          fields:
+            title: Überschrift
+            intro: 'Überschriften in zwei Rollen und vier Größen. Ihre Ebene ergibt sich aus der Stelle.'
+          areas:
+            main:
+              - { block: frootbox/theme-base/Section, variant: Default, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Frisch geröstet, jede Woche' } }, { block: frootbox/theme-base/Heading, options: { role: sub, size: auto }, fields: { text: 'Eine Unterüberschrift' } }, { block: frootbox/theme-base/Heading, options: { role: heading, size: small }, fields: { text: 'Klein gesetzt' } }] } }
+              - { block: frootbox/theme-base/Section, variant: Two, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Frisch geröstet, jede Woche' } }, { block: frootbox/theme-base/Heading, options: { role: sub, size: auto }, fields: { text: 'Eine Unterüberschrift' } }, { block: frootbox/theme-base/Heading, options: { role: heading, size: small }, fields: { text: 'Klein gesetzt' } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: OneTwo, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Frisch geröstet, jede Woche' } }, { block: frootbox/theme-base/Heading, options: { role: sub, size: auto }, fields: { text: 'Eine Unterüberschrift' } }, { block: frootbox/theme-base/Heading, options: { role: heading, size: small }, fields: { text: 'Klein gesetzt' } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+  as: heading
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Text
+        slug: text
+        content:
+          fields:
+            title: Text
+            intro: 'Formatierter Fließtext in einer Spalte.'
+          areas:
+            main:
+              - { block: frootbox/theme-base/Section, variant: Default, areas: { first: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }, { type: paragraph, content: [{ type: text, text: 'Ein zweiter Absatz mit etwas mehr Text, damit die Zeilen umbrechen und der Abstand zwischen Absätzen sichtbar wird.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: Two, areas: { first: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }, { type: paragraph, content: [{ type: text, text: 'Ein zweiter Absatz mit etwas mehr Text, damit die Zeilen umbrechen und der Abstand zwischen Absätzen sichtbar wird.' }] }] } } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: OneTwo, areas: { first: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }, { type: paragraph, content: [{ type: text, text: 'Ein zweiter Absatz mit etwas mehr Text, damit die Zeilen umbrechen und der Abstand zwischen Absätzen sichtbar wird.' }] }] } } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+  as: text
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Button
+        slug: button
+        content:
+          fields:
+            title: Button
+            intro: 'Links als Buttons, gefüllt und umrandet.'
+          areas:
+            main:
+              - { block: frootbox/theme-base/Section, variant: Default, areas: { first: [{ block: frootbox/theme-base/Button, options: { style: primary }, fields: { link: { url: 'https://example.org/', text: Gefüllt } } }, { block: frootbox/theme-base/Button, options: { style: secondary }, fields: { link: { url: 'https://example.org/', text: Umrandet } } }] } }
+              - { block: frootbox/theme-base/Section, variant: Two, areas: { first: [{ block: frootbox/theme-base/Button, options: { style: primary }, fields: { link: { url: 'https://example.org/', text: Gefüllt } } }, { block: frootbox/theme-base/Button, options: { style: secondary }, fields: { link: { url: 'https://example.org/', text: Umrandet } } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: OneTwo, areas: { first: [{ block: frootbox/theme-base/Button, options: { style: primary }, fields: { link: { url: 'https://example.org/', text: Gefüllt } } }, { block: frootbox/theme-base/Button, options: { style: secondary }, fields: { link: { url: 'https://example.org/', text: Umrandet } } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+  as: button
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Abschnitt
+        slug: section
+        content:
+          fields:
+            title: Abschnitt
+            intro: 'Alle Varianten des Abschnitts mit Überschrift und Text in jeder Spalte.'
+          areas:
+            main:
+              - { block: frootbox/theme-base/Section, variant: Default, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Spalte 1' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: Two, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Spalte 1' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }], second: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Spalte 2' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: OneTwo, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Spalte 1' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }], second: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Spalte 2' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: TwoOne, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Spalte 1' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }], second: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Spalte 2' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: Three, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Spalte 1' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }], second: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Spalte 2' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }], third: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Spalte 3' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }] } }
+  as: section
+- page.create:
+    layout: frootbox/theme-base/Landing
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Aktion
+        slug: aktion
+        content:
+          areas:
+            main:
+              - { block: frootbox/theme-base/Section, variant: Default, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Eine Seite ohne Hauptnavigation' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Nichts führt weg, nur der Fuß bleibt mit dem Impressum.' }] }] } } }, { block: frootbox/theme-base/Button, options: { style: primary }, fields: { link: { url: 'https://example.org/', text: Mitmachen } } }] } }
+  as: landing
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Impressum
+        slug: impressum
+        content:
+          fields:
+            title: Impressum
+          areas:
+            main:
+              - { block: frootbox/theme-base/Section, variant: Default, areas: { first: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Muster GmbH, Musterstraße 1, 12345 Musterstadt' }] }] } } }] } }
+  as: imprint
+- page.publish:
+    ids:
+      - '${start.id}'
+      - '${heading.id}'
+      - '${text.id}'
+      - '${button.id}'
+      - '${section.id}'
+      - '${landing.id}'
+      - '${imprint.id}'
+- navigation.update:
+    name: main
+    items:
+      de:
+        -
+          type: target
+          target: 'page:${section.id}'
+        -
+          type: heading
+          label: Widgets
+          children:
+            -
+              type: target
+              target: 'page:${heading.id}'
+            -
+              type: target
+              target: 'page:${text.id}'
+            -
+              type: target
+              target: 'page:${button.id}'
+        -
+          type: target
+          target: 'page:${landing.id}'
+- navigation.update:
+    name: footer
+    items:
+      de:
+        -
+          type: target
+          target: 'page:${imprint.id}'
+        -
+          type: email
+          email: hallo@example.org
+- navigation.publish:
+    names:
+      - main
+      - footer
+- site.update:
+    language: de
+    fields:
+      brand: Basis
+      address: |-
+        Muster GmbH
+        Musterstraße 1
+        12345 Musterstadt
+      note: 'Eine Musterseite des Basis-Themes.'
+      profiles:
+        -
+          link:
+            url: 'https://example.org/social'
+            text: Mastodon
+- site.publish: {}
