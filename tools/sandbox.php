@@ -45,7 +45,8 @@ $directory = is_string($options['dir'] ?? null) ? trim($options['dir'], '/') : '
 $environment = is_string($options['env'] ?? null) ? $options['env'] : 'dev';
 $url = is_string($options['url'] ?? null) ? $options['url'] : null;
 $themes = [
-    'bohnenglueck' => ['name' => 'Bohnenglück', 'package' => 'frootbox/theme-bohnenglueck', 'seed' => 'demo/site.yaml'],
+    // The news follow the demo of Bohnenglück (decision 0219).
+    'bohnenglueck' => ['name' => 'Bohnenglück', 'package' => 'frootbox/theme-bohnenglueck', 'seed' => 'demo/site.yaml', 'more' => ['frootbox/news:demo/news.yaml']],
     'base' => ['name' => 'Basis', 'package' => 'frootbox/theme-base', 'seed' => 'demo/site.yaml'],
     'agency' => ['name' => 'Atelier Nordlicht', 'package' => 'frootbox-test/theme-agency', 'seed' => 'demo/site.yaml', 'fixtures' => true],
 ];
@@ -117,10 +118,12 @@ $composer['name'] = 'frootbox/sandbox';
 $composer['repositories'] = [
     ['type' => 'path', 'url' => $up . 'packages/*', 'options' => ['symlink' => true]],
     ['type' => 'path', 'url' => $up . 'packages/themes/*', 'options' => ['symlink' => true]],
+    ['type' => 'path', 'url' => $up . 'packages/modules/*', 'options' => ['symlink' => true]],
     // Themes only for tests, never shipped (decision 0212).
     ...(($theme['fixtures'] ?? false) ? [['type' => 'path', 'url' => $up . 'tests/Fixtures/Themes/*', 'options' => ['symlink' => true]]] : []),
 ];
-$composer['require'] = [...(is_array($composer['require'] ?? null) ? $composer['require'] : []), $theme['package'] => '^0.1@dev'];
+// The official modules are installed in every sandbox.
+$composer['require'] = [...(is_array($composer['require'] ?? null) ? $composer['require'] : []), $theme['package'] => '^0.1@dev', 'frootbox/news' => '^0.1@dev'];
 
 file_put_contents(
     $composerFile,
@@ -155,6 +158,7 @@ $commands = [
     // Writes .env, runs the migrations and creates the superuser.
     'install --no-interaction --env=' . $environment . ' --admin-email=' . escapeshellarg($adminEmail) . ' --admin-name=' . escapeshellarg($adminName),
     'seed ' . $theme['package'] . ':' . $theme['seed'],
+    ...array_map(static fn(string $seed): string => 'seed ' . $seed, $theme['more'] ?? []),
 ];
 
 if ('prod' === $environment) {
