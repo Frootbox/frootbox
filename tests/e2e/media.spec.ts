@@ -128,7 +128,7 @@ test('uploads an image, sets its focus and shows it on a published page', async 
     const start = await page.locator('#page-tree .fb-tree__item').first().getAttribute('data-id');
     const slug = `bild-${unique()}`;
     const created = await action(page, 'page.create', {
-        layout: 'frootbox/theme-bohnenglueck/Page',
+        layout: 'frootbox/theme-base/Page',
         parentId: start,
         translations: { de: { title: 'Bild', slug, content: { fields: { title: 'Bild' }, areas: { main: [
             { block: 'frootbox/theme-base/Section', areas: { first: [{ block: 'frootbox/theme-base/Image' }] } },
@@ -142,7 +142,7 @@ test('uploads an image, sets its focus and shows it on a published page', async 
 
     // The script of the mode listens once the fields are editable; a click before it opens nothing.
     await expect(page.locator('h1[data-fb-field="title"]')).toHaveAttribute('contenteditable', 'plaintext-only');
-    const field = page.locator('[data-fb-type="image"]');
+    const field = page.locator('main [data-fb-type="image"]');
     await field.click();
     const bar = page.locator('fb-editor-bar');
     const dialog = bar.getByRole('dialog', { name: 'Bild auswählen' });

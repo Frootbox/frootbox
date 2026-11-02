@@ -17,7 +17,7 @@ async function openPage(page: Page, slug: string, main: object[]): Promise<strin
     await signIn(page, '/cms/pages');
     const start = await page.locator('#page-tree .fb-tree__item').first().getAttribute('data-id');
     const created = await action(page, 'page.create', {
-        layout: 'frootbox/theme-bohnenglueck/Page',
+        layout: 'frootbox/theme-base/Page',
         parentId: start,
         translations: { de: { title: 'Anordnen', slug, content: { fields: { title: 'Anordnen' }, areas: { main } } } },
     });
@@ -51,18 +51,20 @@ function text(body: string) {
 test('adds, moves and sets up blocks on the website', async ({ page, browser }, info) => {
     const slug = `anordnen-${unique()}`;
     const id = await openPage(page, slug, [
-        { block: 'frootbox/theme-bohnenglueck/Text', fields: { body: text('Wir rösten langsam.') } },
+        { block: 'frootbox/theme-base/TextWithHeading', fields: { title: 'Rösten', body: text('Wir rösten langsam.') } },
     ]);
     const bar = page.locator('fb-editor-bar');
-    const textBlock = page.locator('[data-fb-name="frootbox/theme-bohnenglueck/Text"]');
+    const textBlock = page.locator('[data-fb-name="frootbox/theme-base/TextWithHeading"]');
     const section = page.locator('[data-fb-name="frootbox/theme-base/Section"]');
     const picker = bar.getByRole('dialog', { name: 'Block einfügen' });
 
     // A section below the text, from the dialog.
     await textBlock.hover();
-    await bar.getByRole('toolbar', { name: 'Block Text' }).getByRole('button', { name: 'Block darunter einfügen' }).click();
+    await bar.getByRole('toolbar', { name: 'Block Text mit Überschrift' }).getByRole('button', { name: 'Block darunter einfügen' }).click();
+    // The library is large, the picker shows it in groups.
+    await picker.getByRole('button', { name: /^Struktur/ }).click();
     await expect(picker.getByRole('button', { name: /^Abschnitt/ })).toBeVisible();
-    await expect(picker.getByRole('button', { name: /^Überschrift/ })).toHaveCount(0);
+    await expect(picker.getByRole('button', { name: /^Überschrift Eine/ })).toHaveCount(0);
 
     // Each card shows the preview from the block folder in the colours of the theme (decision 0148).
     const preview = picker.getByRole('button', { name: /^Abschnitt/ }).locator('.preview use');
@@ -93,9 +95,9 @@ test('adds, moves and sets up blocks on the website', async ({ page, browser }, 
     // One heading in each empty column, typed in place.
     for (const [area, heading] of [['first', 'Links'], ['second', 'Rechts']]) {
         await section.locator(`fb-area[data-fb-area="${area}"]`).click();
-        await expect(picker.getByRole('button', { name: /^Überschrift/ })).toBeVisible();
+        await expect(picker.getByRole('button', { name: /^Überschrift Eine/ })).toBeVisible();
         await expect(picker.getByRole('button', { name: /^Abschnitt/ })).toHaveCount(0);
-        await picker.getByRole('button', { name: /^Überschrift/ }).click();
+        await picker.getByRole('button', { name: /^Überschrift Eine/ }).click();
         await ready(page);
         const field = section.locator(`[data-fb-area="${area}"][data-fb-name="frootbox/theme-base/Heading"]`)
             .locator(':scope[data-fb-field], [data-fb-field]').first();
@@ -116,7 +118,7 @@ test('adds, moves and sets up blocks on the website', async ({ page, browser }, 
     // Alt+F10 reaches the buttons, Escape goes back to the block.
     await textBlock.focus();
     await page.keyboard.press('Alt+F10');
-    const tools = bar.getByRole('toolbar', { name: 'Block Text' });
+    const tools = bar.getByRole('toolbar', { name: 'Block Text mit Überschrift' });
     await expect(tools.getByRole('button', { name: 'Nach oben' })).toBeFocused();
     await page.keyboard.press('ArrowRight');
     await expect(tools.getByRole('button', { name: 'Block kopieren' })).toBeFocused();
@@ -145,11 +147,11 @@ test('adds, moves and sets up blocks on the website', async ({ page, browser }, 
 test('copies and deletes blocks and edits list entries', async ({ page }) => {
     const slug = `liste-${unique()}`;
     const id = await openPage(page, slug, [
-        { block: 'frootbox/theme-bohnenglueck/Faq', fields: { title: 'Fragen', items: [{ question: 'Eins?', answer: text('Ja.') }] } },
+        { block: 'frootbox/theme-base/Accordion', variant: 'Faq', fields: { title: 'Fragen', items: [{ title: 'Eins?', body: text('Ja.') }] } },
     ]);
     const bar = page.locator('fb-editor-bar');
-    const faq = page.locator('[data-fb-name="frootbox/theme-bohnenglueck/Faq"]');
-    const tools = bar.getByRole('toolbar', { name: 'Block FAQ' });
+    const faq = page.locator('[data-fb-name="frootbox/theme-base/Accordion"]');
+    const tools = bar.getByRole('toolbar', { name: 'Block Akkordeon' });
 
     // A copy goes right below and gets the focus.
     await faq.hover();
@@ -159,19 +161,19 @@ test('copies and deletes blocks and edits list entries', async ({ page }) => {
 
     // Deleting asks first.
     await tools.getByRole('button', { name: 'Block löschen' }).click();
-    await expect(tools).toContainText('„FAQ“ löschen?');
+    await expect(tools).toContainText('„Akkordeon“ löschen?');
     await tools.getByRole('button', { name: 'Löschen', exact: true }).click();
     await expect(faq).toHaveCount(1);
 
     // List entries in the panel: add one, fill it, move it up, remove the other.
     await faq.focus();
     await tools.getByRole('button', { name: 'Einstellungen des Blocks' }).click();
-    const panel = bar.getByRole('region', { name: 'Einstellungen: FAQ' });
+    const panel = bar.getByRole('region', { name: 'Einstellungen: Akkordeon' });
     await panel.getByRole('button', { name: 'Eintrag hinzufügen' }).click();
     await expect(faq.locator('details')).toHaveCount(2);
     await panel.getByRole('button', { name: 'Eintrag 2', exact: true }).click();
-    await panel.getByLabel('Frage').fill('Zwei?');
-    await panel.getByLabel('Frage').press('Enter');
+    await panel.getByPlaceholder('Eine Frage oder ein Thema').fill('Zwei?');
+    await panel.getByPlaceholder('Eine Frage oder ein Thema').press('Enter');
     await expect(faq.locator('summary').nth(1)).toHaveText('Zwei?');
 
     await panel.getByRole('button', { name: 'Nach oben: Zwei?' }).click();
@@ -180,7 +182,7 @@ test('copies and deletes blocks and edits list entries', async ({ page }) => {
     await expect(faq.locator('summary')).toHaveText(['Zwei?']);
 
     // An option, then undo takes it back.
-    await panel.getByRole('checkbox', { name: 'Erste Antwort geöffnet' }).check();
+    await panel.getByRole('checkbox', { name: 'Ersten Eintrag öffnen' }).check();
     await expect(faq.locator('details').first()).toHaveAttribute('open', '');
     await panel.getByRole('button', { name: 'Schließen' }).click();
     await bar.getByRole('button', { name: 'Rückgängig' }).click();
@@ -193,22 +195,23 @@ test('copies and deletes blocks and edits list entries', async ({ page }) => {
 test('gives a new block its start entries with placeholders', async ({ page, browser }) => {
     const slug = `start-${unique()}`;
     const id = await openPage(page, slug, [
-        { block: 'frootbox/theme-bohnenglueck/Text', fields: { body: text('Wir rösten langsam.') } },
+        { block: 'frootbox/theme-base/TextWithHeading', fields: { title: 'Rösten', body: text('Wir rösten langsam.') } },
     ]);
     const bar = page.locator('fb-editor-bar');
-    const textBlock = page.locator('[data-fb-name="frootbox/theme-bohnenglueck/Text"]');
-    const features = page.locator('[data-fb-name="frootbox/theme-bohnenglueck/Features"]');
+    const textBlock = page.locator('[data-fb-name="frootbox/theme-base/TextWithHeading"]');
+    const features = page.locator('[data-fb-name="frootbox/theme-base/Features"]');
     const picker = bar.getByRole('dialog', { name: 'Block einfügen' });
 
     // Right after inserting, the block looks like itself (decision 0142).
     await textBlock.hover();
-    await bar.getByRole('toolbar', { name: 'Block Text' }).getByRole('button', { name: 'Block darunter einfügen' }).click();
+    await bar.getByRole('toolbar', { name: 'Block Text mit Überschrift' }).getByRole('button', { name: 'Block darunter einfügen' }).click();
+    await picker.getByRole('button', { name: /^Listen/ }).click();
     await picker.getByRole('button', { name: /^Vorteile/ }).click();
-    await expect(features.locator('.features__item')).toHaveCount(3);
+    await expect(features.locator('.base-features__item')).toHaveCount(3);
     // After loading again the new block has the focus; only then click into it.
     await expect(features).toBeFocused();
     const title = features.locator('[data-fb-field="items/0/title"]');
-    await expect(title).toHaveAttribute('data-fb-placeholder', 'Ein Vorteil in wenigen Worten');
+    await expect(title).toHaveAttribute('data-fb-placeholder', 'Was dafür spricht');
     await expect(title).toBeEmpty();
 
     // Typed right into the placeholder.
@@ -219,6 +222,13 @@ test('gives a new block its start entries with placeholders', async ({ page, bro
     await save;
     await expect(title).toHaveText('Frisch geröstet');
 
+    // The second entry gets a text, but no heading yet.
+    const typed = page.waitForResponse((response) => response.url().endsWith('/page.update-field') && response.ok());
+    await features.locator('[data-fb-field="items/1/text"]').click();
+    await page.keyboard.type('Jeden Morgen');
+    await page.keyboard.press('Tab');
+    await typed;
+
     // Empty required fields keep the page from going live and are marked (decision 0143);
     // entries nobody touched and optional fields do not (decision 0144).
     await bar.getByRole('button', { name: 'Veröffentlichen' }).click();
@@ -226,18 +236,18 @@ test('gives a new block its start entries with placeholders', async ({ page, bro
     await expect(bar.locator('.outline[data-kind="problem"]')).toHaveCount(1);
 
     // The way to the first one; with a value its mark goes.
-    const heading = features.locator('h2[data-fb-field="title"]');
+    const heading = features.locator('[data-fb-field="items/1/title"]');
     await bar.getByRole('button', { name: 'Zum ersten Feld' }).click();
     await expect(heading).toBeFocused();
     const saved = page.waitForResponse((response) => response.url().endsWith('/page.update-field') && response.ok());
-    await page.keyboard.type('Darum wir');
+    await page.keyboard.type('Morgens frisch');
     await page.keyboard.press('Enter');
     await saved;
     await expect(bar.locator('.outline[data-kind="problem"]')).toHaveCount(0);
     await expect(bar.locator('.state .visually-hidden')).toHaveText('Status: Änderungen offen');
 
     // Emptied by hand, a field shows its placeholder again.
-    const second = features.locator('[data-fb-field="items/1/title"]');
+    const second = features.locator('[data-fb-field="items/2/title"]');
     await second.click();
     await page.keyboard.type('x');
     await page.keyboard.press('Backspace');
@@ -245,29 +255,29 @@ test('gives a new block its start entries with placeholders', async ({ page, bro
 
     // Buttons at the entry add, move and remove entries (decision 0145).
     await title.hover();
-    const tools = bar.getByRole('toolbar', { name: 'Eintrag 1 von „Punkte“' });
+    const tools = bar.getByRole('toolbar', { name: 'Eintrag 1 von „Vorteile“' });
     await tools.getByRole('button', { name: 'Eintrag danach einfügen' }).click();
-    await expect(features.locator('.features__item')).toHaveCount(4);
+    await expect(features.locator('.base-features__item')).toHaveCount(4);
     await expect(features.locator('[data-fb-field="items/1/title"]')).toBeFocused();
-    await bar.getByRole('toolbar', { name: 'Eintrag 2 von „Punkte“' }).getByRole('button', { name: 'Nach vorne' }).click();
+    await bar.getByRole('toolbar', { name: 'Eintrag 2 von „Vorteile“' }).getByRole('button', { name: 'Nach vorne' }).click();
     await expect(features.locator('[data-fb-field="items/1/title"]')).toHaveText('Frisch geröstet');
     await expect(features.locator('[data-fb-field="items/0/title"]')).toBeFocused();
-    const first = bar.getByRole('toolbar', { name: 'Eintrag 1 von „Punkte“' });
+    const first = bar.getByRole('toolbar', { name: 'Eintrag 1 von „Vorteile“' });
     await expect(first.getByRole('button', { name: 'Nach vorne' })).toBeDisabled();
     await first.getByRole('button', { name: 'Eintrag entfernen' }).click();
-    await expect(features.locator('.features__item')).toHaveCount(3);
+    await expect(features.locator('.base-features__item')).toHaveCount(3);
     await expect(features.locator('[data-fb-field="items/0/title"]')).toBeFocused();
     await expect(features.locator('[data-fb-field="items/0/title"]')).toHaveText('Frisch geröstet');
 
-    // Visitors get the entry with a value only, without empty elements.
+    // Visitors get the entries with a value only, without empty elements.
     const published = page.waitForResponse((response) => response.url().endsWith('/page.publish') && response.ok());
     await bar.getByRole('button', { name: 'Veröffentlichen' }).click();
     await published;
     const guest = await browser.newPage();
     await guest.goto(`/${slug}`);
-    await expect(guest.locator('.features__item')).toHaveCount(1);
-    await expect(guest.locator('.features__item')).toHaveText('Frisch geröstet');
-    expect(await guest.locator('.features').innerHTML()).not.toMatch(/<(p|span)[^>]*><\/\1>|fb:empty/);
+    await expect(guest.locator('.base-features__item')).toHaveCount(2);
+    await expect(guest.locator('.base-features__heading')).toHaveText(['Frisch geröstet', 'Morgens frisch']);
+    expect(await guest.locator('.base-features').innerHTML()).not.toMatch(/<(p|span)[^>]*><\/\1>|fb:empty/);
     await guest.close();
 
     await removePage(page, id);

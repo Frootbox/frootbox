@@ -39,10 +39,10 @@ test('an editor changes a page on the website and publishes it', async ({ page, 
     expect((await action(page, 'user.create', { email: editor.email, name: 'Redaktion', password: editor.password, roles: ['editor'] })).status).toBe(200);
     const start = await page.locator('#page-tree .fb-tree__item').first().getAttribute('data-id');
     const created = await action(page, 'page.create', {
-        layout: 'frootbox/theme-bohnenglueck/Page',
+        layout: 'frootbox/theme-base/Page',
         parentId: start,
         translations: { de: { title: 'Abnahme', slug, content: { fields: { title: 'Abnahme' }, areas: { main: [
-            { block: 'frootbox/theme-bohnenglueck/Text', fields: { body: { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Wir rösten langsam.' }] }] } } },
+            { block: 'frootbox/theme-base/TextWithHeading', fields: { title: 'Rösten', body: { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Wir rösten langsam.' }] }] } } },
         ] } } } },
     });
     expect(created.status).toBe(200);
@@ -74,15 +74,18 @@ test('an editor changes a page on the website and publishes it', async ({ page, 
     await expect(bar.locator('.state .visually-hidden')).toHaveText('Status: Änderungen offen');
 
     // A section below the text, with an image in its column.
-    const textBlock = page.locator('[data-fb-name="frootbox/theme-bohnenglueck/Text"]');
+    const textBlock = page.locator('[data-fb-name="frootbox/theme-base/TextWithHeading"]');
     const picker = bar.getByRole('dialog', { name: 'Block einfügen' });
     await textBlock.hover();
-    await bar.getByRole('toolbar', { name: 'Block Text' }).getByRole('button', { name: 'Block darunter einfügen' }).click();
+    await bar.getByRole('toolbar', { name: 'Block Text mit Überschrift' }).getByRole('button', { name: 'Block darunter einfügen' }).click();
+    // The library is large, the picker shows it in groups.
+    await picker.getByRole('button', { name: /^Struktur/ }).click();
     await picker.getByRole('button', { name: /^Abschnitt/ }).click();
     const section = page.locator('[data-fb-name="frootbox/theme-base/Section"]');
     await expect(section).toBeFocused();
     await section.locator('fb-area[data-fb-area="first"]').click();
-    await picker.getByRole('button', { name: /^Bild/ }).click();
+    await picker.getByRole('button', { name: /^Bilder und Medien/ }).click();
+    await picker.getByRole('button', { name: /^Bild Ein Bild/ }).click();
     const image = section.locator('[data-fb-type="image"]');
     await expect(image).toBeVisible();
     await expect(heading).toHaveAttribute('contenteditable', 'plaintext-only');
@@ -121,7 +124,7 @@ test('an editor changes a page on the website and publishes it', async ({ page, 
     await picture.scrollIntoViewIfNeeded();
     await expect.poll(() => picture.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
     await guest.goto('/');
-    await expect(guest.locator('.site-footer')).toContainText(`Abnahme ${id}`);
+    await expect(guest.locator('.base-footer')).toContainText(`Abnahme ${id}`);
     expect(await guest.locator('[data-fb-field], [data-fb-block], fb-editor-bar').count()).toBe(0);
     await guest.close();
 

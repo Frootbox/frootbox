@@ -20,7 +20,7 @@ test('shows guests with a link the draft and nothing else', async ({ page, brows
     await signIn(page, '/cms/pages');
     const start = await page.locator('#page-tree .fb-tree__item').first().getAttribute('data-id');
     const created = await action(page, 'page.create', {
-        layout: 'frootbox/theme-bohnenglueck/Page',
+        layout: 'frootbox/theme-base/Page',
         translations: { de: { title: 'Vorschau', slug, content: { fields: { title: published } } } },
         parentId: start,
     });
@@ -29,7 +29,7 @@ test('shows guests with a link the draft and nothing else', async ({ page, brows
     expect((await action(page, 'page.publish', { ids: [id] })).status).toBe(200);
     expect((await action(page, 'page.update', { id, translations: { de: { content: { fields: { title: draft } } } } })).status).toBe(200);
     const child = await action(page, 'page.create', {
-        layout: 'frootbox/theme-bohnenglueck/Page',
+        layout: 'frootbox/theme-base/Page',
         translations: { de: { title: 'Geheim', slug: 'geheim', content: { fields: { title: hidden } } } },
         parentId: id,
     });

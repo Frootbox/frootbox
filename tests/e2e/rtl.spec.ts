@@ -28,8 +28,8 @@ test('runs Arabic from right to left and German fallback from left to right', as
     // The German content keeps its language and direction, and the fonts of its script.
     const fallback = page.locator('main [lang="de"]').first();
     await expect(fallback).toHaveAttribute('dir', 'ltr');
-    expect(await html.evaluate((element) => getComputedStyle(element).fontFamily)).toContain('Noto Naskh Arabic');
-    expect(await fallback.evaluate((element) => getComputedStyle(element).fontFamily)).not.toContain('Noto Naskh Arabic');
+    expect(await html.evaluate((element) => getComputedStyle(element).fontFamily)).toContain('Noto Sans Arabic');
+    expect(await fallback.evaluate((element) => getComputedStyle(element).fontFamily)).not.toContain('Noto Sans Arabic');
     expect(await fallback.evaluate((element) => getComputedStyle(element).direction)).toBe('ltr');
 });
 
@@ -40,13 +40,13 @@ test('gives an Arabic page an Arabic address and shows it in the right direction
     const start = await page.locator('#page-tree .fb-tree__item').first().getAttribute('data-id');
     const text = (body: string) => ({ type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: body }] }] });
     const created = await action(page, 'page.create', {
-        layout: 'frootbox/theme-bohnenglueck/Page',
+        layout: 'frootbox/theme-base/Page',
         parentId: start,
         translations: {
             de: { title: 'Über uns', slug: `ueber-uns-${unique()}`, content: { fields: { title: 'Über uns' } } },
             ar: { title: 'من نحن', slug, content: {
                 fields: { title: 'من نحن' },
-                areas: { main: [{ block: 'frootbox/theme-bohnenglueck/Text', fields: { body: text('نحمص القهوة ببطء.') } }] },
+                areas: { main: [{ block: 'frootbox/theme-base/TextWithHeading', fields: { title: 'كيف نحمص', body: text('نحمص القهوة ببطء.') } }] },
             } },
         },
     });
@@ -82,9 +82,9 @@ test('gives an Arabic page an Arabic address and shows it in the right direction
     await expect(bar).toHaveAttribute('lang', 'de');
     await expect(bar.getByRole('button', { name: 'Mehr' })).toBeVisible();
 
-    const block = page.locator('[data-fb-name="frootbox/theme-bohnenglueck/Text"]');
+    const block = page.locator('[data-fb-name="frootbox/theme-base/TextWithHeading"]');
     await block.hover();
-    const tools = bar.getByRole('toolbar', { name: 'Block Text' });
+    const tools = bar.getByRole('toolbar', { name: 'Block Text mit Überschrift' });
     await expect(tools).toBeVisible();
     const blockBox = (await block.boundingBox())!;
     const toolsBox = (await tools.boundingBox())!;

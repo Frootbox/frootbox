@@ -19,13 +19,13 @@ test('gives headings the level of their place and shows the outline', async ({ p
     await signIn(page, '/cms/pages');
     const start = await page.locator('#page-tree .fb-tree__item').first().getAttribute('data-id');
     const created = await action(page, 'page.create', {
-        layout: 'frootbox/theme-bohnenglueck/Page',
+        layout: 'frootbox/theme-base/Page',
         parentId: start,
         translations: { de: { title: 'Gliederung', slug, content: {
             fields: { title: 'Unsere Rösterei' },
             areas: { main: [
-                { block: 'frootbox/theme-bohnenglueck/Hero', fields: { title: 'Ein Hero weiter unten' } },
-                { block: 'frootbox/theme-bohnenglueck/Text', fields: { title: 'Wie wir rösten', body: { type: 'doc', content: [
+                { block: 'frootbox/theme-base/Hero', fields: { title: 'Ein Hero weiter unten' } },
+                { block: 'frootbox/theme-base/TextWithHeading', fields: { title: 'Wie wir rösten', body: { type: 'doc', content: [
                     { type: 'heading', attrs: { level: 1 }, content: [{ type: 'text', text: 'Langsam' }] },
                     { type: 'paragraph', content: [{ type: 'text', text: 'Jede Sorte hat ihr Profil.' }] },
                 ] } } },
@@ -42,7 +42,7 @@ test('gives headings the level of their place and shows the outline', async ({ p
     await visitor.goto(`/${slug}`);
     await expect(visitor.locator('main :is(h1, h2, h3, h4, h5, h6)')).toHaveText(['Unsere Rösterei', 'Ein Hero weiter unten', 'Wie wir rösten', 'Langsam']);
     await expect(visitor.locator('h1')).toHaveCount(1);
-    await expect(visitor.locator('h2.hero__title')).toHaveText('Ein Hero weiter unten');
+    await expect(visitor.locator('h2.base-hero__title')).toHaveText('Ein Hero weiter unten');
     await expect(visitor.locator('h3[data-rank="1"]')).toHaveText('Langsam');
     await visitorContext.close();
 

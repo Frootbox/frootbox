@@ -20,10 +20,10 @@ test('a customer comments in the preview and the editor answers in the mode', as
     await signIn(page, '/cms/pages');
     const start = await page.locator('#page-tree .fb-tree__item').first().getAttribute('data-id');
     const created = await action(page, 'page.create', {
-        layout: 'frootbox/theme-bohnenglueck/Page',
+        layout: 'frootbox/theme-base/Page',
         parentId: start,
         translations: { de: { title: 'Kommentare', slug, content: { fields: { title: 'Kommentare' }, areas: { main: [
-            { block: 'frootbox/theme-bohnenglueck/Quote', fields: { quote, author: 'Frau Müller' } },
+            { block: 'frootbox/theme-base/Quote', fields: { quote, author: 'Frau Müller' } },
         ] } } } },
     });
     expect(created.status).toBe(200);
@@ -58,7 +58,7 @@ test('a customer comments in the preview and the editor answers in the mode', as
     await page.getByRole('button', { name: 'Auf der Website bearbeiten' }).click();
     await expect(page).toHaveURL(`/${slug}`);
     const bar = page.locator('fb-editor-bar');
-    const quoteField = page.locator('[data-fb-name="frootbox/theme-bohnenglueck/Quote"] [data-fb-field="quote"]');
+    const quoteField = page.locator('[data-fb-name="frootbox/theme-base/Quote"] [data-fb-field="quote"]');
     const pin = bar.getByRole('button', { name: /^Kommentar 1: Bitte ohne/ });
     await expect(pin).toBeVisible();
     const [pinBox, fieldBox] = [await pin.boundingBox(), await quoteField.boundingBox()];

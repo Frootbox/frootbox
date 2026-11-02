@@ -41,7 +41,7 @@ test('edits the website from the draft', async ({ page, request }) => {
     await signIn(page, '/cms/pages');
     const start = await page.locator('#page-tree .fb-tree__item').first().getAttribute('data-id');
     const created = await action(page, 'page.create', {
-        layout: 'frootbox/theme-bohnenglueck/Page',
+        layout: 'frootbox/theme-base/Page',
         translations: { de: { title: 'Rösttag', slug, content: { fields: { title: heading } } } },
         parentId: start,
     });
@@ -130,7 +130,7 @@ test('keeps the bar in place against the styles of the theme', async ({ page }) 
     await signIn(page, '/cms/pages');
     const start = await page.locator('#page-tree .fb-tree__item').first().getAttribute('data-id');
     const created = await action(page, 'page.create', {
-        layout: 'frootbox/theme-bohnenglueck/Page',
+        layout: 'frootbox/theme-base/Page',
         translations: { de: { title: 'Abgeschirmt', slug, content: { fields: { title: heading } } } },
         parentId: start,
     });

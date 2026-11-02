@@ -17,15 +17,15 @@ async function openPage(page: Page, slug: string, heading: string): Promise<stri
     await signIn(page, '/cms/pages');
     const start = await page.locator('#page-tree .fb-tree__item').first().getAttribute('data-id');
     const created = await action(page, 'page.create', {
-        layout: 'frootbox/theme-bohnenglueck/Page',
+        layout: 'frootbox/theme-base/Page',
         parentId: start,
         translations: { de: { title: 'Rösterei', slug, content: {
             fields: { title: heading, intro: 'Klein und langsam.' },
             areas: { main: [
-                { block: 'frootbox/theme-bohnenglueck/Text', fields: { body: { type: 'doc', content: [
+                { block: 'frootbox/theme-base/TextWithHeading', fields: { title: 'Rösten', body: { type: 'doc', content: [
                     { type: 'paragraph', content: [{ type: 'text', text: 'Wir rösten langsam.' }] },
                 ] } } },
-                { block: 'frootbox/theme-bohnenglueck/Cta', fields: { title: 'Fragen?', button: { url: 'mailto:hallo@example.test', text: 'Schreib uns' } } },
+                { block: 'frootbox/theme-base/CallToAction', fields: { title: 'Fragen?', link: { url: 'mailto:hallo@example.test', text: 'Schreib uns' } } },
             ] },
         } } },
     });
@@ -87,7 +87,8 @@ test('edits fields on the website', async ({ page, request }) => {
     await body.click();
     const toolbar = bar.getByRole('toolbar', { name: 'Formatierung' });
     await expect(toolbar).toBeVisible();
-    await page.keyboard.press('End');
+    // On a Mac, End scrolls the page; Cmd+Right goes to the end of the line.
+    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+ArrowRight' : 'End');
     await page.keyboard.press('Shift+ArrowLeft', { delay: 10 });
     for (let i = 0; i < 7; i++) {
         await page.keyboard.press('Shift+ArrowLeft');
@@ -106,7 +107,7 @@ test('edits fields on the website', async ({ page, request }) => {
     await expect(body.locator('a')).toHaveAttribute('href', 'https://example.com');
 
     // A link field with its dialog.
-    const button = page.locator('[data-fb-field="button"]');
+    const button = page.locator('[data-fb-field="link"]');
     await button.click();
     await dialog.getByLabel('Text').fill('Mail an uns');
     save = saved(page);
@@ -171,7 +172,7 @@ test('offers the buttons of a field on its label', async ({ page, context }) => 
     const bar = page.locator('fb-editor-bar');
 
     // The button of the call to action leads to the start page.
-    const button = page.locator('[data-fb-field="button"]');
+    const button = page.locator('[data-fb-field="link"]');
     await button.click();
     const dialog = bar.getByRole('dialog', { name: 'Link' });
     await dialog.getByLabel('Adresse oder Seite').fill('/');

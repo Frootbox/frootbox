@@ -36,12 +36,12 @@ test('links to subpages in the language of the visitor', async ({ page }) => {
 
 test('switches the language on the same page', async ({ page }) => {
     await page.goto('/sorten');
-    await page.getByRole('link', { name: 'en', exact: true }).click();
+    await page.getByRole('link', { name: 'English', exact: true }).click();
 
     await expect(page).toHaveURL('/en/coffees');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Our coffees');
 
-    await page.getByRole('link', { name: 'de', exact: true }).click();
+    await page.getByRole('link', { name: 'Deutsch', exact: true }).click();
     await expect(page).toHaveURL('/sorten');
 });
 
