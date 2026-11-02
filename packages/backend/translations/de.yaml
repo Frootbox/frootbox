@@ -1092,8 +1092,8 @@ APP_SECRET in .env is missing or too short, so no secret can be stored.: APP_SEC
 The secret is stored encrypted.: Das Geheimnis ist verschlüsselt gespeichert.
 New value: Neuer Wert
 It is stored encrypted and never shown again.: Es wird verschlüsselt gespeichert und nie wieder angezeigt.
-Replace: Ersetzen
-Store: Speichern
+Replace the secret: Geheimnis ersetzen
+Store the secret: Geheimnis speichern
 Remove {name}: '{name} entfernen'
 The secret is removed.: Das Geheimnis ist entfernt.
 Remove the secret?: Geheimnis entfernen?
@@ -1103,7 +1103,7 @@ is a secret, set it with settings.set-secret.: ist ein Geheimnis und wird mit se
 is set in the configuration and cannot be changed here.: ist in der Konfiguration festgelegt und hier nicht änderbar.
 is not a secret of this extension.: ist kein Geheimnis dieser Erweiterung.
 'cannot be stored: APP_SECRET in .env is missing or shorter than 16 characters.': 'lässt sich nicht speichern: APP_SECRET in der .env fehlt oder ist kürzer als 16 Zeichen.'
-Jobs: Aufträge
+Background jobs: Aufträge
 Work that extensions do in the background, e.g. sending data to another service.: Arbeit, die Erweiterungen im Hintergrund erledigen, z. B. Daten an einen anderen Dienst senden.
 Queue: Warteschlange
 No jobs waiting: Keine wartenden Aufträge

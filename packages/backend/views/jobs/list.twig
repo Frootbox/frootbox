@@ -2,14 +2,14 @@
 {% extends '@backend/layout.twig' %}
 {% import '@backend/ui.twig' as ui %}
 
-{% block title %}{{ t('Jobs') }}{% endblock %}
+{% block title %}{{ t('Background jobs') }}{% endblock %}
 
 {% block content %}
 {% set status = list.status %}
 <div class="fb-stack fb-stack--lg" id="jobs">
     <header class="fb-page-header">
         <div class="fb-page-header__text">
-            <h1 class="fb-heading-1">{{ t('Jobs') }}</h1>
+            <h1 class="fb-heading-1">{{ t('Background jobs') }}</h1>
             <p class="fb-muted">{{ t('Work that extensions do in the background, e.g. sending data to another service.') }}</p>
         </div>
     </header>

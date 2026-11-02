@@ -88,7 +88,7 @@
                             <input type="hidden" name="name" value="{{ field.name }}">
                             {{ ui.field({label: field.set ? t('New value') : t('Value'), name: 'value', id: id, type: 'password', autocomplete: 'off', hint: t('It is stored encrypted and never shown again.')}) }}
                             <div class="fb-form__actions">
-                                {{ ui.button({label: field.set ? t('Replace') : t('Store'), type: 'submit', variant: 'tonal'}) }}
+                                {{ ui.button({label: field.set ? t('Replace the secret') : t('Store the secret'), type: 'submit', variant: 'tonal'}) }}
                                 {% if field.set %}
                                 {{ ui.button({label: t('Remove'), variant: 'danger', attrs: {commandfor: 'secret-remove', command: 'show-modal', 'aria-label': t('Remove {name}', {name: t(field.title)}), 'data-fb-fill': {package: extension.package, name: field.name}|json_encode}}) }}
                                 {% endif %}

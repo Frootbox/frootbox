@@ -113,7 +113,7 @@ final class BackendExtension implements Extension
         $registry->add(Screen::class, new Screen('Users', 'backend.users', Screen::ADMINISTRATION, 'users', UsersHandler::PERMISSION, order: 100));
         $registry->add(Screen::class, new Screen('Roles', 'backend.roles', Screen::ADMINISTRATION, 'shield', RolesHandler::PERMISSION, order: 110));
         $registry->add(Screen::class, new Screen('Settings', 'backend.settings', Screen::ADMINISTRATION, 'settings', SettingsHandler::PERMISSION, order: 120));
-        $registry->add(Screen::class, new Screen('Jobs', 'backend.jobs', Screen::ADMINISTRATION, 'clock', JobsHandler::PERMISSION, order: 130));
+        $registry->add(Screen::class, new Screen('Background jobs', 'backend.jobs', Screen::ADMINISTRATION, 'clock', JobsHandler::PERMISSION, order: 130));
         $registry->add(Screen::class, new Screen('Design system', 'backend.design', Screen::ADMINISTRATION, 'palette', DesignHandler::PERMISSION, order: 900, development: true));
 
         // Where hits of the search open, and what it offers to do (decision 0217).
