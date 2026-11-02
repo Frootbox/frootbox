@@ -50,3 +50,14 @@ test('has no violations with the menu open', async ({ page }) => {
 
     expect(await violations(page)).toEqual([]);
 });
+
+test('has no violations with an image of the gallery shown large', async ({ page }) => {
+    await page.goto(PAGES.gallery);
+    await page.getByRole('button', { name: 'Goldenes Licht auf dunklem Rotbraun: Größer zeigen' }).first().click();
+    await expect(page.getByRole('dialog', { name: 'Bilder' })).toBeVisible();
+
+    // The page behind the open dialog is inert, so only the dialog counts.
+    const results = await new AxeBuilder({ page }).withTags(TAGS).include('dialog[open]').analyze();
+    expect(results.passes.map((pass) => pass.id)).toEqual(expect.arrayContaining(['button-name', 'image-alt']));
+    expect(results.violations.map((violation) => violation.id)).toEqual([]);
+});

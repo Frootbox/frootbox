@@ -93,3 +93,56 @@ test('loads Noto Sans from the theme', async ({ page }) => {
     })).toBe(true);
     expect(await page.locator('body').evaluate((element) => getComputedStyle(element).fontFamily)).toMatch(/^"Noto Sans", "Noto Sans Fallback"/);
 });
+
+test('opens the hero image at once, as the heading of the start page', async ({ page }) => {
+    await page.goto(PAGES.start);
+
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Die Bibliothek des Basis-Themes');
+    const image = page.locator('.base-hero img');
+    await expect(image).toHaveAttribute('loading', 'eager');
+    await expect(image).toHaveAttribute('fetchpriority', 'high');
+});
+
+test('shows an image of the gallery large and browses with the keyboard', async ({ page }) => {
+    await page.goto(PAGES.gallery);
+    const gallery = page.locator('base-gallery').first();
+    const dialog = gallery.getByRole('dialog', { name: 'Bilder' });
+    const opener = gallery.getByRole('button', { name: 'Goldenes Licht auf dunklem Rotbraun: Größer zeigen' });
+
+    await opener.click();
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText('2 / 6')).toBeVisible();
+    await expect(dialog.getByRole('img', { name: 'Goldenes Licht auf dunklem Rotbraun' })).toBeVisible();
+
+    await page.keyboard.press('ArrowRight');
+    await expect(dialog.getByText('3 / 6')).toBeVisible();
+    await dialog.getByRole('button', { name: 'Vorheriges Bild' }).click();
+    await dialog.getByRole('button', { name: 'Vorheriges Bild' }).click();
+    await expect(dialog.getByText('1 / 6')).toBeVisible();
+
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+    await expect(opener).toBeFocused();
+});
+
+test('moves the image slider only with its buttons', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(PAGES.slider);
+    const slider = page.locator('base-carousel').first();
+    const track = slider.getByRole('list', { name: 'Bilder' });
+    const previous = slider.getByRole('button', { name: 'Vorheriges Bild' });
+    const next = slider.getByRole('button', { name: 'Nächstes Bild' });
+
+    await expect(previous).toBeDisabled();
+    await page.waitForTimeout(500);
+    expect(await track.evaluate((element) => element.scrollLeft)).toBe(0);
+
+    await next.click();
+    await expect(previous).toBeEnabled();
+    await expect.poll(() => track.evaluate((element) => Math.round(element.scrollLeft / element.clientWidth))).toBe(1);
+
+    for (let i = 0; i < 2; i++) {
+        await next.click();
+    }
+    await expect(next).toBeDisabled();
+});

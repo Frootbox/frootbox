@@ -2,6 +2,8 @@
  * SPDX-License-Identifier: LGPL-3.0-only
  */
 
+import type { Page } from '@playwright/test';
+
 // The second installation of the browser tests: the base theme alone with
 // its sample website (decision 0163), built by `tools/e2e.php --base`.
 export const LIBRARY = process.env.PLAYWRIGHT_LIBRARY_URL ?? 'http://127.0.0.1:8101';
@@ -19,5 +21,21 @@ export const PAGES = {
     divider: '/divider',
     cta: '/call-to-action',
     figures: '/key-figures',
+    hero: '/hero',
+    pageHeader: '/page-header',
+    imageText: '/image-with-text',
+    gallery: '/gallery',
+    slider: '/slider',
     landing: '/aktion',
 };
+
+// Loads all images of the page, also those that would wait until they are
+// scrolled to, e.g. before a screenshot of the full page. The first call of
+// a size makes the file, which can take a moment on the test server.
+export async function loadImages(page: Page): Promise<void> {
+    await page.evaluate(async () => {
+        const images = [...document.images];
+        images.forEach((image) => (image.loading = 'eager'));
+        await Promise.all(images.map((image) => (image.complete ? image.decode() : new Promise((done) => image.addEventListener('load', done, { once: true })))).map((wait) => wait.catch(() => null)));
+    });
+}

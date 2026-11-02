@@ -3,7 +3,7 @@
  */
 
 import { expect, test } from '@playwright/test';
-import { LIBRARY, PAGES } from './library';
+import { LIBRARY, PAGES, loadImages } from './library';
 
 // Screenshots of the base library on its sample website (decision 0163):
 // every page shows its block at the three places, here at two widths, in
@@ -20,9 +20,12 @@ for (const [name, path] of Object.entries(PAGES)) {
             const language = prefix ? 'ar' : 'de';
 
             test(`${name}, ${width}, ${language}`, async ({ page }) => {
+                // The first visit of a page with images makes their sizes.
+                test.slow();
                 await page.setViewportSize(viewport);
                 await page.goto(prefix + (path === '/' && prefix ? '' : path));
                 await page.evaluate(() => document.fonts.ready);
+                await loadImages(page);
 
                 await expect(page).toHaveScreenshot(`${name}-${width}-${language}.png`, { fullPage: true });
             });

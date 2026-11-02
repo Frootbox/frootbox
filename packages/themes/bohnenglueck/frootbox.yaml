@@ -15,6 +15,11 @@ theme:
       - frootbox/theme-base/Divider
       - frootbox/theme-base/CallToAction
       - frootbox/theme-base/KeyFigures
+      - frootbox/theme-base/Hero
+      - frootbox/theme-base/PageHeader
+      - frootbox/theme-base/ImageWithText
+      - frootbox/theme-base/Gallery
+      - frootbox/theme-base/Slider
   navigations:
     main:
       title: Main navigation
