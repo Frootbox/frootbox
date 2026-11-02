@@ -44,7 +44,8 @@ final class SignInTest extends BackendTestCase
         $response = $this->request('POST', '/cms/login', ['email' => 'jane@example.org', 'password' => self::PASSWORD, 'remember' => '1']);
 
         self::assertSame(429, $response->getStatusCode());
-        self::assertSame('60', $response->getHeaderLine('Retry-After'));
+        // Counts from the last failure in whole seconds, so a second boundary may pass before the check.
+        self::assertContains($response->getHeaderLine('Retry-After'), ['59', '60']);
         self::assertSame('', $response->getHeaderLine('Set-Cookie'), 'Even the right password waits.');
         self::assertStringContainsString('Zu viele Fehlversuche. Versuch es in einer Minute noch einmal.', $this->html($response));
         self::assertMatchesRegularExpression('/name="remember" value="1" checked/', $this->html($response), 'The choice stays.');
