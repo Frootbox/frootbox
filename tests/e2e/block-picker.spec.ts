@@ -37,4 +37,16 @@ test('shows the blocks by group with their number as plain text', async ({ page 
     const count = groups.locator('.count').first();
     await expect(count).toHaveText(/^\d+$/);
     await expect(count).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+
+    // The library has only the base theme, so nothing is made for this
+    // website; "Show all" lists every block (decision 0202).
+    await expect(groups.getByRole('button', { name: /Für diese Website/ })).toHaveCount(0);
+    await expect(groups.getByRole('button', { name: /Kopfbereiche/ })).toHaveAttribute('aria-pressed', 'true');
+    const all = groups.getByRole('button', { name: /Alle anzeigen/ });
+    await all.click();
+    await expect(all).toHaveAttribute('aria-pressed', 'true');
+    const cards = page.locator('fb-editor-bar').getByRole('list', { name: 'Alle anzeigen' }).getByRole('listitem');
+    await expect(cards).toHaveCount(Number(await all.locator('.count').textContent()));
+    const sum = (await groups.locator('li:not(.lead) .count').allTextContents()).reduce((total, number) => total + Number(number), 0);
+    await expect(cards).toHaveCount(sum);
 });

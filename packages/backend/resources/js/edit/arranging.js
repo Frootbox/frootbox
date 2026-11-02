@@ -19,6 +19,10 @@ const PANEL_FIELDS = ['headline', 'text', 'link', 'image', 'video', 'icon', 'fil
 /** Up to this many blocks the picker shows them without groups (decision 0148). */
 const FEW_BLOCKS = 8;
 
+/** Entries above the groups of the picker; group names never start with a hash (decision 0202). */
+const SITE_GROUP = '#site';
+const ALL_GROUP = '#all';
+
 /** The symbol of a group, for blocks without a preview. */
 const GROUP_ICONS = { header: 'header', heading: 'heading', text: 'text', media: 'image', teaser: 'teaser', callout: 'callout', list: 'list', form: 'form', structure: 'columns' };
 
@@ -154,6 +158,15 @@ export const arrangingStyles = css`
         .grouped .picker-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
         .grouped .picker-groups { display: flex; overflow-x: auto; }
         .grouped .picker-groups button { white-space: nowrap; }
+
+        .grouped .picker-groups .lead + li:not(.lead) {
+            margin-block-start: 0;
+            padding-block-start: 0;
+            border-block-start: 0;
+            margin-inline-start: var(--fb-space-1);
+            padding-inline-start: var(--fb-space-1);
+            border-inline-start: var(--fb-size-border) solid var(--fb-border);
+        }
     }
 
     .picker-groups, .picker-cards {
@@ -182,6 +195,13 @@ export const arrangingStyles = css`
     }
 
     .picker-groups .count { color: var(--fb-text-muted); font-size: var(--fb-text-xs); }
+
+    /* A line between "For this website" and "Show all" and the groups (decision 0202). */
+    .picker-groups .lead + li:not(.lead) {
+        margin-block-start: var(--fb-space-1);
+        padding-block-start: var(--fb-space-1);
+        border-block-start: var(--fb-size-border) solid var(--fb-border);
+    }
 
     .picker-cards {
         display: grid;
@@ -853,7 +873,7 @@ export class Arranging {
         const choices = this.blocks.filter((block) => block.offered !== false && (info?.allow ? info.allow.includes(block.name) : !block.widget));
         const groups = choices.length > FEW_BLOCKS ? this.groupsOf(choices) : [];
 
-        this.picker = { ...this.picker, loading: false, info, full: info?.max != null && count >= info.max, choices, groups, group: groups[0]?.name ?? null };
+        this.picker = { ...this.picker, loading: false, info, full: info?.max != null && count >= info.max, choices, groups, group: groups.find((group) => group.name === SITE_GROUP || !group.lead)?.name ?? null };
         this.bar.requestUpdate();
         await this.bar.updateComplete;
         this.bar.renderRoot.querySelector('dialog.picker :is(input, .picker-cards button)')?.focus();
@@ -873,6 +893,10 @@ export class Arranging {
     /**
      * The blocks by group in the order of block.groups, those without a
      * known group under "Other" at the end. One group alone is no group.
+     * Above them "For this website" with the blocks the theme of the site
+     * made or adapted, if some but not all are, and "Show all"
+     * (decision 0202). The picker opens on "For this website", else on
+     * the first group.
      */
     groupsOf(blocks) {
         const labels = this.labels;
@@ -885,7 +909,18 @@ export class Arranging {
         groups.push({ name: '', title: labels.otherGroup, blocks: blocks.filter((block) => !known.has(block.group)) });
         const filled = groups.filter((group) => group.blocks.length > 0);
 
-        return filled.length > 1 ? filled : [];
+        if (filled.length < 2) {
+            return [];
+        }
+
+        const tailored = blocks.filter((block) => block.tailored);
+        const all = filled.flatMap((group) => group.blocks);
+        const lead = [
+            ...(tailored.length > 0 && tailored.length < blocks.length ? [{ name: SITE_GROUP, title: labels.siteGroup, blocks: all.filter((block) => block.tailored), lead: true }] : []),
+            { name: ALL_GROUP, title: labels.allGroup, blocks: all, lead: true },
+        ];
+
+        return [...lead, ...filled];
     }
 
     pickGroup(name) {
@@ -904,7 +939,7 @@ export class Arranging {
         const labels = this.labels;
         const needle = picker.query.trim().toLowerCase();
         const groups = picker.groups ?? [];
-        const groupTitle = (block) => groups.find((group) => group.blocks.includes(block))?.title ?? '';
+        const groupTitle = (block) => groups.find((group) => !group.lead && group.blocks.includes(block))?.title ?? '';
         const matches = (block) => [block.title, block.description, ...(block.keywords ?? []), groupTitle(block)]
             .some((text) => text.toLowerCase().includes(needle));
         let choices = picker.choices ?? [];
@@ -932,7 +967,7 @@ export class Arranging {
                         @input=${(event) => { this.picker = { ...this.picker, query: event.target.value }; this.bar.requestUpdate(); }}></label>` : nothing}
                 <div class="picker-body">
                     ${groups.length > 0 ? html`<ul class="picker-groups" aria-label=${labels.blockGroups}>
-                        ${groups.map((group) => html`<li><button type="button" aria-pressed=${String(group === shownGroup)} @click=${() => this.pickGroup(group.name)}>
+                        ${groups.map((group) => html`<li class=${group.lead ? 'lead' : nothing}><button type="button" aria-pressed=${String(group === shownGroup)} @click=${() => this.pickGroup(group.name)}>
                             <span>${group.title}</span><span class="count">${group.blocks.length}</span></button></li>`)}
                     </ul>` : nothing}
                     <ul class="picker-cards" aria-label=${shownGroup?.title ?? labels.addBlock}>

@@ -438,6 +438,8 @@ final readonly class EditorBar
                 'structure' => $t('Structure'),
             ],
             'otherGroup' => $t('Other'),
+            'siteGroup' => $t('For this website'),
+            'allGroup' => $t('Show all'),
             'areaFull' => $t('The area "{area}" takes no more blocks.'),
             'settingsOf' => $t('Settings: {block}'),
             'close' => $t('Close'),
