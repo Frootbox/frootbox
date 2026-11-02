@@ -60,6 +60,7 @@ export class Editing {
         this.timers = new Map();
         this.queues = new WeakMap();
         this.editors = new WeakMap();
+        this.contents = new WeakMap();
         this.loading = null;
         this.pointer = null;
 
@@ -110,7 +111,7 @@ export class Editing {
     focus(event) {
         const element = this.field(event.target);
 
-        if (element?.dataset.fbType === 'richtext' && !this.editors.has(element)) {
+        if (['richtext', 'table'].includes(element?.dataset.fbType) && !this.editors.has(element)) {
             this.richText(element);
         }
     }
@@ -164,17 +165,17 @@ export class Editing {
         } else if (type === 'icon' && (event.key === 'Enter' || event.key === ' ')) {
             event.preventDefault();
             this.editIcon(element);
-        } else if (type === 'richtext' && event.key === 'F10' && event.altKey) {
+        } else if (['richtext', 'table'].includes(type) && event.key === 'F10' && event.altKey) {
             // Alt+F10 reaches the toolbar from the keyboard.
             event.preventDefault();
             this.bar.focusToolbar();
-        } else if (type === 'richtext' && event.key === 'Escape') {
+        } else if (['richtext', 'table'].includes(type) && event.key === 'Escape') {
             const editor = this.editors.get(element);
 
             if (editor) {
                 event.preventDefault();
                 this.cancel(element);
-                editor.commands.setContent(this.savedValue(element) ?? { type: 'doc', content: [] }, { emitUpdate: false });
+                editor.commands.setContent(this.contents.get(element)(this.savedValue(element)), { emitUpdate: false });
                 editor.commands.blur();
                 element.blur();
             }
@@ -355,9 +356,11 @@ export class Editing {
         });
     }
 
+    /** Rich text with Tiptap, a table with Tiptap and prosemirror-tables (decision 0184). */
     async richText(element) {
-        this.loading ??= import('./richtext.js');
-        const { createEditor, valueOf } = await this.loading;
+        const table = element.dataset.fbType === 'table';
+        const module = table ? (this.tableLoading ??= import('./table.js')) : (this.loading ??= import('./richtext.js'));
+        const { createEditor, valueOf, contentOf } = await module;
 
         if (this.editors.has(element)) {
             return;
@@ -380,6 +383,7 @@ export class Editing {
         });
 
         this.editors.set(element, editor);
+        this.contents.set(element, contentOf);
 
         // The element had the focus before Tiptap listened: focus it anew,
         // with the cursor where the click was and without scrolling.

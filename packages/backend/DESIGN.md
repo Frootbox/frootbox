@@ -1044,6 +1044,14 @@ typed where it stands, nothing is replaced by a form.
   `dir`): turns paragraphs, headings and quotes of the selection the
   other way than the field, e.g. English in Arabic, and back (decision
   0133).
+- **Toolbar of a table** (field type `table`, decision 0184): the same
+  bar with a native `<select>` "Rows and columns" in place of the text
+  style (insert a row above or below, a column before or after, delete
+  the row or column of the cursor; actions that do not apply are
+  disabled), then bold, italic and link, then "Header row" and "Header
+  column" as pressed buttons (always the first row or column). Tab goes
+  to the next cell and adds a row at the end. Selected cells show in
+  `Highlight` mixed with the cell.
 - **Link dialog**: a modal `<dialog>` of `--fb-size-dialog` over
   `--fb-backdrop`. Text (only for link fields), "Address or page" with a
   search in the page tree, results as buttons with title and path, a

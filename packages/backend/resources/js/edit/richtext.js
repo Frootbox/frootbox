@@ -242,7 +242,7 @@ export function createEditor(element, value, { update, selection, blur }) {
 
     return new Editor({
         element: { mount: element },
-        content: value ?? EMPTY,
+        content: contentOf(value),
         injectCSS: false,
         extensions: [
             StarterKit.configure({
@@ -269,6 +269,11 @@ export function createEditor(element, value, { update, selection, blur }) {
         onFocus: () => selection(),
         onBlur: ({ event }) => blur(event),
     });
+}
+
+/** The document of the editor from a stored value. */
+export function contentOf(value) {
+    return value ?? EMPTY;
 }
 
 /** The value to store, null when the editor is empty. */

@@ -50,13 +50,15 @@ final readonly class EditorBar
      * outlines and labels are drawn by the bar, not here.
      */
     private const string PAGE_CSS = 'fb-field,fb-area,[data-fb-field]{outline:none}'
-        . 'fb-field[data-fb-type="richtext"],fb-area{display:block}'
+        . 'fb-field[data-fb-type="richtext"],fb-field[data-fb-type="table"],fb-area{display:block}'
         . 'fb-area[data-fb-empty]{min-block-size:4rem}'
         . '[data-fb-field][contenteditable]{cursor:text}'
         . '[data-fb-field]:empty::before{content:attr(data-fb-label);opacity:.5}'
         . '[data-fb-field][data-fb-placeholder]:empty::before{content:attr(data-fb-placeholder)}'
         . '.ProseMirror{white-space:pre-wrap;overflow-wrap:break-word}'
-        . '.ProseMirror-hideselection *::selection{background:transparent}';
+        . '.ProseMirror-hideselection *::selection{background:transparent}'
+        . '.ProseMirror :is(td,th)>p{margin:0}'
+        . '.ProseMirror .selectedCell{background-color:color-mix(in srgb,Highlight 30%,transparent)}';
 
     public function __construct(
         private TwigExtension $permissions,
@@ -320,6 +322,15 @@ final readonly class EditorBar
             'orderedList' => $t('Numbered list'),
             'quote' => $t('Quote'),
             'otherDirection' => $t('Other writing direction'),
+            'headerRow' => $t('Header row'),
+            'headerColumn' => $t('Header column'),
+            'rowsAndColumns' => $t('Rows and columns'),
+            'rowAbove' => $t('Insert a row above'),
+            'rowBelow' => $t('Insert a row below'),
+            'columnBefore' => $t('Insert a column before'),
+            'columnAfter' => $t('Insert a column after'),
+            'deleteRow' => $t('Delete the row'),
+            'deleteColumn' => $t('Delete the column'),
             'link' => $t('Link'),
             'linkText' => $t('Text'),
             'linkTarget' => $t('Address or page'),

@@ -18,6 +18,21 @@ const UNDO = 'fb-edit-undo:';
 
 
 /** Whether the block at the cursor runs the other way than its field (decision 0133). */
+/**
+ * Whether the first row and the first column of a table are heads
+ * (decision 0184); the row of heads does not count for the column.
+ */
+function tableHeaders(editor) {
+    const table = editor.state.doc.firstChild;
+    const rows = [];
+    table?.forEach((row) => rows.push(row));
+    const head = (cell) => cell?.type.name === 'tableHeader';
+    const row = rows.length > 0 && rows[0].childCount > 0 && Array.from({ length: rows[0].childCount }, (_, index) => rows[0].child(index)).every(head);
+    const body = rows.slice(row ? 1 : 0);
+
+    return { row, column: body.length > 0 && body.every((item) => head(item.firstChild)) };
+}
+
 function otherDirection(editor) {
     const { $from } = editor.state.selection;
 
@@ -1524,6 +1539,8 @@ export class EditorBar extends LitElement {
         const top = below ? coords.bottom : coords.top;
         const left = Math.max(8, Math.min(fromStart(this, coords.left), this.clientWidth - 320));
         const run = (command) => command(editor.chain().focus()).run();
+        const has = (type) => Boolean(editor.schema.nodes[type] ?? editor.schema.marks[type]);
+        const table = has('table') ? tableHeaders(editor) : null;
         const items = [
             ['bold', 'bold', labels.bold, () => run((chain) => chain.toggleBold())],
             ['italic', 'italic', labels.italic, () => run((chain) => chain.toggleItalic())],
@@ -1532,14 +1549,20 @@ export class EditorBar extends LitElement {
             ['quote', 'blockquote', labels.quote, () => run((chain) => chain.toggleBlockquote())],
             ['link', 'link', labels.link, () => this.richLink(editor)],
             // For a paragraph in another language, e.g. English in Arabic (decision 0133).
-            ['direction', () => otherDirection(editor), labels.otherDirection, () => run((chain) => chain.toggleBlockDirection())],
-        ];
+            ...editor.commands.toggleBlockDirection ? [['direction', () => otherDirection(editor), labels.otherDirection, () => run((chain) => chain.toggleBlockDirection())]] : [],
+            // The heads of a table (decision 0184).
+            ...table ? [
+                ['headerRow', () => table.row, labels.headerRow, () => run((chain) => chain.toggleHeaderRow())],
+                ['headerColumn', () => table.column, labels.headerColumn, () => run((chain) => chain.toggleHeaderColumn())],
+            ] : [],
+        ].filter(([, active]) => typeof active !== 'string' || has(active));
 
         return html`<div class="toolbar ${below ? 'below' : ''}" role="toolbar" aria-label=${labels.formatting}
             style="inset-block-start: ${top}px; inset-inline-start: ${left}px"
             @keydown=${(event) => this.toolbarKey(event, editor)}
             @focusout=${(event) => this.toolbarLeft(event, editor)}>
             ${this.headingSelect(editor, run)}
+            ${this.tableSelect(editor, run)}
             ${items.map(([name, active, label, action]) => {
                 const pressed = typeof active === 'function' ? active() : Array.isArray(active) ? editor.isActive(...active) : editor.isActive(active);
 
@@ -1571,6 +1594,37 @@ export class EditorBar extends LitElement {
         return html`<select aria-label=${labels.textStyle} title=${labels.textStyleHint} @change=${change}>
             <option value="0" ?selected=${current === 0}>${labels.normalText}</option>
             ${ranks.map((rank) => html`<option value=${rank} ?selected=${current === rank}>${names[rank]}</option>`)}
+        </select>`;
+    }
+
+    /** Rows and columns of a table to add or remove (decision 0184). */
+    tableSelect(editor, run) {
+        if (!editor.schema.nodes.table) {
+            return nothing;
+        }
+
+        const labels = this.labels;
+        const actions = [
+            ['addRowBefore', labels.rowAbove],
+            ['addRowAfter', labels.rowBelow],
+            ['addColumnBefore', labels.columnBefore],
+            ['addColumnAfter', labels.columnAfter],
+            ['deleteRow', labels.deleteRow],
+            ['deleteColumn', labels.deleteColumn],
+        ];
+        const can = editor.can();
+        const change = (event) => {
+            const name = event.target.value;
+            event.target.value = '';
+
+            if (name) {
+                run((chain) => chain[name]());
+            }
+        };
+
+        return html`<select aria-label=${labels.rowsAndColumns} title=${labels.rowsAndColumns} @change=${change}>
+            <option value="" selected>${labels.rowsAndColumns}</option>
+            ${actions.map(([name, label]) => html`<option value=${name} ?disabled=${!can[name]()}>${label}</option>`)}
         </select>`;
     }
 

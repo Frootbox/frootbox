@@ -44,6 +44,9 @@ const ICONS = {
     form: svg`<rect x="3" y="5" width="18" height="5" rx="1"/><rect x="3" y="14" width="11" height="5" rx="1"/>`,
     columns: svg`<rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/>`,
     block: svg`<rect x="4" y="4" width="16" height="16" rx="2"/>`,
+    table: svg`<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 10h18"/><path d="M3 15h18"/><path d="M10 4v16"/>`,
+    headerRow: svg`<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 10h18"/><path d="M5 7h14" stroke-width="3"/><path d="M10 10v10"/>`,
+    headerColumn: svg`<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M10 4v16"/><path d="M6.5 6v12" stroke-width="3"/><path d="M10 12h11"/>`,
     places: svg`<rect x="3" y="4" width="18" height="6" rx="1.5" stroke-dasharray="3 2"/><rect x="3" y="14" width="18" height="6" rx="1.5" stroke-dasharray="3 2"/>`,
 };
 

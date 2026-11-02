@@ -484,7 +484,7 @@ export class Arranging {
         }
 
         // Alt+F10 reaches the buttons of the field, then of the entry and the block; in rich text its toolbar.
-        if (event.key === 'F10' && event.altKey && !target.closest('[data-fb-type="richtext"]')) {
+        if (event.key === 'F10' && event.altKey && !target.closest('[data-fb-type="richtext"], [data-fb-type="table"]')) {
             const field = target.closest('[data-fb-field]');
 
             if (field && this.bar.hasFieldTools(field)) {
