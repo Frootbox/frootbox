@@ -221,8 +221,8 @@ MySQL or MariaDB, as the CI does.
 
 ## License
 
-Frootbox is licensed under the GNU Lesser General Public License v3.0 only
-(`LGPL-3.0-only`). See [`COPYING.LESSER`](COPYING.LESSER) and
-[`COPYING`](COPYING).
+Frootbox is licensed under the MIT License. See [`LICENSE`](LICENSE).
+Extensions may use any license. Font files may also be licensed under the
+SIL Open Font License 1.1, with `OFL.txt` next to them.
 
 Contributions are not accepted yet.

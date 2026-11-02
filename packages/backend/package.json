@@ -2,7 +2,7 @@
   "name": "@frootbox/backend",
   "private": true,
   "description": "Scripts of the Frootbox backend, built with Vite into assets/build",
-  "license": "LGPL-3.0-only",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "build": "vite build && vite build --config vite.edit.config.js",

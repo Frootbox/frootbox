@@ -360,7 +360,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/backend",
-                "reference": "e4ac8add741305193e6b90e3c45e329c2e0d052a"
+                "reference": "79df9c879dd2768b6b5d88445aafae839b2a5bb1"
             },
             "require": {
                 "frootbox/core": "^0.1",
@@ -389,7 +389,7 @@
                 }
             },
             "license": [
-                "LGPL-3.0-only"
+                "MIT"
             ],
             "description": "Backend of the Frootbox CMS: the screens behind backend.path and the user interface of the edit mode",
             "keywords": [
@@ -408,7 +408,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/core",
-                "reference": "0a25c8d25c66c3c1de61f81891ca8b02dbfb91a9"
+                "reference": "d52b8bfbfb6994bbd13a53246357705b376bda26"
             },
             "require": {
                 "doctrine/dbal": "^4.5",
@@ -455,7 +455,7 @@
                 }
             },
             "license": [
-                "LGPL-3.0-only"
+                "MIT"
             ],
             "description": "Core of the Frootbox CMS",
             "keywords": [
@@ -473,7 +473,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/database",
-                "reference": "f2123255e2317cebd2c4bf43d8a16632a3bfb67f"
+                "reference": "459e7c2620619b1971440af3ad5da3f23dae6cf1"
             },
             "require": {
                 "doctrine/dbal": "^4.5",
@@ -497,7 +497,7 @@
                 }
             },
             "license": [
-                "LGPL-3.0-only"
+                "MIT"
             ],
             "description": "Repositories, typed entities and a schema builder for migrations on top of Doctrine DBAL",
             "keywords": [

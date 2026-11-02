@@ -2,7 +2,7 @@
     "name": "frootbox/backend",
     "description": "Backend of the Frootbox CMS: the screens behind backend.path and the user interface of the edit mode",
     "type": "frootbox-extension",
-    "license": "LGPL-3.0-only",
+    "license": "MIT",
     "keywords": [
         "cms",
         "frootbox",

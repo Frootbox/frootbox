@@ -5,7 +5,6 @@ parameters:
         - packages
         - tools
         - .php-cs-fixer.dist.php
-        - .php-cs-fixer.mit.php
     excludePaths:
         - tools/phpstan/tests/data/*
         - packages/*/vendor/*

@@ -64,5 +64,5 @@ Values for colors, spaces and sizes come only from
 
 ## License
 
-LGPL-3.0-only. Lit (BSD-3-Clause) and htmx (0BSD) are bundled in
+MIT, see [`LICENSE`](LICENSE). Lit (BSD-3-Clause) and htmx (0BSD) are bundled in
 `assets/build/`.

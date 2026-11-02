@@ -2,7 +2,7 @@
   "name": "frootbox-monorepo",
   "private": true,
   "description": "Browser tests and the npm workspaces of Frootbox",
-  "license": "LGPL-3.0-only",
+  "license": "MIT",
   "scripts": {
     "build": "npm run build --workspace=packages/backend",
     "watch": "npm run watch --workspace=packages/backend",

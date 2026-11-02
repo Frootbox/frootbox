@@ -1,7 +1,7 @@
 <?php
 
 /*
- * SPDX-License-Identifier: LGPL-3.0-only
+ * SPDX-License-Identifier: MIT
  */
 
 declare(strict_types=1);
@@ -9,12 +9,10 @@ declare(strict_types=1);
 use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
 
-// MIT licensed code has its own configuration: .php-cs-fixer.mit.php
 $finder = Finder::create()
     ->in([__DIR__ . '/packages', __DIR__ . '/tools'])
-    ->exclude(['themes', 'rich-text'])
     ->notPath('phpstan/tests/data')
-    ->append([__FILE__, __DIR__ . '/.php-cs-fixer.mit.php']);
+    ->append([__FILE__]);
 
 return new Config()
     ->setRiskyAllowed(true)
@@ -28,7 +26,7 @@ return new Config()
         'declare_strict_types' => true,
         'final_class' => true,
         'header_comment' => [
-            'header' => 'SPDX-License-Identifier: LGPL-3.0-only',
+            'header' => 'SPDX-License-Identifier: MIT',
             'comment_type' => 'comment',
             'location' => 'after_open',
             'separate' => 'both',
