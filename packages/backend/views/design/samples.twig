@@ -30,6 +30,12 @@
 </div>
 
 <div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Rich text and image') }}</p>
+    {{ ui.richtext({label: t('Text'), name: 'text', id: id ~ '-text', value: {type: 'doc', content: [{type: 'paragraph', content: [{type: 'text', text: 'Frisch geröstet, '}, {type: 'text', marks: [{type: 'bold'}], text: 'jeden Dienstag'}, {type: 'text', text: '.'}]}]}}) }}
+    {{ ui.image({label: t('Image'), name: 'image', id: id ~ '-image', optional: true}) }}
+</div>
+
+<div class="fb-design-sample">
     <p class="fb-design-sample__title">{{ t('Choices') }}</p>
     {{ ui.check({label: t('Show in the main menu'), name: 'menu', id: id ~ '-menu', checked: true}) }}
     {{ ui.check({label: t('Open in a new window'), name: 'window', id: id ~ '-window', hint: t('Only for links to other websites.')}) }}

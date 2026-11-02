@@ -75,6 +75,36 @@
     </div>
 {%- endmacro %}
 
+{# Rich text as Tiptap JSON (decision 0220): value is the document, lang and dir the language of the text. #}
+{% macro richtext(options) -%}
+    {%- set o = {label: '', name: '', id: null, value: null, hint: null, error: null, optional: false, disabled: false, lang: null, dir: null}|merge(options) -%}
+    {%- set id = o.id ?? ('field-' ~ o.name) -%}
+    {%- set labels = {formatting: t('Formatting'), heading: t('Heading'), subheading: t('Subheading'), bold: t('Bold'), italic: t('Italic'), list: t('List'), ordered: t('Numbered list'), quote: t('Quote'), link: t('Link'), address: t('Address of the link'), apply: t('Apply'), remove: t('Remove the link'), cancel: t('Cancel'), loading: t('Loading the editor …')} -%}
+    <div class="fb-field">
+        <span class="fb-label" id="{{ id }}-label">{{ o.label }}{% if o.optional %} <span class="fb-label__optional">({{ t('optional') }})</span>{% endif %}</span>
+        <fb-rich-text labelledby="{{ id }}-label" labels="{{ labels|json_encode }}"{{ _self.attributes({lang: o.lang, dir: o.dir}) }}>
+            <input type="hidden" data-type="json"{{ _self.attributes({id: id, name: o.name, disabled: o.disabled}) }} value="{{ (o.value ?? {type: 'doc', content: []})|json_encode }}">
+        </fb-rich-text>
+        {%- if o.hint %}<p class="fb-hint" id="{{ id }}-hint">{{ o.hint }}</p>{% endif -%}
+        {%- if o.error %}<p class="fb-error" id="{{ id }}-error">{{ icon('alert', 'fb-icon fb-icon--small') }}<span>{{ o.error }}</span></p>{% endif -%}
+    </div>
+{%- endmacro %}
+
+{# An image from the media as {media, alt} (decision 0220): preview and file show the current one. #}
+{% macro image(options) -%}
+    {%- set o = {label: '', name: '', id: null, value: null, preview: null, file: null, hint: null, error: null, optional: false, disabled: false}|merge(options) -%}
+    {%- set id = o.id ?? ('field-' ~ o.name) -%}
+    {%- set labels = {choose: t('Choose an image'), change: t('Change'), remove: t('Remove'), title: t('Choose an image'), search: t('Search the media'), more: t('Show more'), close: t('Close'), alt: t('Alternative text'), altHint: t('What the image shows, for people who cannot see it.'), none: t('No images found.'), loading: t('Loading …'), failed: t('The media could not be loaded. Try again.')} -%}
+    <div class="fb-field">
+        <span class="fb-label" id="{{ id }}-label">{{ o.label }}{% if o.optional %} <span class="fb-label__optional">({{ t('optional') }})</span>{% endif %}</span>
+        <fb-image-input role="group" aria-labelledby="{{ id }}-label" src="{{ path('backend.query', {name: 'media.list'}) }}" labels="{{ labels|json_encode }}"{{ _self.attributes({preview: o.preview, file: o.file}) }}>
+            <input type="hidden" data-type="json"{{ _self.attributes({id: id, name: o.name, disabled: o.disabled}) }} value="{{ (o.value is empty ? {} : o.value)|json_encode }}">
+        </fb-image-input>
+        {%- if o.hint %}<p class="fb-hint" id="{{ id }}-hint">{{ o.hint }}</p>{% endif -%}
+        {%- if o.error %}<p class="fb-error" id="{{ id }}-error">{{ icon('alert', 'fb-icon fb-icon--small') }}<span>{{ o.error }}</span></p>{% endif -%}
+    </div>
+{%- endmacro %}
+
 {# options: list of {value, label}, optional attrs per option. #}
 {% macro select(options) -%}
     {%- set o = {label: '', name: '', id: null, options: [], value: null, hint: null, error: null, disabled: false, attrs: {}}|merge(options) -%}

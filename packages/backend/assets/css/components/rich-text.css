@@ -1,0 +1,135 @@
+/* <fb-rich-text>: rich text in a form, a toolbar above the text
+   (decision 0220). */
+
+.fb-rich-text__frame {
+    overflow: hidden;
+    border: var(--fb-size-border) solid var(--fb-border-strong);
+    border-radius: var(--fb-radius-md);
+    background: var(--fb-input-bg);
+}
+
+.fb-rich-text__frame:focus-within {
+    outline: var(--fb-size-focus) solid var(--fb-focus);
+    outline-offset: var(--fb-size-focus-offset);
+}
+
+.fb-rich-text__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fb-space-1);
+    padding: var(--fb-space-1);
+    border-block-end: var(--fb-size-border) solid var(--fb-border);
+    background: var(--fb-surface-2);
+}
+
+.fb-rich-text__tool {
+    display: inline-grid;
+    place-items: center;
+    min-width: var(--fb-size-control-sm);
+    min-height: var(--fb-size-control-sm);
+    padding: 0;
+    border: var(--fb-size-border) solid transparent;
+    border-radius: var(--fb-radius-sm);
+    background: transparent;
+    color: var(--fb-text);
+    cursor: pointer;
+}
+
+.fb-rich-text__tool svg {
+    width: var(--fb-size-icon);
+    height: var(--fb-size-icon);
+}
+
+.fb-rich-text__tool--small svg {
+    width: var(--fb-size-icon-sm);
+    height: var(--fb-size-icon-sm);
+}
+
+.fb-rich-text__tool:hover {
+    background: var(--fb-surface);
+}
+
+.fb-rich-text__tool[aria-pressed="true"] {
+    border-color: var(--fb-border-strong);
+    background: var(--fb-accent-soft);
+    color: var(--fb-accent-text);
+}
+
+.fb-rich-text__tool:focus-visible {
+    outline: var(--fb-size-focus) solid var(--fb-focus);
+    outline-offset: calc(var(--fb-size-focus-offset) * -1);
+}
+
+.fb-rich-text__tool:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.fb-rich-text__link {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fb-space-2);
+    align-items: center;
+    padding: var(--fb-space-2);
+    border-block-end: var(--fb-size-border) solid var(--fb-border);
+}
+
+.fb-rich-text__link .fb-input {
+    flex: 1;
+    width: auto;
+    min-width: calc(var(--fb-size-form) * 0.4);
+}
+
+.fb-rich-text__status {
+    margin: 0;
+    padding: var(--fb-space-3);
+    color: var(--fb-text-muted);
+    font-size: var(--fb-text-sm);
+}
+
+.fb-rich-text__content {
+    min-height: calc(var(--fb-size-control) * 4);
+    padding: var(--fb-space-3);
+    outline: none;
+    line-height: var(--fb-leading-normal);
+}
+
+.fb-rich-text__content > * + * {
+    margin-block-start: var(--fb-space-3);
+}
+
+.fb-rich-text__content :is(h2, h3) {
+    font-weight: var(--fb-weight-bold);
+    line-height: var(--fb-leading-snug);
+}
+
+.fb-rich-text__content h2 {
+    font-size: var(--fb-text-xl);
+}
+
+.fb-rich-text__content h3 {
+    font-size: var(--fb-text-lg);
+}
+
+.fb-rich-text__content :is(ul, ol) {
+    padding-inline-start: var(--fb-space-6);
+}
+
+.fb-rich-text__content ul {
+    list-style: disc;
+}
+
+.fb-rich-text__content ol {
+    list-style: decimal;
+}
+
+.fb-rich-text__content blockquote {
+    padding-inline-start: var(--fb-space-4);
+    border-inline-start: var(--fb-size-indicator) solid var(--fb-border-strong);
+    color: var(--fb-text-muted);
+}
+
+.fb-rich-text__content a {
+    color: var(--fb-accent-text);
+    text-decoration: underline;
+}

@@ -520,6 +520,42 @@ code on `--fb-surface-2` in the mono font, quotes with a bar of
 Only for safe HTML of the core (`help.show`), never for HTML of a
 user. The panel of `<fb-help>` has the same rules (`proseStyles`).
 
+### Rich text
+
+```twig
+{{ ui.richtext({label: t('Text'), name: 'translations.de.text', value: article.text, lang: 'de', dir: 'ltr'}) }}
+```
+
+Rich text in a form of the backend (decision 0220) as `<fb-rich-text>`
+with the editor of the editing mode: the same nodes and marks, the same
+cleaning, stored as Tiptap JSON in a hidden field with
+`data-type="json"`. Above the text a toolbar on `--fb-surface-2` with
+heading, subheading, bold, italic, list, numbered list, quote and link,
+each a square button of `--fb-size-control-sm` with an icon of
+`--fb-size-icon`; a pressed tool gets `--fb-accent-soft`. The link tool
+opens a row with the address, "Apply", "Remove the link" and
+"Cancel"; Escape closes it. The frame has the border and radius of
+`.fb-input` and the focus ring around all of it; the text is at least
+four controls high. Headings start at h2 below the h1 of the screen.
+Tiptap loads as a chunk of its own (`chunks/richtext-<hash>.js`) when
+the field appears; until then it says "Loading the editor …".
+
+### Image input
+
+```twig
+{{ ui.image({label: t('Image'), name: 'image', value: {media: id, alt: 'Beans'}, preview: url, file: 'beans.jpg', optional: true}) }}
+```
+
+An image from the media (decision 0220) as `<fb-image-input>`, stored
+like an image field as `{media, alt}`, `{}` for none. Without an image
+it is the button "Choose an image"; with one a preview (30 % of
+`--fb-size-dialog`, border, radius `--fb-radius-md`), the file name,
+the field for the alternative text and the buttons "Change" and
+"Remove". "Choose an image" opens a dialog with a search and a grid of
+the images (`media.list?kind=image`, 24 at a time, "Show more"); a
+click chooses one. Uploads stay on the screen "Media". The styles are in
+its shadow root and use the tokens only.
+
 ### Form
 
 ```twig
@@ -552,8 +588,9 @@ answer:
   `data-type="number"` are numbers (empty is `null`);
   `data-type="lines"` is a list of the lines that are not empty (in a
   monospace font); `data-type="boolean"` makes a hidden field `true` for
-  `1`; `data-empty="null"` sends `null` for an empty text. Disabled
-  fields are left out.
+  `1`; `data-type="json"` sends the parsed JSON (empty is `null`);
+  `data-empty="null"` sends `null` for an empty text. Disabled fields
+  are left out.
 - `refresh="page-tree page-detail"` loads the current address again
   after success and replaces only the elements with these ids; focus
   goes to the element with the same id or to `[data-fb-focus]` in it
@@ -1336,7 +1373,8 @@ field.
 
 `@frootbox/ui` exports `ThemeSwitch` (`<fb-theme-switch>`), `Form`
 (`<fb-form>`) with `formInput(form)`, `Tree` (`<fb-tree>`), `Navigation`
-(`<fb-navigation>`), `showToast(text)`, `runAction(name, input)` and
+(`<fb-navigation>`), `RichTextInput` (`<fb-rich-text>`), `ImageInput`
+(`<fb-image-input>`), `showToast(text)`, `runAction(name, input)` and
 `refresh(ids)` for own components, and the helpers `generatePasswords()`,
 `bindSlugs()`, `bindFills()` and `localTimes()`, which `backend.js`
 starts on every page.

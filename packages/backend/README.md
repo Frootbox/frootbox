@@ -64,5 +64,5 @@ Values for colors, spaces and sizes come only from
 
 ## License
 
-MIT, see [`LICENSE`](LICENSE). Lit (BSD-3-Clause) and htmx (0BSD) are bundled in
-`assets/build/`.
+MIT, see [`LICENSE`](LICENSE). Lit (BSD-3-Clause), htmx (0BSD) and Tiptap
+(MIT) are bundled in `assets/build/`.

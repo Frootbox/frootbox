@@ -94,6 +94,8 @@ function fill(template, data) {
  * - type="number" and data-type="number" are numbers, empty is null
  * - data-type="lines" is a list of the lines that are not empty
  * - data-type="boolean" is true for "1" or "true", e.g. a hidden field
+ * - data-type="json" is the parsed value, empty is null, e.g. the hidden
+ *   field of <fb-rich-text> or <fb-image-input>
  * - data-type="datetime" on a datetime-local field is the time with the
  *   offset of the browser, empty is null; data-value="<ISO time>" fills
  *   it in the time zone of the browser
@@ -135,6 +137,8 @@ export function formInput(form) {
             value = value.trim() === '' ? null : Number(value);
         } else if (element.dataset.type === 'boolean') {
             value = value === '1' || value === 'true';
+        } else if (element.dataset.type === 'json') {
+            value = value.trim() === '' ? null : JSON.parse(value);
         } else if (element.dataset.type === 'datetime') {
             value = value === '' ? null : new Date(value).toISOString();
         } else if (element.dataset.type === 'lines') {
