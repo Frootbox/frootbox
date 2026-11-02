@@ -11,6 +11,7 @@ namespace Frootbox\Backend\Http\Theme;
 use Frootbox\Backend\View\BackendView;
 use Frootbox\Core\Action\AccessDeniedException;
 use Frootbox\Core\Action\Runner;
+use Frootbox\Core\Design\DesignPage;
 use Frootbox\Core\Design\ListDesignVersions;
 use Frootbox\Core\Design\ShowDesign;
 use Psr\Http\Message\ResponseInterface;
@@ -26,8 +27,11 @@ final readonly class ThemeHandler implements RequestHandlerInterface
 {
     public const string PERMISSION = 'design.show';
 
-    /** Where the website opens with the panel "Design". */
-    public const string WEBSITE = '/#fb-design';
+    /**
+     * Where the website opens with the panel "Design": the design page of
+     * the core, which shows every element (decision 0207).
+     */
+    public const string WEBSITE = DesignPage::ROUTE . '#fb-design';
 
     public function __construct(
         private BackendView $view,
@@ -50,6 +54,7 @@ final readonly class ThemeHandler implements RequestHandlerInterface
             'design' => $this->runner->ask(new ShowDesign()),
             'versions' => $versions,
             'website' => self::WEBSITE,
+            'elements' => DesignPage::ROUTE,
         ]);
     }
 }

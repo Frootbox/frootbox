@@ -16,6 +16,7 @@ use Frootbox\Backend\Security\Csrf;
 use Frootbox\Core\Action\AccessDeniedException;
 use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Asset\PublicAssets;
+use Frootbox\Core\Design\DesignPage;
 use Frootbox\Core\I18n\Translator;
 use Frootbox\Core\Language\Direction;
 use Frootbox\Core\Language\Languages;
@@ -108,6 +109,8 @@ final readonly class EditorBar
             // Comments of the page (decision 0156).
             'comments' => $this->permissions->can('comment.list') ? ['resolve' => $this->permissions->can('comment.resolve'), 'delete' => $this->permissions->can('comment.delete')] : null,
             'page' => $page,
+            // The design page of the core is no page one changes (decision 0207).
+            'designPage' => true === $event->request->getAttribute(DesignPage::class),
             'media' => null === $id || null === $page ? null : $this->media($id),
             'labels' => $this->labels(),
         ];
@@ -264,6 +267,7 @@ final readonly class EditorBar
             'changed' => $t('Pending changes'),
             'locked' => $t('Locked for visitors'),
             'readOnly' => $t('You may not change this page.'),
+            'designPage' => $t('Every element of the website, in the draft.'),
             'publish' => $t('Publish'),
             'publishDone' => $t('The page is published.'),
             'mediaElsewhere' => $t('Also changes {images} on other published pages.'),

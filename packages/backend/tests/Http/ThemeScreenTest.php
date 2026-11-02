@@ -45,7 +45,8 @@ final class ThemeScreenTest extends BackendTestCase
 
         self::assertStringContainsString('<h1 class="fb-heading-1">Design</h1>', $html);
         self::assertStringContainsString('Farben, Schriften und Maße des Themes acme/site.', $html);
-        self::assertStringContainsString('<input type="hidden" name="next" value="/#fb-design">', $html);
+        self::assertStringContainsString('<input type="hidden" name="next" value="/_design#fb-design">', $html, 'The panel opens on the design page (decision 0207).');
+        self::assertStringContainsString('<a class="fb-button fb-button--outline" href="/_design"><span>Alle Elemente</span></a>', $html);
         self::assertStringContainsString('Besucher sehen das Design des Themes.', $html);
         self::assertStringContainsString('<span class="fb-swatch" style="--fb-swatch: #cc0000" aria-hidden="true"></span>', $html);
         self::assertStringContainsString('<code>--radius</code>', $html);

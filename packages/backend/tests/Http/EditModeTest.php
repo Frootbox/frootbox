@@ -92,6 +92,7 @@ final class EditModeTest extends BackendTestCase
         $config = $this->bar($visitor);
         self::assertFalse($config['editing']);
         self::assertSame('/cms/edit-mode', $config['toggle']);
+        self::assertFalse($config['designPage']);
         self::assertStringStartsWith(':host{', $config['tokens']);
         self::assertStringContainsString('src="/assets/frootbox/backend/assets/build/edit.js?v=', $visitor);
         self::assertStringNotContainsString('fb-field,fb-area', $visitor, 'The rule for marked places only in the mode.');
@@ -242,6 +243,16 @@ final class EditModeTest extends BackendTestCase
         return ['app' => ['url' => 'https://example.org'], 'theme' => 'acme/site', 'languages' => ['de' => ['title' => 'Deutsch']]];
     }
 
+    public function testSaysWhatTheDesignPageIs(): void
+    {
+        // Decision 0207: no page to change, but all elements in the draft.
+        $config = $this->bar($this->html($this->page('/_design')));
+
+        self::assertTrue($config['designPage']);
+        self::assertNull($config['page']);
+        self::assertSame('Alle Elemente der Website, im Entwurf.', $config['labels']['designPage']);
+    }
+
     private function page(string $path, bool $editing = true): ResponseInterface
     {
         $response = $this->requestWithCookies($path, $editing);
@@ -262,7 +273,7 @@ final class EditModeTest extends BackendTestCase
     }
 
     /**
-     * @return array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null}
+     * @return array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, designPage: bool, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null}
      */
     private function bar(string $html): array
     {
@@ -270,7 +281,7 @@ final class EditModeTest extends BackendTestCase
         $config = json_decode($match[1], true, flags: \JSON_THROW_ON_ERROR);
         self::assertIsArray($config);
 
-        /** @var array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null} $config */
+        /** @var array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, designPage: bool, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null} $config */
         return $config;
     }
 

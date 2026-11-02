@@ -1149,7 +1149,7 @@ export class EditorBar extends LitElement {
         const labels = this.labels;
 
         if (!page) {
-            return html`<span class="note">${labels.readOnly}</span>`;
+            return html`<span class="note">${this.config.designPage ? labels.designPage : labels.readOnly}</span>`;
         }
 
         if (this.confirmingPublish) {

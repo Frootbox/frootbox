@@ -437,6 +437,7 @@ There is no kind of scope "{scope}".: Für „{scope}“ lassen sich keine Rolle
 There is nothing for the scope "{scope}".: „{scope}“ gibt es nicht.
 "Editor bar": "Redaktionsleiste"
 "You may not change this page.": "Diese Seite darfst Du nicht ändern."
+"Every element of the website, in the draft.": "Alle Elemente der Website, im Entwurf."
 "Show all places": "Alle Stellen zeigen"
 "Open in the backend": "Im Backend öffnen"
 "Collapse the editor bar": "Redaktionsleiste einklappen"
@@ -695,6 +696,7 @@ Monospace: Gleichbreit
 'Colours, fonts and sizes of the theme {theme}. You change them on the website and see the effect right away.': 'Farben, Schriften und Maße des Themes {theme}. Du änderst sie auf der Website und siehst sofort, wie es wirkt.'
 No theme is active.: Es ist kein Theme aktiv.
 Design on the website: Auf der Website gestalten
+All elements: Alle Elemente
 There are changes visitors do not see yet.: Es gibt Änderungen, die Besucher noch nicht sehen.
 Visitors see version {number}.: Besucher sehen Version {number}.
 Visitors see the design of the theme.: Besucher sehen das Design des Themes.

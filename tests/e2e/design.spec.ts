@@ -16,9 +16,13 @@ test('changes the colours on the website and publishes them', async ({ page, bro
     await expect(page.getByRole('heading', { level: 1, name: 'Design' })).toBeVisible();
     await expect(page.locator('.fb-swatch').first()).toBeVisible();
 
+    await expect(page.getByRole('link', { name: 'Alle Elemente' })).toHaveAttribute('href', '/_design');
+
+    // The panel opens on the design page, which shows every element (decision 0207).
     await page.getByRole('button', { name: 'Auf der Website gestalten' }).click();
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL('/_design');
     const bar = page.locator('fb-editor-bar');
+    await expect(bar.getByText('Alle Elemente der Website, im Entwurf.')).toBeVisible();
     const panel = bar.getByRole('region', { name: 'Design der Website' });
     await expect(panel.getByRole('heading', { name: 'Design der Website' })).toBeFocused();
     await expect(panel.getByRole('group', { name: 'Farben' })).toBeVisible();

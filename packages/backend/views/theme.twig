@@ -14,14 +14,17 @@
             <h1 class="fb-heading-1">{{ t('Design') }}</h1>
             <p class="fb-muted">{{ design.theme ? t('Colours, fonts and sizes of the theme {theme}. You change them on the website and see the effect right away.', {theme: design.theme}) : t('No theme is active.') }}</p>
         </div>
-        {% if design.tokens is not empty and can('design.update') %}
-        <form method="post" action="{{ path('backend.edit-mode') }}">
-            <input type="hidden" name="_csrf" value="{{ fb.csrf }}">
-            <input type="hidden" name="on" value="1">
-            <input type="hidden" name="next" value="{{ website }}">
-            {{ ui.button({label: t('Design on the website'), type: 'submit', icon: 'palette'}) }}
-        </form>
-        {% endif %}
+        <div class="fb-cluster">
+            {{ ui.button({label: t('All elements'), href: elements, variant: 'outline'}) }}
+            {% if design.tokens is not empty and can('design.update') %}
+            <form method="post" action="{{ path('backend.edit-mode') }}">
+                <input type="hidden" name="_csrf" value="{{ fb.csrf }}">
+                <input type="hidden" name="on" value="1">
+                <input type="hidden" name="next" value="{{ website }}">
+                {{ ui.button({label: t('Design on the website'), type: 'submit', icon: 'palette'}) }}
+            </form>
+            {% endif %}
+        </div>
     </header>
 
     <section class="fb-card" id="design-status" aria-labelledby="design-status-title">
