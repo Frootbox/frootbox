@@ -100,7 +100,10 @@ test('gives headings the level of their place and shows the outline', async ({ p
     await expect(body).toBeFocused();
 
     // "Show all places" names the level of each heading.
+    // Escape leaves the text; the editor lets go of the focus a frame
+    // later, which would otherwise close the menu right after it opens.
     await page.keyboard.press('Escape');
+    await expect(body).not.toBeFocused();
     await bar.getByRole('button', { name: 'Mehr' }).click();
     await bar.getByRole('menuitemcheckbox', { name: 'Alle Stellen zeigen' }).click();
     await expect(bar.locator('.level-badge')).toHaveText(['H1', 'H2', 'H2', 'H3', 'H4']);
