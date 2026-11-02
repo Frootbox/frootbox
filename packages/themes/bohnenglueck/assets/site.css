@@ -30,7 +30,9 @@
 }
 :is(.button, .button-field > a):hover { transform: translateY(-2px); box-shadow: 0 .5rem 1.5rem color-mix(in srgb, var(--color-primary) 35%, transparent); }
 .button--ghost, .button-field--ghost > a { background: transparent; color: inherit; box-shadow: inset 0 0 0 2px currentColor; }
-.eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: .8rem; font-weight: 700; color: var(--color-primary); }
+.eyebrow { font-size: .8rem; font-weight: 700; color: var(--color-primary); }
+/* Arabic and Hebrew have no capitals, and spacing tears Arabic letters apart (decision 0133). */
+.eyebrow:dir(ltr) { text-transform: uppercase; letter-spacing: .12em; }
 .section { padding-block: var(--space); }
 .section__head { max-inline-size: 42rem; margin-block-end: 2.5rem; }
 .section__title { font-size: clamp(1.8rem, 4vw, 2.6rem); }

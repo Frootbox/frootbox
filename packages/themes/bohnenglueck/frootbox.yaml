@@ -30,3 +30,24 @@ theme:
     radius: 14px
     space: normal
     width: 72rem
+    leading:
+      body: 1.6
+      heading: 1.15
+  # Content in Arabic or Hebrew, also as fallback on a page of another
+  # language, gets fonts with its letters and more room between lines
+  # (decision 0159).
+  scripts:
+    arab:
+      font:
+        body: '"Noto Naskh Arabic", "Geeza Pro", "Segoe UI", Tahoma, sans-serif'
+        heading: '"Noto Kufi Arabic", "Geeza Pro", "Segoe UI", Tahoma, sans-serif'
+      leading:
+        body: 1.9
+        heading: 1.4
+    hebr:
+      font:
+        body: '"Noto Sans Hebrew", "Arial Hebrew", "Segoe UI", Arial, sans-serif'
+        heading: '"Noto Serif Hebrew", "Times New Roman", serif'
+      leading:
+        body: 1.75
+        heading: 1.3

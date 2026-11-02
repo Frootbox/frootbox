@@ -1,8 +1,9 @@
 {# Texts of the theme in the language of the visitor. #}
 {% macro t(key) %}
   {%- set texts = {
-    de: { main: 'Hauptnavigation', footer: 'Footer', languages: 'Sprache', breadcrumb: 'Brotkrumen', home: 'Startseite' },
-    en: { main: 'Main navigation', footer: 'Footer', languages: 'Language', breadcrumb: 'Breadcrumb', home: 'Home' },
+    de: { main: 'Hauptnavigation', footer: 'Footer', languages: 'Sprache', breadcrumb: 'Brotkrumen', home: 'Startseite', skip: 'Zum Inhalt' },
+    en: { main: 'Main navigation', footer: 'Footer', languages: 'Language', breadcrumb: 'Breadcrumb', home: 'Home', skip: 'Skip to content' },
+    ar: { main: 'القائمة الرئيسية', footer: 'التذييل', languages: 'اللغة', breadcrumb: 'مسار التنقل', home: 'الرئيسية', skip: 'انتقل إلى المحتوى' },
   } -%}
   {{- (texts[language()] ?? texts.de)[key] -}}
 {% endmacro %}
