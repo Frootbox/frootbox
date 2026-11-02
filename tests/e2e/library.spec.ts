@@ -34,6 +34,15 @@ test('opens the second level of the navigation without a script', async ({ page 
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Überschrift');
 });
 
+test('shows the menu in the head on wide screens', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(PAGES.start);
+
+    await expect(page.getByRole('navigation', { name: 'Hauptnavigation' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Menü', exact: true })).toBeHidden();
+    await expect(page.getByRole('button', { name: 'Menü schließen' })).toBeHidden();
+});
+
 test('opens the menu on small screens as a popover', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(PAGES.start);
@@ -69,6 +78,9 @@ test('mirrors head and foot from right to left', async ({ page }) => {
     const menu = await page.locator('.base-header__menu').boundingBox();
     expect(brand!.x).toBeGreaterThan(menu!.x);
     await expect(page.getByRole('link', { name: 'انتقل إلى المحتوى' })).toBeAttached();
+
+    // Latin letters among Arabic ones, like the brand, keep Noto Sans.
+    expect(await page.locator('.base-header__brand').evaluate((element) => getComputedStyle(element).fontFamily)).toMatch(/^"Noto Sans Arabic", "Noto Sans"/);
 });
 
 test('loads Noto Sans from the theme', async ({ page }) => {

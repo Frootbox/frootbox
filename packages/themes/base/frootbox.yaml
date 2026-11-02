@@ -77,17 +77,17 @@ theme:
       fallback: { local: [Arial, Helvetica], size-adjust: 105.37%, ascent: 101.45%, descent: 27.81% }
     noto-sans-arabic:
       label: Noto Sans Arabic
-      family: '"Noto Sans Arabic", "Geeza Pro", "Segoe UI", Tahoma, sans-serif'
+      family: '"Noto Sans Arabic", "Noto Sans", "Geeza Pro", "Segoe UI", Tahoma, sans-serif'
       files:
         - { file: assets/fonts/noto-sans-arabic.woff2, weight: 100 900, range: arabic }
     noto-sans-hebrew:
       label: Noto Sans Hebrew
-      family: '"Noto Sans Hebrew", "Arial Hebrew", "Segoe UI", Arial, sans-serif'
+      family: '"Noto Sans Hebrew", "Noto Sans", "Arial Hebrew", "Segoe UI", Arial, sans-serif'
       files:
         - { file: assets/fonts/noto-sans-hebrew.woff2, weight: 100 900, range: hebrew }
   # Content in Arabic or Hebrew, also as fallback on a page of another
   # language, gets fonts with its letters and more room between lines
-  # (decision 0159).
+  # (decision 0159). Latin letters in it, e.g. a brand, stay in Noto Sans.
   scripts:
     arab:
       font: { body: noto-sans-arabic, heading: noto-sans-arabic }

@@ -43,7 +43,7 @@
 .base-header__close { align-self: flex-end; }
 
 @media (min-width: 48rem) {
-  .base-header__toggle, .base-header__close { display: none; }
+  .base-header :is(.base-header__toggle, .base-header__close) { display: none; }
   .base-header__menu,
   .base-header__menu:popover-open {
     position: static;
