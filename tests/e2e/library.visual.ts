@@ -42,3 +42,16 @@ test('menu, narrow', async ({ page }) => {
 
     await expect(page).toHaveScreenshot('menu-narrow.png');
 });
+
+// The error page in the frame of the theme (decision 0189).
+for (const [width, viewport] of Object.entries(widths)) {
+    for (const [language, path] of Object.entries({ de: '/gibt-es-nicht', ar: '/ar/غير-موجود' })) {
+        test(`error page, ${width}, ${language}`, async ({ page }) => {
+            await page.setViewportSize(viewport);
+            expect((await page.goto(path))?.status()).toBe(404);
+            await page.evaluate(() => document.fonts.ready);
+
+            await expect(page).toHaveScreenshot(`error-${width}-${language}.png`, { fullPage: true });
+        });
+    }
+}

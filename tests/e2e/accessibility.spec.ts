@@ -42,6 +42,21 @@ for (const [width, viewport] of Object.entries(widths)) {
     }
 }
 
+test('has no violations on the error page', async ({ page }) => {
+    const found: string[] = [];
+
+    for (const viewport of Object.values(widths)) {
+        await page.setViewportSize(viewport);
+
+        for (const path of ['/gibt-es-nicht', '/ar/غير-موجود']) {
+            expect((await page.goto(path))?.status()).toBe(404);
+            found.push(...(await violations(page)).map((line) => `${path}: ${line}`));
+        }
+    }
+
+    expect(found).toEqual([]);
+});
+
 test('has no violations with the menu open', async ({ page }) => {
     await page.setViewportSize(widths.narrow);
     await page.goto(PAGES.start);

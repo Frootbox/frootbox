@@ -83,3 +83,25 @@ test('names the other languages for search engines', async ({ page }) => {
     await expect(page.locator('link[rel=alternate][hreflang=en]')).toHaveAttribute('href', 'http://127.0.0.1:8100/en/coffees');
     await expect(page.locator('link[rel=alternate][hreflang=x-default]')).toHaveAttribute('href', 'http://127.0.0.1:8100/sorten');
 });
+
+test('shows a missing page in the frame of the website', async ({ page }) => {
+    const response = await page.goto('/gibt-es-nicht');
+
+    // The status stays, search engines leave it out (decision 0189).
+    expect(response?.status()).toBe(404);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Seite nicht gefunden');
+    await expect(page.getByRole('navigation', { name: 'Hauptnavigation' }).getByRole('link', { name: 'Unsere Sorten' })).toBeVisible();
+
+    await page.getByRole('link', { name: 'Zur Startseite' }).click();
+    await expect(page).toHaveURL('/');
+});
+
+test('shows a missing page in the language of its address', async ({ page }) => {
+    expect((await page.goto('/en/no-such-page'))?.status()).toBe(404);
+
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Page not found');
+    await page.getByRole('link', { name: 'To the start page' }).click();
+    await expect(page).toHaveURL('/en');
+});
