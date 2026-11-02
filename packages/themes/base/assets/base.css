@@ -2,7 +2,7 @@
  * Typography, links, focus and forms in the layer "base", all from the
  * tokens (decision 0162). Blocks build on it, but do not need it.
  */
-html { scroll-padding-block-start: var(--space-2xl); }
+html { scroll-padding-block-start: calc(var(--base-sticky-top, 0px) + var(--space-2xl)); }
 body {
   color: var(--color-text);
   background: var(--color-bg);
