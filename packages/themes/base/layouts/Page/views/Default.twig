@@ -11,10 +11,13 @@ areas:
 <main id="content" class="base-page">
   <div class="base-page-head">
     {% include '@theme/breadcrumb.twig' %}
-    {# A page without translation shows the text of another language. #}
-    {% set content = content_attributes() %}
-    {{ heading('title', 0, {class: 'base-page-head__title'}|merge(content)) }}
-    <p class="base-page-head__intro"{{ content|attributes }}>{{ field('intro') }}</p>
+    {# Below a page, e.g. a news article, the block shows its own heading (decision 0220). #}
+    {% if not subpage() %}
+      {# A page without translation shows the text of another language. #}
+      {% set content = content_attributes() %}
+      {{ heading('title', 0, {class: 'base-page-head__title'}|merge(content)) }}
+      <p class="base-page-head__intro"{{ content|attributes }}>{{ field('intro') }}</p>
+    {% endif %}
   </div>
   {{ area('main') }}
 </main>

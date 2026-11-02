@@ -15,7 +15,7 @@ Every block has examples, so all of them show on the design page
 | Path | What it is |
 |---|---|
 | `frootbox.yaml` | Theme manifest: default tokens (colours, fonts, radius, spacing, width), site fields, navigations, the places and surfaces of the design page |
-| `layouts/` | `Start` (only content), `Page` (breadcrumbs, heading, introduction, content), `Landing` (without the main navigation) |
+| `layouts/` | `Start` (only content), `Page` (breadcrumbs, heading, introduction, content; below it, e.g. for a news article, only breadcrumbs and content, as the block shows the heading), `Landing` (without the main navigation) |
 | `partials/` | `header`, `footer`, `navigation`, `breadcrumb`, `languages`, `error`; a child theme overrides them file by file |
 | `blocks/` | The blocks, see below |
 | `assets/` | `reset.css`, `base.css`, `layouts.css`, `partials.css`, the font Noto Sans and files for the examples |
