@@ -5,7 +5,7 @@
 // With comments (0156): "Comment" lets the guest click a field or block,
 // write and send; "Comments" lists the threads of their link with the
 // replies and the status, and pins mark the places on the page.
-import { WHOLE_DESIGN_PAGE, elementOf, isContent, placeOf } from './comments/place.js';
+import { WHOLE_DESIGN_PAGE, elementOf, isContent, pinAt, placeOf } from './comments/place.js';
 
 const source = document.getElementById('fb-preview-config');
 const NAME = 'frootbox-comment-name';
@@ -140,7 +140,8 @@ const STYLES = `
         min-block-size: var(--fb-size-icon);
         padding: 0 var(--fb-space-1);
         border: var(--fb-size-border) solid var(--fb-on-accent);
-        border-radius: var(--fb-radius-full) var(--fb-radius-full) var(--fb-radius-full) 0;
+        border-radius: var(--fb-radius-full);
+        border-end-start-radius: 0;
         background: var(--fb-accent);
         color: var(--fb-on-accent);
         font-size: var(--fb-text-xs);
@@ -148,6 +149,8 @@ const STYLES = `
     }
 
     .pin.done { background: var(--fb-surface-2); color: var(--fb-text-muted); }
+
+    .pin.draft { pointer-events: none; display: grid; place-items: center; border-color: var(--fb-accent); background: var(--fb-surface); color: var(--fb-accent); }
 
     .panel {
         position: fixed;
@@ -327,7 +330,7 @@ class PreviewNote extends HTMLElement {
         this.commentButton.setAttribute('aria-pressed', 'true');
         this.hint = h('div', { class: 'hint', role: 'status' },
             h('span', {}, this.t('pickHint')),
-            h('button', { type: 'button', onclick: () => this.compose({ blockId: null, field: null, site: false, label: null, excerpt: null, element: null }) }, this.t('wholePage')),
+            h('button', { type: 'button', onclick: () => this.compose({ blockId: null, field: null, site: false, landmark: null, label: null, excerpt: null, element: null, pointX: null, pointY: null }) }, this.t('wholePage')),
             h('button', { type: 'button', onclick: () => this.stopPicking() }, this.t('cancel')),
         );
         this.root.append(this.hint);
@@ -352,7 +355,7 @@ class PreviewNote extends HTMLElement {
             return;
         }
 
-        const place = placeOf(event.target);
+        const place = placeOf(event.target, { labels: this.labels });
         this.outline?.remove();
         this.outline = null;
 
@@ -374,7 +377,7 @@ class PreviewNote extends HTMLElement {
 
         event.preventDefault();
         event.stopPropagation();
-        this.compose(placeOf(event.target));
+        this.compose(placeOf(event.target, { event, labels: this.labels }));
     }
 
     key(event) {
@@ -394,12 +397,23 @@ class PreviewNote extends HTMLElement {
         );
         this.root.append(this.panel);
         this.listButton?.setAttribute('aria-expanded', String('list' === view));
+
+        // Only a comment being written shows its place ahead.
+        if ('compose' !== view && this.draft) {
+            this.draft = null;
+            this.placePins();
+        }
     }
 
     closePanel() {
         this.panel?.remove();
         this.panel = null;
         this.listButton?.setAttribute('aria-expanded', 'false');
+
+        if (this.draft) {
+            this.draft = null;
+            this.placePins();
+        }
     }
 
     compose(place) {
@@ -415,6 +429,8 @@ class PreviewNote extends HTMLElement {
             h('div', { class: 'actions' }, h('button', { type: 'submit', class: 'primary' }, this.t('send')), h('button', { type: 'button', onclick: () => this.closePanel() }, this.t('cancel'))),
         );
         this.openPanel('compose', this.t('newComment'), form);
+        this.draft = place.element ? place : null;
+        this.placePins();
         form.querySelector('textarea').focus();
     }
 
@@ -435,6 +451,9 @@ class PreviewNote extends HTMLElement {
                 blockId: place.blockId,
                 field: place.field,
                 site: place.site,
+                landmark: place.landmark ?? null,
+                pointX: place.pointX ?? null,
+                pointY: place.pointY ?? null,
                 language: this.settings.language,
                 path: design ? location.pathname + location.search : location.pathname,
                 excerpt: place.excerpt,
@@ -525,31 +544,40 @@ class PreviewNote extends HTMLElement {
     placePins() {
         this.pins?.forEach((pin) => pin.remove());
         this.pins = [];
-        let number = 0;
+        // Newest first in the list, numbered from the oldest as in the editor bar.
+        const here = this.threads.filter((thread) => this.isHere(thread));
 
-        for (const thread of this.threads) {
-            if (!this.isHere(thread)) {
-                continue;
-            }
-
-            number += 1;
+        for (const [index, thread] of here.entries()) {
+            const number = here.length - index;
             const element = elementOf(thread);
 
             if (!element) {
                 continue;
             }
 
-            const rect = element.getBoundingClientRect();
-
-            if (rect.bottom < 0 || rect.top > window.innerHeight) {
-                continue;
-            }
-
             const pin = h('button', { type: 'button', class: `pin${'done' === thread.status ? ' done' : ''}`, 'aria-label': this.t('commentPin', { number, text: thread.comment.body.slice(0, 60) }), onclick: () => this.showList(thread.id) }, String(number));
-            Object.assign(pin.style, { top: `${Math.max(0, rect.top - 10)}px`, left: `${Math.max(0, rect.right - 10)}px` });
-            this.layer.append(pin);
-            this.pins.push(pin);
+            this.pinTo(pin, thread, element);
         }
+
+        // The place of the comment being written.
+        if (this.draft?.element.isConnected) {
+            this.pinTo(h('span', { class: 'pin draft', 'aria-hidden': 'true' }, '+'), this.draft, this.draft.element);
+        }
+    }
+
+    pinTo(pin, place, element) {
+        const { x, y, rect, point } = pinAt(place, element);
+
+        if (rect.bottom < 0 || rect.top > window.innerHeight || (0 === rect.width && 0 === rect.height)) {
+            return;
+        }
+
+        this.layer.append(pin);
+        this.pins.push(pin);
+        // The note runs in the direction of the backend, the pin with it.
+        const fromStart = 'rtl' === this.dir ? document.documentElement.clientWidth - x : x;
+        const [block, inline] = point ? [y - pin.offsetHeight, fromStart] : [y - pin.offsetHeight / 2, fromStart - pin.offsetWidth / 2];
+        Object.assign(pin.style, { insetBlockStart: `${Math.max(0, block)}px`, insetInlineStart: `${Math.max(0, inline)}px` });
     }
 
     /** Whether a thread belongs to this page, or to the design page shown. */

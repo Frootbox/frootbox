@@ -113,6 +113,13 @@ final readonly class PreviewNote
             'openCount' => $t('{count} open'),
             'commentPin' => $t('Comment {number}: {text}'),
             'commentFailed' => $t('That did not work. Try again.'),
+            // Places without a block or field (decision 0211).
+            'landmarkBanner' => $t('Head of the page'),
+            'landmarkContentinfo' => $t('Foot of the page'),
+            'landmarkNavigation' => $t('Navigation'),
+            'landmarkComplementary' => $t('Side column'),
+            'landmarkMain' => $t('Main area'),
+            'landmarkNamed' => $t('{landmark}: {name}'),
         ];
     }
 }

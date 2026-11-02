@@ -1,6 +1,6 @@
 import { css, html, nothing } from 'lit';
-import { WHOLE_DESIGN_PAGE, elementOf, isContent, placeOf } from '../comments/place.js';
-import { endFromStart } from './edges.js';
+import { WHOLE_DESIGN_PAGE, elementOf, isContent, pinAt, placeOf } from '../comments/place.js';
+import { fromStart } from './edges.js';
 import { icon } from './icons.js';
 
 /**
@@ -127,7 +127,7 @@ export class CommentsPanel {
         event.preventDefault();
         event.stopPropagation();
         this.stopPicking();
-        const place = placeOf(event.target);
+        const place = placeOf(event.target, { event, labels: this.labels });
         this.update({ composing: place, error: null });
         this.bar.updateComplete.then(() => this.bar.renderRoot.querySelector('.panel.comments textarea')?.focus());
     }
@@ -163,6 +163,9 @@ export class CommentsPanel {
             blockId: place?.blockId ?? null,
             field: place?.field ?? null,
             site: place?.site ?? false,
+            landmark: place?.landmark ?? null,
+            pointX: place?.pointX ?? null,
+            pointY: place?.pointY ?? null,
             language: this.bar.config.language,
             path: design ? location.pathname + location.search : location.pathname,
             excerpt: place?.excerpt ?? null,
@@ -213,27 +216,50 @@ export class CommentsPanel {
 
     /** Numbered pins at the places of the threads on the page. */
     pins() {
-        if (!this.config || this.threads.length === 0) {
+        const draft = this.state?.composing;
+
+        if (!this.config || (this.threads.length === 0 && !draft?.element)) {
             return nothing;
         }
 
         const labels = this.labels;
-
-        return this.threads.map((thread, index) => {
+        const pins = this.threads.map((thread, index) => {
             const element = elementOf(thread);
-            const rect = element?.getBoundingClientRect();
+            const style = element ? this.pinStyle(thread, element) : null;
 
-            if (!rect || rect.bottom < 0 || rect.top > innerHeight || (rect.width === 0 && rect.height === 0)) {
+            if (!style) {
                 return nothing;
             }
 
             const number = this.threads.length - index;
 
             return html`<button type="button" class="comment-pin ${thread.status === 'done' ? 'done' : ''} ${this.state?.current === thread.id ? 'current' : ''}"
-                style="inset-block-start: ${Math.max(0, rect.top - 10)}px; inset-inline-start: ${Math.max(0, endFromStart(this.bar, rect) - 10)}px"
+                style=${style}
                 aria-label=${labels.commentPin.replace('{number}', number).replace('{text}', thread.comment.body.slice(0, 60))}
                 @click=${() => this.show(thread.id)}>${number}</button>`;
         });
+
+        // The place of the comment being written.
+        const style = draft?.element?.isConnected ? this.pinStyle(draft, draft.element) : null;
+
+        return style ? [...pins, html`<span class="comment-pin draft" aria-hidden="true" style=${style}>+</span>`] : pins;
+    }
+
+    /**
+     * Where a pin goes: with its lower start corner at the point, or
+     * centred on the corner of the place; null when out of sight.
+     */
+    pinStyle(place, element) {
+        const { x, y, rect, point } = pinAt(place, element);
+
+        if (rect.bottom < 0 || rect.top > innerHeight || (rect.width === 0 && rect.height === 0)) {
+            return null;
+        }
+
+        const start = fromStart(this.bar, x);
+        const [block, inline] = point ? [`${y}px - var(--fb-size-icon)`, `${start}px`] : [`${y}px - var(--fb-size-icon) / 2`, `${start}px - var(--fb-size-icon) / 2`];
+
+        return `inset-block-start: max(0px, calc(${block})); inset-inline-start: max(0px, calc(${inline}))`;
     }
 
     /** The hint while picking a place. */
@@ -246,7 +272,7 @@ export class CommentsPanel {
 
         return html`<div class="comment-hint" role="status">
             <span>${labels.pickHint}</span>
-            <button type="button" @click=${() => { this.stopPicking(); this.update({ composing: { blockId: null, field: null, site: false, label: null, excerpt: null } }); }}>${labels.wholePage}</button>
+            <button type="button" @click=${() => { this.stopPicking(); this.update({ composing: { blockId: null, field: null, site: false, landmark: null, label: null, excerpt: null, element: null, pointX: null, pointY: null } }); }}>${labels.wholePage}</button>
             <button type="button" @click=${() => this.stopPicking()}>${labels.cancel}</button>
         </div>`;
     }
@@ -417,6 +443,8 @@ export const commentStyles = css`
     .comment-pin.done { background: var(--fb-surface-2); color: var(--fb-text-muted); }
 
     .comment-pin.current { outline: var(--fb-size-focus) solid var(--fb-focus); }
+
+    .comment-pin.draft { display: grid; place-items: center; pointer-events: none; border-color: var(--fb-accent); background: var(--fb-surface); color: var(--fb-accent); }
 
     .comment-hint {
         position: absolute;

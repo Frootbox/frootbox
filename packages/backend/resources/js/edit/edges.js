@@ -5,9 +5,6 @@
 
 const rtl = (bar) => bar.dir === 'rtl';
 
-/** How far the end of a rect lies from the start of a line in the bar. */
-export const endFromStart = (bar, rect) => (rtl(bar) ? bar.clientWidth - rect.left : rect.right);
-
 /** How far the end of a rect lies from the end of a line in the bar, at least 0. */
 export const endFromEnd = (bar, rect) => Math.max(0, rtl(bar) ? rect.left : bar.clientWidth - rect.right);
 

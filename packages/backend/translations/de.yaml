@@ -868,6 +868,12 @@ Done thread: Erledigt
 '{count} open': '{count} offen'
 'Comment {number}: {text}': 'Kommentar {number}: {text}'
 That did not work. Try again.: Das hat nicht geklappt. Versuch es noch einmal.
+# Places of comments without a block or field (decision 0211)
+Head of the page: Kopf der Seite
+Foot of the page: Fuß der Seite
+Navigation: Navigation
+Side column: Randspalte
+'{landmark}: {name}': '{landmark}: {name}'
 Too many comments. Try again in a minute.: Zu viele Kommentare. Versuch es in einer Minute noch einmal.
 Too many comments. Try again in {minutes} minutes.: Zu viele Kommentare. Versuch es in {minutes} Minuten noch einmal.
 Open the preview link again to comment.: Öffne den Vorschaulink noch einmal, um zu kommentieren.
