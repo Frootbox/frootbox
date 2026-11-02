@@ -140,6 +140,8 @@ test('uploads an image, sets its focus and shows it on a published page', async 
     await page.getByRole('button', { name: 'Auf der Website bearbeiten' }).click();
     await expect(page).toHaveURL(`/${slug}`);
 
+    // The script of the mode listens once the fields are editable; a click before it opens nothing.
+    await expect(page.locator('h1[data-fb-field="title"]')).toHaveAttribute('contenteditable', 'plaintext-only');
     const field = page.locator('[data-fb-type="image"]');
     await field.click();
     const bar = page.locator('fb-editor-bar');
