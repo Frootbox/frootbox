@@ -3,16 +3,53 @@
  */
 
 import { expect, test } from '@playwright/test';
-import { LIBRARY, PAGES, loadImages } from './library';
+import { DESIGN, LIBRARY, PAGES, designTest, frames, loadImages, sections, withoutNote } from './library';
 
-// Screenshots of the base library on its sample website (decision 0163):
-// every page shows its block at the three places, here at two widths, in
-// German and from right to left in Arabic (with the German text as
-// fallback). Only valid in the Playwright container, see backend.visual.ts.
+// Screenshots of the base theme (decision 0209). The design page shows
+// every block in every variant: in the main area at two widths, in German
+// and from right to left in Arabic, and at each place and on each surface
+// of the theme, wide. One image per part and group of blocks. The small
+// sample website shows head, foot and layouts. Only valid in the
+// Playwright container, see backend.visual.ts.
 
 test.use({ baseURL: LIBRARY });
 
 const widths = { wide: { width: 1280, height: 800 }, narrow: { width: 390, height: 844 } };
+
+/** Every part of the design page in one view, as its own image. */
+async function shoot(page: import('@playwright/test').Page, path: string, prefix: string, withBasics: boolean): Promise<void> {
+    expect((await page.goto(path))?.status()).toBe(200);
+    await page.evaluate(() => document.fonts.ready);
+    await loadImages(page);
+    await withoutNote(page);
+    const parts = await sections(page, withBasics);
+    expect(parts.length).toBeGreaterThan(5);
+
+    for (const part of parts) {
+        await expect.soft(page).toHaveScreenshot(`${prefix}-${part.name}.png`, { fullPage: true, clip: part.clip });
+    }
+}
+
+for (const [width, viewport] of Object.entries(widths)) {
+    for (const language of ['de', 'ar']) {
+        designTest(`design page, ${width}, ${language}`, async ({ page }) => {
+            // One image per part, each of the full page.
+            test.setTimeout(120_000);
+            await page.setViewportSize(viewport);
+            await shoot(page, `${DESIGN}?language=${language}`, `design-${width}-${language}`, true);
+        });
+    }
+}
+
+designTest('design page at each place and on each surface', async ({ page }) => {
+    test.setTimeout(300_000);
+    await page.setViewportSize(widths.wide);
+    const views = await frames(page);
+
+    for (const view of views) {
+        await shoot(page, `${DESIGN}${view}`, `design-${view.slice(1).replace('=', '-')}`, false);
+    }
+});
 
 for (const [name, path] of Object.entries(PAGES)) {
     for (const [width, viewport] of Object.entries(widths)) {
@@ -20,9 +57,6 @@ for (const [name, path] of Object.entries(PAGES)) {
             const language = prefix ? 'ar' : 'de';
 
             test(`${name}, ${width}, ${language}`, async ({ page }) => {
-                // The first visit of a page with images makes their sizes,
-                // which takes a while with AVIF.
-                test.setTimeout(300_000);
                 await page.setViewportSize(viewport);
                 await page.goto(prefix + (path === '/' && prefix ? '' : path));
                 await page.evaluate(() => document.fonts.ready);
@@ -38,7 +72,7 @@ test('menu, narrow', async ({ page }) => {
     await page.setViewportSize(widths.narrow);
     await page.goto(PAGES.start);
     await page.getByRole('button', { name: 'Menü', exact: true }).click();
-    await page.getByRole('navigation', { name: 'Hauptnavigation' }).getByText('Widgets').click();
+    await page.getByRole('navigation', { name: 'Hauptnavigation' }).getByText('Rösterei').click();
 
     await expect(page).toHaveScreenshot('menu-narrow.png');
 });

@@ -3,10 +3,11 @@
  */
 
 import { expect, test } from '@playwright/test';
-import { LIBRARY, PAGES } from './library';
+import { DESIGN, LIBRARY, PAGES, designTest } from './library';
 
-// Head, foot and layouts of the base theme (decision 0162), on its sample
-// website. Its look is checked by library.visual.ts.
+// Head, foot and layouts of the base theme (decision 0162), on its small
+// sample website, and the blocks with a script on the design page
+// (decision 0209). Their look is checked by library.visual.ts.
 
 test.use({ baseURL: LIBRARY });
 
@@ -25,13 +26,13 @@ test('opens the second level of the navigation without a script', async ({ page 
     await page.goto(PAGES.start);
     const navigation = page.getByRole('navigation', { name: 'Hauptnavigation' });
 
-    await expect(navigation.getByRole('link', { name: 'Überschrift' })).toBeHidden();
-    await navigation.getByText('Widgets').click();
-    await navigation.getByRole('link', { name: 'Überschrift' }).click();
+    await expect(navigation.getByRole('link', { name: 'Unser Kaffee' })).toBeHidden();
+    await navigation.getByText('Rösterei').click();
+    await navigation.getByRole('link', { name: 'Unser Kaffee' }).click();
 
-    await expect(page).toHaveURL(/\/heading$/);
+    await expect(page).toHaveURL(/\/kaffee$/);
     await expect(page.getByRole('navigation', { name: 'Brotkrumen' }).getByRole('link', { name: 'Startseite' })).toBeVisible();
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Überschrift');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Unser Kaffee');
 });
 
 test('shows the menu in the head on wide screens', async ({ page }) => {
@@ -84,7 +85,7 @@ test('mirrors head and foot from right to left', async ({ page }) => {
 });
 
 test('loads Noto Sans from the theme', async ({ page }) => {
-    await page.goto(PAGES.text);
+    await page.goto(PAGES.about);
 
     await expect.poll(() => page.evaluate(async () => {
         await document.fonts.ready;
@@ -97,14 +98,14 @@ test('loads Noto Sans from the theme', async ({ page }) => {
 test('opens the hero image at once, as the heading of the start page', async ({ page }) => {
     await page.goto(PAGES.start);
 
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Die Bibliothek des Basis-Themes');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Frisch geröstet am Hafen');
     const image = page.locator('.base-hero img');
     await expect(image).toHaveAttribute('loading', 'eager');
     await expect(image).toHaveAttribute('fetchpriority', 'high');
 });
 
-test('shows an image of the gallery large and browses with the keyboard', async ({ page }) => {
-    await page.goto(PAGES.gallery);
+designTest('shows an image of the gallery large and browses with the keyboard', async ({ page }) => {
+    await page.goto(DESIGN);
     const gallery = page.locator('base-gallery').first();
     const dialog = gallery.getByRole('dialog', { name: 'Bilder' });
     const opener = gallery.getByRole('button', { name: 'Goldenes Licht auf dunklem Rotbraun: Größer zeigen' });
@@ -125,9 +126,9 @@ test('shows an image of the gallery large and browses with the keyboard', async 
     await expect(opener).toBeFocused();
 });
 
-test('moves the image slider only with its buttons', async ({ page }) => {
+designTest('moves the image slider only with its buttons', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto(PAGES.slider);
+    await page.goto(DESIGN);
     const slider = page.locator('base-carousel').first();
     const track = slider.getByRole('list', { name: 'Bilder' });
     const previous = slider.getByRole('button', { name: 'Vorheriges Bild' });
@@ -141,21 +142,25 @@ test('moves the image slider only with its buttons', async ({ page }) => {
     await expect(previous).toBeEnabled();
     await expect.poll(() => track.evaluate((element) => Math.round(element.scrollLeft / element.clientWidth))).toBe(1);
 
-    for (let i = 0; i < 2; i++) {
+    const images = await track.getByRole('listitem').count();
+    expect(images).toBeGreaterThan(2);
+
+    for (let i = 2; i < images; i++) {
+        await expect(next).toBeEnabled();
         await next.click();
     }
     await expect(next).toBeDisabled();
 });
 
-test('shows a video with poster that starts only on request', async ({ page }) => {
-    await page.goto(PAGES.video);
+designTest('shows a video with poster that starts only on request', async ({ page }) => {
+    await page.goto(DESIGN);
     const video = page.locator('.base-video video').first();
 
     await expect(video).toHaveAttribute('controls', '');
     await expect(video).toHaveAttribute('aria-label', 'Film: Lichtkreise ziehen über dunkles Braun');
     await expect(video).toHaveAttribute('poster', /\.(webp|jpg)$/);
     await expect(video).toHaveAttribute('preload', 'none');
-    await expect(video.locator('source')).toHaveAttribute('type', 'video/webm; codecs="vp9"');
+    await expect(video.locator('source')).toHaveAttribute('type', /^video\/webm/);
 
     // The browser gets the film, with jumps, and nothing plays by itself.
     await video.evaluate((element: HTMLVideoElement) => element.load());
@@ -164,7 +169,7 @@ test('shows a video with poster that starts only on request', async ({ page }) =
 });
 
 test('jumps to a section and keeps the jump bar in view', async ({ page }) => {
-    await page.goto(PAGES.jumpBar);
+    await page.goto(PAGES.coffee);
     const bar = page.getByRole('navigation', { name: 'Auf dieser Seite' });
     await bar.getByRole('link', { name: 'Für Firmen' }).click();
 

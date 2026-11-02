@@ -15,6 +15,7 @@ use Frootbox\Core\Auth\Authentication;
 use Frootbox\Core\Auth\TokenType;
 use Frootbox\Core\Component\BlockSummary;
 use Frootbox\Core\Component\ListBlocks;
+use Frootbox\Core\Design\DesignPage;
 use Frootbox\Core\Extension\ExtensionPackage;
 use Frootbox\Core\Extension\Extensions;
 use Frootbox\Core\Page\CreatePage;
@@ -22,6 +23,7 @@ use Frootbox\Core\Page\EditMode;
 use Frootbox\Core\Page\PageHandler;
 use Frootbox\Core\Page\PageOutline;
 use Frootbox\Core\Page\PublishPages;
+use Frootbox\Core\Preview\PreviewAccess;
 use Frootbox\Core\Tests\Support\NotesTestCase;
 use Frootbox\Core\Url\Urls;
 use Frootbox\Core\User\AssignRole;
@@ -34,9 +36,10 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
  * Every block of the base library (decision 0163): its manifest, previews
- * and headings pass blocks:check, and its start state renders as valid
- * HTML at the three places, in the main area, in one of two columns and
- * in a narrow column of a third.
+ * and headings pass blocks:check, its start state renders as valid HTML
+ * at the three places, in the main area, in one of two columns and in a
+ * narrow column of a third, and its examples on the design page in every
+ * view (decision 0209). The small sample website renders as well.
  */
 #[CoversNothing]
 final class LibraryTest extends NotesTestCase
@@ -69,71 +72,57 @@ final class LibraryTest extends NotesTestCase
         $console->setAutoExit(false);
         $output = new BufferedOutput();
 
-        self::assertSame(0, $console->run(new ArrayInput(['command' => 'seed', 'file' => self::THEME . ':demo/library.yaml']), $output), $output->fetch());
+        self::assertSame(0, $console->run(new ArrayInput(['command' => 'seed', 'file' => self::THEME . ':demo/site.yaml']), $output), $output->fetch());
 
-        foreach (['/', '/heading', '/text', '/button', '/section', '/text-with-heading', '/quote', '/notice', '/divider', '/call-to-action', '/key-figures', '/hero', '/page-header', '/image-with-text', '/gallery', '/slider', '/video', '/cards', '/logos', '/link-list', '/accordion', '/steps', '/testimonials', '/prices', '/contact', '/features', '/downloads', '/table', '/code', '/on-primary', '/on-dark', '/jump-bar', '/aktion', '/impressum'] as $path) {
-            $this->get(Urls::class)->clear();
-            $this->get(PageOutline::class)->clear();
-            $response = $this->get(PageHandler::class)->handle(new ServerRequest('GET', 'https://example.org' . $path));
-
-            self::assertSame(200, $response->getStatusCode(), $path);
-            self::assertSame([], self::htmlErrors((string) $response->getBody()), $path);
-
-            if ('/table' === $path) {
-                $html = (string) $response->getBody();
-                self::assertStringContainsString('<div class="base-table__scroll" tabindex="0" role="group" aria-label="Öffnungszeiten">', $html);
-                self::assertStringContainsString('<thead><tr><th scope="col">Tag</th><th scope="col">Laden</th><th scope="col">Café</th></tr></thead><tbody><tr><th scope="row">Montag bis Freitag</th><td>8–18 Uhr</td>', $html);
-                self::assertStringContainsString('<td>10–16 Uhr<br>nur bei Sonne</td>', $html);
-                self::assertStringContainsString('<td><strong>Hausmischung</strong></td>', $html);
-            }
+        foreach (['/', '/ueber-uns', '/kaffee', '/aktion', '/impressum'] as $path) {
+            $html = $this->page($path);
+            self::assertSame([], self::htmlErrors($html), $path);
 
             if ('/' === $path) {
-                $html = (string) $response->getBody();
-                self::assertMatchesRegularExpression('#<p class="base-footer__heading" id="base-footer-1">Bibliothek</p>\s*<ul aria-labelledby="base-footer-1">\s*<li><a href="/table">Tabelle</a></li>#', $html, 'An entry with entries below is a column (decision 0195).');
+                self::assertMatchesRegularExpression('#<p class="base-footer__heading" id="base-footer-1">Rösterei</p>\s*<ul aria-labelledby="base-footer-1">\s*<li><a href="/ueber-uns">Über uns</a></li>#', $html, 'An entry with entries below is a column (decision 0195).');
                 self::assertMatchesRegularExpression('#</div>\s*<ul class="base-nav__list">\s*<li><a href="/impressum">Impressum</a></li>\s*</ul>\s*</nav>#', $html, 'The others stay a row below the columns.');
                 self::assertStringContainsString('<a href="tel:+4940123456" dir="ltr">+49 40 123456</a>', $html, 'Phone numbers keep their order in right-to-left languages.');
                 self::assertStringContainsString('--radius-button:999px;', $html, 'Buttons have round ends unless the theme says otherwise (decision 0197).');
             }
 
-            if ('/hero' === $path) {
-                self::assertMatchesRegularExpression('#<p class="base-hero__eyebrow">Rösterei am Hafen</p>\s*<h2 class="base-hero__title"#', (string) $response->getBody(), 'The eyebrow stands above the heading (decision 0188).');
-                self::assertSame(2, substr_count((string) $response->getBody(), 'base-hero__eyebrow'), 'An empty eyebrow leaves nothing behind.');
-                self::assertSame(2, substr_count((string) $response->getBody(), 'base-hero--centred'), 'Without image the hero is centred unless told otherwise (decision 0199).');
-                self::assertStringContainsString('<div class="base-hero base-full base-hero--start base-hero--none">', (string) $response->getBody());
-            }
-
-            if ('/code' === $path) {
-                self::assertStringContainsString('<p>Die Mühle stellst Du mit <code>mahlgrad --fein</code> auf Espresso ein.</p><pre><code class="language-shell">mahlgrad --sorte=hafenmorgen', (string) $response->getBody(), 'Code inline and as a block, styled by base.css.');
-            }
-
-            if ('/features' === $path) {
-                self::assertMatchesRegularExpression('#<div class="base-features__head base-head">\s*<p class="base-head__eyebrow">Rösterei am Hafen</p>\s*<h2 class="base-features__title"[^>]*>Warum Bohnenglück</h2>\s*<p class="base-head__intro">Vier Gründe, warum unser Kaffee anders schmeckt\.</p>\s*</div>#', (string) $response->getBody(), 'Eyebrow, heading and introduction (decision 0192).');
-                self::assertStringContainsString('<p class="base-more"><a href="https://example.org/">Mehr über uns</a></p>', (string) $response->getBody());
-            }
-
-            if ('/steps' === $path) {
-                self::assertStringNotContainsString('base-head__eyebrow', (string) $response->getBody(), 'Empty fields leave nothing behind.');
-                self::assertStringNotContainsString('base-more', (string) $response->getBody());
-            }
-
-            if ('/jump-bar' === $path) {
-                $html = (string) $response->getBody();
+            if ('/kaffee' === $path) {
                 self::assertMatchesRegularExpression('#<base-jump-bar class="base-jump-bar base-full">\s*<nav aria-label="Auf dieser Seite">\s*<ul class="base-jump-bar__list">\s*<li><a href="\#roesterei">Rösterei</a></li>\s*<li><a href="\#sorten-und-abos">Sorten und Abos</a></li>\s*<li><a href="\#fuer-firmen">Für Firmen</a></li>#', $html, 'The bar fills itself from the jump marks below it (decision 0196).');
                 self::assertStringContainsString('<section id="fuer-firmen" class="base-section', $html);
                 self::assertStringNotContainsString('base-jump-bar__hint', $html, 'The hint is for editors only.');
             }
+        }
+    }
 
-            if ('/on-dark' === $path) {
-                self::assertSame(4, substr_count((string) $response->getBody(), 'base-section--dark'), 'The blocks stand on the dark colour (decision 0198).');
-            }
+    public function testShowsEveryBlockOnTheDesignPage(): void
+    {
+        // Decision 0209: the design page in each view stands in for the
+        // pages of the old sample website, one per block.
+        $html = $this->design('');
+        self::assertSame([], self::htmlErrors($html));
+        self::assertStringNotContainsString('<ul class="fb-design-missing">', $html, 'Every block has an example.');
+        self::assertStringNotContainsString('This block cannot be shown', $html);
 
-            if ('/on-primary' === $path) {
-                self::assertSame(3, substr_count((string) $response->getBody(), 'base-section--primary'), 'The blocks stand on the main colour.');
-            }
+        self::assertStringContainsString('<div class="base-table__scroll" tabindex="0" role="group" aria-label="Öffnungszeiten">', $html);
+        self::assertStringContainsString('<thead><tr><th scope="col">Tag</th><th scope="col">Laden</th><th scope="col">Café</th></tr></thead><tbody><tr><th scope="row">Montag bis Freitag</th><td>8–18 Uhr</td>', $html);
+        self::assertStringContainsString('<td>10–16 Uhr<br>nur bei Sonne</td>', $html);
+        self::assertMatchesRegularExpression('#<p class="base-hero__eyebrow">Rösterei am Hafen</p>\s*<h4 class="base-hero__title"#', $html, 'The eyebrow stands above the heading (decision 0188).');
+        self::assertMatchesRegularExpression('#<div class="base-features__head base-head">\s*<p class="base-head__eyebrow">Rösterei am Hafen</p>\s*<h4 class="base-features__title"[^>]*>Warum wir</h4>\s*<p class="base-head__intro">Vier Gründe, warum unser Kaffee anders schmeckt\.</p>\s*</div>#', $html, 'Eyebrow, heading and introduction (decision 0192).');
+        self::assertStringContainsString('<a href="/assets/frootbox/theme-base/assets/examples/price-list.pdf" type="application/pdf">price-list <small>PDF, 1 KB</small></a>', $html, 'Without a title the name of the file.');
+        self::assertStringContainsString('type="text/csv">Unsere Sorten als Tabelle <small>CSV, 1 KB</small></a>', $html);
+        self::assertStringContainsString('<a href="tel:+4940123456" dir="ltr">+49 40 123456</a>', $html, 'Phone numbers keep their order in right-to-left languages, also in the contact block.');
 
-            if ('/downloads' === $path) {
-                self::assertMatchesRegularExpression('#<a href="/media/[0-9A-Z]{26}/1/price-list-main-[0-9a-f]{16}\.pdf" type="application/pdf">Preisliste 2027 <small>PDF, 1 KB</small></a>#', (string) $response->getBody());
-                self::assertStringContainsString('type="text/csv">Unsere Sorten als Tabelle <small>CSV, 1 KB</small></a>', (string) $response->getBody());
+        foreach (['place=column' => null, 'place=narrow' => null, 'surface=surface' => 'surface', 'surface=primary' => 'primary', 'surface=dark' => 'dark'] as $view => $surface) {
+            $html = $this->design('?' . $view);
+            self::assertSame([], self::htmlErrors($html), $view);
+            self::assertStringNotContainsString('This block cannot be shown', $html, $view);
+            preg_match_all('#<ul class="fb-design-missing">(.*?)</ul>#s', $html, $lists);
+            preg_match_all('#<li>([^<]+)</li>#', implode('', $lists[1]), $elsewhere);
+            self::assertSame(['Hero', 'Seitenkopf', 'Sprungleiste', 'Abschnitt'], $elsewhere[1], $view . ': only these stand in the main area alone.');
+
+            if (null !== $surface) {
+                $blocks = substr_count(substr($html, (int) strpos($html, 'fb-design-blocks-title')), 'fb-design-caption') - 1;
+                self::assertGreaterThan(30, $blocks);
+                self::assertSame($blocks, substr_count($html, 'base-section--' . $surface), $view . ': every block stands on the surface (decisions 0191, 0198).');
             }
         }
     }
@@ -201,6 +190,35 @@ final class LibraryTest extends NotesTestCase
             'theme' => self::THEME,
             'languages' => ['de' => ['title' => 'Deutsch']],
         ];
+    }
+
+    /**
+     * A published page as a guest sees it.
+     */
+    private function page(string $path): string
+    {
+        // Each request starts afresh, as in its own process.
+        $this->get(Urls::class)->clear();
+        $this->get(PageOutline::class)->clear();
+        $response = $this->get(PageHandler::class)->handle(new ServerRequest('GET', 'https://example.org' . $path));
+        self::assertSame(200, $response->getStatusCode(), $path);
+
+        return (string) $response->getBody();
+    }
+
+    /**
+     * A view of the design page, as the agency sees it with a preview link.
+     */
+    private function design(string $view): string
+    {
+        $this->get(PageOutline::class)->clear();
+        $request = new ServerRequest('GET', 'https://example.org/_design' . $view)
+            ->withAttribute(PreviewAccess::class, new PreviewAccess('01JPREVIEW0000000000000000', new DateTimeImmutable('+1 day')));
+        parse_str(ltrim($view, '?'), $query);
+        $response = $this->get(DesignPage::class)->handle($request->withQueryParams($query));
+        self::assertSame(200, $response->getStatusCode(), $view);
+
+        return (string) $response->getBody();
     }
 
     /**

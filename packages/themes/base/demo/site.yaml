@@ -1,0 +1,162 @@
+# A small sample website of the base theme, for
+#
+#     php bin/frootbox seed frootbox/theme-base:demo/site.yaml
+#
+# It carries what the design page /_design cannot show (decision 0209):
+# head and foot with real navigations, the layouts Start, Page and
+# Landing, a jump bar over sections of a page and the error page. Every
+# block in every variant, at every place and on every surface, shows
+# the design page from the examples of the blocks (decision 0206).
+# The browser tests take screenshots of both and check them with axe.
+# Needs the language de. The image comes from assets/examples/, under the
+# licence of the theme.
+- upload:
+    file: ../assets/examples/harbour.jpg
+  as: file_harbour
+- media.create:
+    upload: '${file_harbour.token}'
+    texts:
+      de:
+        alt: 'Orangefarbener Lichtkreis auf tiefblauem Grund'
+  as: img_harbour
+- page.create:
+    layout: frootbox/theme-base/Start
+    translations:
+      de:
+        title: Basis
+        content:
+          areas:
+            main:
+              - { block: frootbox/theme-base/Hero, variant: Background, options: { height: medium }, fields: { title: 'Frisch geröstet am Hafen', text: 'Eine kleine Website des Basis-Themes. Alle Blöcke in allen Varianten zeigt die Design-Seite.', primary: { url: /kaffee, text: 'Unser Kaffee' }, image: { media: '${img_harbour.id}' } } }
+              - { block: frootbox/theme-base/Section, variant: Three, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: sub, size: auto }, fields: { text: Einfach } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }], second: [{ block: frootbox/theme-base/Heading, options: { role: sub, size: auto }, fields: { text: Barrierefrei } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Überschriften, Kontraste und Tastatur stimmen von selbst, keine Option eines Redakteurs bricht sie.' }] }] } } }], third: [{ block: frootbox/theme-base/Heading, options: { role: sub, size: auto }, fields: { text: 'In jeder Sprache' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Auch von rechts nach links, mit übersetzten Adressen und einer Sprache als Rückfall.' }] }] } } }] } }
+              - { block: frootbox/theme-base/KeyFigures, fields: { title: 'Bohnenglück in Zahlen', items: [{ value: '12', label: 'Jahre Röstererfahrung' }, { value: '4.800', label: 'Kunden im letzten Jahr' }, { value: '9', label: 'Sorten im Regal' }] } }
+              - { block: frootbox/theme-base/CallToAction, options: { background: primary }, fields: { title: 'Lust auf eine Verkostung?', text: 'Jeden ersten Freitag im Monat probieren wir neue Sorten, Du bist herzlich eingeladen.', link: { url: 'https://example.org/', text: 'Platz reservieren' } } }
+  as: start
+- page.create:
+    layout: frootbox/theme-base/Start
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Über uns
+        slug: ueber-uns
+        content:
+          areas:
+            main:
+              - { block: frootbox/theme-base/PageHeader, options: { background: surface }, fields: { title: 'Über die Rösterei', intro: 'Seit 2013 rösten wir am Hafen, mit Bohnen von Höfen, die wir kennen.' } }
+              - { block: frootbox/theme-base/TextWithHeading, variant: Default, fields: { title: 'Frisch geröstet in Hamburg', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Wir rösten jeden Montag in kleinen Mengen, damit jede Sorte ihren eigenen Charakter behält. Die Bohnen kommen von Höfen, die wir seit Jahren kennen.' }] }, { type: bulletList, content: [{ type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ganze Bohnen oder gemahlen' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Versand jeden Dienstag' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ab 30 Euro ohne Versandkosten' }] }] }] }] } } }
+  as: about
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Unser Kaffee
+        slug: kaffee
+        content:
+          fields:
+            title: Unser Kaffee
+            intro: 'Von der Rösterei bis ins Büro, die Leiste führt zu jedem Abschnitt.'
+          areas:
+            main:
+              - {"block":"frootbox/theme-base/JumpBar"}
+              - {"block":"frootbox/theme-base/Section","variant":"Default","options":{"jumpMark":"Rösterei"},"areas":{"first":[{"block":"frootbox/theme-base/TextWithHeading","fields":{"title":"Die Rösterei am Hafen","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Wir rösten jeden Montag in kleinen Mengen, damit jede Sorte ihren eigenen Charakter behält. Die Bohnen kommen von Höfen, die wir seit Jahren kennen."}]}]}}},{"block":"frootbox/theme-base/TextWithHeading","fields":{"title":"Unser Handwerk","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Jede Röstung prüfen wir am Tag danach in der Tasse. Was nicht schmeckt, kommt nicht in den Laden."}]}]}}}]}}
+              - {"block":"frootbox/theme-base/Section","variant":"Two","options":{"background":"surface","jumpMark":"Sorten und Abos"},"areas":{"first":[{"block":"frootbox/theme-base/TextWithHeading","fields":{"title":"Hafenmorgen","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Unsere Hausmischung, mild und nussig, für jeden Tag und jede Maschine."}]}]}}}],"second":[{"block":"frootbox/theme-base/TextWithHeading","fields":{"title":"Speicherstadt","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Kräftig und dunkel geröstet, am besten als Espresso. Als Abo alle zwei Wochen frisch."}]}]}}}]}}
+              - {"block":"frootbox/theme-base/Section","variant":"Default","options":{"jumpMark":"Für Firmen"},"areas":{"first":[{"block":"frootbox/theme-base/TextWithHeading","fields":{"title":"Kaffee fürs Büro","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Wir liefern ganze Bohnen in Kilobeuteln und beraten bei der Wahl der Maschine. Die erste Lieferung probierst Du ohne Abo."}]}]}}},{"block":"frootbox/theme-base/TextWithHeading","fields":{"title":"Lieferung und Rechnung","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Jeden Dienstag mit dem Rad in Hamburg, sonst mit der Post. Die Rechnung kommt einmal im Monat."}]}]}}}]}}
+  as: coffee
+- page.create:
+    layout: frootbox/theme-base/Landing
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Aktion
+        slug: aktion
+        content:
+          areas:
+            main:
+              - { block: frootbox/theme-base/Section, variant: Default, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Eine Seite ohne Hauptnavigation' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Nichts führt weg, nur der Fuß bleibt mit dem Impressum.' }] }] } } }, { block: frootbox/theme-base/Button, options: { style: primary }, fields: { link: { url: 'https://example.org/', text: Mitmachen } } }] } }
+  as: landing
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Impressum
+        slug: impressum
+        content:
+          fields:
+            title: Impressum
+          areas:
+            main:
+              - { block: frootbox/theme-base/Section, variant: Default, areas: { first: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Muster GmbH, Musterstraße 1, 12345 Musterstadt' }] }] } } }] } }
+  as: imprint
+- page.publish:
+    ids:
+      - '${start.id}'
+      - '${about.id}'
+      - '${coffee.id}'
+      - '${landing.id}'
+      - '${imprint.id}'
+- navigation.update:
+    name: main
+    items:
+      de:
+        -
+          type: heading
+          label: Rösterei
+          children:
+            -
+              type: target
+              target: 'page:${about.id}'
+            -
+              type: target
+              target: 'page:${coffee.id}'
+        -
+          type: target
+          target: 'page:${imprint.id}'
+        -
+          type: target
+          target: 'page:${landing.id}'
+          options: { button: true }
+- navigation.update:
+    name: footer
+    items:
+      de:
+        -
+          type: heading
+          label: Rösterei
+          children:
+            -
+              type: target
+              target: 'page:${about.id}'
+            -
+              type: target
+              target: 'page:${coffee.id}'
+        -
+          type: heading
+          label: Kontakt
+          children:
+            -
+              type: email
+              email: hallo@example.org
+            -
+              type: phone
+              phone: '+49 40 123456'
+        -
+          type: target
+          target: 'page:${imprint.id}'
+- navigation.publish:
+    names:
+      - main
+      - footer
+- site.update:
+    language: de
+    fields:
+      brand: Basis
+      address: "Muster GmbH\nMusterstraße 1\n12345 Musterstadt"
+      note: 'Eine kleine Website des Basis-Themes.'
+      profiles:
+        -
+          link:
+            url: 'https://example.org/social'
+            text: Mastodon
+- site.publish: {}

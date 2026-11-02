@@ -44,7 +44,7 @@ $environment = is_string($options['env'] ?? null) ? $options['env'] : 'dev';
 $url = is_string($options['url'] ?? null) ? $options['url'] : null;
 $themes = [
     'bohnenglueck' => ['name' => 'Bohnenglück', 'package' => 'frootbox/theme-bohnenglueck', 'seed' => 'demo/site.yaml'],
-    'base' => ['name' => 'Basis', 'package' => 'frootbox/theme-base', 'seed' => 'demo/library.yaml'],
+    'base' => ['name' => 'Basis', 'package' => 'frootbox/theme-base', 'seed' => 'demo/site.yaml'],
 ];
 $theme = $themes[is_string($options['theme'] ?? null) ? $options['theme'] : 'bohnenglueck'] ?? null;
 

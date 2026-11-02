@@ -36,7 +36,7 @@ examples:
   {{ heading('title', 0, {class: 'base-contact__title'}) }}
   <p class="base-contact__address">{{ field('address') }}</p>
   <ul class="base-contact__ways">
-    <li class="base-contact__way base-contact__way--phone"><a href="tel:{{ phone }}">{{ field('phone') }}</a></li>
+    <li class="base-contact__way base-contact__way--phone"><a href="tel:{{ phone }}" dir="ltr">{{ field('phone') }}</a></li>
     <li class="base-contact__way base-contact__way--email"><a href="mailto:{{ value('email') }}">{{ field('email') }}</a></li>
   </ul>
   <div class="base-contact__hours">
