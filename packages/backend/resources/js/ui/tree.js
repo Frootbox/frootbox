@@ -688,8 +688,6 @@ export class Tree extends LitElement {
     }
 }
 
-customElements.define('fb-tree', Tree);
-
 /**
  * <fb-tree-filter for="page-tree">: a search field for a tree (decision
  * 0136), around a label, an input and a role="status" for the result:
@@ -767,4 +765,7 @@ export class TreeFilter extends HTMLElement {
     }
 }
 
+// The filter first: a tree on the page starts right on its definition and
+// asks the filter for a search that is still on.
 customElements.define('fb-tree-filter', TreeFilter);
+customElements.define('fb-tree', Tree);
