@@ -15,6 +15,6 @@
 .base-prices__features li::before { content: ""; flex: none; inline-size: 0.35em; block-size: 0.7em; border-block-end: 2px solid var(--color-success); border-inline-end: 2px solid var(--color-success); rotate: 40deg; translate: 0 -0.05em; }
 .base-prices__features li:dir(rtl)::before { rotate: -40deg; }
 .base-prices__button { margin: 0; margin-block-start: auto; padding-block-start: var(--space-s); }
-.base-prices__button a { display: flex; align-items: center; justify-content: center; min-block-size: 2.75rem; padding: var(--space-2xs) var(--space-m); border-radius: 999px; box-shadow: inset 0 0 0 2px currentColor; font-weight: 600; text-decoration: none; }
+.base-prices__button a { display: flex; align-items: center; justify-content: center; min-block-size: 2.75rem; padding: var(--space-2xs) var(--space-m); border-radius: var(--radius-button); box-shadow: inset 0 0 0 2px currentColor; font-weight: 600; text-decoration: none; }
 .base-prices__item--highlight .base-prices__button a { background: var(--color-primary); color: var(--color-primary-contrast); box-shadow: none; }
 .base-prices__button a:hover { text-decoration: underline; text-underline-offset: 0.18em; }

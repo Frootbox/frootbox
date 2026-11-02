@@ -27,7 +27,7 @@
   min-block-size: 2.75rem;
   padding-inline: var(--space-s);
   border: var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-button);
   background: var(--color-surface);
   color: var(--color-text);
   font-size: var(--size-s);

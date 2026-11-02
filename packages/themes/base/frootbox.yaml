@@ -35,6 +35,15 @@ theme:
     size-3xl: 'clamp(2.07rem, 1.84rem + 1.17vw, 2.75rem)'
     size-4xl: 'clamp(2.49rem, 2.16rem + 1.64vw, 3.43rem)'
     radius: { value: 8px, type: length, label: Rounding of the corners, min: 0, max: 32, step: 1, unit: px }
+    # Buttons and the links of the jump bar (decision 0197); badges stay round.
+    radius-button:
+      value: pill
+      type: choice
+      label: Rounding of buttons
+      options:
+        pill: { label: Round ends, value: 999px }
+        corners: { label: Like the corners, value: var(--radius) }
+        square: { label: Square, value: '0' }
     space:
       value: normal
       type: choice

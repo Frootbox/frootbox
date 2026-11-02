@@ -20,7 +20,7 @@
   align-items: center;
   min-block-size: 2.75rem;
   padding: var(--space-2xs) var(--space-m);
-  border-radius: 999px;
+  border-radius: var(--radius-button);
   background: var(--color-primary-contrast);
   color: var(--color-primary);
   font-weight: 600;
