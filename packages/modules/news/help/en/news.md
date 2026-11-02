@@ -1,6 +1,6 @@
 ---
 title: News
-about: [screen:frootbox.news.articles, screen:frootbox.news.categories, action:frootbox/news/article.create]
+about: [screen:frootbox.news.articles, action:frootbox/news/article.create]
 permission: frootbox/news/article.list
 order: 60
 ---

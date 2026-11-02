@@ -30,6 +30,8 @@ for (const scheme of ['light', 'dark'] as const) {
 test('design page', async ({ page }) => {
     test.setTimeout(60_000);
     await signIn(page, '/cms/design');
+    // The rich text loads its editor as a chunk of its own.
+    await expect(page.locator('fb-rich-text [contenteditable]')).toHaveCount(2);
 
     // Building blocks in both modes side by side, then all tokens. The page
     // is very long, so two equal pictures take longer than the usual 5 s.
@@ -51,4 +53,13 @@ test('missing page', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Das gibt es hier nicht (mehr)' })).toBeVisible();
 
     await expect(page).toHaveScreenshot('error-missing.png', { fullPage: true });
+});
+
+test('news article', async ({ page }) => {
+    // Decision 0220: a demo article with rich text, image field and categories.
+    await signIn(page, '/cms/news');
+    await page.getByRole('link', { name: 'Neue Ernte aus Peru' }).click();
+    await expect(page.locator('fb-rich-text [contenteditable]')).toBeVisible();
+
+    await expect(page).toHaveScreenshot('news-article.png', { fullPage: true });
 });

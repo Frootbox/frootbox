@@ -15,6 +15,9 @@ use Frootbox\Core\Action\Schema\Pattern;
 use Frootbox\Core\Action\Schema\Range;
 use Frootbox\Database\Ulid;
 
+/**
+ * @implements Action<Category>
+ */
 #[AsAction('frootbox/news/category.update', 'Changes a category of the news')]
 final readonly class UpdateCategory implements Action
 {
@@ -24,7 +27,7 @@ final readonly class UpdateCategory implements Action
     public function __construct(
         #[Pattern(Ulid::PATTERN)]
         public string $id,
-        #[Description('Title and slug by language; languages left out stay, null removes one')]
+        #[Description('Title and slug by language; languages left out stay, null or an empty title and slug remove one')]
         public array $translations = [],
         #[Range(min: 0)]
         public ?int $position = null,

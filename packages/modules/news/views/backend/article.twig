@@ -1,0 +1,169 @@
+{#- An article: text by language, date, image and categories in the draft; publishing, times, offline and deleting (decision 0220). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+{% set has_draft = article.draft is not null %}
+{% set published = article.published is not null %}
+{% set refresh = 'article-detail' %}
+{% set self = path('frootbox.news.articles.show', {id: article.id}) %}
+{% set heading = title ?: t('Without a title') %}
+
+{% block title %}{{ heading }} · {{ t('News') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg" id="article-detail">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <p class="fb-muted"><a href="{{ path('frootbox.news.articles') }}">{{ t('News') }}</a></p>
+            <h1 class="fb-heading-1" tabindex="-1" data-fb-focus>{{ heading }}</h1>
+        </div>
+        <div class="fb-cluster">
+            {% if article.publishAt or article.unpublishAt %}{{ ui.status('scheduled') }}{% endif %}
+            {{ ui.status(article.status.value) }}
+        </div>
+    </header>
+
+    {% for planned in [{at: article.publishAt, text: t('Will be published on {time} by itself.')}, {at: article.unpublishAt, text: t('Goes offline on {time} by itself.')}] %}
+        {% if planned.at %}
+        {% set parts = planned.text|split('{time}') %}
+        {% set text %}{{ parts[0] }}{{ ui.time(planned.at) }}{{ parts[1] ?? '' }}{% endset %}
+        {{ ui.alert({tone: 'info', text: text, live: 'none'}) }}
+        {% endif %}
+    {% endfor %}
+
+    <div class="fb-cluster">
+        {% set url = article.urls[language.code] ?? null %}
+        {% if url %}{{ ui.button({label: t('View on the website'), href: url, variant: 'outline', icon: 'external', attrs: {target: '_blank', rel: 'noopener'}}) }}{% endif %}
+        {% if has_draft and can('frootbox/news/article.publish') %}
+        <fb-form action="frootbox/news/article.publish" refresh="{{ refresh }}" done="{{ t('The article is published.') }}">
+            <form novalidate>
+                <input type="hidden" name="ids[]" value="{{ article.id }}">
+                {{ ui.button({label: t('Publish'), type: 'submit'}) }}
+            </form>
+        </fb-form>
+        {% endif %}
+        {% if has_draft and can('frootbox/news/article.discard') %}
+            {{ ui.button({label: t('Discard the draft'), variant: 'danger', attrs: {commandfor: 'article-discard', command: 'show-modal'}}) }}
+        {% endif %}
+    </div>
+
+    <section class="fb-card" aria-labelledby="article-content-title">
+        <h2 class="fb-visually-hidden" id="article-content-title">{{ t('Content') }}</h2>
+        {% if languages|length > 1 %}
+        {{ ui.tabs(t('Languages'), languages|map(item => {
+            label: item.title,
+            href: self ~ '?language=' ~ item.code,
+            current: item.code == language.code,
+            attrs: {lang: item.code},
+        })) }}
+        {% endif %}
+        <div class="fb-card__body fb-stack">
+            {% set editable = can('frootbox/news/article.update') %}
+            {% if translation %}
+            <fb-form action="frootbox/news/article.update" refresh="{{ refresh }}" done="{{ t('Saved') }}">
+                <form class="fb-stack" novalidate>
+                    <input type="hidden" name="id" value="{{ article.id }}">
+                    {% include '@frootbox/news/backend/fields.twig' with {language: language, translation: translation, slug: true, date: data.date, image: image, image_value: data.image, categories: categories, chosen: data.categories, editable: editable} only %}
+                    {% if editable %}
+                    <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}<p class="fb-form__note">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p></div>
+                    {% endif %}
+                </form>
+            </fb-form>
+            {% else %}
+            <div class="fb-missing">
+                <p class="fb-missing__title">{{ t('No version in {language} yet', {language: language.title}) }}</p>
+                <p class="fb-muted">{{ t('Visitors in this language do not see the article.') }}</p>
+                {% if editable %}
+                <fb-form action="frootbox/news/article.update" refresh="{{ refresh }}" done="{{ t('Saved') }}">
+                    <form novalidate>
+                        <input type="hidden" name="id" value="{{ article.id }}">
+                        <input type="hidden" name="translations.{{ language.code }}.title" value="{{ source.title ?? '' }}">
+                        {{ ui.button({label: t('Add the version in {language}', {language: language.title}), type: 'submit', variant: 'tonal', icon: 'plus'}) }}
+                    </form>
+                </fb-form>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    {% if can('frootbox/news/article.schedule') %}
+    <section class="fb-card fb-card--padded fb-stack" aria-labelledby="article-schedule-title">
+        <h2 class="fb-heading-4" id="article-schedule-title">{{ t('Times') }}</h2>
+        <fb-form action="frootbox/news/article.schedule" refresh="{{ refresh }}" done="{{ t('Saved') }}">
+            <form class="fb-stack" novalidate>
+                <input type="hidden" name="id" value="{{ article.id }}">
+                {{ ui.field({label: t('Publish on'), name: 'publishAt', id: 'article-publish-at', type: 'datetime-local', optional: true, value: article.publishAt ? article.publishAt|date('Y-m-d\\TH:i') : '', disabled: not has_draft, hint: has_draft ? t('The draft goes online by itself.') : t('Only for a draft.'), attrs: {'data-type': 'datetime', 'data-value': article.publishAt ? article.publishAt|date('c') : null}}) }}
+                {{ ui.field({label: t('Take offline on'), name: 'unpublishAt', id: 'article-unpublish-at', type: 'datetime-local', optional: true, value: article.unpublishAt ? article.unpublishAt|date('Y-m-d\\TH:i') : '', disabled: not published, hint: published ? t('The article goes offline by itself.') : t('Only for a published article.'), attrs: {'data-type': 'datetime', 'data-value': article.unpublishAt ? article.unpublishAt|date('c') : null}}) }}
+                <div class="fb-form__actions">{{ ui.button({label: t('Save the times'), type: 'submit', saves: true}) }}</div>
+            </form>
+        </fb-form>
+    </section>
+    {% endif %}
+
+    {% set can_unpublish = published and can('frootbox/news/article.unpublish') %}
+    {% set can_delete = can('frootbox/news/article.delete') %}
+    {% if can_unpublish or can_delete %}
+    <section class="fb-card fb-card--padded fb-stack" aria-labelledby="article-more-title">
+        <h2 class="fb-heading-4" id="article-more-title">{{ t('Offline and delete') }}</h2>
+        <div class="fb-cluster">
+            {% if can_unpublish %}{{ ui.button({label: t('Take offline'), variant: 'outline', attrs: {commandfor: 'article-unpublish', command: 'show-modal'}}) }}{% endif %}
+            {% if can_delete %}{{ ui.button({label: t('Delete the article'), variant: 'danger', attrs: {commandfor: 'article-delete', command: 'show-modal'}}) }}{% endif %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if has_draft and can('frootbox/news/article.discard') %}
+    <dialog class="fb-dialog" id="article-discard" aria-labelledby="article-discard-title">
+        <fb-form action="frootbox/news/article.discard" {% if published %}refresh="{{ refresh }}"{% else %}next="{{ path('frootbox.news.articles') }}"{% endif %} done="{{ t('The draft is discarded.') }}">
+            <form novalidate>
+                <input type="hidden" name="id" value="{{ article.id }}">
+                <div class="fb-dialog__body">
+                    <h2 class="fb-dialog__title" id="article-discard-title">{{ t('Discard the draft?') }}</h2>
+                    <p>{{ published ? t('Your changes to this article are lost. The published version stays.') : t('The article was never published and is gone afterwards.') }}</p>
+                </div>
+                <div class="fb-dialog__actions">
+                    {{ ui.button({label: t('Keep the draft'), variant: 'outline', attrs: {commandfor: 'article-discard', command: 'close', autofocus: true}}) }}
+                    {{ ui.button({label: t('Discard'), variant: 'danger-solid', type: 'submit'}) }}
+                </div>
+            </form>
+        </fb-form>
+    </dialog>
+    {% endif %}
+
+    {% if can_unpublish %}
+    <dialog class="fb-dialog" id="article-unpublish" aria-labelledby="article-unpublish-title">
+        <fb-form action="frootbox/news/article.unpublish" refresh="{{ refresh }}" done="{{ t('The article is offline.') }}">
+            <form novalidate>
+                <input type="hidden" name="id" value="{{ article.id }}">
+                <div class="fb-dialog__body">
+                    <h2 class="fb-dialog__title" id="article-unpublish-title">{{ t('Take {title} offline?', {title: heading}) }}</h2>
+                    <p>{{ t('Visitors no longer find the article. It stays as a draft and can be published again.') }}</p>
+                </div>
+                <div class="fb-dialog__actions">
+                    {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'article-unpublish', command: 'close', autofocus: true}}) }}
+                    {{ ui.button({label: t('Take offline'), variant: 'danger-solid', type: 'submit'}) }}
+                </div>
+            </form>
+        </fb-form>
+    </dialog>
+    {% endif %}
+
+    {% if can_delete %}
+    <dialog class="fb-dialog" id="article-delete" aria-labelledby="article-delete-title">
+        <fb-form action="frootbox/news/article.delete" next="{{ path('frootbox.news.articles') }}" done="{{ t('The article is deleted.') }}">
+            <form novalidate>
+                <input type="hidden" name="id" value="{{ article.id }}">
+                <div class="fb-dialog__body">
+                    <h2 class="fb-dialog__title" id="article-delete-title">{{ t('Delete {title}?', {title: heading}) }}</h2>
+                    <p>{{ t('The article leaves the list and the website. Visitors no longer find it.') }}</p>
+                </div>
+                <div class="fb-dialog__actions">
+                    {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'article-delete', command: 'close', autofocus: true}}) }}
+                    {{ ui.button({label: t('Delete for good'), variant: 'danger-solid', type: 'submit'}) }}
+                </div>
+            </form>
+        </fb-form>
+    </dialog>
+    {% endif %}
+</div>
+{% endblock %}

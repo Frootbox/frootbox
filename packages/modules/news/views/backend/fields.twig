@@ -1,0 +1,21 @@
+{#- The fields of an article in one language plus date, image and categories (decision 0220). -#}
+{% import '@backend/ui.twig' as ui %}
+{% set code = language.code %}
+{% set dir = language.direction.value %}
+{% set prefix = 'translations.' ~ code ~ '.' %}
+{{ ui.field({label: t('Title'), name: prefix ~ 'title', id: 'article-title', value: translation.title ?? '', required: true, disabled: not editable, attrs: {lang: code, dir: dir, maxlength: 300}}) }}
+{% if slug %}
+{{ ui.field({label: t('Address'), name: prefix ~ 'slug', id: 'article-slug', value: translation.slug ?? '', disabled: not editable, attrs: {dir: 'ltr', maxlength: 100}, hint: t('The last part of the address of the article. If it changes, the old one redirects to the new one.')}) }}
+{% endif %}
+{{ ui.field({label: t('Teaser'), name: prefix ~ 'teaser', id: 'article-teaser', value: translation.teaser ?? '', multiline: true, optional: true, disabled: not editable, hint: t('A few sentences for the list and for search engines.'), attrs: {lang: code, dir: dir, rows: 3}}) }}
+{{ ui.richtext({label: t('Text'), name: prefix ~ 'text', id: 'article-text', value: translation.text ?? null, optional: true, disabled: not editable, lang: code, dir: dir}) }}
+{{ ui.field({label: t('Date'), name: 'date', id: 'article-date', type: 'datetime-local', value: date ? date|date('Y-m-d\\TH:i') : '', optional: date is null, disabled: not editable, hint: t('Shown with the article and orders the list. Without a date it is now.'), attrs: {'data-type': 'datetime', 'data-value': date ? date|date('c') : null}}) }}
+{{ ui.image({label: t('Image'), name: 'image', id: 'article-image', value: image_value, preview: image.preview ?? null, file: image.file ?? null, optional: true, disabled: not editable}) }}
+{% if categories is not empty %}
+<fieldset class="fb-fieldset">
+    <legend class="fb-fieldset__legend">{{ t('Categories') }} <span class="fb-label__optional">({{ t('optional') }})</span></legend>
+    {% for category in categories %}
+        {{ ui.check({label: category.title, name: 'categories[]', id: 'article-category-' ~ category.id, value: category.id, checked: category.id in chosen, disabled: not editable}) }}
+    {% endfor %}
+</fieldset>
+{% endif %}

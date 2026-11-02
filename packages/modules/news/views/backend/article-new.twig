@@ -1,0 +1,26 @@
+{#- A new article as a draft (decision 0220). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('New article') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <p class="fb-muted"><a href="{{ path('frootbox.news.articles') }}">{{ t('News') }}</a></p>
+            <h1 class="fb-heading-1">{{ t('New article') }}</h1>
+        </div>
+    </header>
+
+    <fb-form action="frootbox/news/article.create" next="{{ path('frootbox.news.articles') }}/{id}" done="{{ t('The article is saved as a draft.') }}">
+        <form class="fb-card fb-card--padded fb-stack" novalidate>
+            {% include '@frootbox/news/backend/fields.twig' with {language: language, translation: null, slug: false, date: null, image: null, image_value: null, categories: categories, chosen: [], editable: true} only %}
+            <div class="fb-form__actions">
+                {{ ui.button({label: t('Save as a draft'), type: 'submit'}) }}
+                {{ ui.button({label: t('Cancel'), variant: 'ghost', href: path('frootbox.news.articles')}) }}
+            </div>
+        </form>
+    </fb-form>
+</div>
+{% endblock %}

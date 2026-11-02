@@ -13,6 +13,9 @@ use Frootbox\Core\Action\AsAction;
 use Frootbox\Core\Action\Schema\Description;
 use Frootbox\Core\Action\Schema\Range;
 
+/**
+ * @implements Action<Category>
+ */
 #[AsAction('frootbox/news/category.create', 'Creates a category of the news')]
 final readonly class CreateCategory implements Action
 {
@@ -20,7 +23,7 @@ final readonly class CreateCategory implements Action
      * @param array<mixed> $translations
      */
     public function __construct(
-        #[Description('Title and slug by language: {"de": {"title": "Kaffee"}}; the slug is made from the title if left out')]
+        #[Description('Title and slug by language: {"de": {"title": "Kaffee"}}; the slug is made from the title if left out; an empty title and slug count as no language')]
         public array $translations,
         #[Range(min: 0)]
         #[Description('Place in the list, 0 for the first; left out for the last')]

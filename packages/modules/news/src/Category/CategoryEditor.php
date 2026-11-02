@@ -83,6 +83,11 @@ final readonly class CategoryEditor
             $language = (string) $language;
             $at = '/translations/' . $language;
 
+            // A form sends every language; one left empty is none.
+            if (\is_array($value) && '' === trim(\is_string($value['title'] ?? null) ? $value['title'] : '') && '' === trim(\is_string($value['slug'] ?? null) ? $value['slug'] : '')) {
+                $value = null;
+            }
+
             if (null === $value) {
                 unset($result[$language]);
 
@@ -118,7 +123,8 @@ final readonly class CategoryEditor
         }
 
         if ([] === $result) {
-            $errors['/translations'] ??= 'needs at least one language, e.g. {"de": {"title": "Kaffee"}}.';
+            $first = array_key_first($input);
+            $errors[null === $first ? '/translations' : '/translations/' . $first . '/title'] ??= null === $first ? 'needs at least one language, e.g. {"de": {"title": "Kaffee"}}.' : 'is required.';
         }
 
         if ([] !== $errors) {
