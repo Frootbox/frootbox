@@ -215,3 +215,15 @@ test('offers the buttons of a field on its label', async ({ page, context }) => 
 
     await removePage(page, id);
 });
+
+test('shows the lines of a text with several lines once', async ({ page }) => {
+    const slug = `zeilen-${unique()}`;
+    const id = await openPage(page, slug, `Zeilen ${Math.floor(Math.random() * 1000)}`);
+
+    // In the mode a line break next to the <br> would count twice.
+    const address = page.locator('[data-fb-site][data-fb-field="address"]');
+    await expect(address).toHaveAttribute('contenteditable', 'plaintext-only');
+    expect(await address.evaluate((element: HTMLElement) => element.innerText)).toBe('Bohnenglück Kaffeerösterei\nHafenstraße 12\n20457 Hamburg');
+
+    await removePage(page, id);
+});
