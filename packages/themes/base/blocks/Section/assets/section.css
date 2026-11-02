@@ -1,4 +1,5 @@
-.base-section { padding-block: var(--space); }
+/* Full width in base-page, its content at the width of the content (decision 0167). */
+.base-section { container-type: inline-size; padding-block: var(--space); }
 .base-section--small { padding-block: calc(var(--space) / 2); }
 .base-section--large { padding-block: calc(var(--space) * 1.5); }
 .base-section--surface { background: var(--color-surface); }
@@ -7,17 +8,17 @@
 
 .base-section__grid {
   display: grid;
-  gap: clamp(1.5rem, 4vw, 3rem);
-  inline-size: min(100% - 2.5rem, var(--width));
+  gap: var(--space-l);
+  inline-size: min(100% - 2 * var(--gutter, 1.25rem), var(--width));
   margin-inline: auto;
 }
 
-/* Columns stand next to each other only where there is room. */
-@media (min-width: 48rem) {
+/* Columns stand next to each other only where the section has room, not by the screen. */
+@container (min-width: 48rem) {
   .base-section__grid--two { grid-template-columns: 1fr 1fr; }
   .base-section__grid--three { grid-template-columns: repeat(3, 1fr); }
   .base-section__grid--one-two { grid-template-columns: 1fr 2fr; }
   .base-section__grid--two-one { grid-template-columns: 2fr 1fr; }
 }
 
-.base-section__column { display: flex; flex-direction: column; gap: 1rem; min-inline-size: 0; }
+.base-section__column { display: flex; flex-direction: column; gap: var(--space-s); min-inline-size: 0; }

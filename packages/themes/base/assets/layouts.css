@@ -1,0 +1,175 @@
+/*
+ * Building blocks for layouts and child themes in the layer "layouts"
+ * (decision 0167). Everything starts with "base-", so nothing meets the
+ * classes of a framework. No block of the library needs them.
+ *
+ *   base-visually-hidden    there for screen readers only
+ *   base-wrap               the width of the content, centred; --narrow, --wide
+ *   base-stack              one below the other with a gap; --s, --l
+ *   base-cluster            in a row, wrapping; --s, --l
+ *   base-page               the page in named widths: children take the
+ *                           content width, base-narrow, base-wide and
+ *                           base-full the others
+ *   base-grid               12 columns that follow the room they get, not the
+ *                           screen: base-span-6, base-span-m-4, base-start-l-2
+ *                           (s from 30rem, m from 48rem, l from 64rem)
+ *   base-auto-grid          as many columns as fit, at least --base-min wide
+ *   base-subgrid            takes the rows of the grid around it, e.g. for
+ *                           cards with their buttons on one line
+ */
+.base-visually-hidden {
+  position: absolute !important;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.base-wrap { inline-size: min(100% - 2 * var(--gutter), var(--width)); margin-inline: auto; }
+.base-wrap--narrow { inline-size: min(100% - 2 * var(--gutter), var(--width-narrow)); }
+.base-wrap--wide { inline-size: min(100% - 2 * var(--gutter), var(--width-wide)); }
+
+.base-stack { display: flex; flex-direction: column; gap: var(--base-gap, var(--space-m)); }
+.base-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--base-gap, var(--space-s)); }
+:is(.base-stack, .base-cluster).base--s { --base-gap: var(--space-2xs); }
+:is(.base-stack, .base-cluster).base--l { --base-gap: var(--space-xl); }
+
+/* Narrow, content, wide and full by named lines; each width as wide as it can be, the gutters shrink last. */
+.base-page {
+  --base-room: (100% - 2 * var(--gutter));
+  --base-narrow: min(var(--width-narrow), var(--base-room));
+  --base-content: min(var(--width), var(--base-room));
+  --base-wide: min(var(--width-wide), var(--base-room));
+  display: grid;
+  grid-template-columns:
+    [full-start] minmax(var(--gutter), 1fr)
+    [wide-start] calc((var(--base-wide) - var(--base-content)) / 2)
+    [content-start] calc((var(--base-content) - var(--base-narrow)) / 2)
+    [narrow-start] var(--base-narrow)
+    [narrow-end] calc((var(--base-content) - var(--base-narrow)) / 2)
+    [content-end] calc((var(--base-wide) - var(--base-content)) / 2)
+    [wide-end] minmax(var(--gutter), 1fr)
+    [full-end];
+}
+.base-page > * { grid-column: content; }
+.base-page > .base-narrow { grid-column: narrow; }
+.base-page > .base-wide { grid-column: wide; }
+.base-page > .base-full { grid-column: full; }
+
+.base-grid {
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--base-gap, var(--space-m));
+}
+.base-grid > * { grid-column: 1 / -1; }
+.base-span-1 { grid-column: span 1 / span 1; }
+.base-span-2 { grid-column: span 2 / span 2; }
+.base-span-3 { grid-column: span 3 / span 3; }
+.base-span-4 { grid-column: span 4 / span 4; }
+.base-span-5 { grid-column: span 5 / span 5; }
+.base-span-6 { grid-column: span 6 / span 6; }
+.base-span-7 { grid-column: span 7 / span 7; }
+.base-span-8 { grid-column: span 8 / span 8; }
+.base-span-9 { grid-column: span 9 / span 9; }
+.base-span-10 { grid-column: span 10 / span 10; }
+.base-span-11 { grid-column: span 11 / span 11; }
+.base-span-12 { grid-column: span 12 / span 12; }
+.base-start-1 { grid-column-start: 1; }
+.base-start-2 { grid-column-start: 2; }
+.base-start-3 { grid-column-start: 3; }
+.base-start-4 { grid-column-start: 4; }
+.base-start-5 { grid-column-start: 5; }
+.base-start-6 { grid-column-start: 6; }
+.base-start-7 { grid-column-start: 7; }
+.base-start-8 { grid-column-start: 8; }
+.base-start-9 { grid-column-start: 9; }
+.base-start-10 { grid-column-start: 10; }
+.base-start-11 { grid-column-start: 11; }
+.base-start-12 { grid-column-start: 12; }
+@container (min-width: 30rem) {
+  .base-span-s-1 { grid-column: span 1 / span 1; }
+  .base-span-s-2 { grid-column: span 2 / span 2; }
+  .base-span-s-3 { grid-column: span 3 / span 3; }
+  .base-span-s-4 { grid-column: span 4 / span 4; }
+  .base-span-s-5 { grid-column: span 5 / span 5; }
+  .base-span-s-6 { grid-column: span 6 / span 6; }
+  .base-span-s-7 { grid-column: span 7 / span 7; }
+  .base-span-s-8 { grid-column: span 8 / span 8; }
+  .base-span-s-9 { grid-column: span 9 / span 9; }
+  .base-span-s-10 { grid-column: span 10 / span 10; }
+  .base-span-s-11 { grid-column: span 11 / span 11; }
+  .base-span-s-12 { grid-column: span 12 / span 12; }
+  .base-start-s-1 { grid-column-start: 1; }
+  .base-start-s-2 { grid-column-start: 2; }
+  .base-start-s-3 { grid-column-start: 3; }
+  .base-start-s-4 { grid-column-start: 4; }
+  .base-start-s-5 { grid-column-start: 5; }
+  .base-start-s-6 { grid-column-start: 6; }
+  .base-start-s-7 { grid-column-start: 7; }
+  .base-start-s-8 { grid-column-start: 8; }
+  .base-start-s-9 { grid-column-start: 9; }
+  .base-start-s-10 { grid-column-start: 10; }
+  .base-start-s-11 { grid-column-start: 11; }
+  .base-start-s-12 { grid-column-start: 12; }
+}
+@container (min-width: 48rem) {
+  .base-span-m-1 { grid-column: span 1 / span 1; }
+  .base-span-m-2 { grid-column: span 2 / span 2; }
+  .base-span-m-3 { grid-column: span 3 / span 3; }
+  .base-span-m-4 { grid-column: span 4 / span 4; }
+  .base-span-m-5 { grid-column: span 5 / span 5; }
+  .base-span-m-6 { grid-column: span 6 / span 6; }
+  .base-span-m-7 { grid-column: span 7 / span 7; }
+  .base-span-m-8 { grid-column: span 8 / span 8; }
+  .base-span-m-9 { grid-column: span 9 / span 9; }
+  .base-span-m-10 { grid-column: span 10 / span 10; }
+  .base-span-m-11 { grid-column: span 11 / span 11; }
+  .base-span-m-12 { grid-column: span 12 / span 12; }
+  .base-start-m-1 { grid-column-start: 1; }
+  .base-start-m-2 { grid-column-start: 2; }
+  .base-start-m-3 { grid-column-start: 3; }
+  .base-start-m-4 { grid-column-start: 4; }
+  .base-start-m-5 { grid-column-start: 5; }
+  .base-start-m-6 { grid-column-start: 6; }
+  .base-start-m-7 { grid-column-start: 7; }
+  .base-start-m-8 { grid-column-start: 8; }
+  .base-start-m-9 { grid-column-start: 9; }
+  .base-start-m-10 { grid-column-start: 10; }
+  .base-start-m-11 { grid-column-start: 11; }
+  .base-start-m-12 { grid-column-start: 12; }
+}
+@container (min-width: 64rem) {
+  .base-span-l-1 { grid-column: span 1 / span 1; }
+  .base-span-l-2 { grid-column: span 2 / span 2; }
+  .base-span-l-3 { grid-column: span 3 / span 3; }
+  .base-span-l-4 { grid-column: span 4 / span 4; }
+  .base-span-l-5 { grid-column: span 5 / span 5; }
+  .base-span-l-6 { grid-column: span 6 / span 6; }
+  .base-span-l-7 { grid-column: span 7 / span 7; }
+  .base-span-l-8 { grid-column: span 8 / span 8; }
+  .base-span-l-9 { grid-column: span 9 / span 9; }
+  .base-span-l-10 { grid-column: span 10 / span 10; }
+  .base-span-l-11 { grid-column: span 11 / span 11; }
+  .base-span-l-12 { grid-column: span 12 / span 12; }
+  .base-start-l-1 { grid-column-start: 1; }
+  .base-start-l-2 { grid-column-start: 2; }
+  .base-start-l-3 { grid-column-start: 3; }
+  .base-start-l-4 { grid-column-start: 4; }
+  .base-start-l-5 { grid-column-start: 5; }
+  .base-start-l-6 { grid-column-start: 6; }
+  .base-start-l-7 { grid-column-start: 7; }
+  .base-start-l-8 { grid-column-start: 8; }
+  .base-start-l-9 { grid-column-start: 9; }
+  .base-start-l-10 { grid-column-start: 10; }
+  .base-start-l-11 { grid-column-start: 11; }
+  .base-start-l-12 { grid-column-start: 12; }
+}
+
+.base-auto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(var(--base-min, 16rem), 100%), 1fr));
+  gap: var(--base-gap, var(--space-m));
+}
+.base-subgrid { display: grid; grid-row: span var(--base-rows, 3); grid-template-rows: subgrid; row-gap: var(--space-xs); }

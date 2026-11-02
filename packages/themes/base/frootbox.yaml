@@ -1,8 +1,9 @@
 title: 'Basis'
-description: 'Basis-Theme: Tokens und Bausteine, auf denen Themes aufbauen'
+description: 'Basis-Theme: Layouts, Tokens, Bausteine und Blöcke, auf denen Themes aufbauen'
 theme:
   # Tokens with a type can be changed in the editing mode (decision 0127),
-  # child themes change the value with the short form.
+  # child themes change the value with the short form. Scales stay fixed
+  # values (decision 0162).
   tokens:
     color:
       bg: { value: '#ffffff', type: color, label: Background }
@@ -12,11 +13,27 @@ theme:
       primary: { value: '#1d4ed8', type: color, label: Main colour, contrast: primary-contrast }
       primary-contrast: { value: '#ffffff', type: color, label: Text on the main colour }
       accent: { value: '#f59e0b', type: color, label: Accent }
+      focus: { value: '#1d4ed8', type: color, label: Focus ring, contrast: bg }
+      error: { value: '#b91c1c', type: color, label: Errors, contrast: bg }
+      success: { value: '#15803d', type: color, label: Success, contrast: bg }
       dark: '#1c1917'
       line: { value: '#e7e5e4', type: color, label: Lines }
     font:
-      body: { value: sans, type: font, label: Font for text }
-      heading: { value: sans, type: font, label: Font for headings }
+      body: { value: noto-sans, type: font, label: Font for text }
+      heading: { value: noto-sans, type: font, label: Font for headings }
+      mono: 'ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace'
+    leading:
+      body: 1.6
+      heading: 1.2
+    # Fluid sizes of text, from small screens to wide ones.
+    size-xs: 'clamp(0.694rem, 0.686rem + 0.0444vw, 0.72rem)'
+    size-s: 'clamp(0.833rem, 0.81rem + 0.116vw, 0.9rem)'
+    size-m: 'clamp(1rem, 0.957rem + 0.217vw, 1.12rem)'
+    size-l: 'clamp(1.2rem, 1.13rem + 0.359vw, 1.41rem)'
+    size-xl: 'clamp(1.44rem, 1.33rem + 0.553vw, 1.76rem)'
+    size-2xl: 'clamp(1.73rem, 1.56rem + 0.816vw, 2.2rem)'
+    size-3xl: 'clamp(2.07rem, 1.84rem + 1.17vw, 2.75rem)'
+    size-4xl: 'clamp(2.49rem, 2.16rem + 1.64vw, 3.43rem)'
     radius: { value: 8px, type: length, label: Rounding of the corners, min: 0, max: 32, step: 1, unit: px }
     space:
       value: normal
@@ -26,4 +43,71 @@ theme:
         compact: { label: Compact, value: 'clamp(2rem, 5vw, 4rem)' }
         normal: { label: Normal, value: 'clamp(3rem, 8vw, 6rem)' }
         wide: { label: Spacious, value: 'clamp(4rem, 11vw, 8rem)' }
+    # Fluid spaces, e.g. var(--space-m) between paragraphs.
+    space-3xs: 'clamp(0.25rem, 0.228rem + 0.109vw, 0.312rem)'
+    space-2xs: 'clamp(0.5rem, 0.457rem + 0.217vw, 0.625rem)'
+    space-xs: 'clamp(0.75rem, 0.685rem + 0.326vw, 0.938rem)'
+    space-s: 'clamp(1rem, 0.913rem + 0.435vw, 1.25rem)'
+    space-m: 'clamp(1.5rem, 1.37rem + 0.652vw, 1.88rem)'
+    space-l: 'clamp(2rem, 1.83rem + 0.87vw, 2.5rem)'
+    space-xl: 'clamp(3rem, 2.74rem + 1.3vw, 3.75rem)'
+    space-2xl: 'clamp(4rem, 3.65rem + 1.74vw, 5rem)'
+    space-3xl: 'clamp(6rem, 5.48rem + 2.61vw, 7.5rem)'
+    # The room at the edges of the screen.
+    gutter: 'clamp(1rem, 0.652rem + 1.74vw, 2rem)'
     width: { value: 72rem, type: length, label: Width of the content, min: 48, max: 90, step: 1, unit: rem }
+    width-narrow: 42rem
+    width-wide: 90rem
+    border: '1px solid var(--color-line)'
+    shadow: '0 1px 2px rgb(0 0 0 / 0.06), 0 4px 12px rgb(0 0 0 / 0.06)'
+  # Noto for as many languages as possible (decisions 0162, 0165, 0166).
+  # The browser loads a file only for text of its part of Unicode; the
+  # fallback is Arial measured against Noto Sans, so nothing moves.
+  fonts:
+    noto-sans:
+      label: Noto Sans
+      family: '"Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
+      files:
+        - { file: assets/fonts/noto-sans-latin.woff2, weight: 100 900, range: latin, preload: true }
+        - { file: assets/fonts/noto-sans-latin-ext.woff2, weight: 100 900, range: latin-ext }
+        - { file: assets/fonts/noto-sans-greek.woff2, weight: 100 900, range: greek }
+        - { file: assets/fonts/noto-sans-cyrillic.woff2, weight: 100 900, range: cyrillic }
+        - { file: assets/fonts/noto-sans-vietnamese.woff2, weight: 100 900, range: vietnamese }
+        - { file: assets/fonts/noto-sans-latin-italic.woff2, weight: 100 900, style: italic, range: latin }
+      fallback: { local: [Arial, Helvetica], size-adjust: 105.37%, ascent: 101.45%, descent: 27.81% }
+    noto-sans-arabic:
+      label: Noto Sans Arabic
+      family: '"Noto Sans Arabic", "Geeza Pro", "Segoe UI", Tahoma, sans-serif'
+      files:
+        - { file: assets/fonts/noto-sans-arabic.woff2, weight: 100 900, range: arabic }
+    noto-sans-hebrew:
+      label: Noto Sans Hebrew
+      family: '"Noto Sans Hebrew", "Arial Hebrew", "Segoe UI", Arial, sans-serif'
+      files:
+        - { file: assets/fonts/noto-sans-hebrew.woff2, weight: 100 900, range: hebrew }
+  # Content in Arabic or Hebrew, also as fallback on a page of another
+  # language, gets fonts with its letters and more room between lines
+  # (decision 0159).
+  scripts:
+    arab:
+      font: { body: noto-sans-arabic, heading: noto-sans-arabic }
+      leading: { body: 1.9, heading: 1.4 }
+    hebr:
+      font: { body: noto-sans-hebrew, heading: noto-sans-hebrew }
+      leading: { body: 1.75, heading: 1.3 }
+  # Content that is the same on every page (decision 0128).
+  fields:
+    brand: { type: headline, label: Name of the website, maxLength: 60 }
+    logo: { type: image, label: Logo, optional: true }
+    address: { type: text, label: Address in the footer, multiline: true, optional: true, maxLength: 300 }
+    note: { type: text, label: Note in the footer, optional: true, maxLength: 200 }
+    profiles:
+      type: list
+      label: Profiles in social networks
+      optional: true
+      max: 8
+      fields:
+        link: { type: link, label: Profile }
+  navigations:
+    main: { title: Main navigation, depth: 2 }
+    footer: Footer

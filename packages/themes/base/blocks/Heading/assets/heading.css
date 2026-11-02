@@ -1,4 +1,4 @@
-.base-heading { margin: 0; font-family: var(--font-heading); line-height: 1.15; text-wrap: balance; }
-.base-heading--large { font-size: clamp(1.6rem, 3.5vw, 2.3rem); }
-.base-heading--medium { font-size: clamp(1.25rem, 2.5vw, 1.5rem); }
-.base-heading--small { font-size: 1.1rem; }
+.base-heading { margin: 0; font-family: var(--font-heading); line-height: var(--leading-heading); text-wrap: balance; }
+.base-heading--large { font-size: var(--size-3xl); }
+.base-heading--medium { font-size: var(--size-xl); }
+.base-heading--small { font-size: var(--size-l); }

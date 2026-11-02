@@ -1,0 +1,58 @@
+/*
+ * Typography, links, focus and forms in the layer "base", all from the
+ * tokens (decision 0162). Blocks build on it, but do not need it.
+ */
+html { scroll-padding-block-start: var(--space-2xl); }
+body {
+  color: var(--color-text);
+  background: var(--color-bg);
+  font-size: var(--size-m);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Again at content of another language, so it takes the fonts of its script (decision 0159). */
+body, :where([lang]) { font-family: var(--font-body); line-height: var(--leading-body); }
+
+/* The level of a heading follows from where it stands; it looks like its rank or its class (decision 0129). */
+:is(h1, h2, h3, h4, h5, h6) { font-family: var(--font-heading); font-size: inherit; line-height: var(--leading-heading); text-wrap: balance; }
+:where([data-rank="1"]) { font-size: var(--size-3xl); }
+:where([data-rank="2"]) { font-size: var(--size-xl); }
+:where([data-rank="3"]) { font-size: var(--size-l); }
+:where([data-rank="4"], [data-rank="5"], [data-rank="6"]) { font-size: var(--size-m); }
+p, li { text-wrap: pretty; }
+small { font-size: var(--size-s); }
+:is(code, kbd, samp, pre) { font-family: var(--font-mono); font-size: 0.92em; }
+
+a { color: var(--color-primary); text-underline-offset: 0.18em; text-decoration-thickness: 0.08em; }
+a:hover { text-decoration-thickness: 0.14em; }
+
+/* Always visible for the keyboard, never for the mouse (WCAG 2.2 AA). */
+:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; border-radius: 2px; }
+
+::selection { background: color-mix(in srgb, var(--color-primary) 20%, transparent); }
+
+hr { border: 0; border-block-start: var(--border); margin-block: var(--space-l); }
+
+:is(input, textarea, select) {
+  min-block-size: 2.75rem;
+  padding: var(--space-2xs) var(--space-xs);
+  border: var(--border);
+  border-color: var(--color-muted);
+  border-radius: calc(var(--radius) / 2);
+  background: var(--color-bg);
+}
+button { cursor: pointer; }
+
+/* The link to skip to the content, shown when it has the focus. */
+.base-skip-link {
+  position: absolute;
+  inset-block-start: var(--space-2xs);
+  inset-inline-start: var(--space-2xs);
+  z-index: 10;
+  padding: var(--space-2xs) var(--space-s);
+  border-radius: var(--radius);
+  background: var(--color-dark);
+  color: var(--color-bg);
+  translate: 0 -200%;
+}
+.base-skip-link:focus { translate: 0; }

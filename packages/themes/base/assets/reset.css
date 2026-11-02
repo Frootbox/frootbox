@@ -1,0 +1,22 @@
+/*
+ * A small reset in the layer "reset". A child theme with a framework that
+ * brings its own, e.g. Bootstrap's Reboot, replaces this file with an
+ * empty one of the same name (decision 0167).
+ */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: none; text-size-adjust: none; }
+body { margin: 0; min-block-size: 100vh; }
+:is(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, dd, blockquote, figure, pre) { margin: 0; }
+:is(img, picture, svg, video, canvas) { display: block; max-inline-size: 100%; block-size: auto; }
+:is(input, button, textarea, select) { font: inherit; color: inherit; }
+:is(p, li, figcaption, blockquote) { overflow-wrap: break-word; }
+table { border-collapse: collapse; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
