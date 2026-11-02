@@ -4,7 +4,7 @@
 <a class="skip-link" href="#content">{{ labels.t('skip') }}</a>
 <header class="site-header">
   <div class="site-header__inner">
-    <a class="site-brand" href="{{ home ? home.url : '/' }}">{{ site_field('brand') }}</a>
+    <a class="site-brand" href="{{ home ? home.url : '/' }}"{{ site_attributes('brand')|attributes }}>{{ site_field('brand') }}</a>
     <div class="site-header__end">
       {% if main %}
         <nav aria-label="{{ labels.t('main') }}"><ul>

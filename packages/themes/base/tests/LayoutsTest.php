@@ -76,6 +76,8 @@ final class LayoutsTest extends NotesTestCase
         self::assertStringContainsString('<html lang="ar" dir="rtl">', $arabic);
         self::assertStringContainsString('>انتقل إلى المحتوى</a>', $arabic);
         self::assertStringContainsString('aria-label="القائمة"', $arabic);
+        self::assertMatchesRegularExpression('#<p class="base-footer__address" lang="de" dir="ltr">Hafenstraße 12<br>\s*20457 Hamburg</p>#', $arabic, 'The German address keeps its direction on the Arabic page.');
+        self::assertStringContainsString('<span lang="de" dir="ltr">Bohnenglück</span>', $arabic);
     }
 
     protected function extensions(): Extensions

@@ -8,6 +8,6 @@
       {% endfor %}
     </ul></nav>
   {% endif %}
-  <p>{{ site_field('address') }}</p>
-  <p>{{ site_field('note') }}</p>
+  <p{{ site_attributes('address')|attributes }}>{{ site_field('address') }}</p>
+  <p{{ site_attributes('note')|attributes }}>{{ site_field('note') }}</p>
 </footer>
