@@ -86,7 +86,7 @@ test('an editor changes a page on the website and publishes it', async ({ page, 
     await section.locator('fb-area[data-fb-area="first"]').click();
     await picker.getByRole('button', { name: /^Bilder und Medien/ }).click();
     await picker.getByRole('button', { name: /^Bild Ein Bild/ }).click();
-    const image = section.locator('[data-fb-type="image"]');
+    const image = section.locator('[data-fb-type="image"]:not([data-fb-part])');
     await expect(image).toBeVisible();
     await expect(heading).toHaveAttribute('contenteditable', 'plaintext-only');
 
@@ -96,9 +96,18 @@ test('an editor changes a page on the website and publishes it', async ({ page, 
     await dialog.getByRole('button', { name: 'Hochladen' }).click();
     await (await chooser).setFiles(await photo(page, `abnahme-${id}.jpg`));
     await expect(dialog.getByRole('button', { name: `abnahme-${id}.jpg` })).toHaveAttribute('aria-pressed', 'true');
-    await dialog.getByLabel('Alternativtext für diese Stelle').fill('Gelbe Fläche');
+    // Choosing on one side, what counts here on the other (decision 0203).
+    const place = dialog.getByRole('region', { name: 'An dieser Stelle' });
+    await expect(place.getByRole('figure')).toContainText(`abnahme-${id}.jpg`);
+    await place.getByLabel('Alternativtext', { exact: true }).fill('Gelbe Fläche');
+    await place.getByLabel('Bildunterschrift').fill('Eine gelbe Fläche');
+    // The medium has no copyright yet: it goes to the media library.
+    await expect(place.getByText('Wird in den Medien gespeichert')).toBeVisible();
+    await place.getByLabel('Copyright').fill('Anna Muster');
     await dialog.getByRole('button', { name: 'Übernehmen' }).click();
     await expect(image.locator('img')).toHaveAttribute('alt', 'Gelbe Fläche');
+    await expect(section.locator('[data-fb-part="caption"]')).toHaveText('Eine gelbe Fläche');
+    await expect(section.locator('[data-fb-part="copyright"]')).toHaveText('Anna Muster');
 
     // The footer is the same on every page.
     const footer = page.locator('[data-fb-site][data-fb-field="note"]');
@@ -121,6 +130,7 @@ test('an editor changes a page on the website and publishes it', async ({ page, 
     await expect(guest.getByRole('heading', { level: 1 })).toHaveText('Abnahme bestanden');
     const picture = guest.locator('.base-image picture img');
     await expect(picture).toHaveAttribute('alt', 'Gelbe Fläche');
+    await expect(guest.locator('.base-image figcaption')).toHaveText('Eine gelbe Fläche Anna Muster');
     await picture.scrollIntoViewIfNeeded();
     await expect.poll(() => picture.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
     await guest.goto('/');

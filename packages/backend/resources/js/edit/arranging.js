@@ -1132,7 +1132,7 @@ export class Arranging {
 
         if (field.type === 'image') {
             return html`<div><span class="hint">${field.label}</span>
-                <button type="button" class="link-field" @click=${() => this.editImage(data, path, value)}>
+                <button type="button" class="link-field" @click=${() => this.editImage(data, path, value, 'image', field.caption === true)}>
                     <span>${value?.media ? this.labels.imageChosen : this.labels.noImage}</span>${icon('image')}</button></div>`;
         }
 
@@ -1244,12 +1244,13 @@ export class Arranging {
         return this.panelChange(name, { block: data.id, ...input });
     }
 
-    editImage(data, path, value, kind = 'image') {
+    editImage(data, path, value, kind = 'image', caption = false) {
         const button = this.bar.renderRoot.activeElement;
 
         this.bar.media.open({
             kind,
             value,
+            caption,
             apply: (chosen) => this.panelChange('page.update-field', { block: data.id, path, value: chosen, previous: value }),
             remove: () => this.panelChange('page.update-field', { block: data.id, path, value: null, previous: value }),
             done: () => button?.focus(),

@@ -142,7 +142,7 @@ test('uploads an image, sets its focus and shows it on a published page', async 
 
     // The script of the mode listens once the fields are editable; a click before it opens nothing.
     await expect(page.locator('h1[data-fb-field="title"]')).toHaveAttribute('contenteditable', 'plaintext-only');
-    const field = page.locator('main [data-fb-type="image"]');
+    const field = page.locator('main [data-fb-type="image"]:not([data-fb-part])');
     await field.click();
     const bar = page.locator('fb-editor-bar');
     const dialog = bar.getByRole('dialog', { name: 'Bild auswählen' });

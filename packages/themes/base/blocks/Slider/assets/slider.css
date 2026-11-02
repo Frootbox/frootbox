@@ -18,6 +18,7 @@
 .base-slider__figure { display: flex; flex-direction: column; gap: var(--space-2xs); margin: 0; }
 .base-slider__figure :is(picture, img) { display: block; inline-size: 100%; block-size: auto; }
 .base-slider__caption { padding-inline: var(--space-3xs); color: var(--color-muted); font-size: var(--size-s); }
+.base-slider__copyright { display: block; font-size: 0.875em; }
 .base-slider__controls { display: flex; justify-content: flex-end; gap: var(--space-2xs); }
 .base-slider__controls[hidden] { display: none; }
 .base-slider__button {

@@ -103,6 +103,16 @@ export class Editing {
         return target instanceof Element ? target.closest('[data-fb-field]') : null;
     }
 
+    /** The elements of one field: itself and those of its parts, in the same block (decision 0203). */
+    twins(element) {
+        const site = element.dataset.fbSite !== undefined;
+        const block = element.closest('[data-fb-block]');
+        const all = [...document.querySelectorAll(`[data-fb-field="${CSS.escape(element.dataset.fbField)}"]`)]
+            .filter((item) => (item.dataset.fbSite !== undefined) === site && (site || item.closest('[data-fb-block]') === block));
+
+        return all.includes(element) ? all : [element, ...all];
+    }
+
     /** The value saved last, at first the one the page came with. */
     savedValue(element) {
         return this.saved.has(element) ? this.saved.get(element) : storedValue(element);
@@ -286,16 +296,22 @@ export class Editing {
         }
 
         const data = result.data;
-        this.saved.set(element, data.value);
 
-        if (data.value === null) {
-            delete element.dataset.fbValue;
-        } else {
-            element.dataset.fbValue = JSON.stringify(data.value);
-        }
+        // The field itself and its parts, e.g. the caption of an image (decision 0203).
+        for (const twin of this.twins(element)) {
+            this.saved.set(twin, data.value);
 
-        if (['link', 'image', 'video', 'icon', 'file'].includes(element.dataset.fbType)) {
-            element.innerHTML = data.html;
+            if (data.value === null) {
+                delete twin.dataset.fbValue;
+            } else {
+                twin.dataset.fbValue = JSON.stringify(data.value);
+            }
+
+            if (twin.dataset.fbPart !== undefined) {
+                twin.innerHTML = data.parts?.[twin.dataset.fbPart] ?? '';
+            } else if (['link', 'image', 'video', 'icon', 'file'].includes(twin.dataset.fbType)) {
+                twin.innerHTML = data.html;
+            }
         }
 
         this.bar.changed(data.entry, site);
@@ -340,6 +356,9 @@ export class Editing {
         this.bar.media.open({
             kind: ['video', 'file'].includes(element.dataset.fbType) ? element.dataset.fbType : 'image',
             value: this.savedValue(element),
+            // Caption and copyright are parts of an image field (decision 0203).
+            caption: (element.dataset.fbParts ?? '').split(' ').includes('caption'),
+            focus: element.dataset.fbPart ?? null,
             apply: (value) => this.save(element, value),
             remove: () => this.save(element, null),
             done: () => element.focus(),

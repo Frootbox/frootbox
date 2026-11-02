@@ -5,7 +5,6 @@ group: media
 keywords: [Photo, Graphic, Picture, Illustration]
 widget: true
 fields:
-  image: { type: image, label: Image, sizes: "(min-width: 72rem) 36rem, (min-width: 48rem) 50vw, 100vw" }
-  caption: { type: text, label: Caption, optional: true }
+  image: { type: image, label: Image, caption: true, sizes: "(min-width: 72rem) 36rem, (min-width: 48rem) 50vw, 100vw" }
 #}
-<figure class="base-image">{{ field('image') }}<figcaption>{{ field('caption') }}</figcaption></figure>
+<figure class="base-image">{{ field('image') }}<figcaption class="base-image__caption"><span>{{ field('image', 'caption') }}</span> <small class="base-image__copyright">{{ field('image', 'copyright') }}</small></figcaption></figure>

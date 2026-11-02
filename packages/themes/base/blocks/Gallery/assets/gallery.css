@@ -13,6 +13,7 @@
 .base-gallery__figure :is(picture, img) { display: block; inline-size: 100%; }
 .base-gallery__figure img { aspect-ratio: 1; block-size: auto; border-radius: calc(var(--radius) / 2); object-fit: cover; }
 .base-gallery__caption { color: var(--color-muted); font-size: var(--size-s); }
+.base-gallery__copyright { display: block; font-size: 0.875em; }
 .base-gallery__open { display: block; inline-size: 100%; padding: 0; border: 0; border-radius: calc(var(--radius) / 2); background: none; cursor: zoom-in; }
 .base-gallery__open:hover img { opacity: 0.88; }
 

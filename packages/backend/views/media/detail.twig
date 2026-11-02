@@ -1,4 +1,4 @@
-{#- The details of one medium: focus point, texts per language, tags, folder (decision 0126), where it is used and its file replaced (0146), its draft (0147), the files of a video (0177), documents (0179). -#}
+{#- The details of one medium: focus point, texts per language, copyright (0203), tags, folder (decision 0126), where it is used and its file replaced (0146), its draft (0147), the files of a video (0177), documents (0179). -#}
 {% import '@backend/ui.twig' as ui %}
 {% set editable = can('media.update') %}
 {% set video = medium.kind == 'video' %}
@@ -120,6 +120,8 @@
                 </div>
             </fieldset>
             {% endfor %}
+
+            {{ ui.field({label: t('Copyright'), name: 'copyright', id: 'media-copyright', value: medium.copyright, optional: true, hint: t('Photographer or image agency, e.g. “Anna Muster / image agency”. The website shows it with the image where the theme provides for it.'), disabled: not editable, attrs: {maxlength: 300}}) }}
 
             {{ ui.field({label: t('Tags'), name: 'tags', id: 'media-tags', value: medium.tags|join("\n"), multiline: true, optional: true, hint: t('One per line, e.g. team or summer.'), disabled: not editable, attrs: {'data-type': 'lines', rows: 3}}) }}
 

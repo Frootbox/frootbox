@@ -7,9 +7,12 @@ const SEARCH_DELAY = 300;
 
 /**
  * Choosing an image in the editing mode (decision 0126): a dialog of the
- * bar with the media library, a search, uploads and the alternative text
- * for this place. The bar keeps one instance; fields and the settings
- * panel open it with open().
+ * bar in two columns (decision 0203). The media library on one side with
+ * a search and uploads chooses the medium; "At this place" on the other
+ * shows it and sets what counts only here: alternative text, caption
+ * (if the field has one) and copyright. A copyright typed for a medium
+ * without one goes to the medium, so it counts everywhere. The bar
+ * keeps one instance; fields and the settings panel open it with open().
  *
  * Uploading one image for a field that has one already: if the image
  * there is used at other places as well, the dialog asks whether the
@@ -29,6 +32,8 @@ export class MediaPicker {
         this.bar = bar;
         this.state = null;
         this.timer = null;
+        // Counts the openings, so late answers know whether their dialog is still open.
+        this.opened = 0;
     }
 
     get labels() {
@@ -36,11 +41,13 @@ export class MediaPicker {
     }
 
     /**
-     * kind: "image", "video" or "file"; value: the stored value {media, alt?},
-     * {media, poster?}, {media, text?} or null; apply(value) and remove() save, done()
-     * gives the focus back.
+     * kind: "image", "video" or "file"; value: the stored value {media, alt?,
+     * caption?, copyright?}, {media, poster?}, {media, text?} or null; caption:
+     * whether the image field has one; focus: "caption" or "copyright" to
+     * start there; apply(value) and remove() save, done() gives the focus back.
      */
-    open({ kind = 'image', value, apply, remove, done }) {
+    open({ kind = 'image', value, caption = false, focus = null, apply, remove, done }) {
+        this.opened++;
         this.state = {
             kind,
             tab: 'media',
@@ -53,6 +60,9 @@ export class MediaPicker {
             seen: {},
             alt: value?.alt ?? '',
             text: value?.text ?? '',
+            withCaption: kind === 'image' && caption,
+            caption: value?.caption ?? '',
+            copyright: value?.copyright ?? '',
             query: '',
             items: [],
             total: 0,
@@ -61,15 +71,46 @@ export class MediaPicker {
             uploading: null,
             question: null,
             replaced: false,
+            applying: false,
             problems: [],
             notices: [],
         };
         this.load(1);
+
+        for (const id of [value?.media, value?.poster]) {
+            if (id) {
+                this.show(id);
+            }
+        }
+
         this.bar.requestUpdate();
         this.bar.updateComplete.then(() => {
             this.bar.renderRoot.querySelector('dialog.media')?.showModal();
-            this.bar.renderRoot.querySelector('dialog.media input[type="search"]')?.focus();
+            const start = focus && this.state?.chosen ? `dialog.media [name="${focus}"]` : 'dialog.media input[type="search"]';
+            (this.bar.renderRoot.querySelector(start) ?? this.bar.renderRoot.querySelector('dialog.media input[type="search"]'))?.focus();
         });
+    }
+
+    /** Loads a chosen medium that may not be on the first page of the list, for its preview and texts. */
+    async show(id) {
+        const opened = this.opened;
+        let body = null;
+
+        try {
+            const response = await fetch(this.bar.config.queries + 'media.show?' + new URLSearchParams({ id }), { headers: { Accept: 'application/json' }, credentials: 'same-origin' });
+            body = response.ok ? await response.json() : null;
+        } catch {
+            body = null;
+        }
+
+        if (body?.data && this.state && this.opened === opened) {
+            this.update({ seen: { ...this.state.seen, [id]: body.data } });
+        }
+    }
+
+    /** A medium of the list or one seen before. */
+    item(id, state = this.state) {
+        return id ? (state.items.find((entry) => entry.id === id) ?? state.seen[id] ?? null) : null;
     }
 
     update(changes) {
@@ -256,15 +297,16 @@ export class MediaPicker {
         input.click();
     }
 
-    apply() {
+    async apply() {
         const state = this.state;
 
-        if (!state?.chosen) {
+        if (!state?.chosen || state.applying) {
             return;
         }
 
+        const opened = this.opened;
         const value = { media: state.chosen };
-        const item = (id) => state.items.find((entry) => entry.id === id) ?? state.seen[id];
+        const item = (id) => this.item(id, state);
         this.bar.mediaChosen(item(state.chosen));
 
         if (state.kind === 'video') {
@@ -276,11 +318,56 @@ export class MediaPicker {
             if (state.text.trim() !== '') {
                 value.text = state.text.trim();
             }
-        } else if (state.alt.trim() !== '') {
-            value.alt = state.alt.trim();
+        } else {
+            if (state.alt.trim() !== '') {
+                value.alt = state.alt.trim();
+            }
+
+            if (state.withCaption && state.caption.trim() !== '') {
+                value.caption = state.caption.trim();
+            }
+
+            const copyright = state.copyright.trim();
+            const medium = item(state.chosen);
+
+            if (copyright !== '' && copyright !== (medium?.copyright ?? '')) {
+                // The first copyright of a medium counts everywhere (decision 0203).
+                const saved = this.toMedium(medium) ? await this.saveCopyright(medium, copyright) : false;
+
+                if (!saved) {
+                    value.copyright = copyright;
+                }
+            }
+
+            // Closed meanwhile.
+            if (!this.state || this.opened !== opened) {
+                return;
+            }
         }
 
         this.close(() => state.apply(value));
+    }
+
+    /** Whether a copyright typed here goes to the medium: it has none yet and the user may change it. */
+    toMedium(medium) {
+        return Boolean(medium && this.bar.config.mayUpdateMedia && (medium.copyright ?? '') === '');
+    }
+
+    async saveCopyright(medium, copyright) {
+        this.update({ applying: true });
+        const updated = await this.bar.run('media.update', { id: medium.id, copyright });
+
+        if (this.state) {
+            this.update({ applying: false });
+        }
+
+        if (!updated.ok) {
+            return false;
+        }
+
+        this.bar.mediaChosen(updated.data);
+
+        return true;
     }
 
     close(then = null) {
@@ -296,6 +383,66 @@ export class MediaPicker {
         if (state?.replaced) {
             Promise.resolve(saving).finally(() => location.reload());
         }
+    }
+
+    /** The chosen medium as a small preview with its file name. */
+    preview(item) {
+        if (!item) {
+            return nothing;
+        }
+
+        const media = item.kind === 'document'
+            ? html`<span class="file-tile" aria-hidden="true">${icon('file')}<b>${item.format}</b></span>`
+            : item.kind === 'video'
+            ? html`<video src=${item.preview} preload="metadata" muted playsinline aria-hidden="true"></video>`
+            : html`<img src=${item.preview} alt="" width=${item.width} height=${item.height} decoding="async">`;
+
+        return html`<figure class="media-chosen">${media}<figcaption>${item.fileName}</figcaption></figure>`;
+    }
+
+    /** What counts at this place: the texts of an image, the link text of a file, hints for a video. */
+    place(state) {
+        const labels = this.labels;
+        const picked = this.picked(state);
+        const item = this.item(picked, state);
+
+        if (!picked) {
+            const first = { video: labels.pickVideoFirst, document: labels.pickDocumentFirst }[this.listKind(state)] ?? labels.pickImageFirst;
+
+            return html`<p class="hint">${first}</p>`;
+        }
+
+        if (state.kind === 'video') {
+            return html`${this.preview(item)}
+                ${state.tab === 'poster'
+                    ? html`<p class="hint">${labels.posterHint}</p>
+                        <div class="actions start"><button type="button" @click=${() => this.update({ poster: null })}>${labels.noPoster}</button></div>`
+                    : html`<p class="hint">${labels.videoHint}</p>`}`;
+        }
+
+        if (state.kind === 'file') {
+            return html`${this.preview(item)}
+                <label>${labels.linkTextHere}
+                    <input type="text" name="text" .value=${state.text} maxlength="200" placeholder=${item?.texts?.[this.bar.config.language]?.title ?? ''} aria-describedby="fb-media-text-hint"
+                        @input=${(event) => this.update({ text: event.target.value })}></label>
+                <p class="hint" id="fb-media-text-hint">${labels.linkTextHereHint}</p>`;
+        }
+
+        const own = item?.copyright ?? '';
+        const copyrightHint = own !== '' ? labels.copyrightHereHint : this.toMedium(item) ? labels.copyrightToMedium : labels.copyrightOnlyHere;
+
+        return html`${this.preview(item)}
+            <label>${labels.altHere}
+                <input type="text" name="alt" .value=${state.alt} maxlength="500" placeholder=${item?.texts?.[this.bar.config.language]?.alt ?? ''} aria-describedby="fb-media-alt-hint"
+                    @input=${(event) => this.update({ alt: event.target.value })}></label>
+            <p class="hint" id="fb-media-alt-hint">${labels.altHereHint}</p>
+            ${state.withCaption ? html`<label>${labels.captionHere}
+                <input type="text" name="caption" .value=${state.caption} maxlength="300"
+                    @input=${(event) => this.update({ caption: event.target.value })}></label>` : nothing}
+            <label>${labels.copyrightHere}
+                <input type="text" name="copyright" .value=${state.copyright} maxlength="300" placeholder=${own !== '' ? own : labels.copyrightExample} aria-describedby="fb-media-copyright-hint"
+                    @input=${(event) => this.update({ copyright: event.target.value })}></label>
+            <p class="hint" id="fb-media-copyright-hint">${copyrightHint}</p>`;
     }
 
     dialog() {
@@ -334,46 +481,40 @@ export class MediaPicker {
                 ${[['media', labels.videoTab], ['poster', labels.posterTab]].map(([name, label]) => html`<button type="button" aria-pressed=${String(state.tab === name)} @click=${() => this.tab(name)}>${label}</button>`)}
             </div>`
             : nothing;
-        const texts = video
-            ? (state.tab === 'poster'
-                ? html`<p class="hint">${labels.posterHint}</p>
-                    ${state.poster ? html`<div class="actions start"><button type="button" @click=${() => this.update({ poster: null })}>${labels.noPoster}</button></div>` : nothing}`
-                : html`<p class="hint">${labels.videoHint}</p>`)
-            : file
-            ? html`<label>${labels.linkTextHere}
-                    <input type="text" .value=${state.text} maxlength="200" aria-describedby="fb-media-text-hint"
-                        @input=${(event) => this.update({ text: event.target.value })}></label>
-                <p class="hint" id="fb-media-text-hint">${labels.linkTextHereHint}</p>`
-            : html`<label>${labels.altHere}
-                    <input type="text" .value=${state.alt} maxlength="500" aria-describedby="fb-media-alt-hint"
-                        @input=${(event) => this.update({ alt: event.target.value })}></label>
-                <p class="hint" id="fb-media-alt-hint">${labels.altHereHint}</p>`;
 
         return html`<dialog class="media" aria-labelledby="fb-media-title" @cancel=${(event) => { event.preventDefault(); this.close(); }}>
             <form @submit=${(event) => { event.preventDefault(); this.apply(); }}>
                 <h2 id="fb-media-title">${video ? labels.chooseVideo : file ? labels.chooseDocument : labels.chooseImage}</h2>
                 ${tabs}
-                <div class="media-tools">
-                    <label>${labels.search}
-                        <input type="search" .value=${state.query} autocomplete="off" @input=${(event) => this.search(event.target.value)}></label>
-                    ${this.bar.config.mayUpload ? html`<button type="button" ?disabled=${state.uploading !== null || state.question !== null} @click=${() => this.choose()}>${labels.upload}</button>` : nothing}
+                <div class="media-columns">
+                    <section class="media-library" aria-labelledby="fb-media-library">
+                        <h3 id="fb-media-library">${labels.mediaLibrary}</h3>
+                        <div class="media-tools">
+                            <label>${labels.search}
+                                <input type="search" .value=${state.query} autocomplete="off" @input=${(event) => this.search(event.target.value)}></label>
+                            ${this.bar.config.mayUpload ? html`<button type="button" ?disabled=${state.uploading !== null || state.question !== null} @click=${() => this.choose()}>${labels.upload}</button>` : nothing}
+                        </div>
+                        <p class="hint" role="status">${state.uploading ?? ''}</p>
+                        ${state.question ? html`<div class="question" role="group" aria-labelledby="fb-media-question">
+                            <p id="fb-media-question">${labels.replaceWhere.replace('{name}', state.question.name)}</p>
+                            <div class="actions">
+                                <button type="button" @click=${() => this.answer(false)}>${labels.replaceHere}</button>
+                                <button type="button" class="primary" @click=${() => this.answer(true)}>${labels.replaceEverywhere.replace('{count}', String(state.question.places))}</button>
+                            </div>
+                        </div>` : nothing}
+                        ${state.problems.length > 0 ? html`<ul class="problems" role="alert">${state.problems.map((problem) => html`<li>${problem}</li>`)}</ul>` : nothing}
+                        ${state.notices.length > 0 ? html`<ul class="notices" role="status">${state.notices.map((notice) => html`<li>${notice}</li>`)}</ul>` : nothing}
+                        ${list}
+                    </section>
+                    <section class="media-place" aria-labelledby="fb-media-place">
+                        <h3 id="fb-media-place">${labels.atThisPlace}</h3>
+                        ${this.place(state)}
+                    </section>
                 </div>
-                <p class="hint" role="status">${state.uploading ?? ''}</p>
-                ${state.question ? html`<div class="question" role="group" aria-labelledby="fb-media-question">
-                    <p id="fb-media-question">${labels.replaceWhere.replace('{name}', state.question.name)}</p>
-                    <div class="actions">
-                        <button type="button" @click=${() => this.answer(false)}>${labels.replaceHere}</button>
-                        <button type="button" class="primary" @click=${() => this.answer(true)}>${labels.replaceEverywhere.replace('{count}', String(state.question.places))}</button>
-                    </div>
-                </div>` : nothing}
-                ${state.problems.length > 0 ? html`<ul class="problems" role="alert">${state.problems.map((problem) => html`<li>${problem}</li>`)}</ul>` : nothing}
-                ${state.notices.length > 0 ? html`<ul class="notices" role="status">${state.notices.map((notice) => html`<li>${notice}</li>`)}</ul>` : nothing}
-                ${list}
-                ${texts}
                 <div class="actions">
                     ${state.value ? html`<button type="button" class="danger" @click=${() => this.close(state.remove)}>${video ? labels.removeVideo : file ? labels.removeDocument : labels.removeImage}</button>` : nothing}
                     <button type="button" @click=${() => this.close()}>${labels.cancel}</button>
-                    <button type="submit" class="primary" ?disabled=${!state.chosen || state.question !== null}>${labels.apply}</button>
+                    <button type="submit" class="primary" ?disabled=${!state.chosen || state.question !== null || state.applying}>${labels.apply}</button>
                 </div>
             </form>
         </dialog>`;
@@ -382,6 +523,43 @@ export class MediaPicker {
 
 export const mediaStyles = css`
     dialog.media { inline-size: min(100% - var(--fb-space-8), var(--fb-size-content)); }
+
+    /* Choosing and setting apart (decision 0203): side by side, stacked once narrow. */
+    .media-columns { display: flex; flex-wrap: wrap; gap: var(--fb-space-4); align-items: start; }
+
+    .media-library { display: grid; flex: 999 1 0; gap: var(--fb-space-3); min-inline-size: 55%; }
+
+    .media-place {
+        display: grid;
+        flex: 1 1 calc(var(--fb-size-narrow) - var(--fb-space-16));
+        gap: var(--fb-space-3);
+        padding: var(--fb-space-4);
+        border-radius: var(--fb-radius-md);
+        background: var(--fb-surface-2);
+    }
+
+    .media-columns h3 { margin: 0; font-size: var(--fb-text-md); font-weight: var(--fb-weight-bold); }
+
+    .media-chosen { display: grid; gap: var(--fb-space-1); margin: 0; }
+
+    .media-chosen :is(img, video, .file-tile) {
+        inline-size: 100%;
+        block-size: auto;
+        max-block-size: calc(var(--fb-space-16) * 3);
+        object-fit: contain;
+        border-radius: var(--fb-radius-sm);
+        background: var(--fb-surface);
+    }
+
+    .media-chosen figcaption {
+        overflow: hidden;
+        font-size: var(--fb-text-xs);
+        color: var(--fb-text-muted);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .media-place input { background: var(--fb-surface); }
 
     dialog input[type="search"] {
         min-block-size: var(--fb-size-control);

@@ -12,8 +12,7 @@ fields:
     max: 12
     start: 3
     fields:
-      image: { type: image, label: Image, ratio: "16:9", sizes: "(min-width: 72rem) 72rem, 100vw" }
-      caption: { type: text, label: Caption, optional: true, maxLength: 200 }
+      image: { type: image, label: Image, caption: true, ratio: "16:9", sizes: "(min-width: 72rem) 72rem, 100vw" }
 #}
 <base-carousel class="base-slider">
   {{ heading('title', 0, {class: 'base-slider__title'}) }}
@@ -23,7 +22,7 @@ fields:
       <li class="base-slider__slide">
         <figure class="base-slider__figure">
           {{ item.field('image') }}
-          <figcaption class="base-slider__caption">{{ item.field('caption') }}</figcaption>
+          <figcaption class="base-slider__caption"><span>{{ item.field('image', 'caption') }}</span> <small class="base-slider__copyright">{{ item.field('image', 'copyright') }}</small></figcaption>
         </figure>
       </li>
     {% endfor %}

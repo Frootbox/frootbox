@@ -97,6 +97,7 @@ final readonly class EditorBar
             'uploadPart' => UploadReceiver::partBytes(),
             'mayUpload' => $this->permissions->can('media.create'),
             'mayReplace' => $this->permissions->can('media.replace'),
+            'mayUpdateMedia' => $this->permissions->can('media.update'),
             'site' => $this->site(),
             'design' => $this->permissions->can('design.update') ? ['publish' => $this->permissions->can('design.publish'), 'discard' => $this->permissions->can('design.discard')] : null,
             'tokens' => $this->design->hostCss(),
@@ -115,10 +116,25 @@ final readonly class EditorBar
         $event->head->add('<script type="application/json" id="' . self::CONFIG . '">' . $json . '</script>');
 
         if ($this->mode->active()) {
-            $event->head->add('<style>' . self::PAGE_CSS . '</style>');
+            $event->head->add('<style>' . self::PAGE_CSS . $this->partCss() . '</style>');
         }
 
         $event->head->add('<script type="module" src="' . Html::escape($this->public->versioned(self::SCRIPT)) . '"></script>');
+    }
+
+    /**
+     * Names for the empty parts of fields while editing, e.g. the caption
+     * of an image (decision 0203).
+     */
+    private function partCss(): string
+    {
+        $css = '';
+
+        foreach (['caption' => 'Caption', 'copyright' => 'Copyright'] as $part => $label) {
+            $css .= \sprintf('[data-fb-field][data-fb-part="%s"]:empty::before{content:"%s"}', $part, addcslashes($this->translator->get($label), '"\\'));
+        }
+
+        return $css;
     }
 
     /**
@@ -376,8 +392,18 @@ final readonly class EditorBar
             'replacedInDraft' => $t('The new file counts everywhere. Visitors see it once the image is published.'),
             'replacedEverywhere' => $t('The new file counts everywhere.'),
             'loadMore' => $t('Show more'),
-            'altHere' => $t('Alternative text for this place'),
+            'atThisPlace' => $t('At this place'),
+            'pickImageFirst' => $t('Choose an image from the media library first.'),
+            'pickVideoFirst' => $t('Choose a video from the media library first.'),
+            'pickDocumentFirst' => $t('Choose a document from the media library first.'),
+            'altHere' => $t('Alternative text'),
             'altHereHint' => $t('Leave it empty to use the text from the media library.'),
+            'captionHere' => $t('Caption'),
+            'copyrightHere' => $t('Copyright'),
+            'copyrightExample' => $t('e.g. Anna Muster / image agency'),
+            'copyrightHereHint' => $t('Leave it empty to use the copyright from the media library.'),
+            'copyrightToMedium' => $t('Saved in the media library, it counts at every place that uses the image.'),
+            'copyrightOnlyHere' => $t('Counts only at this place.'),
             'removeImage' => $t('Remove the image'),
             'imageChosen' => $t('Change the image'),
             'noImage' => $t('No image'),

@@ -665,7 +665,17 @@ Choose a file.: Wähl eine Datei aus.
 Choose an image: Bild auswählen
 'No images yet. Upload the first one.': 'Noch keine Bilder. Lade das erste hoch.'
 Show more: Mehr anzeigen
-Alternative text for this place: Alternativtext für diese Stelle
+At this place: An dieser Stelle
+Choose an image from the media library first.: Wähl zuerst ein Bild aus den Medien.
+Choose a video from the media library first.: Wähl zuerst ein Video aus den Medien.
+Choose a document from the media library first.: Wähl zuerst ein Dokument aus den Medien.
+Caption: Bildunterschrift
+Copyright: Copyright
+'e.g. Anna Muster / image agency': 'z. B. Anna Muster / Bildagentur'
+'Leave it empty to use the copyright from the media library.': 'Leer lassen, um das Copyright aus den Medien zu verwenden.'
+'Saved in the media library, it counts at every place that uses the image.': 'Wird in den Medien gespeichert und gilt überall, wo das Bild verwendet wird.'
+Counts only at this place.: Gilt nur an dieser Stelle.
+'Photographer or image agency, e.g. “Anna Muster / image agency”. The website shows it with the image where the theme provides for it.': 'Fotograf oder Bildagentur, z. B. „Anna Muster / Bildagentur“. Die Website zeigt es beim Bild, wo das Theme es vorsieht.'
 'Leave it empty to use the text from the media library.': 'Leer lassen, um den Text aus den Medien zu verwenden.'
 Remove the image: Bild entfernen
 Change the image: Bild ändern

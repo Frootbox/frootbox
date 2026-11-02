@@ -12,8 +12,7 @@ fields:
     max: 24
     start: 3
     fields:
-      image: { type: image, label: Image, sizes: "(min-width: 72rem) 18rem, (min-width: 30rem) 33vw, 50vw" }
-      caption: { type: text, label: Caption, optional: true, maxLength: 200 }
+      image: { type: image, label: Image, caption: true, sizes: "(min-width: 72rem) 18rem, (min-width: 30rem) 33vw, 50vw" }
 #}
 <base-gallery class="base-gallery">
   {{ heading('title', 0, {class: 'base-gallery__title'}) }}
@@ -22,7 +21,7 @@ fields:
       <li class="base-gallery__item">
         <figure class="base-gallery__figure">
           {{ item.field('image') }}
-          <figcaption class="base-gallery__caption">{{ item.field('caption') }}</figcaption>
+          <figcaption class="base-gallery__caption"><span>{{ item.field('image', 'caption') }}</span> <small class="base-gallery__copyright">{{ item.field('image', 'copyright') }}</small></figcaption>
         </figure>
       </li>
     {% endfor %}
