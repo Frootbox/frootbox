@@ -21,6 +21,14 @@ theme:
       - frootbox/theme-base/Gallery
       - frootbox/theme-base/Slider
       - frootbox/theme-base/Video
+      - frootbox/theme-base/Cards
+      - frootbox/theme-base/Logos
+      - frootbox/theme-base/LinkList
+      - frootbox/theme-base/Accordion
+      - frootbox/theme-base/Steps
+      - frootbox/theme-base/Testimonials
+      - frootbox/theme-base/Pricing
+      - frootbox/theme-base/Contact
   navigations:
     main:
       title: Main navigation

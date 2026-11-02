@@ -27,6 +27,14 @@ export const PAGES = {
     gallery: '/gallery',
     slider: '/slider',
     video: '/video',
+    cards: '/cards',
+    logos: '/logos',
+    linkList: '/link-list',
+    accordion: '/accordion',
+    steps: '/steps',
+    testimonials: '/testimonials',
+    prices: '/prices',
+    contact: '/contact',
     landing: '/aktion',
 };
 
