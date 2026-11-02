@@ -26,11 +26,24 @@ if (spawnSync('docker', ['info'], { stdio: 'ignore' }).status !== 0) {
     process.exit(1);
 }
 
-// The demo website and the base theme alone (decision 0163).
+// The demo website and the base theme alone (decision 0163). Each in its
+// own process group: tools/e2e.php starts the PHP server with its workers
+// as children, and they all have to end with the run.
 const servers = [
-    spawn(php, ['tools/e2e.php'], { cwd: root, env: { ...process.env, E2E_LISTEN: '0.0.0.0:8100' }, stdio: ['ignore', 'ignore', 'inherit'] }),
-    spawn(php, ['tools/e2e.php', '--base'], { cwd: root, env: { ...process.env, E2E_LISTEN: '0.0.0.0:8101' }, stdio: ['ignore', 'ignore', 'inherit'] }),
+    spawn(php, ['tools/e2e.php'], { cwd: root, detached: true, env: { ...process.env, E2E_LISTEN: '0.0.0.0:8100' }, stdio: ['ignore', 'ignore', 'inherit'] }),
+    spawn(php, ['tools/e2e.php', '--base'], { cwd: root, detached: true, env: { ...process.env, E2E_LISTEN: '0.0.0.0:8101' }, stdio: ['ignore', 'ignore', 'inherit'] }),
 ];
+const stop = () => servers.forEach((server) => {
+    try {
+        process.kill(-server.pid, 'SIGTERM');
+    } catch {
+        // Already ended.
+    }
+});
+process.on('SIGINT', () => {
+    stop();
+    process.exit(130);
+});
 
 let exitCode = 1;
 
@@ -50,7 +63,7 @@ try {
 
     exitCode = result.status ?? 1;
 } finally {
-    servers.forEach((server) => server.kill());
+    stop();
 }
 
 process.exit(exitCode);
