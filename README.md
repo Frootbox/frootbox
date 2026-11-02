@@ -212,6 +212,19 @@ group: header
 keywords: [Stage, Intro]
 ```
 
+`example:` gives the block content for the design page under `/_design`,
+in the same form as a block on a page (`fields`, `areas`, `options`). The
+page shows every block the theme offers in each variant with its example,
+next to the tokens, the plain elements and rich text, in the frame of the
+website and in the draft. It is open to users who may see the design and
+to guests with a preview link, never to search engines.
+
+```yaml
+example:
+  fields:
+    title: Fresh coffee, roasted next door
+```
+
 `bin/frootbox blocks` lists what is available, `blocks:check` checks all
 schemas and templates and hints at missing groups and previews,
 `cache:clear` empties `var/cache` after a deployment.

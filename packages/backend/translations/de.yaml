@@ -993,3 +993,20 @@ Video: Video
 "A document has no focus point.": "Ein Dokument hat keinen Fokuspunkt."
 "Replace a video only with a video.": "Ersetz ein Video nur durch ein Video."
 "Replace an image only with an image.": "Ersetz ein Bild nur durch ein Bild."
+# The design page of the core (decision 0205)
+"Everything this website is made of, in the draft.": "Alles, woraus diese Website besteht, im Entwurf."
+Tokens: Tokens
+"Line heights": Zeilenhöhen
+"Font sizes": Schriftgrößen
+Spacing: Abstände
+Widths: Breiten
+Corners: Ecken
+Lines: Linien
+Shadows: Schatten
+"Basic elements": Grundelemente
+"Without classes, like content of modules and other sources": "Ohne Klassen, wie Inhalte von Modulen und fremden Quellen"
+"Rich text": "Rich Text"
+"Everything the text editor can make": "Alles, was der Texteditor erzeugen kann"
+Blocks: Blöcke
+"Without an example yet:": "Noch ohne Beispiel:"
+"This block cannot be shown: {message}": "Dieser Block lässt sich nicht zeigen: {message}"
