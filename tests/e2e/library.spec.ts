@@ -52,7 +52,7 @@ test('opens the menu on small screens as a popover', async ({ page }) => {
     await expect(navigation).toBeHidden();
     await toggle.click();
     await expect(navigation).toBeVisible();
-    await expect(page.getByRole('list', { name: 'Sprache' })).toBeVisible();
+    await expect(page.getByRole('banner').getByRole('list', { name: 'Sprache' })).toBeVisible();
 
     await page.keyboard.press('Escape');
     await expect(navigation).toBeHidden();
