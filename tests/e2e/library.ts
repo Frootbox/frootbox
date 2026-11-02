@@ -26,10 +26,11 @@ export const PAGES = {
     imageText: '/image-with-text',
     gallery: '/gallery',
     slider: '/slider',
+    video: '/video',
     landing: '/aktion',
 };
 
-// Loads all images of the page, also those that would wait until they are
+// Loads all images and video posters of the page, also those that would wait until they are
 // scrolled to, e.g. before a screenshot of the full page. The first call of
 // a size makes the file, which can take a moment on the test server.
 export async function loadImages(page: Page): Promise<void> {
@@ -43,5 +44,13 @@ export async function loadImages(page: Page): Promise<void> {
                 image.addEventListener('error', done, { once: true });
             });
         await Promise.all(images.map((image) => (image.complete ? image.decode() : loaded(image)).catch(() => null)));
+        // Posters of videos load on their own; the same address is then in the cache.
+        const posters = [...document.querySelectorAll('video[poster]')].map((video) => {
+            const image = new Image();
+            image.src = video.getAttribute('poster') ?? '';
+
+            return image.decode().catch(() => null);
+        });
+        await Promise.all(posters);
     });
 }

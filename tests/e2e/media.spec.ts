@@ -2,6 +2,7 @@
  * SPDX-License-Identifier: LGPL-3.0-only
  */
 
+import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import { action, signIn } from './admin';
 
@@ -35,6 +36,46 @@ async function photo(page: Page, name: string): Promise<{ name: string; mimeType
     return { name, mimeType: 'image/jpeg', buffer: Buffer.from(data.split(',')[1], 'base64') };
 }
 
+/**
+ * The clip of the sample website with an empty EBML element of random
+ * bytes at the end, so each run uploads another file (decision 0146).
+ */
+function clip(name: string): { name: string; mimeType: string; buffer: Buffer } {
+    const film = readFileSync('packages/themes/base/demo/media/roasting.webm');
+    const filler = Buffer.from([0xec, 0x84, ...Array.from({ length: 4 }, () => Math.floor(Math.random() * 256))]);
+
+    return { name, mimeType: 'video/webm', buffer: Buffer.concat([film, filler]) };
+}
+
+test('uploads a video in parts and asks for a file every browser plays', async ({ page }) => {
+    const name = `roestung-${unique()}`;
+    await signIn(page, '/cms/media');
+    await page.waitForFunction(() => customElements.get('fb-upload') !== undefined);
+
+    // Small parts, as on a server with a small post_max_size (decision 0177).
+    await page.evaluate(() => document.querySelector('meta[name="fb-upload-part"]')?.setAttribute('content', '4096'));
+    const parts: string[] = [];
+    page.on('request', (request) => {
+        if (request.method() === 'POST' && new URL(request.url()).pathname === '/cms/uploads') {
+            parts.push(request.url());
+        }
+    });
+
+    const chooser = page.waitForEvent('filechooser');
+    await page.getByRole('button', { name: 'Hochladen' }).click();
+    await (await chooser).setFiles(clip(`${name}.webm`));
+    await expect(page.getByText('Die Dateien sind hochgeladen.')).toBeVisible();
+    expect(parts.length).toBeGreaterThanOrEqual(3);
+
+    await page.getByRole('link', { name: `${name}.webm` }).click();
+    await expect(page.getByRole('heading', { name: `${name}.webm` })).toBeVisible();
+    await expect(page.getByText('WebM (vp9) · 640 × 360 px')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Weitere Dateien' })).toBeVisible();
+    await expect(page.getByText('Ergänz eine Datei als MP4 mit H.264 (avc1).')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Datei hinzufügen' })).toBeVisible();
+    await expect(page.locator('fb-focus')).toHaveCount(0);
+});
+
 test('uploads an image, sets its focus and shows it on a published page', async ({ page, browser }) => {
     const name = `hafen-${unique()}`;
     await signIn(page, '/cms/media');
@@ -47,7 +88,7 @@ test('uploads an image, sets its focus and shows it on a published page', async 
     await page.getByRole('button', { name: 'Hochladen' }).click();
     const file = await photo(page, `${name}.jpg`);
     await (await chooser).setFiles(file);
-    await expect(page.getByText('Die Bilder sind hochgeladen.')).toBeVisible();
+    await expect(page.getByText('Die Dateien sind hochgeladen.')).toBeVisible();
     const tile = page.getByRole('link', { name: `${name}.jpg` });
     await expect(tile).toBeVisible();
 
@@ -62,7 +103,7 @@ test('uploads an image, sets its focus and shows it on a published page', async 
     const refused = page.waitForEvent('filechooser');
     await page.getByRole('button', { name: 'Hochladen' }).click();
     await (await refused).setFiles({ name: 'notiz.txt', mimeType: 'text/plain', buffer: Buffer.from('Kaffee') });
-    await expect(page.getByRole('alert')).toContainText('notiz.txt: Die Datei ist kein Bild im Format JPEG, PNG, WebP oder GIF.');
+    await expect(page.getByRole('alert')).toContainText('notiz.txt: Die Datei ist kein Bild (JPEG, PNG, WebP, GIF) und kein Video (MP4, WebM).');
 
     // Focus point by click, alternative text, tags.
     await tile.click();

@@ -146,3 +146,19 @@ test('moves the image slider only with its buttons', async ({ page }) => {
     }
     await expect(next).toBeDisabled();
 });
+
+test('shows a video with poster that starts only on request', async ({ page }) => {
+    await page.goto(PAGES.video);
+    const video = page.locator('.base-video video').first();
+
+    await expect(video).toHaveAttribute('controls', '');
+    await expect(video).toHaveAttribute('aria-label', 'Film: Lichtkreise ziehen über dunkles Braun');
+    await expect(video).toHaveAttribute('poster', /\.(webp|jpg)$/);
+    await expect(video).toHaveAttribute('preload', 'none');
+    await expect(video.locator('source')).toHaveAttribute('type', 'video/webm; codecs="vp9"');
+
+    // The browser gets the film, with jumps, and nothing plays by itself.
+    await video.evaluate((element: HTMLVideoElement) => element.load());
+    await expect.poll(() => video.evaluate((element: HTMLVideoElement) => element.readyState)).toBeGreaterThanOrEqual(1);
+    expect(await video.evaluate((element: HTMLVideoElement) => [element.paused, Math.round(element.duration)])).toEqual([true, 4]);
+});

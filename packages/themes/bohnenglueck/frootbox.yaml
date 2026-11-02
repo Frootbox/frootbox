@@ -20,6 +20,7 @@ theme:
       - frootbox/theme-base/ImageWithText
       - frootbox/theme-base/Gallery
       - frootbox/theme-base/Slider
+      - frootbox/theme-base/Video
   navigations:
     main:
       title: Main navigation
