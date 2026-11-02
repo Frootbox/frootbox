@@ -464,6 +464,7 @@ final readonly class EditorBar
             'chooseIcon' => $t('Choose a symbol'),
             'removeIcon' => $t('Remove the symbol'),
             'noIcon' => $t('No symbol'),
+            'noChoice' => $t('None'),
             'icons' => $t('Symbols'),
             'noIcons' => $t('There are no symbols yet.'),
             'noIconFound' => $t('Nothing found'),

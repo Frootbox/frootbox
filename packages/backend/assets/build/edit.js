@@ -597,9 +597,10 @@ import{a as e,i as t,n,o as r,r as i}from"./chunks/edit-place-Xsl8f87D.js";var a
                 <legend>${n.content}</legend>
                 ${o.map(t=>this.fieldInput(e,t,t.name,e.fields?.[t.name]??null))}
             </fieldset>`:k}
-            ${s.map(t=>this.listView(e,t))}`}optionInput(e,t){let n=e.options?.[t.name]??t.default,r=n=>this.setOption(e,t.name,n),i=t.description?E`<small class="hint">${t.description}</small>`:k;switch(t.type){case`boolean`:return E`<label class="check"><input type="checkbox" .checked=${n===!0}
+            ${s.map(t=>this.listView(e,t))}`}optionInput(e,t){let n=e.options?.[t.name]??t.default,r=n=>this.setOption(e,t.name,n),i=t.description?E`<small class="hint">${t.description}</small>`:k,a=this.labels;switch(t.type){case`boolean`:return E`<label class="check"><input type="checkbox" .checked=${n===!0}
                     @change=${e=>r(e.target.checked)}>${t.label}</label>`;case`choice`:return E`<label>${t.label}
                     <select @change=${e=>r(e.target.value)}>
+                        ${t.default===``?E`<option value="" ?selected=${n===``}>${a.noChoice}</option>`:k}
                         ${t.choices.map(e=>E`<option .value=${String(e.value)} ?selected=${String(e.value)===String(n)}>${e.label}</option>`)}
                     </select>${i}</label>`;case`number`:return E`<label>${t.label}
                     <input type="number" .value=${String(n??``)} min=${t.min??k} max=${t.max??k}

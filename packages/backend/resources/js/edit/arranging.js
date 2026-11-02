@@ -1100,6 +1100,7 @@ export class Arranging {
         const value = data.options?.[option.name] ?? option.default;
         const set = (next) => this.setOption(data, option.name, next);
         const description = option.description ? html`<small class="hint">${option.description}</small>` : nothing;
+        const labels = this.labels;
 
         switch (option.type) {
             case 'boolean':
@@ -1108,6 +1109,7 @@ export class Arranging {
             case 'choice':
                 return html`<label>${option.label}
                     <select @change=${(event) => set(event.target.value)}>
+                        ${option.default === '' ? html`<option value="" ?selected=${value === ''}>${labels.noChoice}</option>` : nothing}
                         ${option.choices.map((choice) => html`<option .value=${String(choice.value)} ?selected=${String(choice.value) === String(value)}>${choice.label}</option>`)}
                     </select>${description}</label>`;
             case 'number':
