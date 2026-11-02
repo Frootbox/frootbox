@@ -2,6 +2,9 @@
 export const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 export const VIDEO_TYPES = ['video/mp4', 'video/webm'];
 
+/** Documents by extension (decision 0179): browsers name the type of CSV and Office files differently. */
+export const DOCUMENT_TYPES = ['.pdf', '.docx', '.xlsx', '.pptx', '.odt', '.ods', '.odp', '.txt', '.csv', '.zip'];
+
 /** Parts when the server names no size. */
 const DEFAULT_PART = 2 * 1024 * 1024;
 

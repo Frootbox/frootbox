@@ -172,6 +172,24 @@ final class MediaScreenTest extends BackendTestCase
         self::assertStringNotContainsString('Ergänz eine Datei als MP4', $detail);
     }
 
+    public function testShowsADocumentWithItsFormatAndTitle(): void
+    {
+        $file = $this->path('pdf');
+        file_put_contents($file, "%PDF-1.7\n%%EOF");
+        $id = $this->upload('preisliste.pdf', file: $file);
+
+        $list = $this->html($this->request('GET', '/cms/media', session: $this->session));
+        self::assertMatchesRegularExpression('#<span class="fb-media-grid__file" aria-hidden="true"><svg[^>]*>.*?</svg><span>PDF</span></span>#s', $list);
+
+        $detail = $this->html($this->request('GET', '/cms/media/' . $id, session: $this->session));
+        self::assertStringContainsString('PDF · 1 KB', $detail);
+        self::assertStringNotContainsString('<fb-focus', $detail, 'A document has no focus point.');
+        self::assertStringNotContainsString('Alternativtext', $detail);
+        self::assertStringContainsString('Benennt den Link zum Dokument', $detail);
+        self::assertMatchesRegularExpression('#href="/media/' . $id . '/1/preisliste-main-[0-9a-f]{16}\.pdf"[^>]*target="_blank"#', $detail);
+        self::assertStringContainsString('accept="document" label="Dokument hier ablegen, um die Datei zu ersetzen"', $detail);
+    }
+
     public function testExplainsWhatIsWrongWithAFile(): void
     {
         $file = $this->get(ProjectPaths::class)->var('shell.php');

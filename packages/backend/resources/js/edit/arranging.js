@@ -13,7 +13,7 @@ import { icon } from './icons.js';
 
 const RESTORE = 'fb-edit-restore:';
 const BLOCK = '[data-fb-block]';
-const PANEL_FIELDS = ['headline', 'text', 'link', 'image', 'video', 'icon'];
+const PANEL_FIELDS = ['headline', 'text', 'link', 'image', 'video', 'icon', 'file'];
 
 /** Up to this many blocks the picker shows them without groups (decision 0148). */
 const FEW_BLOCKS = 8;
@@ -1098,6 +1098,12 @@ export class Arranging {
             return html`<div><span class="hint">${field.label}</span>
                 <button type="button" class="link-field" @click=${() => this.editImage(data, path, value, 'video')}>
                     <span>${value?.media ? this.labels.videoChosen : this.labels.noVideo}</span>${icon('video')}</button></div>`;
+        }
+
+        if (field.type === 'file') {
+            return html`<div><span class="hint">${field.label}</span>
+                <button type="button" class="link-field" @click=${() => this.editImage(data, path, value, 'file')}>
+                    <span>${value?.media ? (value.text || this.labels.documentChosen) : this.labels.noDocument}</span>${icon('file')}</button></div>`;
         }
 
         if (field.type === 'icon') {

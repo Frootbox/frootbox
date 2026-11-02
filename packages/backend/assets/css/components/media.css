@@ -1,5 +1,5 @@
-/* The media library (decision 0126): a grid of images and videos
-   (0177), the drop zone of <fb-upload> and the focus point of <fb-focus>. */
+/* The media library (decision 0126): a grid of images, videos (0177)
+   and documents (0179), the drop zone of <fb-upload> and the focus point of <fb-focus>. */
 
 .fb-media-grid {
     display: grid;
@@ -49,6 +49,26 @@
 
 .fb-media-grid__item video {
     pointer-events: none;
+}
+
+/* A document: the file icon and its format instead of a picture. */
+.fb-media-grid__file {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--fb-space-2);
+    aspect-ratio: 1;
+    border: var(--fb-size-border) solid var(--fb-border);
+    border-radius: var(--fb-radius-md);
+    background: var(--fb-surface-2);
+    color: var(--fb-text-muted);
+    font-size: var(--fb-text-xs);
+    font-weight: var(--fb-weight-semibold);
+}
+
+.fb-media-grid__item:hover .fb-media-grid__file {
+    border-color: var(--fb-border-strong);
 }
 
 /* Marks a video on its first picture. */

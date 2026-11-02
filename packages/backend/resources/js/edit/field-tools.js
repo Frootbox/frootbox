@@ -76,6 +76,15 @@ registerFieldTools('video', (field, bar) => {
     ];
 });
 
+registerFieldTools('file', (field, bar) => {
+    const labels = bar.labels;
+
+    return [
+        { icon: 'file', label: field.dataset.fbValue === undefined ? labels.chooseDocument : labels.documentChosen, run: () => bar.editing?.editImage(field) },
+        ...(removable(field) ? [{ icon: 'trash', label: labels.removeDocument, run: () => bar.editing?.save(field, null), tone: 'danger' }] : []),
+    ];
+});
+
 registerFieldTools('icon', (field, bar) => {
     const labels = bar.labels;
 

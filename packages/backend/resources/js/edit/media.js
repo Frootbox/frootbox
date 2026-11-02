@@ -1,5 +1,6 @@
 import { css, html, nothing } from 'lit';
-import { IMAGE_TYPES, VIDEO_TYPES, sendInParts } from '../ui/parts.js';
+import { DOCUMENT_TYPES, IMAGE_TYPES, VIDEO_TYPES, sendInParts } from '../ui/parts.js';
+import { icon } from './icons.js';
 
 const PER_PAGE = 24;
 const SEARCH_DELAY = 300;
@@ -19,6 +20,9 @@ const SEARCH_DELAY = 300;
  * shown before it starts. Its value is {media, poster?}; the description
  * from the media library names the video, so it has no text here.
  * Files go in parts, so large videos arrive as well.
+ *
+ * A file field (decision 0179) lists the documents and has a link text
+ * instead of the alternative text: {media, text?}.
  */
 export class MediaPicker {
     constructor(bar) {
@@ -32,8 +36,8 @@ export class MediaPicker {
     }
 
     /**
-     * kind: "image" or "video"; value: the stored value {media, alt?} or
-     * {media, poster?} or null; apply(value) and remove() save, done()
+     * kind: "image", "video" or "file"; value: the stored value {media, alt?},
+     * {media, poster?}, {media, text?} or null; apply(value) and remove() save, done()
      * gives the focus back.
      */
     open({ kind = 'image', value, apply, remove, done }) {
@@ -48,6 +52,7 @@ export class MediaPicker {
             poster: value?.poster ?? null,
             seen: {},
             alt: value?.alt ?? '',
+            text: value?.text ?? '',
             query: '',
             items: [],
             total: 0,
@@ -72,8 +77,12 @@ export class MediaPicker {
         this.bar.requestUpdate();
     }
 
-    /** What the list shows: videos on the first tab of a video field, else images. */
+    /** What the list shows: videos on the first tab of a video field, documents for a file, else images. */
     listKind(state = this.state) {
+        if (state.kind === 'file') {
+            return 'document';
+        }
+
         return state.kind === 'video' && state.tab === 'media' ? 'video' : 'image';
     }
 
@@ -242,7 +251,7 @@ export class MediaPicker {
         const input = document.createElement('input');
         input.type = 'file';
         input.multiple = true;
-        input.accept = (this.listKind() === 'video' ? VIDEO_TYPES : IMAGE_TYPES).join(',');
+        input.accept = ({ video: VIDEO_TYPES, document: DOCUMENT_TYPES }[this.listKind()] ?? IMAGE_TYPES).join(',');
         input.addEventListener('change', () => this.upload([...(input.files ?? [])]));
         input.click();
     }
@@ -262,6 +271,10 @@ export class MediaPicker {
             if (state.poster) {
                 value.poster = state.poster;
                 this.bar.mediaChosen(item(state.poster));
+            }
+        } else if (state.kind === 'file') {
+            if (state.text.trim() !== '') {
+                value.text = state.text.trim();
             }
         } else if (state.alt.trim() !== '') {
             value.alt = state.alt.trim();
@@ -295,17 +308,20 @@ export class MediaPicker {
         const labels = this.labels;
         const more = state.items.length < state.total;
         const video = state.kind === 'video';
+        const file = state.kind === 'file';
         const picked = this.picked(state);
         let list;
 
         if (state.items.length === 0) {
-            const empty = this.listKind(state) === 'video' ? labels.noVideos : labels.noMedia;
+            const empty = { video: labels.noVideos, document: labels.noDocuments }[this.listKind(state)] ?? labels.noMedia;
             list = html`<p class="hint">${state.loading ? labels.loading : state.query.trim() !== '' ? labels.noMediaFound : empty}</p>`;
         } else {
             list = html`<ul class="media-grid" aria-label=${labels.mediaLibrary}>
                 ${state.items.map((item) => html`<li><button type="button" aria-pressed=${String(item.id === picked)}
                     @click=${() => this.pick(item.id)} @dblclick=${() => { this.pick(item.id); this.apply(); }}>
-                    ${item.kind === 'video'
+                    ${item.kind === 'document'
+                        ? html`<span class="file-tile" aria-hidden="true">${icon('file')}<b>${item.format}</b></span>`
+                        : item.kind === 'video'
                         ? html`<video src=${item.preview} preload="metadata" muted playsinline aria-hidden="true"></video>`
                         : html`<img src=${item.preview} alt="" width=${item.width} height=${item.height} loading="lazy" decoding="async">`}
                     <span>${item.fileName}</span></button></li>`)}
@@ -323,6 +339,11 @@ export class MediaPicker {
                 ? html`<p class="hint">${labels.posterHint}</p>
                     ${state.poster ? html`<div class="actions start"><button type="button" @click=${() => this.update({ poster: null })}>${labels.noPoster}</button></div>` : nothing}`
                 : html`<p class="hint">${labels.videoHint}</p>`)
+            : file
+            ? html`<label>${labels.linkTextHere}
+                    <input type="text" .value=${state.text} maxlength="200" aria-describedby="fb-media-text-hint"
+                        @input=${(event) => this.update({ text: event.target.value })}></label>
+                <p class="hint" id="fb-media-text-hint">${labels.linkTextHereHint}</p>`
             : html`<label>${labels.altHere}
                     <input type="text" .value=${state.alt} maxlength="500" aria-describedby="fb-media-alt-hint"
                         @input=${(event) => this.update({ alt: event.target.value })}></label>
@@ -330,7 +351,7 @@ export class MediaPicker {
 
         return html`<dialog class="media" aria-labelledby="fb-media-title" @cancel=${(event) => { event.preventDefault(); this.close(); }}>
             <form @submit=${(event) => { event.preventDefault(); this.apply(); }}>
-                <h2 id="fb-media-title">${video ? labels.chooseVideo : labels.chooseImage}</h2>
+                <h2 id="fb-media-title">${video ? labels.chooseVideo : file ? labels.chooseDocument : labels.chooseImage}</h2>
                 ${tabs}
                 <div class="media-tools">
                     <label>${labels.search}
@@ -350,7 +371,7 @@ export class MediaPicker {
                 ${list}
                 ${texts}
                 <div class="actions">
-                    ${state.value ? html`<button type="button" class="danger" @click=${() => this.close(state.remove)}>${video ? labels.removeVideo : labels.removeImage}</button>` : nothing}
+                    ${state.value ? html`<button type="button" class="danger" @click=${() => this.close(state.remove)}>${video ? labels.removeVideo : file ? labels.removeDocument : labels.removeImage}</button>` : nothing}
                     <button type="button" @click=${() => this.close()}>${labels.cancel}</button>
                     <button type="submit" class="primary" ?disabled=${!state.chosen || state.question !== null}>${labels.apply}</button>
                 </div>
@@ -417,7 +438,22 @@ export const mediaStyles = css`
         background: var(--fb-surface-2);
     }
 
-    .media-grid span {
+    .file-tile {
+        display: grid;
+        place-content: center;
+        justify-items: center;
+        gap: var(--fb-space-1);
+        aspect-ratio: 1;
+        border-radius: var(--fb-radius-sm);
+        background: var(--fb-surface-2);
+        color: var(--fb-text-muted);
+    }
+
+    .file-tile svg { inline-size: var(--fb-space-8); block-size: var(--fb-space-8); }
+
+    .file-tile b { font-size: var(--fb-text-xs); font-weight: var(--fb-weight-semibold); }
+
+    .media-grid > li > button > span:last-child {
         overflow: hidden;
         font-size: var(--fb-text-xs);
         color: var(--fb-text-muted);

@@ -760,7 +760,7 @@ item.
 ### Media
 
 ```html
-<fb-upload url="/cms/uploads" folder="01J…" refresh="media-grid" label="Drop images or videos here to upload them"
+<fb-upload url="/cms/uploads" folder="01J…" refresh="media-grid" label="Drop images, videos or documents here to upload them"
            progress="Uploading {done} of {total} … {percent} %" done="The files are uploaded.">
     <section class="fb-card" id="media-grid">
         … <button class="fb-button fb-button--primary" type="button" data-fb-upload>Upload</button> …
@@ -769,6 +769,8 @@ item.
             <li><a class="fb-media-grid__item" href="…"><img src="…" alt="" width="…" height="…"><span class="fb-media-grid__name">hafen.jpg</span></a></li>
             <li><a class="fb-media-grid__item" href="…"><video src="…" preload="metadata" muted playsinline tabindex="-1" aria-hidden="true"></video>
                 <span class="fb-media-grid__kind">…video icon…<span class="fb-visually-hidden">Video</span></span><span class="fb-media-grid__name">film.webm</span></a></li>
+            <li><a class="fb-media-grid__item" href="…"><span class="fb-media-grid__file" aria-hidden="true">…file icon…<span>PDF</span></span>
+                <span class="fb-media-grid__name">preisliste.pdf</span></a></li>
         </ul>
     </section>
 </fb-upload>
@@ -783,7 +785,11 @@ with the file name below; the image is decoration (`alt=""`), the name
 is the text of the link. The chosen tile has `aria-current="true"` or,
 as a button, `aria-pressed="true"`. A video (decision 0177) shows its
 first picture and `.fb-media-grid__kind` with the video icon in the
-corner; in the details `.fb-media-video` is the player.
+corner; in the details `.fb-media-video` is the player. A document
+(decision 0179) shows `.fb-media-grid__file`, the file icon with its
+format on the surface of the tile; its details have no focus point, only
+the title per language that names the link, and a button that opens the
+file.
 
 - `<fb-upload>` uploads the files of the file dialog (a click on
   `[data-fb-upload]` inside it) or of a drop onto it, one after another:
@@ -796,7 +802,7 @@ corner; in the details `.fb-media-video` is the player.
 - Files go in parts of the size in `<meta name="fb-upload-part">`
   (`sendInParts()` in `ui/parts.js`, decision 0177), so large videos
   arrive on any server; `{percent}` in `progress` follows the current
-  file. `accept` (`image`, `video`, empty for both) limits the file
+  file. `accept` (`image`, `video`, `document`, empty for all) limits the file
   dialog, `replace` replaces the file of a medium and `source` adds a
   further file to a video.
 - `<fb-focus>` sets the focus point of an image: a click puts the round
@@ -807,7 +813,9 @@ corner; in the details `.fb-media-video` is the player.
 In the editing mode the bar has its own dialog for images (`media.js`):
 the library with search and upload, the alternative text for the place
 and "Remove the image". For a video field it has two tabs, "Video" and
-"Poster image", each with only the media of its kind.
+"Poster image", each with only the media of its kind. For a file field
+(decision 0179) it lists the documents as `.file-tile` (file icon and
+format) and asks for a link text instead of the alternative text.
 
 For an icon field (decision 0179) the bar has a dialog of the same build
 (`icon-picker.js`): a search by label and a grid of the symbols of the

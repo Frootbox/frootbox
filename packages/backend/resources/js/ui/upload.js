@@ -1,9 +1,9 @@
 import { LitElement } from 'lit';
 import { refresh as refreshParts, runAction } from './action.js';
-import { IMAGE_TYPES, VIDEO_TYPES, sendInParts } from './parts.js';
+import { DOCUMENT_TYPES, IMAGE_TYPES, VIDEO_TYPES, sendInParts } from './parts.js';
 import { showToast } from './toast.js';
 
-export { IMAGE_TYPES, VIDEO_TYPES };
+export { DOCUMENT_TYPES, IMAGE_TYPES, VIDEO_TYPES };
 
 function meta(name) {
     return document.querySelector(`meta[name="${name}"]`)?.getAttribute('content') ?? '';
@@ -73,7 +73,7 @@ export async function uploadMedium(url, file, folderId = null, replace = null, s
  *   (media.replace) instead of adding new ones
  * - source: the id of a video that gets one more file in another format
  *   (media.source-add, decision 0177)
- * - accept: "image", "video" or empty for both
+ * - accept: "image", "video", "document" or empty for all
  *
  * Files go in parts (decision 0177); the status shows the percentage of
  * the current file with {percent} in progress.
@@ -160,7 +160,7 @@ export class Upload extends LitElement {
     }
 
     types() {
-        return { image: IMAGE_TYPES, video: VIDEO_TYPES }[this.accept] ?? [...IMAGE_TYPES, ...VIDEO_TYPES];
+        return { image: IMAGE_TYPES, video: VIDEO_TYPES, document: DOCUMENT_TYPES }[this.accept] ?? [...IMAGE_TYPES, ...VIDEO_TYPES, ...DOCUMENT_TYPES];
     }
 
     onClick(event) {

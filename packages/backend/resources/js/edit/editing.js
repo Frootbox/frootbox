@@ -158,7 +158,7 @@ export class Editing {
         } else if (type === 'link' && (event.key === 'Enter' || event.key === ' ')) {
             event.preventDefault();
             this.editLink(element);
-        } else if ((type === 'image' || type === 'video') && (event.key === 'Enter' || event.key === ' ')) {
+        } else if (['image', 'video', 'file'].includes(type) && (event.key === 'Enter' || event.key === ' ')) {
             event.preventDefault();
             this.editImage(element);
         } else if (type === 'icon' && (event.key === 'Enter' || event.key === ' ')) {
@@ -197,7 +197,7 @@ export class Editing {
         } else if (element?.dataset.fbType === 'link') {
             event.preventDefault();
             this.editLink(element);
-        } else if (element?.dataset.fbType === 'image' || element?.dataset.fbType === 'video') {
+        } else if (['image', 'video', 'file'].includes(element?.dataset.fbType)) {
             event.preventDefault();
             this.editImage(element);
         } else if (element?.dataset.fbType === 'icon') {
@@ -293,7 +293,7 @@ export class Editing {
             element.dataset.fbValue = JSON.stringify(data.value);
         }
 
-        if (['link', 'image', 'video', 'icon'].includes(element.dataset.fbType)) {
+        if (['link', 'image', 'video', 'icon', 'file'].includes(element.dataset.fbType)) {
             element.innerHTML = data.html;
         }
 
@@ -334,10 +334,10 @@ export class Editing {
         });
     }
 
-    /** Images and videos (decision 0177) both come from the media library. */
+    /** Images, videos (decision 0177) and documents (decision 0179) all come from the media library. */
     editImage(element) {
         this.bar.media.open({
-            kind: element.dataset.fbType === 'video' ? 'video' : 'image',
+            kind: ['video', 'file'].includes(element.dataset.fbType) ? element.dataset.fbType : 'image',
             value: this.savedValue(element),
             apply: (value) => this.save(element, value),
             remove: () => this.save(element, null),
