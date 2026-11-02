@@ -65,7 +65,7 @@ final class CommentsTest extends BackendTestCase
         self::assertStringContainsString('"actions":"/cms/preview/actions/"', $html);
         self::assertStringContainsString('"queries":"/cms/preview/queries/"', $html);
         self::assertStringContainsString('"pickHint":"Klicke auf die Stelle, die Du kommentieren willst."', $html);
-        self::assertStringContainsString('<h1 data-fb-field="heading" data-fb-label="Heading">Wer wir sind</h1>', $html, 'Light marks to pick a place.');
+        self::assertStringContainsString('<h1 data-fb-field="heading" data-fb-label="Überschrift">Wer wir sind</h1>', $html, 'Light marks to pick a place.');
     }
 
     public function testAGuestCommentsThroughThePreview(): void
