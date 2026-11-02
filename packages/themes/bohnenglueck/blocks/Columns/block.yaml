@@ -1,7 +1,0 @@
-title: Two columns
-description: Two areas side by side, on narrow screens one below the other.
-group: structure
-keywords: [Columns, side by side]
-areas:
-  left: { label: Left, allow: [Text, Quote] }
-  right: { label: Right, allow: [Text, Quote] }

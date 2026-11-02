@@ -109,5 +109,9 @@ theme:
       fields:
         link: { type: link, label: Profile }
   navigations:
-    main: { title: Main navigation, depth: 2 }
+    main:
+      title: Main navigation
+      depth: 2
+      options:
+        button: { type: boolean, label: As a button }
     footer: Footer

@@ -87,6 +87,11 @@ final class LibraryTest extends NotesTestCase
                 self::assertStringContainsString('<td><strong>Hausmischung</strong></td>', $html);
             }
 
+            if ('/hero' === $path) {
+                self::assertMatchesRegularExpression('#<p class="base-hero__eyebrow">Rösterei am Hafen</p>\s*<h2 class="base-hero__title"#', (string) $response->getBody(), 'The eyebrow stands above the heading (decision 0188).');
+                self::assertSame(1, substr_count((string) $response->getBody(), 'base-hero__eyebrow'), 'An empty eyebrow leaves nothing behind.');
+            }
+
             if ('/downloads' === $path) {
                 self::assertMatchesRegularExpression('#<a href="/media/[0-9A-Z]{26}/1/price-list-main-[0-9a-f]{16}\.pdf" type="application/pdf">Preisliste 2027 <small>PDF, 1 KB</small></a>#', (string) $response->getBody());
                 self::assertStringContainsString('type="text/csv">Unsere Sorten als Tabelle <small>CSV, 1 KB</small></a>', (string) $response->getBody());

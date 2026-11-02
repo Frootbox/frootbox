@@ -3,6 +3,7 @@ description: The big opening at the top of a page with a heading, a sentence and
 group: header
 keywords: [Header, Intro, Banner, Stage, Opening, Teaser]
 fields:
+  eyebrow: { type: headline, label: Eyebrow, optional: true, maxLength: 60, placeholder: "A few words above the heading" }
   title: { type: headline, label: Heading, maxLength: 100, placeholder: "What the website offers" }
   text: { type: text, label: Text, optional: true, multiline: true, maxLength: 300, placeholder: "One or two sentences that say more" }
   primary: { type: link, label: Button, optional: true }

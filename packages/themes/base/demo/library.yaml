@@ -303,7 +303,7 @@
             main:
               - { block: frootbox/theme-base/Hero, variant: Default, options: { background: surface }, fields: { title: 'Kaffee, frisch geröstet in Hamburg', text: 'Wir rösten in kleinen Mengen und schicken Deinen Kaffee am Tag danach los.', primary: { url: 'https://example.org/', text: 'Zum Shop' }, secondary: { url: 'https://example.org/', text: 'Über uns' } } }
               - { block: frootbox/theme-base/Hero, variant: Default, options: { background: primary }, fields: { title: 'Kaffee, frisch geröstet in Hamburg', text: 'Wir rösten in kleinen Mengen und schicken Deinen Kaffee am Tag danach los.', primary: { url: 'https://example.org/', text: 'Zum Shop' }, secondary: { url: 'https://example.org/', text: 'Über uns' } } }
-              - { block: frootbox/theme-base/Hero, variant: Split, options: { image: end }, fields: { title: 'Kaffee, frisch geröstet in Hamburg', text: 'Wir rösten in kleinen Mengen und schicken Deinen Kaffee am Tag danach los.', primary: { url: 'https://example.org/', text: 'Zum Shop' }, secondary: { url: 'https://example.org/', text: 'Über uns' }, image: { media: '${img_roastery.id}' } } }
+              - { block: frootbox/theme-base/Hero, variant: Split, options: { image: end }, fields: { eyebrow: 'Rösterei am Hafen', title: 'Kaffee, frisch geröstet in Hamburg', text: 'Wir rösten in kleinen Mengen und schicken Deinen Kaffee am Tag danach los.', primary: { url: 'https://example.org/', text: 'Zum Shop' }, secondary: { url: 'https://example.org/', text: 'Über uns' }, image: { media: '${img_roastery.id}' } } }
               - { block: frootbox/theme-base/Hero, variant: Split, options: { image: start }, fields: { title: 'Kaffee, frisch geröstet in Hamburg', text: 'Wir rösten in kleinen Mengen und schicken Deinen Kaffee am Tag danach los.', primary: { url: 'https://example.org/', text: 'Zum Shop' }, secondary: { url: 'https://example.org/', text: 'Über uns' }, image: { media: '${img_square.id}' } } }
               - { block: frootbox/theme-base/Hero, variant: Background, options: { height: medium }, fields: { title: 'Kaffee, frisch geröstet in Hamburg', text: 'Wir rösten in kleinen Mengen und schicken Deinen Kaffee am Tag danach los.', primary: { url: 'https://example.org/', text: 'Zum Shop' }, secondary: { url: 'https://example.org/', text: 'Über uns' }, image: { media: '${img_harbour.id}' } } }
   as: hero
@@ -735,6 +735,7 @@
         -
           type: target
           target: 'page:${landing.id}'
+          options: { button: true }
 - navigation.update:
     name: footer
     items:

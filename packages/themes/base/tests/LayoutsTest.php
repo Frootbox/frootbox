@@ -39,7 +39,7 @@ final class LayoutsTest extends NotesTestCase
         $legal = $this->page(self::THEME . '/Page', $start, ['de' => ['title' => 'Impressum', 'content' => ['fields' => ['title' => 'Impressum']]]]);
         $this->runner()->run(new PublishPages([$start, $about, $offer, $legal]));
 
-        $this->runner()->run(new UpdateNavigation('main', ['de' => [['type' => 'target', 'target' => 'page:' . $about], ['type' => 'heading', 'label' => 'Mehr', 'children' => [['type' => 'target', 'target' => 'page:' . $offer]]]]]));
+        $this->runner()->run(new UpdateNavigation('main', ['de' => [['type' => 'target', 'target' => 'page:' . $about], ['type' => 'heading', 'label' => 'Mehr', 'children' => [['type' => 'target', 'target' => 'page:' . $offer]]], ['type' => 'target', 'target' => 'page:' . $legal, 'options' => ['button' => true]]]]));
         $this->runner()->run(new UpdateNavigation('footer', ['de' => [['type' => 'target', 'target' => 'page:' . $legal]]]));
         $this->runner()->run(new PublishNavigations(['main', 'footer']));
         $this->runner()->run(new UpdateSite('de', ['brand' => 'Bohnenglück', 'address' => "Hafenstraße 12\n20457 Hamburg"]));
@@ -48,6 +48,7 @@ final class LayoutsTest extends NotesTestCase
         $home = $this->html('/');
         self::assertStringContainsString('<a class="base-skip-link" href="#content">Zum Inhalt springen</a>', $home, 'The texts of the theme speak the language of the page.');
         self::assertStringContainsString('<nav class="base-nav base-nav--main" aria-label="Hauptnavigation">', $home);
+        self::assertStringContainsString('<a href="/impressum" class="base-nav__button">Impressum</a>', $home, 'An entry of the main navigation may stand out as a button (decision 0188).');
         self::assertMatchesRegularExpression('#<summary>Mehr</summary>\s*<ul>\s*<li><a href="/angebot">Angebot</a></li>#', $home, 'A heading opens its children without a link of its own.');
         self::assertStringContainsString('<button class="base-header__toggle" type="button" popovertarget="base-menu" aria-label="Menü">', $home);
         self::assertStringContainsString('<main id="content" class="base-page">', $home);

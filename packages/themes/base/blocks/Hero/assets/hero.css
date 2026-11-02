@@ -9,6 +9,10 @@
   padding-block: var(--space-2xl);
 }
 .base-hero__text { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-s); }
+.base-hero__eyebrow { margin: 0; font-size: var(--size-s); font-weight: 700; color: var(--color-primary); }
+/* Arabic and Hebrew have no capitals, and spacing tears Arabic letters apart (decision 0133). */
+.base-hero__eyebrow:dir(ltr) { text-transform: uppercase; letter-spacing: 0.12em; }
+.base-hero:is(.base-hero--primary, .base-hero--background) .base-hero__eyebrow { color: inherit; }
 .base-hero__title { margin: 0; font-size: var(--size-4xl); line-height: 1.1; }
 .base-hero__lead { margin: 0; max-inline-size: 38em; font-size: var(--size-l); }
 .base-hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin: var(--space-xs) 0 0; }

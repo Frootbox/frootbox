@@ -1,7 +1,0 @@
-.page-head { padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(1rem, 3vw, 2rem); background: linear-gradient(180deg, color-mix(in srgb, var(--color-accent) 18%, var(--color-bg)), var(--color-bg)); }
-.page-head__title { font-size: clamp(2.2rem, 5vw, 3.4rem); max-inline-size: 22ch; }
-.page-head__intro { margin-block-start: 1rem; max-inline-size: 42rem; font-size: 1.15rem; color: var(--color-muted); }
-
-.breadcrumb ol { display: flex; flex-wrap: wrap; gap: .35rem; list-style: none; padding: 0; margin-block-end: 1.25rem; font-size: .9rem; color: var(--color-muted); }
-.breadcrumb li + li::before { content: '›'; margin-inline-end: .35rem; }
-.breadcrumb a { color: inherit; }
