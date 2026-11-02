@@ -226,6 +226,19 @@ function findLandmark(key, root) {
     return (name ? all.find((entry) => entry.name === name) : null)?.element ?? all.find((entry) => entry.number === Number(number))?.element ?? null;
 }
 
+/**
+ * How a list names the place of a thread in one line: the landmark it
+ * belongs to (it has no block or field to show) and the quoted excerpt,
+ * null when it has neither.
+ */
+export function placeLine(thread, labels) {
+    const match = thread.landmark ? /^([a-z]+)#\d+(?::(.+))?$/s.exec(thread.landmark) : null;
+    const landmark = match ? landmarkLabel({ kind: match[1], name: match[2] ?? null }, labels) : null;
+    const excerpt = thread.excerpt ? `„${thread.excerpt.length > 60 ? `${thread.excerpt.slice(0, 60)} …` : thread.excerpt}“` : null;
+
+    return [landmark, excerpt].filter(Boolean).join(' · ') || null;
+}
+
 function landmarkLabel(landmark, labels) {
     const kind = labels[`landmark${landmark.kind[0].toUpperCase()}${landmark.kind.slice(1)}`] ?? landmark.kind;
 

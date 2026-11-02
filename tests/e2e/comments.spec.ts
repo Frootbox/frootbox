@@ -224,7 +224,8 @@ test('a customer comments at a point of a block and on the footer navigation', a
     const linkText = (await footerLink.innerText()).trim();
     const atFooter = await comment(footerLink, { x: 4, y: 4 }, 'Hier fehlt die Adresse.', 'Navigation: Fußnavigation');
     const footerThread = note.getByRole('region', { name: 'Kommentare' }).locator('[data-thread]', { hasText: 'Hier fehlt die Adresse.' });
-    await expect(footerThread).toContainText(linkText);
+    // The list names the landmark, then the excerpt.
+    await expect(footerThread).toContainText(`Navigation: Fußnavigation · „${linkText}“`);
     const footerPin = note.getByRole('button', { name: /^Kommentar \d+: Hier fehlt/ });
     at = await tip(footerPin);
     expect(Math.abs(at.x - atFooter.x)).toBeLessThan(3);
@@ -253,6 +254,8 @@ test('a customer comments at a point of a block and on the footer navigation', a
     at = await tip(editorFooterPin);
     expect(Math.abs(at.x - (linkBox.x + 4))).toBeLessThan(3);
     expect(Math.abs(at.y - (linkBox.y + 4))).toBeLessThan(3);
+    await bar.getByRole('button', { name: /^Kommentare, \d+ offen/ }).click();
+    await expect(bar.getByRole('region', { name: 'Kommentare' }).locator('[data-thread]', { hasText: 'Hier fehlt die Adresse.' })).toContainText('Navigation: Fußnavigation · „');
 
     // Clean up.
     await page.goto('/cms');

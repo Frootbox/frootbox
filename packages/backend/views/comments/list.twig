@@ -38,6 +38,12 @@
                         {%- if href %}<a href="{{ href }}">{{ thread.pageTitle }}</a>{% else %}{{ t('Deleted page') }}{% endif -%}
                         {%- endif -%}
                     </h2>
+                    {% if thread.landmark %}
+                        {#- A part of the page outside of blocks, e.g. "navigation#2:Footer" (decision 0211). -#}
+                        {%- set kind = {banner: t('Head of the page'), contentinfo: t('Foot of the page'), navigation: t('Navigation'), complementary: t('Side column'), main: t('Main area')}[thread.landmark|split('#')|first] ?? null -%}
+                        {%- set name = (thread.landmark|split(':', 2))[1] ?? null -%}
+                        {%- if kind %}<p class="fb-muted">{{ name ? t('{landmark}: {name}', {landmark: kind, name: name}) : kind }}</p>{% endif -%}
+                    {% endif %}
                     {% if thread.excerpt %}<p class="fb-muted">„{{ thread.excerpt|length > 120 ? thread.excerpt|slice(0, 120) ~ ' …' : thread.excerpt }}“</p>{% endif %}
                 </div>
                 {{ done ? ui.badge('published', t('Done thread')) : ui.badge('changed', t('Open thread')) }}

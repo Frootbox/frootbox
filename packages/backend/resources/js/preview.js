@@ -5,7 +5,7 @@
 // With comments (0156): "Comment" lets the guest click a field or block,
 // write and send; "Comments" lists the threads of their link with the
 // replies and the status, and pins mark the places on the page.
-import { WHOLE_DESIGN_PAGE, elementOf, isContent, pinAt, placeOf } from './comments/place.js';
+import { WHOLE_DESIGN_PAGE, elementOf, isContent, pinAt, placeLine, placeOf } from './comments/place.js';
 
 const source = document.getElementById('fb-preview-config');
 const NAME = 'frootbox-comment-name';
@@ -521,7 +521,7 @@ class PreviewNote extends HTMLElement {
         const name = this.storedName();
 
         return h('article', { class: `thread${thread.id === current ? ' current' : ''}`, 'data-thread': thread.id },
-            h('div', { class: 'meta' }, h('span', { class: `badge${done ? ' done' : ''}` }, done ? this.t('doneThread') : this.t('openThread')), h('span', { class: 'muted' }, thread.excerpt ? `„${thread.excerpt.slice(0, 60)}“` : this.t('aboutPage')), place),
+            h('div', { class: 'meta' }, h('span', { class: `badge${done ? ' done' : ''}` }, done ? this.t('doneThread') : this.t('openThread')), h('span', { class: 'muted' }, placeLine(thread, this.labels) ?? this.t('aboutPage')), place),
             this.message(thread.comment),
             ...thread.replies.map((reply) => h('div', { class: 'reply' }, this.message(reply))),
             h('form', { onsubmit: (event) => this.reply(event, thread, error) },

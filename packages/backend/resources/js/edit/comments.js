@@ -1,5 +1,5 @@
 import { css, html, nothing } from 'lit';
-import { WHOLE_DESIGN_PAGE, elementOf, isContent, pinAt, placeOf } from '../comments/place.js';
+import { WHOLE_DESIGN_PAGE, elementOf, isContent, pinAt, placeLine, placeOf } from '../comments/place.js';
 import { fromStart } from './edges.js';
 import { icon } from './icons.js';
 
@@ -326,7 +326,7 @@ export class CommentsPanel {
         return html`<article class="comment-thread ${this.state.current === thread.id ? 'current' : ''}" data-thread=${thread.id}>
             <div class="comment-meta">
                 <span class="comment-badge ${done ? 'done' : ''}">${done ? labels.doneThread : labels.openThread}</span>
-                <span class="hint">${thread.excerpt ? `„${thread.excerpt.slice(0, 60)}“` : labels.aboutPage}</span>
+                <span class="hint">${placeLine(thread, labels) ?? labels.aboutPage}</span>
                 ${element ? html`<button type="button" class="small" @click=${() => this.reveal(thread)}>${labels.showPlace}</button>` : nothing}
             </div>
             ${this.message(thread.comment)}

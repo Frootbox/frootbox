@@ -123,6 +123,18 @@ final class CommentsTest extends BackendTestCase
         self::assertSame('Ist getauscht.', self::at($seen, 0, 'replies', 0, 'body'));
     }
 
+    public function testTheScreenNamesTheLandmarkOfAThread(): void
+    {
+        // Decision 0211: a comment on the footer navigation, outside of blocks.
+        $this->guest('POST', 'actions/comment.create', ['pageId' => $this->about, 'body' => 'Impressum fehlt.', 'authorName' => 'Frau Müller', 'landmark' => 'navigation#2:Fußnavigation', 'excerpt' => 'Datenschutz']);
+        $this->guest('POST', 'actions/comment.create', ['pageId' => $this->about, 'body' => 'Zu groß.', 'authorName' => 'Frau Müller', 'landmark' => 'banner#1']);
+
+        $html = $this->html($this->request('GET', '/cms/comments', session: $this->session));
+        self::assertStringContainsString('<p class="fb-muted">Navigation: Fußnavigation</p>', $html);
+        self::assertStringContainsString('<p class="fb-muted">„Datenschutz“</p>', $html, 'The excerpt stays below.');
+        self::assertStringContainsString('<p class="fb-muted">Kopf der Seite</p>', $html);
+    }
+
     public function testAnAgencyCommentsOnTheDesignPage(): void
     {
         // Decision 0210: a link straight to the design page, comments on its elements.
