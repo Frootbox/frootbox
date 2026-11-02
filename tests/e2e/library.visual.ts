@@ -21,7 +21,7 @@ for (const [name, path] of Object.entries(PAGES)) {
 
             test(`${name}, ${width}, ${language}`, async ({ page }) => {
                 // The first visit of a page with images makes their sizes,
-                // with AVIF slowly and one after the other on the test server.
+                // which takes a while with AVIF.
                 test.setTimeout(300_000);
                 await page.setViewportSize(viewport);
                 await page.goto(prefix + (path === '/' && prefix ? '' : path));
