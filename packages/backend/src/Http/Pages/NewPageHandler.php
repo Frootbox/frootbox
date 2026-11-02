@@ -54,7 +54,7 @@ final readonly class NewPageHandler implements RequestHandlerInterface
             'parents' => $parents,
             'parent' => $parent,
             'prefix' => null === $parent ? $host . '/' : $prefix($parent),
-            'layouts' => array_map(static fn(LayoutSummary $layout): array => ['value' => $layout->name, 'title' => $layout->title, 'text' => $layout->description], $layouts),
+            'layouts' => array_map(static fn(LayoutSummary $layout): array => ['value' => $layout->name, 'title' => $layout->title, 'text' => $layout->description], array_values(array_filter($layouts, static fn(LayoutSummary $layout): bool => $layout->offered))),
             'suggested' => null === $parent ? null : $tree->layoutBelow($parent),
             'language' => $language,
         ]);

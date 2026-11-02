@@ -842,7 +842,8 @@ export class Arranging {
             : this.layouts.find((layout) => layout.name === page?.layout);
         const info = owner?.areas?.find((item) => item.name === target.area) ?? null;
         const count = siblingsOf(target.parent ? document.querySelector(`${BLOCK}[data-fb-block="${CSS.escape(target.parent)}"]`) : null, target.area).length;
-        const choices = this.blocks.filter((block) => (info?.allow ? info.allow.includes(block.name) : !block.widget));
+        // Blocks the theme hides stay on pages, but are not offered (decision 0162).
+        const choices = this.blocks.filter((block) => block.offered !== false && (info?.allow ? info.allow.includes(block.name) : !block.widget));
         const groups = choices.length > FEW_BLOCKS ? this.groupsOf(choices) : [];
 
         this.picker = { ...this.picker, loading: false, info, full: info?.max != null && count >= info.max, choices, groups, group: groups[0]?.name ?? null };
