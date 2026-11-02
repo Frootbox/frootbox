@@ -126,6 +126,8 @@ jobs:
           path: |
             test-results/
             var/e2e/var/log/
+            var/e2e-base/var/log/
+            var/e2e-agency/var/log/
           retention-days: 7
 
   backend-assets:

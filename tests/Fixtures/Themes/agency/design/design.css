@@ -1,0 +1,289 @@
+/*
+ * SPDX-License-Identifier: MIT
+ *
+ * The styles of the design (decision 0212), written as an agency writes
+ * them for Bootstrap: its own classes, its own colours and fonts.
+ */
+
+@font-face {
+    font-family: Lora;
+    src: url("../assets/fonts/lora-latin-400.woff2") format("woff2");
+    font-weight: 400;
+    font-display: block;
+}
+
+@font-face {
+    font-family: Lora;
+    src: url("../assets/fonts/lora-latin-700.woff2") format("woff2");
+    font-weight: 700;
+    font-display: block;
+}
+
+@font-face {
+    font-family: "Noto Sans";
+    src: url("../../../../../packages/themes/base/assets/fonts/noto-sans-latin.woff2") format("woff2");
+    font-weight: 100 900;
+    font-display: block;
+}
+
+:root {
+    --ink: #1f2a2e;
+    --paper: #ffffff;
+    --sand: #f4f1ea;
+    --accent: #b5452f;
+    --muted: #4f5f63;
+    --line: #dcd6ca;
+}
+
+body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Noto Sans", sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+h1,
+h2,
+h3 {
+    margin: 0;
+    color: var(--ink);
+    font-family: Lora, serif;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+p {
+    margin: 0 0 1rem;
+}
+
+/* Head */
+
+.site-header {
+    border-bottom: 1px solid var(--line);
+}
+
+.site-header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding-block: 1.5rem;
+}
+
+.brand {
+    color: var(--ink);
+    font-family: Lora, serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-decoration: none;
+}
+
+.tagline {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--muted);
+    font-family: "Noto Sans", sans-serif;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.site-nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.site-nav a {
+    display: block;
+    padding-block: 0.25rem;
+    border-bottom: 2px solid transparent;
+    color: var(--ink);
+    font-weight: 500;
+    line-height: 1.5;
+    text-decoration: none;
+}
+
+.site-nav a[aria-current] {
+    border-bottom-color: var(--accent);
+}
+
+/* Opening */
+
+.intro {
+    padding-block: 5rem;
+    background: var(--sand);
+}
+
+.eyebrow {
+    margin-bottom: 1rem;
+    color: var(--accent);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    line-height: 1.5;
+    text-transform: uppercase;
+}
+
+.intro h1 {
+    max-width: 18ch;
+    font-size: 3rem;
+}
+
+.lead-text {
+    max-width: 40rem;
+    margin: 1.5rem 0 2rem;
+    color: var(--muted);
+    font-size: 1.25rem;
+    line-height: 1.5;
+}
+
+.button {
+    display: inline-block;
+    padding: 0.875rem 1.75rem;
+    background: var(--ink);
+    color: var(--paper);
+    font-weight: 600;
+    line-height: 1.5;
+    text-decoration: none;
+}
+
+/* Text with a voice beside it */
+
+.content {
+    padding-block: 4rem;
+}
+
+.content h2 {
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
+
+.voice {
+    margin: 0;
+    padding-left: 1.5rem;
+    border-left: 3px solid var(--accent);
+}
+
+.voice blockquote {
+    margin: 0 0 0.75rem;
+}
+
+.voice blockquote p {
+    margin: 0;
+    font-family: Lora, serif;
+    font-size: 1.25rem;
+    line-height: 1.5;
+}
+
+.voice figcaption {
+    color: var(--muted);
+    font-size: 0.875rem;
+}
+
+/* Projects */
+
+.projects {
+    padding-bottom: 5rem;
+}
+
+.projects > h2 {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.project {
+    height: 100%;
+    padding-top: 1.25rem;
+    border-top: 3px solid var(--ink);
+}
+
+.project h3 {
+    font-size: 1.375rem;
+}
+
+.project__meta {
+    margin: 0.25rem 0 0.75rem;
+    color: var(--muted);
+    font-size: 0.875rem;
+}
+
+.project p:last-child {
+    margin-bottom: 0;
+}
+
+/* Foot */
+
+.site-footer {
+    padding-block: 3rem;
+    background: var(--ink);
+    color: #e9ecea;
+    font-size: 0.9375rem;
+}
+
+.site-footer__inner {
+    display: grid;
+    gap: 1.5rem 2rem;
+}
+
+.site-footer__brand {
+    margin-bottom: 0.5rem;
+    color: var(--paper);
+    font-family: Lora, serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.site-footer__address {
+    margin: 0;
+}
+
+.site-footer__nav ul {
+    display: flex;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.site-footer__nav a {
+    color: var(--paper);
+}
+
+.site-footer__note {
+    margin: 0;
+    color: #b8c2c0;
+    font-size: 0.875rem;
+}
+
+@media (min-width: 768px) {
+    .site-footer__inner {
+        grid-template-columns: 1fr auto;
+        align-items: start;
+    }
+
+    .site-footer__note {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .intro {
+        padding-block: 3rem;
+    }
+
+    .intro h1 {
+        font-size: 2.25rem;
+    }
+
+    .content {
+        padding-block: 3rem;
+    }
+}

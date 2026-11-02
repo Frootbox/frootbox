@@ -29,6 +29,8 @@ declare(strict_types=1);
  *        --url=http://…  the address of the website
  *        --theme=base    the base theme alone with its sample website
  *                        instead of Bohnenglück (decision 0163)
+ *        --theme=agency  the test design of an agency from
+ *                        tests/Fixtures/Themes, only in German (decision 0212)
  */
 
 $root = dirname(__DIR__);
@@ -45,6 +47,7 @@ $url = is_string($options['url'] ?? null) ? $options['url'] : null;
 $themes = [
     'bohnenglueck' => ['name' => 'Bohnenglück', 'package' => 'frootbox/theme-bohnenglueck', 'seed' => 'demo/site.yaml'],
     'base' => ['name' => 'Basis', 'package' => 'frootbox/theme-base', 'seed' => 'demo/site.yaml'],
+    'agency' => ['name' => 'Atelier Nordlicht', 'package' => 'frootbox-test/theme-agency', 'seed' => 'demo/site.yaml', 'fixtures' => true],
 ];
 $theme = $themes[is_string($options['theme'] ?? null) ? $options['theme'] : 'bohnenglueck'] ?? null;
 
@@ -55,7 +58,7 @@ if (1 !== preg_match('#^[a-z0-9_-]+(/[a-z0-9_-]+)*$#', $directory)) {
 }
 
 if (null === $theme) {
-    fwrite(STDERR, "--theme must be bohnenglueck or base.\n");
+    fwrite(STDERR, "--theme must be bohnenglueck, base or agency.\n");
 
     exit(1);
 }
@@ -114,6 +117,8 @@ $composer['name'] = 'frootbox/sandbox';
 $composer['repositories'] = [
     ['type' => 'path', 'url' => $up . 'packages/*', 'options' => ['symlink' => true]],
     ['type' => 'path', 'url' => $up . 'packages/themes/*', 'options' => ['symlink' => true]],
+    // Themes only for tests, never shipped (decision 0212).
+    ...(($theme['fixtures'] ?? false) ? [['type' => 'path', 'url' => $up . 'tests/Fixtures/Themes/*', 'options' => ['symlink' => true]]] : []),
 ];
 $composer['require'] = [...(is_array($composer['require'] ?? null) ? $composer['require'] : []), $theme['package'] => '^0.1@dev'];
 
@@ -122,7 +127,7 @@ file_put_contents(
     json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . "\n",
 );
 
-configure($sandbox . '/config/app.yaml', $url, $theme['name'], $theme['package']);
+configure($sandbox . '/config/app.yaml', $url, $theme['name'], $theme['package'], !($theme['fixtures'] ?? false));
 
 $composerBinary = getenv('COMPOSER_BINARY');
 
@@ -227,16 +232,19 @@ function setting(string $name): ?string
 }
 
 /**
- * Sets the name and the theme and adds English.
+ * Sets the name and the theme and adds English, unless $english is false.
  */
-function configure(string $file, ?string $url, string $name, string $theme): void
+function configure(string $file, ?string $url, string $name, string $theme, bool $english = true): void
 {
     $yaml = (string) file_get_contents($file);
     $replacements = [
         '/^  name: .*$/m' => '  name: ' . $name,
-        '/^  # en: (\{.*?\})\s*#.*$/m' => '  en: $1',
         '/^# theme: .*$/m' => 'theme: ' . $theme,
     ];
+
+    if ($english) {
+        $replacements['/^  # en: (\{.*?\})\s*#.*$/m'] = '  en: $1';
+    }
 
     if (null !== $url) {
         $replacements['/^  # url: .*$/m'] = '  url: ' . $url;

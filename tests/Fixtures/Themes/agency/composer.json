@@ -1,0 +1,16 @@
+{
+    "name": "frootbox-test/theme-agency",
+    "description": "A test design of an agency as a child of the base theme, only for the browser tests (decision 0212)",
+    "type": "frootbox-extension",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.5",
+        "frootbox/core": "^0.1",
+        "frootbox/theme-base": "^0.1"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    }
+}

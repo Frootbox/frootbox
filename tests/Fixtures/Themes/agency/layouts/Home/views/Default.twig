@@ -1,0 +1,21 @@
+{# frootbox
+title: Home
+description: "The start page of the agency with an opening, text with a column beside it in the grid of Bootstrap, and room for projects below."
+areas:
+  top: {}
+  main: {}
+  aside: {}
+  bottom: {}
+#}
+{% include '@theme/header.twig' %}
+<main id="content">
+  {{ area('top') }}
+  <div class="container agency-content">
+    <div class="row gx-5 gy-4">
+      <div class="col-lg-8">{{ area('main') }}</div>
+      <div class="col-lg-4">{{ area('aside') }}</div>
+    </div>
+  </div>
+  {{ area('bottom') }}
+</main>
+{% include '@theme/footer.twig' %}

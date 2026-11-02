@@ -1,0 +1,13 @@
+{#
+  The head of the agency: brand with tagline and the main navigation
+  beside it, wrapping below on small screens, without a menu button.
+  Replaces the head of the base theme (decision 0212).
+#}
+{% set home = breadcrumb()|first %}
+<a class="base-skip-link" href="#content">{{ t('Skip to content') }}</a>
+<header class="agency-header">
+  <div class="container agency-header__inner">
+    <a class="agency-header__brand" href="{{ home ? home.url : start ?? '/' }}"><span{{ site_attributes('brand')|attributes }}>{{ site_field('brand') }}</span><span class="agency-header__tagline"{{ site_attributes('tagline')|attributes }}>{{ site_field('tagline') }}</span></a>
+    {% include '@theme/navigation.twig' with { items: navigation('main'), name: 'main', label: t('Main navigation') } %}
+  </div>
+</header>

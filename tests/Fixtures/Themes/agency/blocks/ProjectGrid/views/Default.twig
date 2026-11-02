@@ -1,0 +1,38 @@
+{# frootbox
+title: Projects
+description: A few projects side by side in the grid of Bootstrap, each with a heading, place and year, and one sentence.
+group: teaser
+fields:
+  title: { type: headline, label: Heading, maxLength: 100, placeholder: "Selected projects" }
+  items:
+    type: list
+    label: Projects
+    min: 1
+    max: 9
+    start: 3
+    fields:
+      title: { type: headline, label: Heading, maxLength: 80, placeholder: "Name of the project" }
+      meta: { type: headline, label: Place and year, optional: true, maxLength: 80, placeholder: "Kiel, 2025" }
+      text: { type: text, label: Text, optional: true, multiline: true, maxLength: 200 }
+examples:
+  - fields:
+      title: 'Selected projects'
+      items:
+        - { title: 'House by the canal', meta: 'Kiel, 2025', text: 'A timber house with large windows to the water.' }
+        - { title: 'Workshop North', meta: 'Rendsburg, 2024', text: 'An old hall becomes offices with light from above.' }
+        - { title: 'Cottage by the dyke', meta: 'Dithmarschen, 2023', text: 'A thatched cottage rebuilt for a family.' }
+#}
+<section class="container agency-projects">
+  {{ heading('title', 0, {class: 'agency-projects__title'}) }}
+  <div class="row g-4">
+    {% for item in field('items') %}
+      <div class="col-md-6 col-lg-4">
+        <article class="agency-project">
+          {{ item.heading('title', 1, {class: 'agency-project__title'}) }}
+          <p class="agency-project__meta">{{ item.field('meta') }}</p>
+          <p class="agency-project__text">{{ item.field('text') }}</p>
+        </article>
+      </div>
+    {% endfor %}
+  </div>
+</section>

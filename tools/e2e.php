@@ -18,13 +18,18 @@ declare(strict_types=1);
  * requests from a container, see tools/visual.mjs.
  *
  * With --base it builds var/e2e-base/ instead, the base theme alone with
- * its sample website (decision 0163), on http://127.0.0.1:8101.
+ * its sample website (decision 0163), on http://127.0.0.1:8101. With
+ * --agency var/e2e-agency/, the test design of an agency only in German
+ * (decision 0212), on http://127.0.0.1:8102.
  */
 
 $root = dirname(__DIR__);
-$base = isset(getopt('', ['base'])['base']);
-$directory = $base ? 'var/e2e-base' : 'var/e2e';
-$address = $base ? '127.0.0.1:8101' : '127.0.0.1:8100';
+$options = getopt('', ['base', 'agency']);
+[$theme, $directory, $address] = match (true) {
+    isset($options['agency']) => ['agency', 'var/e2e-agency', '127.0.0.1:8102'],
+    isset($options['base']) => ['base', 'var/e2e-base', '127.0.0.1:8101'],
+    default => ['bohnenglueck', 'var/e2e', '127.0.0.1:8100'],
+};
 $listen = getenv('E2E_LISTEN');
 $listen = false === $listen || '' === $listen ? $address : $listen;
 $composer = getenv('COMPOSER_BINARY');
@@ -51,7 +56,7 @@ passthru(sprintf(
     escapeshellarg($composer),
     $directory,
     escapeshellarg('http://' . $address),
-    $base ? 'base' : 'bohnenglueck',
+    $theme,
 ), $exitCode);
 
 if (0 !== $exitCode) {
@@ -59,17 +64,20 @@ if (0 !== $exitCode) {
 }
 
 // Arabic as a third language, written from right to left (decision 0133),
-// without content of its own: pages show the German one as fallback.
-$config = $root . '/' . $directory . '/config/app.yaml';
-$yaml = preg_replace('/^  en: (\{.*\})$/m', "  en: $1\n  ar: { title: العربية }", (string) file_get_contents($config), 1, $count);
+// without content of its own: pages show the German one as fallback. The
+// design of the agency is German only.
+if ('agency' !== $theme) {
+    $config = $root . '/' . $directory . '/config/app.yaml';
+    $yaml = preg_replace('/^  en: (\{.*\})$/m', "  en: $1\n  ar: { title: العربية }", (string) file_get_contents($config), 1, $count);
 
-if (!is_string($yaml) || 1 !== $count) {
-    fwrite(STDERR, "{$directory}/config/app.yaml has no line for English.\n");
+    if (!is_string($yaml) || 1 !== $count) {
+        fwrite(STDERR, "{$directory}/config/app.yaml has no line for English.\n");
 
-    exit(1);
+        exit(1);
+    }
+
+    file_put_contents($config, $yaml);
 }
-
-file_put_contents($config, $yaml);
 passthru(sprintf('%s %s cache:clear', escapeshellarg(PHP_BINARY), escapeshellarg($root . '/' . $directory . '/bin/frootbox')), $exitCode);
 
 if (0 !== $exitCode) {

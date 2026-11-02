@@ -1,0 +1,67 @@
+# The start page of the design in design/index.html and four pages for
+# the navigations (decision 0212), for
+#
+#     php bin/frootbox seed frootbox-test/theme-agency:demo/site.yaml
+#
+# Needs the language de.
+- page.create:
+    layout: frootbox-test/theme-agency/Home
+    translations:
+      de:
+        title: Atelier Nordlicht
+        content:
+          areas:
+            top:
+              - { block: frootbox/theme-base/Hero, variant: Default, options: { align: start, background: surface }, fields: { eyebrow: 'Architekturbüro in Kiel', title: 'Räume, die mit dem Licht arbeiten', text: 'Wir planen Wohnhäuser, Umbauten und Arbeitsorte im Norden, vom ersten Entwurf bis zur Übergabe.', primary: { url: '#projekte', text: 'Projekte ansehen' } } }
+            main:
+              - { block: frootbox/theme-base/TextWithHeading, variant: Default, fields: { title: 'Unser Ansatz', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Jedes Haus beginnt bei uns mit einem Tag am Ort. Wir sehen, wo die Sonne steht, woher der Wind kommt und wie die Nachbarn wohnen.' }] }, { type: paragraph, content: [{ type: text, text: 'Daraus entstehen wenige, klare Entwürfe. Wir rechnen früh mit echten Preisen, damit aus dem Entwurf ein Haus wird.' }] }] } } }
+            aside:
+              - { block: frootbox/theme-base/Quote, fields: { quote: 'Sie haben aus einem dunklen Altbau ein helles Zuhause gemacht.', author: 'Familie Jansen, Umbau in Holtenau' } }
+            bottom:
+              - { block: frootbox-test/theme-agency/ProjectGrid, fields: { title: 'Ausgewählte Projekte', items: [{ title: 'Haus am Kanal', meta: 'Kiel-Holtenau, 2025', text: 'Ein Wohnhaus aus Holz mit großen Fenstern zum Wasser.' }, { title: 'Werkhalle Nord', meta: 'Rendsburg, 2024', text: 'Eine alte Halle wird zu Büros mit Licht von oben.' }, { title: 'Kate am Deich', meta: 'Dithmarschen, 2023', text: 'Umbau einer Reetdachkate für eine Familie mit drei Kindern.' }] } }
+  as: start
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations: { de: { title: Büro, slug: buero, content: { fields: { title: Büro } } } }
+  as: office
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations: { de: { title: Kontakt, slug: kontakt, content: { fields: { title: Kontakt } } } }
+  as: contact
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations: { de: { title: Impressum, slug: impressum, content: { fields: { title: Impressum } } } }
+  as: imprint
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations: { de: { title: Datenschutz, slug: datenschutz, content: { fields: { title: Datenschutz } } } }
+  as: privacy
+- page.publish:
+    ids: ['${start.id}', '${office.id}', '${contact.id}', '${imprint.id}', '${privacy.id}']
+- navigation.update:
+    name: main
+    items:
+      de:
+        - { type: target, target: 'page:${start.id}', label: Projekte }
+        - { type: target, target: 'page:${office.id}' }
+        - { type: target, target: 'page:${contact.id}' }
+- navigation.update:
+    name: footer
+    items:
+      de:
+        - { type: target, target: 'page:${imprint.id}' }
+        - { type: target, target: 'page:${privacy.id}' }
+- navigation.publish:
+    names: [main, footer]
+- site.update:
+    language: de
+    fields:
+      brand: Atelier Nordlicht
+      tagline: 'Architektur und Innenräume, Kiel'
+      address: "Holtenauer Straße 12\n24105 Kiel"
+      note: 'Testentwurf für Frootbox'
+- site.publish: {}

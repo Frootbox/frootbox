@@ -1,0 +1,341 @@
+/*
+ * SPDX-License-Identifier: MIT
+ *
+ * The design of the agency (design/design.css) on the classes of the base
+ * theme (decision 0212). Bootstrap is the reset of this child, so its grid
+ * works and everything here wins over it.
+ */
+
+/* Text as in the design: one size, the browser's line breaks and smoothing. */
+body {
+    font-size: 1rem;
+    -webkit-font-smoothing: auto;
+}
+
+:is(h1, h2, h3) {
+    margin: 0;
+    font-weight: 700;
+    text-wrap: wrap;
+}
+
+p,
+li {
+    text-wrap: wrap;
+}
+
+/* The width of the container of Bootstrap, for parts of the base theme. */
+.base-hero__inner,
+.base-footer__inner {
+    inline-size: 100%;
+    max-inline-size: none;
+    margin-inline: auto;
+    padding-inline: 0.75rem;
+}
+
+@media (min-width: 576px) {
+    .base-hero__inner,
+    .base-footer__inner {
+        max-inline-size: 540px;
+    }
+}
+
+@media (min-width: 768px) {
+    .base-hero__inner,
+    .base-footer__inner {
+        max-inline-size: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    .base-hero__inner,
+    .base-footer__inner {
+        max-inline-size: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .base-hero__inner,
+    .base-footer__inner {
+        max-inline-size: 1140px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .base-hero__inner,
+    .base-footer__inner {
+        max-inline-size: 1320px;
+    }
+}
+
+/* Head (partials/header.twig) */
+
+.agency-header {
+    border-block-end: 1px solid var(--color-line);
+}
+
+.agency-header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding-block: 1.5rem;
+}
+
+.agency-header__brand {
+    color: var(--color-text);
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-decoration: none;
+}
+
+.agency-header__tagline {
+    display: block;
+    margin-block-start: 0.25rem;
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.agency-header .base-nav__list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+}
+
+.agency-header .base-nav a {
+    display: block;
+    min-block-size: 0;
+    padding: 0.25rem 0;
+    border-block-end: 2px solid transparent;
+    border-radius: 0;
+    color: var(--color-text);
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.agency-header .base-nav a:hover {
+    background: none;
+}
+
+.agency-header .base-nav [aria-current="page"] {
+    border-block-end-color: var(--color-accent);
+    color: var(--color-text);
+    font-weight: 500;
+}
+
+/* Opening: the hero of the base theme without image, at the start */
+
+.base-hero__inner {
+    display: block;
+    padding-block: 5rem;
+}
+
+.base-hero__text {
+    display: block;
+}
+
+.base-hero__eyebrow {
+    margin: 0 0 1rem;
+    color: var(--color-accent);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.base-hero__title {
+    max-inline-size: 18ch;
+    font-size: 3rem;
+    line-height: 1.2;
+}
+
+.base-hero__lead {
+    max-inline-size: 40rem;
+    margin: 1.5rem 0 2rem;
+    color: var(--color-muted);
+    font-size: 1.25rem;
+    line-height: 1.5;
+}
+
+.base-hero__actions {
+    display: block;
+    margin: 0;
+}
+
+.base-hero__actions a {
+    display: inline-block;
+    min-block-size: 0;
+    padding: 0.875rem 1.75rem;
+    border-radius: 0;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+/* Text with a voice beside it (layouts/Home) */
+
+.agency-content {
+    padding-block: 4rem;
+}
+
+.agency-content .base-prose {
+    display: block;
+}
+
+.agency-content .base-prose__title {
+    margin: 0 0 1rem;
+    font-size: 2rem;
+}
+
+.agency-content .base-prose__body p,
+.agency-content .base-prose__body > :last-child {
+    margin: 0 0 1rem;
+}
+
+.base-quote {
+    padding-inline-start: 1.5rem;
+    border-inline-start: 3px solid var(--color-accent);
+}
+
+.base-quote__text {
+    margin: 0 0 0.75rem;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    text-wrap: wrap;
+}
+
+.base-quote__text p::before,
+.base-quote__text p::after {
+    content: none;
+}
+
+.base-quote__source {
+    display: block;
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 0.875rem;
+}
+
+.base-quote__author {
+    color: inherit;
+    font-weight: 400;
+}
+
+/* Projects (blocks/ProjectGrid) */
+
+.agency-projects {
+    padding-block-end: 5rem;
+}
+
+.agency-projects__title {
+    margin-block-end: 2rem;
+    font-size: 2rem;
+}
+
+.agency-project {
+    block-size: 100%;
+    padding-block-start: 1.25rem;
+    border-block-start: 3px solid var(--color-text);
+}
+
+.agency-project__title {
+    font-size: 1.375rem;
+}
+
+.agency-project__meta {
+    margin: 0.25rem 0 0.75rem;
+    color: var(--color-muted);
+    font-size: 0.875rem;
+}
+
+.agency-project__text {
+    margin-block-end: 0;
+}
+
+/* Foot: the footer of the base theme, dark */
+
+.base-footer {
+    margin-block-start: 0;
+    padding-block: 3rem;
+    border: 0;
+    background: var(--color-dark);
+    color: #e9ecea;
+    font-size: 0.9375rem;
+}
+
+.base-footer__inner {
+    display: grid;
+    gap: 1.5rem 2rem;
+    padding-block: 0;
+}
+
+.base-footer__site {
+    display: block;
+}
+
+.base-footer__brand {
+    margin: 0 0 0.5rem;
+    color: #ffffff;
+    font-size: 1.25rem;
+}
+
+.base-footer__address {
+    margin: 0;
+}
+
+.base-footer .base-nav__list {
+    flex-direction: row;
+    gap: 1.5rem;
+}
+
+.base-footer .base-nav a {
+    display: inline;
+    min-block-size: 0;
+    padding: 0;
+    border-radius: 0;
+    color: #ffffff;
+    text-decoration: underline;
+    text-decoration-thickness: auto;
+    text-underline-offset: auto;
+}
+
+.base-footer .base-nav a:hover {
+    background: none;
+}
+
+.base-footer__bottom {
+    display: block;
+}
+
+.base-footer__note {
+    color: #b8c2c0;
+    font-size: 0.875rem;
+}
+
+@media (min-width: 768px) {
+    .base-footer__inner {
+        grid-template-columns: 1fr auto;
+        align-items: start;
+    }
+
+    .base-footer__bottom {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .base-hero__inner {
+        padding-block: 3rem;
+    }
+
+    .base-hero__title {
+        font-size: 2.25rem;
+    }
+
+    .agency-content {
+        padding-block: 3rem;
+    }
+}

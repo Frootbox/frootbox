@@ -1,0 +1,98 @@
+<!doctype html>
+<!--
+  SPDX-License-Identifier: MIT
+
+  The design of the agency (decision 0212): a static page as an agency
+  delivers it, with Bootstrap, its own classes and the fonts Lora and
+  Noto Sans. The child theme around it has to show the same page, pixel
+  for pixel; tests/e2e/agency.spec.ts compares both.
+-->
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Atelier Nordlicht</title>
+  <link rel="stylesheet" href="../assets/reset.css">
+  <link rel="stylesheet" href="design.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand" href="index.html">Atelier Nordlicht<span class="tagline">Architektur und Innenräume, Kiel</span></a>
+      <nav class="site-nav" aria-label="Hauptnavigation">
+        <ul>
+          <li><a href="index.html" aria-current="page">Projekte</a></li>
+          <li><a href="#buero">Büro</a></li>
+          <li><a href="#kontakt">Kontakt</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main id="content">
+    <section class="intro">
+      <div class="container">
+        <p class="eyebrow">Architekturbüro in Kiel</p>
+        <h1>Räume, die mit dem Licht arbeiten</h1>
+        <p class="lead-text">Wir planen Wohnhäuser, Umbauten und Arbeitsorte im Norden, vom ersten Entwurf bis zur Übergabe.</p>
+        <a class="button" href="#projekte">Projekte ansehen</a>
+      </div>
+    </section>
+    <div class="container content">
+      <div class="row gx-5 gy-4">
+        <div class="col-lg-8">
+          <h2>Unser Ansatz</h2>
+          <p>Jedes Haus beginnt bei uns mit einem Tag am Ort. Wir sehen, wo die Sonne steht, woher der Wind kommt und wie die Nachbarn wohnen.</p>
+          <p>Daraus entstehen wenige, klare Entwürfe. Wir rechnen früh mit echten Preisen, damit aus dem Entwurf ein Haus wird.</p>
+        </div>
+        <div class="col-lg-4">
+          <figure class="voice">
+            <blockquote><p>Sie haben aus einem dunklen Altbau ein helles Zuhause gemacht.</p></blockquote>
+            <figcaption>Familie Jansen, Umbau in Holtenau</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+    <section class="container projects">
+      <h2>Ausgewählte Projekte</h2>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <article class="project">
+            <h3>Haus am Kanal</h3>
+            <p class="project__meta">Kiel-Holtenau, 2025</p>
+            <p>Ein Wohnhaus aus Holz mit großen Fenstern zum Wasser.</p>
+          </article>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <article class="project">
+            <h3>Werkhalle Nord</h3>
+            <p class="project__meta">Rendsburg, 2024</p>
+            <p>Eine alte Halle wird zu Büros mit Licht von oben.</p>
+          </article>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <article class="project">
+            <h3>Kate am Deich</h3>
+            <p class="project__meta">Dithmarschen, 2023</p>
+            <p>Umbau einer Reetdachkate für eine Familie mit drei Kindern.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div class="site-footer__about">
+        <p class="site-footer__brand">Atelier Nordlicht</p>
+        <p class="site-footer__address">Holtenauer Straße 12<br>24105 Kiel</p>
+      </div>
+      <nav class="site-footer__nav" aria-label="Fußnavigation">
+        <ul>
+          <li><a href="#impressum">Impressum</a></li>
+          <li><a href="#datenschutz">Datenschutz</a></li>
+        </ul>
+      </nav>
+      <p class="site-footer__note">Testentwurf für Frootbox</p>
+    </div>
+  </footer>
+</body>
+</html>

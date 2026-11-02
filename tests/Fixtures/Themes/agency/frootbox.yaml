@@ -1,0 +1,42 @@
+title: 'Agentur (Test)'
+description: 'Testentwurf einer Agentur als Kind des Basis-Themes, nur für die Browser-Tests'
+# The design in design/ as a child theme of the base theme (decision 0212):
+# its own tokens and font, Bootstrap as assets/reset.css, its own head,
+# layout and block, and fewer blocks of the library. Never shipped.
+theme:
+  parent: frootbox/theme-base
+  tokens:
+    color:
+      bg: '#ffffff'
+      surface: '#f4f1ea'
+      text: '#1f2a2e'
+      muted: '#4f5f63'
+      primary: '#1f2a2e'
+      primary-contrast: '#ffffff'
+      accent: '#b5452f'
+      focus: '#b5452f'
+      dark: '#1f2a2e'
+      line: '#dcd6ca'
+    font:
+      body: noto-sans
+      heading: lora
+    leading:
+      body: 1.6
+      heading: 1.2
+    radius: 0px
+    radius-button: square
+  fonts:
+    lora:
+      label: Lora
+      family: 'Lora, Georgia, serif'
+      files:
+        - { file: assets/fonts/lora-latin-400.woff2, weight: 400, range: latin }
+        - { file: assets/fonts/lora-latin-700.woff2, weight: 700, range: latin, preload: true }
+  fields:
+    tagline: { type: headline, label: Tagline, optional: true, maxLength: 80 }
+  blocks:
+    hide:
+      - frootbox/theme-base/Slider
+      - frootbox/theme-base/Video
+      - frootbox/theme-base/Pricing
+      - frootbox/theme-base/Testimonials

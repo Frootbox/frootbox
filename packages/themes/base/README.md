@@ -35,6 +35,21 @@ in lowercase with hyphens (`map-pin.svg`). A child theme adds its own or
 replaces one by the same name. The page gets them inline and hidden from
 screen readers, so the text next to a symbol carries its meaning.
 
+## Frameworks
+
+No framework is needed, and any can be used (decision 0167). A child
+theme that wants Bootstrap puts its CSS into `assets/reset.css`: it then
+replaces the reset of the base theme and lies in the lowest layer, so
+the blocks always win while classes such as `.container`, `.row` and
+`.col-lg-4` still work. Loaded as any other name, it would land in the
+layer `theme`, and its reboot would restyle the blocks. Tokens can be
+handed to the framework, e.g. `--bs-primary: var(--color-primary)` in
+the child's `assets/site.css`.
+
+`tests/Fixtures/Themes/agency` in the repository shows a whole design
+built this way, compared pixel for pixel with its static original
+(decision 0212).
+
 ## License
 
 MIT, see `LICENSE`.
