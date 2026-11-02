@@ -30,6 +30,9 @@
             {%- endfor %}
         </nav>
         <div class="fb-sidebar__footer">
+            {%- if fb.user %}
+            <a class="fb-nav__item fb-nav__item--small" href="{{ path('backend.help') }}">{{ icon('info', 'fb-icon fb-icon--small') }}<span>{{ t('Help') }}</span></a>
+            {%- endif %}
             <fb-theme-switch label="{{ t('Appearance') }}" labels="{{ {system: t('Like the system'), light: t('Light'), dark: t('Dark')}|json_encode }}"></fb-theme-switch>
             {%- if fb.user %}
             <div class="fb-account">
@@ -45,6 +48,9 @@
     </aside>
     <main class="fb-main" id="main" tabindex="-1">
         <div class="fb-main__inner">
+            {%- block help %}{% if fb.user %}
+            <div class="fb-main__bar">{{ ui.help(fb.help, path('backend.help')) }}</div>
+            {%- endif %}{% endblock %}
             {% block content %}{% endblock %}
         </div>
     </main>

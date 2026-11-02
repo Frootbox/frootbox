@@ -1,0 +1,56 @@
+{#- The help (decisions 0215, 0218): its pages on the side, one page or the start in the main part. -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ article ? article.title ~ ' · ' : '' }}{{ t('Help') }}{% endblock %}
+
+{#- No help button on the help itself. -#}
+{% block help %}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Help') }}</h1>
+            <p class="fb-muted">{{ t('How this website is looked after: screens, blocks and roles, as they are installed here.') }}</p>
+        </div>
+    </header>
+
+    {%- if brand.helpName %}
+    <section class="fb-card fb-card--accent" aria-labelledby="help-brand">
+        <div class="fb-card__header fb-card__header--tight"><h2 class="fb-heading-4" id="help-brand">{{ t('Help from {name}', {name: brand.helpName}) }}</h2></div>
+        <div class="fb-card__body">
+            <p class="fb-cluster">
+                {%- if brand.helpUrl %}<a href="{{ brand.helpUrl }}" rel="noopener">{{ brand.helpUrl|replace({'mailto:': '', 'https://': ''}) }}</a>{% endif -%}
+                {%- if brand.helpPhone %}<a href="tel:{{ brand.helpPhone|replace({' ': ''}) }}">{{ brand.helpPhone }}</a>{% endif -%}
+            </p>
+        </div>
+    </section>
+    {%- endif %}
+
+    <div class="fb-split">
+        <nav class="fb-card fb-split__side fb-split__side--sticky" aria-labelledby="help-pages">
+            <div class="fb-card__header fb-card__header--tight"><h2 class="fb-heading-4" id="help-pages">{{ t('Topics') }}</h2></div>
+            <ul class="fb-help-topics">
+                {%- for entry in entries %}
+                <li><a class="fb-help-topics__link" href="{{ path('backend.help.show', {id: entry.id}) }}"{% if entry.id == current %} aria-current="page"{% endif %}>{{ entry.title }}</a></li>
+                {%- endfor %}
+            </ul>
+        </nav>
+
+        <article class="fb-card fb-split__main" aria-labelledby="help-title">
+            <div class="fb-card__header">
+                <h2 class="fb-heading-2" id="help-title">{{ article ? article.title : t('Choose a topic') }}</h2>
+            </div>
+            <div class="fb-card__body fb-stack">
+                {%- if article %}
+                {%- if not article.translated %}{{ ui.alert({tone: 'info', text: t('This page is only available in English so far.')}) }}{% endif %}
+                <div class="fb-prose">{{ article.html|raw }}</div>
+                {%- else %}
+                <p class="fb-muted">{{ t('Every screen has a help button at the top right that opens the page about it. The search finds help pages as well.') }}</p>
+                {%- endif %}
+            </div>
+        </article>
+    </div>
+</div>
+{% endblock %}

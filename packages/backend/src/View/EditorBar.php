@@ -95,6 +95,8 @@ final readonly class EditorBar
             'pages' => $this->router->path('backend.pages'),
             // The search of the backend (decision 0217).
             'search' => ['src' => $this->router->path('backend.search'), 'labels' => $this->searchLabels()],
+            // The help about editing (decision 0218).
+            'help' => $this->help(),
             'uploads' => $this->router->path('backend.uploads'),
             // Files go in parts of this size (decision 0177).
             'uploadPart' => UploadReceiver::partBytes(),
@@ -251,6 +253,18 @@ final readonly class EditorBar
             'label' => $this->translator->get(['{count} day', '{count} days'], ['count' => $duration['days']]),
             'selected' => $duration['selected'],
         ], AccessHandler::durations());
+    }
+
+    /**
+     * The help page about editing on the website for <fb-help>, if there is one.
+     *
+     * @return array{src: string, base: string, labels: array<string, string>}|null
+     */
+    private function help(): ?array
+    {
+        $link = HelpLink::find($this->runner, $this->router, 'screen:edit-mode');
+
+        return null === $link ? null : ['src' => $link->url, 'base' => $this->router->path('backend.help'), 'labels' => HelpLink::labels($this->translator)];
     }
 
     /**

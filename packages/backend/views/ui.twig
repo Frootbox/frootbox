@@ -205,3 +205,14 @@
     <a class="fb-nav__item fb-nav__item--small fb-nav__item--search" href="{{ href }}" aria-keyshortcuts="Control+K Meta+K">{{ icon('search', 'fb-icon fb-icon--small') }}<span>{{ t('Search') }}</span><kbd class="fb-nav__keys" data-fb-keys>Ctrl K</kbd></a>
 </fb-search>
 {%- endmacro %}
+
+{#- The help about a screen as a panel at its side (decision 0218); without a page about it a link to the help. -#}
+{% macro help(link, base) -%}
+{%- if link -%}
+<fb-help src="{{ link.url }}" base="{{ base }}" labels="{{ {help: t('Help'), close: t('Close'), open: t('Open in the help'), loading: t('Loading …'), failed: t('The help could not be loaded. Try again.'), english: t('This page is only available in English so far.')}|json_encode }}">
+    {{- _self.button({label: t('Help: {title}', {title: link.title}), href: link.url, variant: 'ghost', small: true, icon: 'info'}) -}}
+</fb-help>
+{%- else -%}
+    {{- _self.button({label: t('Help'), href: base, variant: 'ghost', small: true, icon: 'info'}) -}}
+{%- endif -%}
+{%- endmacro %}

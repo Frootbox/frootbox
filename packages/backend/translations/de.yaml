@@ -1049,3 +1049,24 @@ Hits: Treffer
 Check the spelling or search for fewer words.: Prüf die Schreibweise oder such nach weniger Wörtern.
 Go to: Gehe zu
 Upload files: Dateien hochladen
+
+# Help (decisions 0215, 0218)
+Help: Hilfe
+"Help: {title}": "Hilfe: {title}"
+Topics: Themen
+Help from {name}: Hilfe von {name}
+Choose a topic: Wähl ein Thema
+"How this website is looked after: screens, blocks and roles, as they are installed here.": "So pflegst Du diese Website: Bildschirme, Blöcke und Rollen, wie sie hier installiert sind."
+Every screen has a help button at the top right that opens the page about it. The search finds help pages as well.: Jeder Bildschirm hat oben rechts einen Hilfe-Knopf, der die passende Seite öffnet. Auch die Suche findet Hilfe-Seiten.
+This page is only available in English so far.: Diese Seite gibt es bisher nur auf Englisch.
+Open in the help: In der Hilfe öffnen
+The help could not be loaded. Try again.: Die Hilfe lässt sich nicht laden. Versuch es noch einmal.
+These blocks can be added to the pages of this website. Each one is designed for a purpose; choose the one that fits instead of building it from others.: Diese Blöcke kannst Du auf den Seiten dieser Website einfügen. Jeder ist für einen Zweck gestaltet; nimm den passenden, statt ihn aus anderen zusammenzubauen.
+Blocks of this website: Blöcke dieser Website
+'Roles bundle what a user may do. A higher level manages the lower ones. "*" stands for every action of its kind, e.g. "page.*" for everything with pages.': 'Rollen bündeln, was ein Benutzer darf. Eine höhere Stufe verwaltet die niedrigeren. „*“ steht für jede Aktion ihrer Art, z. B. „page.*“ für alles mit Seiten.'
+Roles of this website: Rollen dieser Website
+all pages as a tree.: alle Seiten als Baum.
+Move a page: Seite verschieben
+Drag it in the sitemap.: Zieh sie in der Sitemap.
+Or press Alt and an arrow key.: Oder drück Alt und eine Pfeiltaste.
+Old addresses redirect to the new ones by themselves.: Alte Adressen leiten von selbst auf die neuen weiter.

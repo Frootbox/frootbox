@@ -1,0 +1,109 @@
+/* A page of the help written in Markdown (decision 0218); the panel of
+   <fb-help> has the same rules in its own styles. */
+
+.fb-prose {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fb-space-3);
+    line-height: var(--fb-leading-normal);
+}
+
+.fb-prose h2 {
+    margin-block-start: var(--fb-space-4);
+    font-size: var(--fb-text-lg);
+    font-weight: var(--fb-weight-bold);
+    line-height: var(--fb-leading-snug);
+}
+
+.fb-prose :is(h3, h4, h5, h6) {
+    margin-block-start: var(--fb-space-2);
+    font-size: var(--fb-text-md);
+    font-weight: var(--fb-weight-semibold);
+}
+
+.fb-prose :is(ul, ol) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fb-space-1);
+    padding-inline-start: var(--fb-space-6);
+}
+
+.fb-prose ul {
+    list-style: disc;
+}
+
+.fb-prose ol {
+    list-style: decimal;
+}
+
+.fb-prose a {
+    color: var(--fb-accent-text);
+}
+
+.fb-prose code {
+    padding: 0 var(--fb-space-1);
+    border-radius: var(--fb-radius-sm);
+    background: var(--fb-surface-2);
+    font-family: var(--fb-font-mono);
+    font-size: var(--fb-text-sm);
+}
+
+.fb-prose pre {
+    padding: var(--fb-space-3);
+    overflow-x: auto;
+    border-radius: var(--fb-radius-md);
+    background: var(--fb-surface-2);
+}
+
+.fb-prose pre code {
+    padding: 0;
+    background: none;
+}
+
+.fb-prose blockquote {
+    padding: var(--fb-space-3) var(--fb-space-4);
+    border-inline-start: var(--fb-size-indicator) solid var(--fb-accent);
+    border-radius: var(--fb-radius-sm);
+    background: var(--fb-accent-soft);
+}
+
+.fb-prose img {
+    max-inline-size: 100%;
+    height: auto;
+    border: var(--fb-size-border) solid var(--fb-border);
+    border-radius: var(--fb-radius-md);
+}
+
+/* The topics of the help beside a page. */
+.fb-help-topics {
+    display: flex;
+    flex-direction: column;
+    padding: var(--fb-space-2);
+}
+
+.fb-help-topics__link {
+    display: flex;
+    align-items: center;
+    min-height: var(--fb-size-control-sm);
+    padding: var(--fb-space-1) var(--fb-space-3);
+    border-radius: var(--fb-radius-md);
+    color: var(--fb-text);
+    text-decoration: none;
+}
+
+.fb-help-topics__link:hover {
+    background: var(--fb-surface-2);
+}
+
+.fb-help-topics__link[aria-current="page"] {
+    background: var(--fb-accent-soft);
+    color: var(--fb-accent-text);
+    font-weight: var(--fb-weight-semibold);
+}
+
+/* The help button above every screen. */
+.fb-main__bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-block-end: var(--fb-space-2);
+}

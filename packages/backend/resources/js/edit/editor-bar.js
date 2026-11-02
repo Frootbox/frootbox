@@ -1,5 +1,6 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { Search } from '../ui/search.js';
+import '../ui/help.js';
 import { Arranging, arrangingStyles } from './arranging.js';
 import { CommentsPanel, commentStyles } from './comments.js';
 import { DesignPanel, designStyles } from './design.js';
@@ -634,7 +635,7 @@ export class EditorBar extends LitElement {
         @media (max-width: 30rem) {
             .bar { --pad: var(--fb-space-1); flex-wrap: nowrap; gap: var(--fb-space-1); }
             .bar > * { flex-shrink: 0; }
-            .bar > button, .bar > fb-search > button { padding-inline: var(--fb-space-2); }
+            .bar > button, .bar > fb-search > button, .bar > fb-help > button { padding-inline: var(--fb-space-2); }
             .state { padding-inline: var(--fb-space-1); }
 
             .bar > .primary {
@@ -876,6 +877,7 @@ export class EditorBar extends LitElement {
             ${editing ? this.pageControls(page) : nothing}
             ${editing ? this.comments.button() : nothing}
             ${this.search()}
+            ${this.help()}
             ${this.more()}
             <button type="button" aria-label=${labels.collapse} title=${labels.collapse} aria-expanded="true"
                 @click=${() => this.collapse(true)}>${icon('collapse')}</button>
@@ -1032,6 +1034,15 @@ export class EditorBar extends LitElement {
      * sections for this page and for the whole website, each entry only
      * with its right. Without entries there is no menu.
      */
+    /** The help about editing on the website as a panel at the side (decision 0218). */
+    help() {
+        const help = this.config.help;
+
+        return help ? html`<fb-help src=${help.src} base=${help.base} .labels=${help.labels}>
+            <button type="button" aria-label=${help.labels.help} title=${help.labels.help}>${icon('info')}</button>
+        </fb-help>` : nothing;
+    }
+
     /** The search of the backend, also with Ctrl+K or ⌘+K (decision 0217). */
     search() {
         const search = this.config.search;

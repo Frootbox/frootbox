@@ -151,6 +151,19 @@
 </div>
 
 <div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Help') }}</p>
+    <div class="fb-stack">
+        <div class="fb-main__bar">{{ ui.help({id: 'frootbox/backend/pages', title: t('Pages'), url: path('backend.help.show', {id: 'frootbox/backend/pages'})}, path('backend.help')) }}</div>
+        <div class="fb-prose">
+            <p><strong>{{ t('Sitemap') }}</strong>: {{ t('all pages as a tree.') }}</p>
+            <h2 id="design-move">{{ t('Move a page') }}</h2>
+            <ul><li>{{ t('Drag it in the sitemap.') }}</li><li>{{ t('Or press Alt and an arrow key.') }}</li></ul>
+            <blockquote><p>{{ t('Old addresses redirect to the new ones by themselves.') }}</p></blockquote>
+        </div>
+    </div>
+</div>
+
+<div class="fb-design-sample">
     <p class="fb-design-sample__title">{{ t('Empty state') }}</p>
     {{ ui.empty({icon: 'image', title: t('No media yet'), text: t('Upload images and files to use them on your pages.'), action: {label: t('Upload'), icon: 'plus'}}) }}
 </div>

@@ -35,6 +35,8 @@ final readonly class Frame
         public string $head,
         /** Null for guests */
         public ?ProtectionStatus $protection = null,
+        /** The help page about the screen, null for the overview (decision 0218) */
+        public ?HelpLink $help = null,
     ) {
         $this->direction = Direction::of($language)->value;
     }

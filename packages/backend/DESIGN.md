@@ -483,6 +483,43 @@ with `SearchLink` and `SearchCommand` (see [Screens of
 extensions](#screens-of-extensions)). `static` shows it open with
 sample `groups`, as on the design page.
 
+### Help
+
+```twig
+{{ ui.help(fb.help, path('backend.help')) }}
+```
+
+The help about a screen (decisions 0215, 0218) as `<fb-help>`: a small
+ghost button "Help: <page>" with the info icon, which opens the page
+in a panel at the inline end instead of leaving the screen. Without a
+script, or with a modifier key, it is a link to the page on the screen
+"Help". The frame puts it in `.fb-main__bar` above the content of every
+screen and finds the page by the route (`screen:backend.pages` also for
+`backend.pages.show`); without a page it links to the overview. The
+editor bar has the same panel behind a button with the info icon, for
+the page about `screen:edit-mode`.
+
+The panel keeps its styles in its shadow root: full height, width 80 %
+of `--fb-size-dialog`, a border at the inline start, shadow
+`--fb-shadow-lg`, the backdrop `--fb-backdrop`. At the top the title
+(20 px, bold) and "Close", below the page, at the foot "Open in the
+help". Links to other help pages open in the panel, anchors scroll,
+Escape closes. A page that is not translated yet says so above.
+
+### Prose
+
+```twig
+<div class="fb-prose">{{ article.html|raw }}</div>
+```
+
+Text written in Markdown, e.g. a help page: a column with
+`--fb-space-3` between blocks, headings h2 in `--fb-text-lg` and h3 to
+h6 in `--fb-text-md`, lists with markers, links in `--fb-accent-text`,
+code on `--fb-surface-2` in the mono font, quotes with a bar of
+`--fb-accent` on `--fb-accent-soft`, images with a border and radius.
+Only for safe HTML of the core (`help.show`), never for HTML of a
+user. The panel of `<fb-help>` has the same rules (`proseStyles`).
+
 ### Form
 
 ```twig
@@ -1331,6 +1368,9 @@ $registry->add(Brand::class, new Brand(
   colors are an error.
 - The design page shows the active brand and warns if a pair of colors
   falls below 4.5:1.
+- `helpName`, `helpUrl` (https or mailto:) and `helpPhone` add "Help
+  from <helpName>" with both at the top of the screen "Help", e.g. for
+  the agency that looks after the website (decision 0215).
 - Overriding views of the backend file by file is possible but breaks on
   updates; prefer the brand and your own screens.
 
@@ -1367,3 +1407,8 @@ use Frootbox\Backend\SearchLink;
 $registry->add(SearchLink::class, new SearchLink('acme/shop/order', 'acme.orders.show', 'id', 'inbox'));
 $registry->add(SearchCommand::class, new SearchCommand('New order', 'acme.orders.new', 'acme/shop/order.create'));
 ```
+
+Help pages lie in `help/<language>/<name>.md` of the package, English
+as the source (decision 0218). `about: [screen:acme.orders]` in the
+head makes the help button of that screen open the page, also for
+routes below it such as `acme.orders.show`.

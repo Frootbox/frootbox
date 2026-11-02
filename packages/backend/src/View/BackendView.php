@@ -146,6 +146,7 @@ final class BackendView
             $csrf,
             $this->head->html($csrf, null === $user ? null : substr($this->router->path('backend.action', ['name' => 'x']), 0, -1)),
             null === $user ? null : $this->protection(),
+            null === $user || !$route instanceof Route ? null : HelpLink::find($this->runner, $this->router, 'screen:' . $route->name),
         );
     }
 

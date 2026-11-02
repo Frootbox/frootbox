@@ -16,6 +16,7 @@ use Frootbox\Backend\Http\Comments\CommentsHandler;
 use Frootbox\Backend\Http\DashboardHandler;
 use Frootbox\Backend\Http\DesignHandler;
 use Frootbox\Backend\Http\EditModeHandler;
+use Frootbox\Backend\Http\Help\HelpHandler;
 use Frootbox\Backend\Http\LoginHandler;
 use Frootbox\Backend\Http\LogoutHandler;
 use Frootbox\Backend\Http\Media\MediaHandler;
@@ -69,6 +70,8 @@ final class BackendExtension implements Extension
             ->get('/design', DesignHandler::class, 'backend.design')
             ->get('/account', AccountHandler::class, 'backend.account')
             ->get('/search', SearchHandler::class, 'backend.search')
+            ->get('/help', HelpHandler::class, 'backend.help')
+            ->get('/help/{id:[a-z0-9][a-z0-9/-]*}', HelpHandler::class, 'backend.help.show')
             ->get('/pages', PagesHandler::class, 'backend.pages')
             ->get('/pages/new', NewPageHandler::class, 'backend.pages.new')
             ->get('/pages/{id:' . self::ULID . '}', PagesHandler::class, 'backend.pages.show')
@@ -115,6 +118,7 @@ final class BackendExtension implements Extension
         $registry->add(SearchLink::class, new SearchLink('redirect', 'backend.redirects', null, 'redirect'));
         $registry->add(SearchLink::class, new SearchLink('user', 'backend.users.show', 'id', 'users'));
         $registry->add(SearchLink::class, new SearchLink('role', 'backend.roles.show', 'name', 'shield'));
+        $registry->add(SearchLink::class, new SearchLink('help', 'backend.help.show', 'id', 'info'));
         $registry->add(SearchCommand::class, new SearchCommand('New page', 'backend.pages.new', 'page.create'));
         $registry->add(SearchCommand::class, new SearchCommand('Upload files', 'backend.media', 'media.create'));
         $registry->add(SearchCommand::class, new SearchCommand('New user', 'backend.users.new', 'user.create'));

@@ -14,7 +14,7 @@ use Frootbox\Core\Extension\Registry;
 
 /**
  * A white label: its own name, logo and a pale accent with too little
- * contrast, so the design page warns.
+ * contrast, so the design page warns, and help of its own.
  */
 final class BrandExtension implements Extension
 {
@@ -24,6 +24,9 @@ final class BrandExtension implements Extension
             name: 'Acme CMS',
             logo: __DIR__ . '/assets/logo.svg',
             colors: ['accent' => '#ffd84d', 'accent-hover' => ['light' => '#ffcc00', 'dark' => '#ffe066']],
+            helpName: 'Acme Agency',
+            helpUrl: 'https://acme.example/support',
+            helpPhone: '+49 30 1234567',
         ));
     }
 }
