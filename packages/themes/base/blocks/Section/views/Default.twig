@@ -1,16 +1,16 @@
 {# frootbox
-title: Eine Spalte
-description: Eine Spalte über die ganze Breite.
+title: One column
+description: One column across the full width.
 options:
   spacing:
     type: choice
-    label: Abstand
-    choices: { small: Klein, medium: Mittel, large: Groß }
+    label: Spacing
+    choices: { small: Small, medium: Medium, large: Large }
     default: medium
   background:
     type: choice
-    label: Hintergrund
-    choices: { none: Keiner, surface: Fläche, primary: Akzent }
+    label: Background
+    choices: { none: None, surface: Surface, primary: Accent }
     default: none
 #}
 <section class="base-section base-section--{{ options.spacing }} base-section--{{ options.background }}">

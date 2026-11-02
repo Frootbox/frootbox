@@ -1,16 +1,16 @@
 {# frootbox
-title: Zwei Drittel und ein Drittel
-description: Breite Spalte links, schmale rechts.
+title: Two thirds and one third
+description: A wide column on the left, a narrow one on the right.
 options:
   spacing:
     type: choice
-    label: Abstand
-    choices: { small: Klein, medium: Mittel, large: Groß }
+    label: Spacing
+    choices: { small: Small, medium: Medium, large: Large }
     default: medium
   background:
     type: choice
-    label: Hintergrund
-    choices: { none: Keiner, surface: Fläche, primary: Akzent }
+    label: Background
+    choices: { none: None, surface: Surface, primary: Accent }
     default: none
 #}
 <section class="base-section base-section--{{ options.spacing }} base-section--{{ options.background }}">

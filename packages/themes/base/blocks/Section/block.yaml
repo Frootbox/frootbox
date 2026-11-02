@@ -1,8 +1,8 @@
-title: Abschnitt
-description: Spalten mit Überschriften, Texten, Bildern und Buttons. Auf schmalen Bildschirmen stehen die Spalten untereinander.
+title: Section
+description: Columns with headings, texts, images and buttons. On narrow screens the columns stand one below the other.
 group: structure
-keywords: [Spalten, Raster]
+keywords: [Columns, Grid]
 areas:
-  first: { label: Erste Spalte, allow: [Heading, Text, Image, Button] }
-  second: { label: Zweite Spalte, allow: [Heading, Text, Image, Button] }
-  third: { label: Dritte Spalte, allow: [Heading, Text, Image, Button] }
+  first: { label: First column, allow: [Heading, Text, Image, Button] }
+  second: { label: Second column, allow: [Heading, Text, Image, Button] }
+  third: { label: Third column, allow: [Heading, Text, Image, Button] }

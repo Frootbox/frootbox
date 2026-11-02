@@ -1,11 +1,11 @@
 {# frootbox
-title: Bild
-description: Ein Bild aus den Medien in einer Spalte, auf Wunsch mit Bildunterschrift.
+title: Image
+description: An image from the media in a column, with a caption if you like.
 group: media
-keywords: [Foto, Grafik]
+keywords: [Photo, Graphic]
 widget: true
 fields:
-  image: { type: image, label: Bild, sizes: "(min-width: 72rem) 36rem, (min-width: 48rem) 50vw, 100vw" }
-  caption: { type: text, label: Bildunterschrift, optional: true }
+  image: { type: image, label: Image, sizes: "(min-width: 72rem) 36rem, (min-width: 48rem) 50vw, 100vw" }
+  caption: { type: text, label: Caption, optional: true }
 #}
 <figure class="base-image">{{ field('image') }}<figcaption>{{ field('caption') }}</figcaption></figure>
