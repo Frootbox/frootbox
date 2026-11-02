@@ -16,6 +16,9 @@ use Frootbox\Core\Action\Schema\ListOf;
 use Frootbox\Core\Action\Schema\Pattern;
 use Frootbox\Database\Ulid;
 
+/**
+ * @implements Action<ArticleDetails>
+ */
 #[AsAction('frootbox/news/article.update', 'Changes the draft of a news article; what is left out stays as it is')]
 final readonly class UpdateArticle implements Action
 {

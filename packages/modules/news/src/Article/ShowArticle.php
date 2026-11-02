@@ -13,6 +13,9 @@ use Frootbox\Core\Action\Query;
 use Frootbox\Core\Action\Schema\Pattern;
 use Frootbox\Database\Ulid;
 
+/**
+ * @implements Query<ArticleDetails>
+ */
 #[AsQuery('frootbox/news/article.show', 'Returns a news article with its draft, its published version and where visitors find it')]
 final readonly class ShowArticle implements Query
 {

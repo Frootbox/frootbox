@@ -12,6 +12,9 @@ use Frootbox\Core\Action\Action;
 use Frootbox\Core\Action\AsAction;
 use Frootbox\Core\Action\Schema\ListOf;
 
+/**
+ * @implements Action<list<ArticleDetails>>
+ */
 #[AsAction('frootbox/news/article.publish', 'Publishes the drafts of one or more news articles')]
 final readonly class PublishArticles implements Action
 {

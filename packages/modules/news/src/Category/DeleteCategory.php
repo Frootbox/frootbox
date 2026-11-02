@@ -13,6 +13,9 @@ use Frootbox\Core\Action\AsAction;
 use Frootbox\Core\Action\Schema\Pattern;
 use Frootbox\Database\Ulid;
 
+/**
+ * @implements Action<null>
+ */
 #[AsAction('frootbox/news/category.delete', 'Deletes a category; its articles stay')]
 final readonly class DeleteCategory implements Action
 {

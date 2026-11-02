@@ -15,6 +15,9 @@ use Frootbox\Core\Action\Schema\Description;
 use Frootbox\Core\Action\Schema\ListOf;
 use Frootbox\Database\Ulid;
 
+/**
+ * @implements Action<ArticleDetails>
+ */
 #[AsAction('frootbox/news/article.create', 'Creates a news article as a draft; frootbox/news/article.publish puts it online')]
 final readonly class CreateArticle implements Action
 {

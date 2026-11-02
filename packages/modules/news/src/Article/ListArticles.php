@@ -15,6 +15,9 @@ use Frootbox\Core\Action\Schema\Length;
 use Frootbox\Core\Action\Schema\Range;
 use Frootbox\Core\Language\Languages;
 
+/**
+ * @implements Query<ArticleList>
+ */
 #[AsQuery('frootbox/news/article.list', 'Lists the news articles with drafts and published ones, newest first')]
 final readonly class ListArticles implements Query
 {

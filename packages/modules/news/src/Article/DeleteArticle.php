@@ -13,6 +13,9 @@ use Frootbox\Core\Action\AsAction;
 use Frootbox\Core\Action\Schema\Pattern;
 use Frootbox\Database\Ulid;
 
+/**
+ * @implements Action<null>
+ */
 #[AsAction('frootbox/news/article.delete', 'Deletes a news article with its draft; its versions stay')]
 final readonly class DeleteArticle implements Action
 {

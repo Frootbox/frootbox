@@ -18,7 +18,6 @@ use Frootbox\News\Article\UpdateArticle;
 use Frootbox\News\ArticlePages;
 use Frootbox\News\Blocks\ArticleList;
 use Frootbox\News\Blocks\ArticleTeaser;
-use Frootbox\News\Category\Category;
 use Frootbox\News\Category\CreateCategory;
 use Frootbox\News\Feed\Feed;
 use Frootbox\News\Feed\FeedHandler;
@@ -70,7 +69,6 @@ final class WebsiteTest extends NewsTestCase
     {
         $coffee = $this->runner()->run(new CreateCategory(['de' => ['title' => 'Kaffee']]));
         $this->runner()->run(new CreateCategory(['de' => ['title' => 'Presse']]));
-        self::assertInstanceOf(Category::class, $coffee);
         $this->article(['de' => ['title' => 'Bohnen']], categories: [$coffee->id]);
         $this->article(['de' => ['title' => 'Interview']]);
 

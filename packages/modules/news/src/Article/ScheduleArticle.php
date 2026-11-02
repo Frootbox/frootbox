@@ -15,6 +15,9 @@ use Frootbox\Core\Action\Schema\Description;
 use Frootbox\Core\Action\Schema\Pattern;
 use Frootbox\Database\Ulid;
 
+/**
+ * @implements Action<ArticleDetails>
+ */
 #[AsAction('frootbox/news/article.schedule', 'Plans when the draft of a news article is published and when it goes offline')]
 final readonly class ScheduleArticle implements Action
 {

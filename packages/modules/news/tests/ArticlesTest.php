@@ -17,7 +17,6 @@ use Frootbox\Core\Url\Urls;
 use Frootbox\Core\User\Roles;
 use Frootbox\News\Article\ArticleDetails;
 use Frootbox\News\Article\ArticleEditor;
-use Frootbox\News\Article\ArticleList;
 use Frootbox\News\Article\Articles;
 use Frootbox\News\Article\ArticleStatus;
 use Frootbox\News\Article\ArticleStore;
@@ -32,7 +31,6 @@ use Frootbox\News\Article\ShowArticle;
 use Frootbox\News\Article\UnpublishArticle;
 use Frootbox\News\Article\UpdateArticle;
 use Frootbox\News\Category\Categories;
-use Frootbox\News\Category\Category;
 use Frootbox\News\Category\CategoryEditor;
 use Frootbox\News\Category\CreateCategory;
 use Frootbox\News\Category\DeleteCategory;
@@ -52,15 +50,12 @@ final class ArticlesTest extends NewsTestCase
         self::assertNull($this->get(Articles::class)->fetchById($details->id), 'A draft is not in the table.');
 
         $published = $this->runner()->run(new PublishArticles([$details->id]));
-        self::assertIsArray($published);
-        self::assertInstanceOf(ArticleDetails::class, $published[0]);
         self::assertSame(ArticleStatus::Published, $published[0]->status);
         self::assertSame(1, $published[0]->version);
         self::assertSame('Drei Bohnen aus Peru.', $this->get(ArticleTranslations::class)->of($details->id)['de']->teaser);
 
         $this->runner()->run(new UpdateArticle($details->id, ['de' => ['title' => 'Neue Sorten aus Peru']]));
         $shown = $this->runner()->ask(new ShowArticle($details->id));
-        self::assertInstanceOf(ArticleDetails::class, $shown);
         self::assertSame(ArticleStatus::Changed, $shown->status);
         self::assertSame('neue-sorten', $shown->draft?->translations['de']->slug, 'The slug stays when only the title changes.');
         self::assertSame('Drei Bohnen aus Peru.', $shown->draft->translations['de']->teaser, 'What is left out stays.');
@@ -100,7 +95,6 @@ final class ArticlesTest extends NewsTestCase
         $id = $this->article(['de' => ['title' => 'Neue Sorten']]);
 
         $details = $this->runner()->run(new UnpublishArticle($id));
-        self::assertInstanceOf(ArticleDetails::class, $details);
         self::assertSame(ArticleStatus::Draft, $details->status, 'Offline it stays as a draft.');
         self::assertNull($this->get(Articles::class)->fetchById($id));
 
@@ -125,20 +119,17 @@ final class ArticlesTest extends NewsTestCase
         $this->create(['de' => ['title' => 'Entwurf']], '2026-11-01');
 
         $list = $this->runner()->ask(new ListArticles('de'));
-        self::assertInstanceOf(ArticleList::class, $list);
         self::assertSame(['Entwurf', 'Neuer', 'Älter'], array_map(static fn($item): string => $item->title, $list->items));
         self::assertSame(['de', 'en'], $list->items[1]->languages);
         self::assertSame(ArticleStatus::Draft, $list->items[0]->status);
 
         $found = $this->runner()->ask(new ListArticles('de', 'neu'));
-        self::assertInstanceOf(ArticleList::class, $found);
         self::assertSame(1, $found->total);
     }
 
     public function testCategoriesAreCheckedAndDeletedCategoriesDropOut(): void
     {
         $coffee = $this->runner()->run(new CreateCategory(['de' => ['title' => 'Kaffee']]));
-        self::assertInstanceOf(Category::class, $coffee);
         self::assertSame('kaffee', $coffee->slug('de'));
 
         try {
@@ -161,7 +152,7 @@ final class ArticlesTest extends NewsTestCase
         self::assertSame([], $this->get(Categories::class)->all());
         $this->runner()->run(new UpdateArticle($id, ['de' => ['teaser' => 'Neu']]));
         $published = $this->runner()->run(new PublishArticles([$id]));
-        self::assertIsArray($published, 'A deleted category does not keep the article from being published.');
+        self::assertCount(1, $published, 'A deleted category does not keep the article from being published.');
     }
 
     public function testTheSchedulerPublishesArticles(): void
@@ -198,7 +189,6 @@ final class ArticlesTest extends NewsTestCase
     private function create(array $translations, string $date = '2026-11-02 09:00', array $categories = []): ArticleDetails
     {
         $details = $this->runner()->run(new CreateArticle($translations, new DateTimeImmutable($date), categories: $categories));
-        self::assertInstanceOf(ArticleDetails::class, $details);
 
         return $details;
     }

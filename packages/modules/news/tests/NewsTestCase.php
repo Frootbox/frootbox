@@ -17,7 +17,6 @@ use Frootbox\Core\Page\PageHandler;
 use Frootbox\Core\Tests\Support\FixtureSite;
 use Frootbox\Core\Tests\Support\NotesTestCase;
 use Frootbox\News\Article\ArticleCategories;
-use Frootbox\News\Article\ArticleDetails;
 use Frootbox\News\Article\Articles;
 use Frootbox\News\Article\ArticleTranslations;
 use Frootbox\News\Article\CreateArticle;
@@ -76,7 +75,6 @@ abstract class NewsTestCase extends NotesTestCase
     protected function article(array $translations, string $date = '2026-11-02 09:00', array $categories = [], bool $publish = true): string
     {
         $details = $this->runner()->run(new CreateArticle($translations, new \DateTimeImmutable($date), categories: $categories));
-        self::assertInstanceOf(ArticleDetails::class, $details);
 
         if ($publish) {
             $this->runner()->run(new PublishArticles([$details->id]));

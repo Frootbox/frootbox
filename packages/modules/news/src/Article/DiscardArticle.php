@@ -13,6 +13,9 @@ use Frootbox\Core\Action\AsAction;
 use Frootbox\Core\Action\Schema\Pattern;
 use Frootbox\Database\Ulid;
 
+/**
+ * @implements Action<ArticleDetails|null>
+ */
 #[AsAction('frootbox/news/article.discard', 'Throws away the draft of a news article; one that was never published is gone then')]
 final readonly class DiscardArticle implements Action
 {
