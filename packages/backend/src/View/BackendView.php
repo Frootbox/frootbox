@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace Frootbox\Backend\View;
 
 use Frootbox\Backend\Design\Design;
-use Frootbox\Backend\I18n\Translator;
 use Frootbox\Backend\Security\Csrf;
 use Frootbox\Core\Action\AccessDeniedException;
 use Frootbox\Core\Action\CurrentContext;
@@ -17,6 +16,7 @@ use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Auth\Actor;
 use Frootbox\Core\Auth\ActorType;
 use Frootbox\Core\Config\Config;
+use Frootbox\Core\I18n\Translator;
 use Frootbox\Core\ProjectPaths;
 use Frootbox\Core\Routing\Route;
 use Frootbox\Core\Routing\Router;

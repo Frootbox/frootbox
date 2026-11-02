@@ -408,11 +408,12 @@
             "dist": {
                 "type": "path",
                 "url": "packages/core",
-                "reference": "835fe334542b1ef97738c175d3e74a9716e7c53d"
+                "reference": "0a25c8d25c66c3c1de61f81891ca8b02dbfb91a9"
             },
             "require": {
                 "doctrine/dbal": "^4.5",
                 "doctrine/migrations": "^3.9",
+                "ext-intl": "*",
                 "frootbox/database": "^0.1",
                 "frootbox/rich-text": "^0.1",
                 "intervention/image": "^4.4",

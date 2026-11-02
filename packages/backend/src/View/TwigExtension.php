@@ -9,11 +9,11 @@ declare(strict_types=1);
 namespace Frootbox\Backend\View;
 
 use Frootbox\Backend\BackendExtension;
-use Frootbox\Backend\I18n\Translator;
 use Frootbox\Core\Action\Catalog;
 use Frootbox\Core\Action\CurrentContext;
 use Frootbox\Core\Action\Schema\InputMapper;
 use Frootbox\Core\Auth\Gate;
+use Frootbox\Core\I18n\Translator;
 use Frootbox\Core\Routing\Router;
 use Frootbox\RichText\Html;
 use Throwable;

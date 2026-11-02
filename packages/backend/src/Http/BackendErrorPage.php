@@ -8,12 +8,12 @@ declare(strict_types=1);
 
 namespace Frootbox\Backend\Http;
 
-use Frootbox\Backend\I18n\Translator;
 use Frootbox\Backend\View\BackendView;
 use Frootbox\Core\Auth\AuthenticationException;
 use Frootbox\Core\Auth\TooManyAttemptsException;
 use Frootbox\Core\Error\ErrorPage;
 use Frootbox\Core\Http\Exception\HttpException;
+use Frootbox\Core\I18n\Translator;
 use Frootbox\Core\Routing\Route;
 use Frootbox\Core\Routing\Router;
 use Frootbox\Core\Site\SiteAccessMiddleware;

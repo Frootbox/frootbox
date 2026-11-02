@@ -10,8 +10,8 @@ namespace Frootbox\Backend\View;
 
 use Frootbox\Backend\BackendExtension;
 use Frootbox\Backend\Design\Design;
-use Frootbox\Backend\I18n\Translator;
 use Frootbox\Core\Asset\PublicAssets;
+use Frootbox\Core\I18n\Translator;
 use Frootbox\Core\Language\Direction;
 use Frootbox\Core\Preview\PreviewAccess;
 use Frootbox\Core\Preview\PreviewEditor;

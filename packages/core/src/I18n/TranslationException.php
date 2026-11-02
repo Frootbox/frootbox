@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Frootbox\Backend\I18n;
+namespace Frootbox\Core\I18n;
 
 use RuntimeException;
 

@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace Frootbox\Backend\View;
 
 use Doctrine\DBAL\Exception as DatabaseException;
-use Frootbox\Backend\I18n\Translator;
 use Frootbox\Backend\Screen;
 use Frootbox\Core\Action\ActionException;
 use Frootbox\Core\Action\Catalog;
@@ -19,6 +18,7 @@ use Frootbox\Core\Auth\Gate;
 use Frootbox\Core\Auth\Permissions;
 use Frootbox\Core\Config\Environment;
 use Frootbox\Core\Extension\Registry;
+use Frootbox\Core\I18n\Translator;
 use Frootbox\Core\Routing\Router;
 
 /**

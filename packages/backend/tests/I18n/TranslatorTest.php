@@ -9,12 +9,14 @@ declare(strict_types=1);
 namespace Frootbox\Backend\Tests\I18n;
 
 use Frootbox\Backend\BackendExtension;
-use Frootbox\Backend\I18n\TranslationException;
-use Frootbox\Backend\I18n\Translator;
+use Frootbox\Core\Action\CurrentContext;
 use Frootbox\Core\Config\Config;
 use Frootbox\Core\Config\Environment;
 use Frootbox\Core\Extension\ExtensionPackage;
 use Frootbox\Core\Extension\Extensions;
+use Frootbox\Core\I18n\TranslationException;
+use Frootbox\Core\I18n\Translator;
+use Frootbox\Core\I18n\UserLanguages;
 use Frootbox\Core\Language\Languages;
 use Frootbox\Core\ProjectPaths;
 use Frootbox\Core\Tests\Support\TemporaryProject;
@@ -55,7 +57,7 @@ final class TranslatorTest extends TestCase
         self::assertSame('Einloggen', $german->get('Sign in'), 'A later package replaces a text.');
         self::assertSame('1 Bestellung', $german->get(['{count} order', '{count} orders'], ['count' => 1]));
         self::assertSame('3 Bestellungen', $german->get(['{count} order', '{count} orders'], ['count' => 3]));
-        self::assertSame('Nobody translated this', $german->get('Nobody translated this'), 'A missing text shows in English.');
+        self::assertSame('Nobody translated this', $german->get('Nobody translated this'), 'A missing text shows as written.');
 
         $english = $this->translator();
         self::assertSame('Sign out', $english->get('Sign out'));
@@ -72,7 +74,7 @@ final class TranslatorTest extends TestCase
     {
         $live = $this->translator(['backend' => ['language' => 'de']], Environment::Production);
         self::assertSame('Abmelden', $live->get('Sign out'));
-        self::assertFileExists($this->project->root . '/var/cache/backend/translations-de.cache');
+        self::assertFileExists($this->project->root . '/var/cache/translations-de.cache');
         self::assertSame('Abmelden', $this->translator(['backend' => ['language' => 'de']], Environment::Production)->get('Sign out'), 'From the cache.');
 
         $folder = $this->project->root . '/broken';
@@ -121,6 +123,13 @@ final class TranslatorTest extends TestCase
             ...null === $extra ? [] : [$extra],
         ];
 
-        return new Translator($config, Languages::fromConfig($config), new Extensions($packages), new ProjectPaths($this->project->root));
+        $users = new class implements UserLanguages {
+            public function of(int $userId): ?string
+            {
+                return null;
+            }
+        };
+
+        return new Translator($config, Languages::fromConfig($config), new Extensions($packages), new ProjectPaths($this->project->root), new CurrentContext(), $users);
     }
 }

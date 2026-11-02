@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace Frootbox\Backend\Http;
 
-use Frootbox\Backend\I18n\Translator;
 use Frootbox\Backend\Security\Csrf;
 use Frootbox\Backend\Security\SessionCookie;
 use Frootbox\Backend\View\BackendView;
@@ -17,6 +16,7 @@ use Frootbox\Core\Action\InvalidInputException;
 use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Auth\AuthenticationException;
 use Frootbox\Core\Auth\TooManyAttemptsException;
+use Frootbox\Core\I18n\Translator;
 use Frootbox\Core\Routing\Router;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

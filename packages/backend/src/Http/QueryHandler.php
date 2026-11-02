@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace Frootbox\Backend\Http;
 
-use Frootbox\Backend\I18n\Translator;
 use Frootbox\Backend\View\BackendView;
 use Frootbox\Core\Action\ActionException;
 use Frootbox\Core\Action\Catalog;
@@ -20,6 +19,7 @@ use Frootbox\Core\Api\RequestInput;
 use Frootbox\Core\Config\Environment;
 use Frootbox\Core\Error\Problem;
 use Frootbox\Core\Http\Exception\HttpException;
+use Frootbox\Core\I18n\Translator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
