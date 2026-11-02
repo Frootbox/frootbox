@@ -168,3 +168,36 @@ test('keeps the bar in place against the styles of the theme', async ({ page }) 
     await page.goto(`/cms/pages/${id}`);
     expect((await action(page, 'page.delete', { id })).status).toBe(200);
 });
+
+test('makes room for the bar in the last element of the page', async ({ page }) => {
+    const slug = `platz-${unique()}`;
+
+    await signIn(page, '/cms/pages');
+    const start = await page.locator('#page-tree .fb-tree__item').first().getAttribute('data-id');
+    const created = await action(page, 'page.create', {
+        layout: 'frootbox/theme-base/Page',
+        translations: { de: { title: 'Platz', slug, content: { fields: { title: `Platz ${slug}` } } } },
+        parentId: start,
+    });
+    expect(created.status).toBe(200);
+    const id: string = created.body.data.id;
+
+    await page.goto(`/cms/pages/${id}`);
+    await page.getByRole('button', { name: 'Auf der Website bearbeiten' }).click();
+    await expect(page).toHaveURL(`/${slug}`);
+
+    // The foot keeps its own background below the bar instead of the
+    // page showing through (decision 0204).
+    const footer = page.locator('body > footer').last();
+    await expect(footer).toHaveAttribute('style', /padding-block-end: calc\(/);
+    expect(await page.evaluate(() => document.body.style.paddingBlockEnd)).toBe('');
+    const ends = await page.evaluate(() => [Math.round(document.querySelector('body > footer:last-of-type')!.getBoundingClientRect().bottom + scrollY), document.documentElement.scrollHeight]);
+    expect(Math.abs(ends[0] - ends[1])).toBeLessThan(2);
+
+    // Frame and tab meet without a round corner.
+    await page.locator('[data-fb-field="title"]').first().hover();
+    await expect(page.locator('fb-editor-bar').locator('.outline').first()).toHaveCSS('border-start-start-radius', '0px');
+
+    await page.goto(`/cms/pages/${id}`);
+    expect((await action(page, 'page.delete', { id })).status).toBe(200);
+});

@@ -401,6 +401,10 @@ export class EditorBar extends LitElement {
 
         .outline[data-kind="block"], .outline[data-kind="area"], .outline[data-kind="entry"] { border-style: dashed; }
         .outline[data-kind="entry"] .label { display: none; }
+
+        /* The corner under the tab is square, so frame and tab meet as one (decision 0204). */
+        .outline:not([data-kind="entry"]) { border-start-start-radius: 0; }
+        .outline.below:not([data-kind="entry"]) { border-start-start-radius: var(--fb-radius-sm); border-end-start-radius: 0; }
         .outline[data-kind="area"] { background: var(--fb-accent-soft); opacity: 0.8; }
         .outline[data-kind="problem"] { border-color: var(--fb-danger); }
         .outline[data-kind="problem"] .label { background: var(--fb-danger); color: var(--fb-on-danger); }
@@ -797,7 +801,8 @@ export class EditorBar extends LitElement {
     /**
      * Panels end above the bar, whose height changes with its content,
      * and the page gets as much room at its end, so the bar never covers
-     * the footer.
+     * the footer. The room goes into the last element of the page, so its
+     * background runs on below it (decision 0204).
      */
     updated() {
         const bar = this.renderRoot.querySelector('.bar, .round');
@@ -805,8 +810,30 @@ export class EditorBar extends LitElement {
 
         if (this.style.getPropertyValue('--bar-block-size') !== height) {
             this.style.setProperty('--bar-block-size', height);
-            document.body.style.paddingBlockEnd = bar ? `calc(${height} + 2rem)` : '';
+            this.makeRoom(bar ? `${height} + 2rem` : null);
         }
+    }
+
+    /** Pads the last element of the page by the room, or gives back its own padding without. */
+    makeRoom(room) {
+        if (this.room) {
+            this.room.element.style.paddingBlockEnd = this.room.inline;
+            this.room = null;
+        }
+
+        if (!room) {
+            return;
+        }
+
+        const element = [...document.body.children].reverse().find((child) => child !== this
+            && !['SCRIPT', 'STYLE', 'LINK', 'TEMPLATE', 'DIALOG'].includes(child.tagName)
+            && !child.tagName.startsWith('FB-')
+            && !['none', 'contents'].includes(getComputedStyle(child).display)
+            && !['absolute', 'fixed'].includes(getComputedStyle(child).position)) ?? document.body;
+        const own = getComputedStyle(element).paddingBlockEnd;
+
+        this.room = { element, inline: element.style.paddingBlockEnd };
+        element.style.paddingBlockEnd = `calc(${own} + ${room})`;
     }
 
     get marking() {
