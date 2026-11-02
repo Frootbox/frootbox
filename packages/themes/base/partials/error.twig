@@ -1,0 +1,18 @@
+{#
+  The error page of the website (decision 0189), rendered by the core for
+  404, 403, 5xx and the like. It gets status, title and text (already
+  translated), start (the start page in the language of the address) and
+  details (collapsed technical details, in development only). There is no
+  current page: no breadcrumb, no language switch.
+#}
+{% include '@theme/header.twig' %}
+<main id="content" class="base-page base-error">
+  <div class="base-error__head">
+    <p class="base-error__status">{{ t('Error {status}', {status: status}) }}</p>
+    <h1 class="base-error__title">{{ title }}</h1>
+    <p class="base-error__text">{{ text }}</p>
+    <p class="base-error__actions"><a href="{{ start }}">{{ t('To the start page') }}</a></p>
+  </div>
+  {{ details }}
+</main>
+{% include '@theme/footer.twig' %}
