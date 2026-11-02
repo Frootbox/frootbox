@@ -110,6 +110,8 @@ final class LibraryTest extends NotesTestCase
         self::assertStringContainsString('<a href="/assets/frootbox/theme-base/assets/examples/price-list.pdf" type="application/pdf">price-list <small>PDF, 1 KB</small></a>', $html, 'Without a title the name of the file.');
         self::assertStringContainsString('type="text/csv">Unsere Sorten als Tabelle <small>CSV, 1 KB</small></a>', $html);
         self::assertStringContainsString('<a href="tel:+4940123456" dir="ltr">+49 40 123456</a>', $html, 'Phone numbers keep their order in right-to-left languages, also in the contact block.');
+        self::assertMatchesRegularExpression('#<base-jump-bar [^>]*class="base-jump-bar base-full">\s*<nav aria-label="Auf dieser Seite">\s*<ul class="base-jump-bar__list">\s*<li><a href="\#fb-design-tokens">Tokens</a></li>\s*<li><a href="\#fb-design-elements">Basic elements</a></li>\s*<li><a href="\#fb-design-richtext">Rich text</a></li>\s*<li><a href="\#fb-design-blocks">Blocks</a></li>#', $html, 'The jump bar leads to the sections of the design page (decision 0213), in English without the translations of the backend.');
+        self::assertStringNotContainsString('base-jump-bar__hint', $html);
 
         foreach (['place=column' => null, 'place=narrow' => null, 'surface=surface' => 'surface', 'surface=primary' => 'primary', 'surface=dark' => 'dark'] as $view => $surface) {
             $html = $this->design('?' . $view);
