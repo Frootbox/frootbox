@@ -1,0 +1,13 @@
+{#- The warning without cron (decision 0221). status: QueueStatus, link: whether to show the way to the jobs. -#}
+{% import '@backend/ui.twig' as ui %}
+{% if status.cronMissing %}
+<div class="fb-alert" data-tone="warning" role="status">
+    {{ icon('warning') }}
+    <div class="fb-stack fb-stack--sm">
+        <p class="fb-alert__title">{{ t('Cron does not run') }}</p>
+        <p>{{ t(['One job is waiting. Without cron, jobs only run when someone opens the website. Add this line to the crontab of the server:', '{count} jobs are waiting. Without cron, jobs only run when someone opens the website. Add this line to the crontab of the server:'], {count: status.due}) }}</p>
+        <p><code>{{ status.cronLine }}</code></p>
+    </div>
+    {%- if link ?? false %}<div class="fb-alert__action">{{ ui.button({label: t('Show jobs'), href: path('backend.jobs'), variant: 'outline', small: true}) }}</div>{% endif %}
+</div>
+{% endif %}

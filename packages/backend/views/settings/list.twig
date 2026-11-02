@@ -1,0 +1,125 @@
+{#- The settings of the extensions, one card each (decision 0221). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Settings') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Settings') }}</h1>
+            <p class="fb-muted">{{ t('Access data and options of the installed extensions.') }}</p>
+        </div>
+    </header>
+
+    {% if extensions is empty %}
+        <section class="fb-card">
+            {{ ui.empty({icon: 'settings', title: t('No settings yet'), text: t('Extensions such as a shop or a newsletter bring their settings here, e.g. an API key.')}) }}
+        </section>
+    {% endif %}
+
+    {% for extension in extensions %}
+    {% set key = 'settings-' ~ extension.package|replace({'/': '-', '.': '-'}) %}
+    {% set values = extension.fields|filter(field => not field.secret) %}
+    {% set secrets = extension.fields|filter(field => field.secret) %}
+    <section class="fb-card" id="{{ key }}" aria-labelledby="{{ key }}-title">
+        <div class="fb-card__header">
+            <div class="fb-stack fb-stack--sm">
+                <h2 class="fb-heading-4" id="{{ key }}-title" tabindex="-1" data-fb-focus>{{ t(extension.title) }}</h2>
+                {% if extension.description %}<p class="fb-muted">{{ t(extension.description) }}</p>{% endif %}
+            </div>
+            <code class="fb-muted">{{ extension.package }}</code>
+        </div>
+        <div class="fb-card__body fb-stack fb-stack--lg">
+            {% if values is not empty %}
+            <fb-form action="settings.update" refresh="{{ key }}" done="{{ t('The settings are saved.') }}">
+                <form class="fb-stack" novalidate>
+                    <input type="hidden" name="package" value="{{ extension.package }}">
+                    {% for field in values %}
+                        {% set id = key ~ '-' ~ field.name %}
+                        {% set hint = field.locked ? t('Set in config/extensions/{package}.yaml, so it cannot be changed here.', {package: extension.package}) : (field.description ? t(field.description) : null) %}
+                        {% if field.type == 'bool' %}
+                            {{ ui.check({label: t(field.title), name: 'values.' ~ field.name, id: id, checked: field.value, hint: hint, disabled: field.locked}) }}
+                        {% else %}
+                            {{ ui.field({
+                                label: t(field.title),
+                                name: 'values.' ~ field.name,
+                                id: id,
+                                type: field.type in ['int', 'float'] ? 'number' : 'text',
+                                value: field.value,
+                                hint: hint,
+                                optional: field.nullable,
+                                disabled: field.locked,
+                                attrs: {
+                                    step: field.type == 'float' ? 'any' : null,
+                                    min: field.schema.minimum ?? null,
+                                    max: field.schema.maximum ?? null,
+                                    maxlength: field.schema.maxLength ?? null,
+                                },
+                            }) }}
+                        {% endif %}
+                    {% endfor %}
+                    {% if can('settings.update') and values|filter(field => not field.locked) is not empty %}
+                    <div class="fb-form__actions">
+                        {{ ui.button({label: t('Save'), type: 'submit'}) }}
+                    </div>
+                    {% endif %}
+                </form>
+            </fb-form>
+            {% endif %}
+
+            {% for field in secrets %}
+                {% set id = key ~ '-' ~ field.name %}
+                <div class="fb-stack fb-stack--sm" role="group" aria-labelledby="{{ id }}-title">
+                    <div class="fb-cluster">
+                        <h3 class="fb-label" id="{{ id }}-title">{{ t(field.title) }}</h3>
+                        {{ field.set ? ui.badge('published', t('Stored')) : ui.badge('neutral', t('Not stored')) }}
+                    </div>
+                    {% if field.description %}<p class="fb-hint">{{ t(field.description) }}</p>{% endif %}
+                    {% if field.locked %}
+                        <p class="fb-hint">{{ t('Set in config/extensions/{package}.yaml, so it cannot be changed here.', {package: extension.package}) }}</p>
+                    {% elseif not secretsAvailable %}
+                        {{ ui.alert({tone: 'warning', text: t('APP_SECRET in .env is missing or too short, so no secret can be stored.')}) }}
+                    {% elseif can('settings.set-secret') %}
+                    <fb-form action="settings.set-secret" reset refresh="{{ key }}" done="{{ t('The secret is stored encrypted.') }}">
+                        <form class="fb-stack" novalidate>
+                            <input type="hidden" name="package" value="{{ extension.package }}">
+                            <input type="hidden" name="name" value="{{ field.name }}">
+                            {{ ui.field({label: field.set ? t('New value') : t('Value'), name: 'value', id: id, type: 'password', autocomplete: 'off', hint: t('It is stored encrypted and never shown again.')}) }}
+                            <div class="fb-form__actions">
+                                {{ ui.button({label: field.set ? t('Replace') : t('Store'), type: 'submit', variant: 'tonal'}) }}
+                                {% if field.set %}
+                                {{ ui.button({label: t('Remove'), variant: 'danger', attrs: {commandfor: 'secret-remove', command: 'show-modal', 'aria-label': t('Remove {name}', {name: t(field.title)}), 'data-fb-fill': {package: extension.package, name: field.name}|json_encode}}) }}
+                                {% endif %}
+                            </div>
+                        </form>
+                    </fb-form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+</div>
+
+{% if can('settings.set-secret') %}
+<dialog class="fb-dialog" id="secret-remove" aria-labelledby="secret-remove-title">
+    <fb-form action="settings.set-secret" refresh="{{ extensions|map(extension => 'settings-' ~ extension.package|replace({'/': '-', '.': '-'}))|join(' ') }}" done="{{ t('The secret is removed.') }}">
+        <form novalidate>
+            <input type="hidden" name="package">
+            <input type="hidden" name="name">
+            <input type="hidden" name="value" data-type="json" value="">
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="secret-remove-title">{{ t('Remove the secret?') }}</h2>
+                <p>{{ t('The extension can no longer use it, e.g. to reach another service. It cannot be undone.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'secret-remove', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Remove'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+{% endblock %}

@@ -13,6 +13,8 @@
         </div>
     </header>
 
+    {% if queue is not null %}{% include '@backend/jobs/cron.twig' with {status: queue, link: can('system.job-list')} %}{% endif %}
+
     <section class="fb-card fb-card--accent fb-callout" aria-labelledby="fb-edit-title">
         <div class="fb-callout__text">
             <h2 class="fb-heading-3" id="fb-edit-title">{{ t('You edit content right on the website') }}</h2>

@@ -19,6 +19,7 @@ use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Page\PageStatus;
 use Frootbox\Core\Page\PublishPages;
 use Frootbox\Core\Page\ShowPageTree;
+use Frootbox\Core\Queue\ShowQueueStatus;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -61,8 +62,16 @@ final readonly class DashboardHandler implements RequestHandlerInterface
             $publishable = [];
         }
 
+        try {
+            // The warning without cron, for superusers (decision 0221).
+            $queue = $this->runner->ask(new ShowQueueStatus());
+        } catch (AccessDeniedException) {
+            $queue = null;
+        }
+
         return $this->view->render($request, '@backend/dashboard.twig', [
             'name' => explode(' ', trim($user->name))[0],
+            'queue' => $queue,
             'pending' => $pending,
             'publishable' => $publishable,
         ]);

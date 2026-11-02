@@ -1,0 +1,77 @@
+{#- The queue of jobs in the background, for superusers (decision 0221). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Jobs') }}{% endblock %}
+
+{% block content %}
+{% set status = list.status %}
+<div class="fb-stack fb-stack--lg" id="jobs">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Jobs') }}</h1>
+            <p class="fb-muted">{{ t('Work that extensions do in the background, e.g. sending data to another service.') }}</p>
+        </div>
+    </header>
+
+    {% include '@backend/jobs/cron.twig' with {status: status, link: false} %}
+
+    <section class="fb-card" aria-labelledby="jobs-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="jobs-title" tabindex="-1" data-fb-focus>{{ t('Queue') }}</h2>
+            {{ ui.badge('neutral', list.jobs|length) }}
+        </div>
+        {% if list.jobs is empty %}
+            {{ ui.empty({icon: 'clock', title: t('No jobs waiting'), text: t('Jobs appear here while they wait, run again after an error or have failed.')}) }}
+        {% else %}
+        <ul>
+            {%- for job in list.jobs %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title">{{ job.description ? t(job.description) : job.name }}</span>
+                    <span class="fb-list__meta">
+                        <code>{{ job.name }}</code>
+                        · {{ t('for {name}', {name: job.actor}) }}
+                        · {{ t('attempt {count} of {max}', {count: job.attempts, max: job.maxAttempts}) }}
+                        {%- if job.state == 'failed' %} · {% set at = t('failed on {time}')|split('{time}') %}{{ at[0] }}{{ ui.time(job.failedAt) }}{{ at[1] ?? '' }}
+                        {%- elseif job.state == 'waiting' %} · {% set at = t('due {time}')|split('{time}') %}{{ at[0] }}{{ ui.time(job.availableAt) }}{{ at[1] ?? '' }}{% endif -%}
+                    </span>
+                    {% if job.lastError %}<span class="fb-list__meta">{{ t('Last error: {error}', {error: job.lastError}) }}</span>{% endif %}
+                </span>
+                {% if job.state == 'failed' %}{{ ui.badge('danger', t('Failed')) }}{% elseif job.state == 'running' %}{{ ui.badge('changed', t('Running')) }}{% else %}{{ ui.badge('scheduled', t('Waiting')) }}{% endif %}
+                {% if job.state != 'running' and can('system.job-retry') %}
+                <fb-form action="system.job-retry" refresh="jobs" done="{{ t('The job runs again soon.') }}">
+                    <form novalidate>
+                        <input type="hidden" name="id" value="{{ job.id }}">
+                        {{ ui.button({label: t('Run now'), type: 'submit', variant: 'outline', small: true, attrs: {'aria-label': t('Run {name} now', {name: job.name})}}) }}
+                    </form>
+                </fb-form>
+                {% endif %}
+                {% if job.state != 'running' and can('system.job-delete') %}
+                {{ ui.button({label: t('Delete'), variant: 'ghost', small: true, icon: 'trash', icon_only: true, attrs: {commandfor: 'job-delete', command: 'show-modal', 'aria-label': t('Delete {name}', {name: job.name}), 'data-fb-fill': {id: job.id}|json_encode}}) }}
+                {% endif %}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+    </section>
+</div>
+
+{% if can('system.job-delete') %}
+<dialog class="fb-dialog" id="job-delete" aria-labelledby="job-delete-title">
+    <fb-form action="system.job-delete" refresh="jobs" done="{{ t('The job is deleted.') }}">
+        <form novalidate>
+            <input type="hidden" name="id">
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="job-delete-title">{{ t('Delete the job?') }}</h2>
+                <p>{{ t('It will not run. Whatever it should have done stays undone.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'job-delete', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Delete'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+{% endblock %}
