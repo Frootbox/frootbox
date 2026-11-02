@@ -193,7 +193,7 @@ export class CommentsPanel {
         const label = open ? `${labels.comments}, ${labels.openCount.replace('{count}', open)}` : labels.comments;
 
         return html`<button type="button" data-fb-comments aria-label=${label} title=${label} aria-expanded=${this.state ? 'true' : 'false'}
-            @click=${() => (this.state ? this.close() : this.show())}>${icon('comment')}${open ? html`<span class="count" aria-hidden="true">${open}</span>` : nothing}</button>`;
+            @click=${() => (this.state ? this.close() : this.show())}>${icon('comment')}${open ? html`<span class="comment-count" aria-hidden="true">${open}</span>` : nothing}</button>`;
     }
 
     /** Numbered pins at the places of the threads on the page. */
@@ -372,7 +372,8 @@ export const commentStyles = css`
 
     .comment-error { margin: 0; color: var(--fb-danger-text); }
 
-    .count {
+    /* The number of open comments on the button of the editor bar. */
+    .comment-count {
         min-inline-size: var(--fb-size-icon-sm);
         padding-inline: var(--fb-space-1);
         border-radius: var(--fb-radius-full);
