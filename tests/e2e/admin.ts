@@ -16,6 +16,11 @@ export async function signIn(page: Page, next = '/cms', account = ADMIN): Promis
     await expect(page).toHaveURL(next);
 }
 
+/** Waits for a custom element; under load a click or keys may come before its script, and without it a button is a link. */
+export async function ready(page: Page, element: string): Promise<void> {
+    await page.waitForFunction((name) => customElements.get(name) !== undefined, element);
+}
+
 /** Runs an action with the session of a page of the backend or the editing mode. */
 export async function action(page: Page, name: string, input: object): Promise<{ status: number; body: any }> {
     return page.evaluate(async ([name, input]) => {

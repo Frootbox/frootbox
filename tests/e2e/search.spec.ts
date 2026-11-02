@@ -3,7 +3,7 @@
  */
 
 import { expect, test, type Page } from '@playwright/test';
-import { action, signIn } from './admin';
+import { action, ready, signIn } from './admin';
 
 // The global search (decisions 0214, 0217): Ctrl+K or ⌘+K opens it from
 // any screen and from the editor bar, the keyboard opens a hit, every
@@ -44,6 +44,7 @@ test('finds a page from any screen and opens it with the keyboard', async ({ pag
     const size = await createPage(page, start, `Größe ${word}`, 'Tassen');
 
     await page.goto('/cms/media');
+    await ready(page, 'fb-search');
     await page.keyboard.press(KEYS);
     const dialog = page.getByRole('dialog', { name: 'Suchen' });
     await expect(dialog).toBeVisible();
@@ -68,6 +69,7 @@ test('finds a page from any screen and opens it with the keyboard', async ({ pag
     await expect(page).toHaveURL(`/cms/pages/${id}`);
 
     // Screens and commands by their name, all hits on the screen of the search.
+    await ready(page, 'fb-search');
     await page.getByRole('link', { name: 'Suchen' }).click();
     await dialog.getByRole('combobox').fill('neue seite');
     await expect(results.getByRole('group', { name: 'Gehe zu' }).getByRole('option', { name: 'Neue Seite' })).toBeVisible();
@@ -105,6 +107,7 @@ test('an editor with a branch finds only pages there, also in the REST API', asy
     await editor.getByRole('button', { name: 'Anmelden' }).click();
     await expect(editor).toHaveURL('/cms/pages');
 
+    await ready(editor, 'fb-search');
     await editor.keyboard.press(KEYS);
     const dialog = editor.getByRole('dialog', { name: 'Suchen' });
     await dialog.getByRole('combobox').fill(word);
