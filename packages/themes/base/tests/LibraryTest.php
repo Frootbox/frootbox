@@ -71,13 +71,18 @@ final class LibraryTest extends NotesTestCase
 
         self::assertSame(0, $console->run(new ArrayInput(['command' => 'seed', 'file' => self::THEME . ':demo/library.yaml']), $output), $output->fetch());
 
-        foreach (['/', '/heading', '/text', '/button', '/section', '/text-with-heading', '/quote', '/notice', '/divider', '/call-to-action', '/key-figures', '/hero', '/page-header', '/image-with-text', '/gallery', '/slider', '/video', '/cards', '/logos', '/link-list', '/accordion', '/steps', '/testimonials', '/prices', '/contact', '/features', '/aktion', '/impressum'] as $path) {
+        foreach (['/', '/heading', '/text', '/button', '/section', '/text-with-heading', '/quote', '/notice', '/divider', '/call-to-action', '/key-figures', '/hero', '/page-header', '/image-with-text', '/gallery', '/slider', '/video', '/cards', '/logos', '/link-list', '/accordion', '/steps', '/testimonials', '/prices', '/contact', '/features', '/downloads', '/aktion', '/impressum'] as $path) {
             $this->get(Urls::class)->clear();
             $this->get(PageOutline::class)->clear();
             $response = $this->get(PageHandler::class)->handle(new ServerRequest('GET', 'https://example.org' . $path));
 
             self::assertSame(200, $response->getStatusCode(), $path);
             self::assertSame([], self::htmlErrors((string) $response->getBody()), $path);
+
+            if ('/downloads' === $path) {
+                self::assertMatchesRegularExpression('#<a href="/media/[0-9A-Z]{26}/1/price-list-main-[0-9a-f]{16}\.pdf" type="application/pdf">Preisliste 2027 <small>PDF, 1 KB</small></a>#', (string) $response->getBody());
+                self::assertStringContainsString('type="text/csv">Unsere Sorten als Tabelle <small>CSV, 1 KB</small></a>', (string) $response->getBody());
+            }
         }
     }
 

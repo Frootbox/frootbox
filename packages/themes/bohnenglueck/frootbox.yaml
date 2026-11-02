@@ -30,6 +30,7 @@ theme:
       - frootbox/theme-base/Pricing
       - frootbox/theme-base/Contact
       - frootbox/theme-base/Features
+      - frootbox/theme-base/Downloads
   navigations:
     main:
       title: Main navigation

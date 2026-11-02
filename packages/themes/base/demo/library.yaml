@@ -7,7 +7,8 @@
 # The browser tests take screenshots of them and check them with axe.
 # Needs the language de. The images in media/ are abstract colour
 # gradients made for this file, the clip roasting.webm comes from
-# tools/demo-video.php; all under the licence of the theme.
+# tools/demo-video.php, the price list and the table of coffees are
+# made for this file as well; all under the licence of the theme.
 - upload:
     file: media/harbour.jpg
   as: file_harbour
@@ -77,6 +78,21 @@
       de:
         alt: 'Orangefarbener Kreis auf Türkis'
   as: img_square
+- upload:
+    file: media/price-list.pdf
+  as: file_price_list
+- media.create:
+    upload: '${file_price_list.token}'
+    texts:
+      de:
+        title: 'Preisliste 2027'
+  as: doc_price_list
+- upload:
+    file: media/coffees.csv
+  as: file_coffees
+- media.create:
+    upload: '${file_coffees.token}'
+  as: doc_coffees
 - page.create:
     layout: frootbox/theme-base/Start
     translations:
@@ -516,6 +532,23 @@
               - {"block": "frootbox/theme-base/Section", "variant": "OneTwo", "areas": {"first": [{"block": "frootbox/theme-base/Features", "fields": {"title": "Warum Bohnenglück", "items": [{"icon": "truck", "title": "Versand am Dienstag", "text": "Montags geröstet, am Tag darauf unterwegs."}, {"icon": "leaf", "title": "Von Höfen, die wir kennen", "text": "Wir kaufen direkt und zahlen über dem Marktpreis."}, {"icon": "cup", "title": "Für jede Kanne", "text": "Ganze Bohnen oder gemahlen, für Filter, French Press und Siebträger."}, {"icon": "clock", "title": "Jederzeit pausieren", "text": "Das Abo ruht, solange Du willst."}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
   as: features
 - page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Downloads
+        slug: downloads
+        content:
+          fields:
+            title: Downloads
+            intro: 'Dateien mit Format, Größe und kurzer Beschreibung.'
+          areas:
+            main:
+              - {"block": "frootbox/theme-base/Downloads", "fields": {"title": "Zum Mitnehmen", "items": [{"file": {"media": "${doc_price_list.id}"}, "text": "Alle Sorten und Abos mit Preisen."}, {"file": {"media": "${doc_coffees.id}", "text": "Unsere Sorten als Tabelle"}, "text": "Herkunft und Röstung, zum Öffnen in jeder Tabellenkalkulation."}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "Two", "areas": {"first": [{"block": "frootbox/theme-base/Downloads", "fields": {"title": "Zum Mitnehmen", "items": [{"file": {"media": "${doc_price_list.id}"}, "text": "Alle Sorten und Abos mit Preisen."}, {"file": {"media": "${doc_coffees.id}", "text": "Unsere Sorten als Tabelle"}, "text": "Herkunft und Röstung, zum Öffnen in jeder Tabellenkalkulation."}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "OneTwo", "areas": {"first": [{"block": "frootbox/theme-base/Downloads", "fields": {"title": "Zum Mitnehmen", "items": [{"file": {"media": "${doc_price_list.id}"}, "text": "Alle Sorten und Abos mit Preisen."}, {"file": {"media": "${doc_coffees.id}", "text": "Unsere Sorten als Tabelle"}, "text": "Herkunft und Röstung, zum Öffnen in jeder Tabellenkalkulation."}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+  as: downloads
+- page.create:
     layout: frootbox/theme-base/Start
     parentId: '${start.id}'
     translations:
@@ -583,6 +616,7 @@
       - '${prices.id}'
       - '${contact.id}'
       - '${features.id}'
+      - '${downloads.id}'
       - '${page_header.id}'
       - '${landing.id}'
       - '${imprint.id}'
@@ -673,6 +707,9 @@
             -
               type: target
               target: 'page:${features.id}'
+            -
+              type: target
+              target: 'page:${downloads.id}'
         -
           type: target
           target: 'page:${landing.id}'

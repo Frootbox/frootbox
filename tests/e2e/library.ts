@@ -36,6 +36,7 @@ export const PAGES = {
     prices: '/prices',
     contact: '/contact',
     features: '/features',
+    downloads: '/downloads',
     landing: '/aktion',
 };
 

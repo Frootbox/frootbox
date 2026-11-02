@@ -1,0 +1,28 @@
+{# frootbox
+title: Downloads
+description: Files to download one below the other, e.g. price lists, menus or forms, each with its format, size and a short description. Not for images (use the gallery) or links to pages (use the link list).
+group: list
+keywords: [Files, Documents, PDF, Attachments, Brochures, Forms]
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "Downloads" }
+  items:
+    type: list
+    label: Files
+    min: 1
+    max: 20
+    start: 2
+    fields:
+      file: { type: file, label: File }
+      text: { type: text, label: Description, optional: true, maxLength: 200, placeholder: "What is in it" }
+#}
+<div class="base-downloads">
+  {{ heading('title', 0, {class: 'base-downloads__title'}) }}
+  <ul class="base-downloads__list">
+    {% for item in field('items') %}
+      <li class="base-downloads__item">
+        <svg class="base-downloads__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg>
+        <span class="base-downloads__main"><span class="base-downloads__link">{{ item.field('file') }}</span><span class="base-downloads__text">{{ item.field('text') }}</span></span>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
