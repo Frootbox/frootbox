@@ -638,7 +638,7 @@ The new file counts everywhere. Visitors see it once the image is published.: Di
 The new file counts everywhere.: Die neue Datei gilt überall.
 'The file cannot be read as an image.': 'Die Datei lässt sich nicht als Bild lesen.'
 'The image has too many pixels, at most {max} million.': 'Das Bild hat zu viele Pixel, höchstens {max} Millionen.'
-'The file is no image of type JPEG, PNG, WebP or GIF.': 'Die Datei ist kein Bild im Format JPEG, PNG, WebP oder GIF.'
+'The file is no image of type JPEG, PNG, WebP, GIF or SVG.': 'Die Datei ist kein Bild im Format JPEG, PNG, WebP, GIF oder SVG.'
 'There is no upload with this token (any more). Upload the file first.': 'Diesen Upload gibt es nicht (mehr). Lade die Datei zuerst hoch.'
 'The folder is not empty. Move or delete what is in it first.': 'Der Ordner ist nicht leer. Verschieb oder lösch vorher seinen Inhalt.'
 'There is no folder with this id.': 'Diesen Ordner gibt es nicht.'
@@ -932,6 +932,8 @@ Video: Video
 "The document is deleted.": "Das Dokument ist gelöscht."
 "The document cannot be deleted yet": "Das Dokument lässt sich noch nicht löschen"
 "Delete the document?": "Dokument löschen?"
+"The image could not be saved.": "Das Bild ließ sich nicht speichern."
+"The SVG cannot be read or holds nothing that can be shown.": "Das SVG lässt sich nicht lesen oder enthält nichts, was sich anzeigen lässt."
 "Choose a symbol": "Symbol auswählen"
 "Remove the symbol": "Symbol entfernen"
 "No symbol": "Kein Symbol"
@@ -941,7 +943,7 @@ Video: Video
 "The description from the media library names the video for people who cannot see it.": "Die Beschreibung aus den Medien benennt das Video für Menschen, die es nicht sehen."
 "Shown before the video starts. Without one the browser shows the first picture of the video.": "Erscheint, bevor das Video startet. Ohne Vorschaubild zeigt der Browser das erste Bild des Videos."
 "No poster image": "Kein Vorschaubild"
-"The file is no image (JPEG, PNG, WebP, GIF), video (MP4, WebM) or document (PDF, Office, OpenDocument, text, CSV, ZIP).": "Die Datei ist weder Bild (JPEG, PNG, WebP, GIF) noch Video (MP4, WebM) noch Dokument (PDF, Office, OpenDocument, Text, CSV, ZIP)."
+"The file is no image (JPEG, PNG, WebP, GIF, SVG), video (MP4, WebM) or document (PDF, Office, OpenDocument, text, CSV, ZIP).": "Die Datei ist weder Bild (JPEG, PNG, WebP, GIF, SVG) noch Video (MP4, WebM) noch Dokument (PDF, Office, OpenDocument, Text, CSV, ZIP)."
 "The file is no document (PDF, Word, Excel, PowerPoint, OpenDocument, text, CSV or ZIP).": "Die Datei ist kein Dokument (PDF, Word, Excel, PowerPoint, OpenDocument, Text, CSV oder ZIP)."
 "The document could not be saved.": "Das Dokument ließ sich nicht speichern."
 "Replace a document only with a document.": "Ersetz ein Dokument nur durch ein Dokument."

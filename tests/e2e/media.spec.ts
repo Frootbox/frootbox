@@ -103,7 +103,7 @@ test('uploads an image, sets its focus and shows it on a published page', async 
     const refused = page.waitForEvent('filechooser');
     await page.getByRole('button', { name: 'Hochladen' }).click();
     await (await refused).setFiles({ name: 'notiz.html', mimeType: 'text/html', buffer: Buffer.from('<p>Kaffee</p>') });
-    await expect(page.getByRole('alert')).toContainText('notiz.html: Die Datei ist weder Bild (JPEG, PNG, WebP, GIF) noch Video (MP4, WebM) noch Dokument (PDF, Office, OpenDocument, Text, CSV, ZIP).');
+    await expect(page.getByRole('alert')).toContainText('notiz.html: Die Datei ist weder Bild (JPEG, PNG, WebP, GIF, SVG) noch Video (MP4, WebM) noch Dokument (PDF, Office, OpenDocument, Text, CSV, ZIP).');
 
     // Focus point by click, alternative text, tags.
     await tile.click();

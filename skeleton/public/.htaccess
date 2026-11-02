@@ -6,3 +6,12 @@
 </IfModule>
 
 Options -Indexes
+
+# SVG files, e.g. copies from the media library: nothing in them may run
+# when opened directly (decision 0182). Other web servers need the same rule.
+<IfModule mod_headers.c>
+    <FilesMatch "\.svg$">
+        Header set Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; img-src data:; sandbox"
+        Header set X-Content-Type-Options "nosniff"
+    </FilesMatch>
+</IfModule>

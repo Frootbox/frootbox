@@ -1,5 +1,5 @@
-/** The image and video types the media library takes (decisions 0126, 0177). */
-export const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+/** The image and video types the media library takes (decisions 0126, 0177, 0182). */
+export const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml', '.svg'];
 export const VIDEO_TYPES = ['video/mp4', 'video/webm'];
 
 /** Documents by extension (decision 0179): browsers name the type of CSV and Office files differently. */
