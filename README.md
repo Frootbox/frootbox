@@ -233,6 +233,25 @@ examples:
       image: { sample: examples/landscape.jpg, alt: Coffee beans }
 ```
 
+Links on top of the page switch the language, the direction (right to
+left also for a language written left to right) and the place and surface
+the blocks stand on. A theme names those frames in its manifest, as blocks
+of its own with the area that takes the block:
+
+```yaml
+theme:
+  design:
+    places:
+      column: { label: In one of two columns, block: Section, variant: Two, area: first }
+    surfaces:
+      dark: { label: On dark, block: Section, options: { background: dark }, area: first }
+```
+
+A child theme replaces each list as a whole. Blocks the area does not
+allow are listed instead. Every `partials/design/<Name>.twig` of the
+themes becomes a section of its own before the blocks, e.g. for states
+that are no block.
+
 `bin/frootbox blocks` lists what is available, `blocks:check` checks all
 schemas and templates and hints at missing groups and previews,
 `cache:clear` empties `var/cache` after a deployment.

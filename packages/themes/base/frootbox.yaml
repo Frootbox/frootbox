@@ -117,6 +117,16 @@ theme:
       max: 8
       fields:
         link: { type: link, label: Profile }
+  # Frames for the design page (decision 0208): the places of decision 0163
+  # and the backgrounds of the section.
+  design:
+    places:
+      column: { label: In one of two columns, block: Section, variant: Two, area: first }
+      narrow: { label: In a narrow column, block: Section, variant: TwoOne, area: second }
+    surfaces:
+      surface: { label: On the surface, block: Section, options: { background: surface }, area: first }
+      primary: { label: On the main colour, block: Section, options: { background: primary }, area: first }
+      dark: { label: On dark, block: Section, options: { background: dark }, area: first }
   navigations:
     main:
       title: Main navigation

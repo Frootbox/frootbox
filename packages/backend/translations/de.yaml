@@ -1011,4 +1011,14 @@ Shadows: Schatten
 "Everything the text editor can make": "Alles, was der Texteditor erzeugen kann"
 Blocks: Blöcke
 "Without an example yet:": "Noch ohne Beispiel:"
+"Not at this place:": "Nicht an dieser Stelle:"
+View: Ansicht
+Direction: Richtung
+As the language: Wie die Sprache
+Right to left: Von rechts nach links
+Place: Stelle
+Main area: Hauptbereich
+Surface: Fläche
+None: Keine
+'The place "{place}" cannot stand on the surface "{surface}".': 'Die Stelle „{place}“ kann nicht auf der Fläche „{surface}“ stehen.'
 "This block cannot be shown: {message}": "Dieser Block lässt sich nicht zeigen: {message}"
