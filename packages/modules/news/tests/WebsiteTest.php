@@ -12,6 +12,7 @@ use Frootbox\Core\Action\Undo\UndoAction;
 use Frootbox\Core\Http\Exception\HttpException;
 use Frootbox\Core\Page\PublishPages;
 use Frootbox\Core\Page\UpdatePage;
+use Frootbox\Core\Settings\UpdateSettings;
 use Frootbox\News\Article\PublishArticles;
 use Frootbox\News\Article\UnpublishArticle;
 use Frootbox\News\Article\UpdateArticle;
@@ -133,6 +134,18 @@ final class WebsiteTest extends NewsTestCase
         self::assertStringContainsString('Zweites', $html);
         self::assertStringNotContainsString('Erstes', $html);
         self::assertStringContainsString('<a href="/aktuelles">Alle News</a>', $html);
+    }
+
+    public function testTheFeedListsAsManyArticlesAsSet(): void
+    {
+        $this->article(['de' => ['title' => 'Erster']], '2026-11-01 09:00');
+        $this->article(['de' => ['title' => 'Zweiter']], '2026-11-02 09:00');
+        $this->runner()->run(new UpdateSettings('frootbox/news', ['feedItems' => 1]));
+
+        $xml = (string) $this->get(FeedHandler::class)->handle(new ServerRequest('GET', 'https://example.org/_news/feed/' . $this->news . '/de.xml')->withAttribute('page', $this->news)->withAttribute('language', 'de'))->getBody();
+
+        self::assertStringContainsString('<title>Zweiter</title>', $xml);
+        self::assertStringNotContainsString('<title>Erster</title>', $xml);
     }
 
     public function testOffersAFeed(): void

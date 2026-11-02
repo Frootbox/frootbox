@@ -18,6 +18,7 @@ use Frootbox\Core\Url\Urls;
 use Frootbox\News\Article\ArticleStore;
 use Frootbox\News\Article\PublishedArticles;
 use Frootbox\News\ArticlePages;
+use Frootbox\News\NewsSettings;
 use Frootbox\RichText\Html;
 
 /**
@@ -28,8 +29,6 @@ final readonly class Feed
 {
     public const string ROUTE = '/_news/feed/{page:[0-7][0-9A-HJKMNP-TV-Z]{25}}/{language:[a-z]{2,3}(?:-[A-Za-z0-9]{1,8})*}.xml';
 
-    public const int ITEMS = 20;
-
     public function __construct(
         private BasePages $bases,
         private PublishedArticles $articles,
@@ -37,6 +36,7 @@ final readonly class Feed
         private Urls $urls,
         private Languages $languages,
         private Config $config,
+        private NewsSettings $settings,
     ) {}
 
     /**
@@ -75,7 +75,7 @@ final readonly class Feed
         $link = $this->urls->absolute(Target::page($pageId), $language, $site) ?? '';
         $items = '';
 
-        foreach ($this->articles->list($language, null, null, self::ITEMS) as $article) {
+        foreach ($this->articles->list($language, null, null, $this->settings->feedItems) as $article) {
             $url = $this->urls->absolute(ArticleStore::target($article->id), $language, $site) ?? $link;
             $items .= '<item>'
                 . self::element('title', $article->title)

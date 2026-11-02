@@ -61,6 +61,7 @@ final class NewsExtension implements Extension
         $registry->subpages(ArticlePages::class);
         $registry->scheduled(ArticleSchedule::class);
         $registry->searchSource(ArticleSource::class);
+        $registry->settings(NewsSettings::class);
 
         $registry->get(Feed::ROUTE, FeedHandler::class, 'frootbox.news.feed');
         $registry->listen(BuildingHead::class, FeedLink::class);

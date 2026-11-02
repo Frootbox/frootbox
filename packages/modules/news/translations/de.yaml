@@ -55,3 +55,7 @@
 "New category": "Neue Kategorie"
 "The category is created.": "Die Kategorie ist angelegt."
 "Create the category": "Kategorie anlegen"
+# Settings (decision 0221)
+Articles on the website and in the feed: Artikel auf der Website und im Feed
+Articles in the feed: Artikel im Feed
+How many of the newest articles the RSS feed of a page lists.: Wie viele der neuesten Artikel der RSS-Feed einer Seite enthält.
