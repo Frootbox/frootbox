@@ -1320,7 +1320,10 @@ both places has the same paths in both.
 - English text is the key of the translations in `translations/<lang>.yaml`
   (`"Sign in": Anmelden`). Placeholders `{name}`; plural with `one` and
   `other` and `{count}`, in Twig `t(['{count} page', '{count} pages'],
-  {count: n})`. A missing translation shows the English text.
+  {count: n})`. A missing translation shows the English text. Texts of
+  a module only for visitors, in a language the backend does not speak,
+  go to `translations/website/<lang>.yaml`; they do not make a language
+  of the backend.
 - No brand names in texts: the name comes from the active brand
   (`fb.brand`).
 
