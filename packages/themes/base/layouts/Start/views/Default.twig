@@ -1,0 +1,9 @@
+{# frootbox
+title: Start page
+description: A start page only with content, e.g. sections one below the other; the main navigation leads to the subpages.
+areas:
+  main: {}
+#}
+{% include '@theme/header.twig' %}
+<main id="content" class="base-page">{{ area('main') }}</main>
+{% include '@theme/footer.twig' %}

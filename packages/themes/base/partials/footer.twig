@@ -1,0 +1,17 @@
+{# The foot of every page: name, address, the footer navigation, profiles and a note (decision 0128). #}
+<footer class="base-footer">
+  <div class="base-footer__inner base-wrap">
+    <div class="base-footer__site">
+      <p class="base-footer__brand">{{ site_field('brand') }}</p>
+      <p class="base-footer__address">{{ site_field('address') }}</p>
+    </div>
+    {% include '@theme/navigation.twig' with { items: navigation('footer'), name: 'footer', label: t('Footer navigation') } %}
+    {% set profiles = site_field('profiles') %}
+    {% if profiles|length > 0 %}
+      <ul class="base-footer__profiles" aria-label="{{ t('Profiles in social networks') }}">
+        {% for profile in profiles %}<li>{{ profile.field('link') }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+    <p class="base-footer__note">{{ site_field('note') }}</p>
+  </div>
+</footer>

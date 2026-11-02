@@ -31,6 +31,9 @@
         <testsuite name="rich-text">
             <directory>packages/rich-text/tests</directory>
         </testsuite>
+        <testsuite name="theme-base">
+            <directory>packages/themes/base/tests</directory>
+        </testsuite>
         <testsuite name="tools">
             <directory>tools/phpstan/tests</directory>
             <exclude>tools/phpstan/tests/data</exclude>

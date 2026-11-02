@@ -1,0 +1,15 @@
+{# The page in the other languages, each named in its own (decision 0105). #}
+{% set languages = alternates() %}
+{% if languages|length > 1 %}
+  <ul class="base-languages" aria-label="{{ t('Language') }}">
+    {% for alternate in languages %}
+      <li>
+        {%- if alternate.current -%}
+          <span aria-current="true" lang="{{ alternate.code }}" dir="{{ alternate.direction }}">{{ alternate.title }}</span>
+        {%- else -%}
+          <a href="{{ alternate.url }}" hreflang="{{ alternate.code }}" lang="{{ alternate.code }}" dir="{{ alternate.direction }}">{{ alternate.title }}</a>
+        {%- endif -%}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

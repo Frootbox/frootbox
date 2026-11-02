@@ -22,6 +22,7 @@
             "Frootbox\\Core\\Tests\\": "packages/core/tests/",
             "Frootbox\\Database\\Tests\\": "packages/database/tests/",
             "Frootbox\\RichText\\Tests\\": "packages/rich-text/tests/",
+            "Frootbox\\ThemeBase\\Tests\\": "packages/themes/base/tests/",
             "Frootbox\\Tools\\PHPStan\\": "tools/phpstan/src/",
             "Frootbox\\Tools\\PHPStan\\Tests\\": "tools/phpstan/tests/"
         }

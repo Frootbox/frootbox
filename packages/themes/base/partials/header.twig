@@ -1,0 +1,27 @@
+{#
+  The head of every page: the link to the content, the brand, the main
+  navigation and the languages. On small screens they open as a popover,
+  without a script (decision 0162). With plain: true only the brand, e.g.
+  on a landing page.
+#}
+{% set home = breadcrumb()|first %}
+{% set main = plain ?? false ? [] : navigation('main') %}
+{% set several = not (plain ?? false) and alternates()|length > 1 %}
+<a class="base-skip-link" href="#content">{{ t('Skip to content') }}</a>
+<header class="base-header">
+  <div class="base-header__inner base-wrap">
+    <a class="base-header__brand" href="{{ home ? home.url : '/' }}">{{ site_field('logo') }}<span>{{ site_field('brand') }}</span></a>
+    {% if main or several %}
+      <button class="base-header__toggle" type="button" popovertarget="base-menu" aria-label="{{ t('Menu') }}">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="base-header__menu" id="base-menu" popover>
+        <button class="base-header__close" type="button" popovertarget="base-menu" popovertargetaction="hide" aria-label="{{ t('Close the menu') }}">
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        {% include '@theme/navigation.twig' with { items: main, name: 'main', label: t('Main navigation') } %}
+        {% if several %}{% include '@theme/languages.twig' %}{% endif %}
+      </div>
+    {% endif %}
+  </div>
+</header>

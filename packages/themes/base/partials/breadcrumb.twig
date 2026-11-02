@@ -1,0 +1,11 @@
+{# The way from the start page here, only below the start page. #}
+{% set crumbs = breadcrumb() %}
+{% if crumbs|length > 1 %}
+  <nav class="base-breadcrumb" aria-label="{{ t('Breadcrumb') }}">
+    <ol>
+      {% for crumb in crumbs %}
+        <li>{% if crumb.current %}<span aria-current="page">{{ crumb.label }}</span>{% else %}<a href="{{ crumb.url }}">{{ loop.first ? t('Home') : crumb.label }}</a>{% endif %}</li>
+      {% endfor %}
+    </ol>
+  </nav>
+{% endif %}

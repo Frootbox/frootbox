@@ -1,0 +1,9 @@
+{# frootbox
+title: Landing page
+description: A page for a campaign without the main navigation, so nothing leads away. The footer keeps its links, e.g. to the legal notice.
+areas:
+  main: {}
+#}
+{% include '@theme/header.twig' with { plain: true } %}
+<main id="content" class="base-page">{{ area('main') }}</main>
+{% include '@theme/footer.twig' %}

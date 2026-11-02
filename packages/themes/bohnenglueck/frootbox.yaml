@@ -2,6 +2,10 @@ title: 'Bohnenglück'
 description: 'Demo-Theme: Website einer kleinen Kaffeerösterei'
 theme:
   parent: frootbox/theme-base
+  # Until it is built on the base theme (decision 0164), Bohnenglück keeps
+  # its own layouts, partials and their styles (the empty partials.css).
+  layouts:
+    hide: [frootbox/theme-base/Page, frootbox/theme-base/Start, frootbox/theme-base/Landing]
   navigations:
     main:
       title: Main navigation

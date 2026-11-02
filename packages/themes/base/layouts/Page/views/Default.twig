@@ -1,0 +1,21 @@
+{# frootbox
+title: Subpage
+description: A page with breadcrumbs, heading, introduction and content.
+fields:
+  title: { type: headline, label: Heading, maxLength: 120 }
+  intro: { type: text, label: Introduction, multiline: true, optional: true, maxLength: 400 }
+areas:
+  main: {}
+#}
+{% include '@theme/header.twig' %}
+<main id="content" class="base-page">
+  <div class="base-page-head">
+    {% include '@theme/breadcrumb.twig' %}
+    {# A page without translation shows the text of another language. #}
+    {% set content = content_attributes() %}
+    {{ heading('title', 0, {class: 'base-page-head__title'}|merge(content)) }}
+    <p class="base-page-head__intro"{{ content|attributes }}>{{ field('intro') }}</p>
+  </div>
+  {{ area('main') }}
+</main>
+{% include '@theme/footer.twig' %}
