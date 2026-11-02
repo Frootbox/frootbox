@@ -96,6 +96,16 @@ final class LibraryTest extends NotesTestCase
                 self::assertStringContainsString('<p>Die Mühle stellst Du mit <code>mahlgrad --fein</code> auf Espresso ein.</p><pre><code class="language-shell">mahlgrad --sorte=hafenmorgen', (string) $response->getBody(), 'Code inline and as a block, styled by base.css.');
             }
 
+            if ('/features' === $path) {
+                self::assertMatchesRegularExpression('#<div class="base-features__head base-head">\s*<p class="base-head__eyebrow">Rösterei am Hafen</p>\s*<h2 class="base-features__title"[^>]*>Warum Bohnenglück</h2>\s*<p class="base-head__intro">Vier Gründe, warum unser Kaffee anders schmeckt\.</p>\s*</div>#', (string) $response->getBody(), 'Eyebrow, heading and introduction (decision 0192).');
+                self::assertStringContainsString('<p class="base-more"><a href="https://example.org/">Mehr über uns</a></p>', (string) $response->getBody());
+            }
+
+            if ('/steps' === $path) {
+                self::assertStringNotContainsString('base-head__eyebrow', (string) $response->getBody(), 'Empty fields leave nothing behind.');
+                self::assertStringNotContainsString('base-more', (string) $response->getBody());
+            }
+
             if ('/on-primary' === $path) {
                 self::assertSame(3, substr_count((string) $response->getBody(), 'base-section--primary'), 'The blocks stand on the main colour.');
             }

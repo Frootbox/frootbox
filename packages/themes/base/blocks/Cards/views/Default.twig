@@ -9,7 +9,9 @@ options:
     label: Columns at most
     choices: { three: Three, two: Two, four: Four }
 fields:
+  eyebrow: { type: headline, label: Eyebrow, optional: true, maxLength: 60, placeholder: "A few words above the heading" }
   title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "Our offers" }
+  intro: { type: text, label: Introduction, optional: true, multiline: true, maxLength: 300, placeholder: "A sentence or two below the heading" }
   items:
     type: list
     label: Cards
@@ -21,9 +23,14 @@ fields:
       title: { type: headline, label: Heading, maxLength: 80, placeholder: "What the card is about" }
       text: { type: text, label: Text, optional: true, multiline: true, maxLength: 300, placeholder: "A sentence or two about it" }
       link: { type: link, label: Link, optional: true }
+  link: { type: link, label: Link below, optional: true, description: "Leads on, e.g. to all offers" }
 #}
 <div class="base-cards base-cards--{{ options.columns }}">
-  {{ heading('title', 0, {class: 'base-cards__title'}) }}
+  <div class="base-cards__head base-head">
+    <p class="base-head__eyebrow">{{ field('eyebrow') }}</p>
+    {{ heading('title', 0, {class: 'base-cards__title'}) }}
+    <p class="base-head__intro">{{ field('intro') }}</p>
+  </div>
   <ul class="base-cards__list">
     {% for item in field('items') %}
       <li class="base-cards__item">
@@ -36,4 +43,5 @@ fields:
       </li>
     {% endfor %}
   </ul>
+  <p class="base-more">{{ field('link') }}</p>
 </div>

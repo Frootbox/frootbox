@@ -4,7 +4,9 @@ description: A numbered sequence, e.g. how ordering, booking or a first visit wo
 group: list
 keywords: [Process, Sequence, How it works, Procedure, Numbered, Instructions]
 fields:
+  eyebrow: { type: headline, label: Eyebrow, optional: true, maxLength: 60, placeholder: "A few words above the heading" }
   title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "How it works" }
+  intro: { type: text, label: Introduction, optional: true, multiline: true, maxLength: 300, placeholder: "A sentence or two below the heading" }
   items:
     type: list
     label: Steps
@@ -14,9 +16,14 @@ fields:
     fields:
       title: { type: headline, label: Heading, maxLength: 100, placeholder: "What happens in this step" }
       text: { type: text, label: Text, optional: true, multiline: true, maxLength: 400, placeholder: "A sentence or two about it" }
+  link: { type: link, label: Link below, optional: true, description: "Leads on, e.g. to all offers" }
 #}
 <div class="base-steps">
-  {{ heading('title', 0, {class: 'base-steps__title'}) }}
+  <div class="base-steps__head base-head">
+    <p class="base-head__eyebrow">{{ field('eyebrow') }}</p>
+    {{ heading('title', 0, {class: 'base-steps__title'}) }}
+    <p class="base-head__intro">{{ field('intro') }}</p>
+  </div>
   <ol class="base-steps__list">
     {% for item in field('items') %}
       <li class="base-steps__item">
@@ -25,4 +32,5 @@ fields:
       </li>
     {% endfor %}
   </ol>
+  <p class="base-more">{{ field('link') }}</p>
 </div>

@@ -23,6 +23,7 @@
 }
 /* Marks in the main colour swap their colours, so they stay visible. */
 .base-section--primary .base-steps__item::before { background: var(--color-primary-contrast); color: var(--color-primary); }
+.base-section--primary .base-head__eyebrow { color: inherit; }
 /* Prices and tables have no surface of their own: they get the page background. */
 .base-section--primary :is(.base-prices__item, .base-table__scroll) { background: var(--color-bg); }
 /* The focus ring would have the colour of the background. */

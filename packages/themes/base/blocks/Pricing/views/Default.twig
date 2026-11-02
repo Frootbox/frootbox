@@ -4,7 +4,9 @@ description: Two to four rates side by side with price, features and a button, e
 group: list
 keywords: [Rates, Plans, Packages, Tariffs, Costs, Subscriptions]
 fields:
+  eyebrow: { type: headline, label: Eyebrow, optional: true, maxLength: 60, placeholder: "A few words above the heading" }
   title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "Our rates" }
+  intro: { type: text, label: Introduction, optional: true, multiline: true, maxLength: 300, placeholder: "A sentence or two below the heading" }
   items:
     type: list
     label: Rates
@@ -19,9 +21,14 @@ fields:
       features: { type: text, label: Features, optional: true, multiline: true, maxLength: 1000, placeholder: "One feature per line" }
       link: { type: link, label: Button, optional: true }
       badge: { type: headline, label: Highlight, optional: true, maxLength: 30, placeholder: "e.g. Popular" }
+  link: { type: link, label: Link below, optional: true, description: "Leads on, e.g. to all offers" }
 #}
 <div class="base-prices">
-  {{ heading('title', 0, {class: 'base-prices__title'}) }}
+  <div class="base-prices__head base-head">
+    <p class="base-head__eyebrow">{{ field('eyebrow') }}</p>
+    {{ heading('title', 0, {class: 'base-prices__title'}) }}
+    <p class="base-head__intro">{{ field('intro') }}</p>
+  </div>
   <ul class="base-prices__list">
     {% for item in field('items') %}
       {% set features = (item.value('features') ?? '')|split("\n")|map(line => line|trim)|filter(line => line != '') %}
@@ -40,4 +47,5 @@ fields:
       </li>
     {% endfor %}
   </ul>
+  <p class="base-more">{{ field('link') }}</p>
 </div>
