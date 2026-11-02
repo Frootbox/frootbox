@@ -549,6 +549,24 @@
               - {"block": "frootbox/theme-base/Section", "variant": "OneTwo", "areas": {"first": [{"block": "frootbox/theme-base/Downloads", "fields": {"title": "Zum Mitnehmen", "items": [{"file": {"media": "${doc_price_list.id}"}, "text": "Alle Sorten und Abos mit Preisen."}, {"file": {"media": "${doc_coffees.id}", "text": "Unsere Sorten als Tabelle"}, "text": "Herkunft und Röstung, zum Öffnen in jeder Tabellenkalkulation."}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
   as: downloads
 - page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Tabelle
+        slug: table
+        content:
+          fields:
+            title: Tabelle
+            intro: 'Daten in Zeilen und Spalten, schmal seitlich scrollbar.'
+          areas:
+            main:
+              - {"block": "frootbox/theme-base/Table", "fields": {"title": "Öffnungszeiten", "table": {"rows": [["Tag", "Laden", "Café"], ["Montag bis Freitag", "8–18 Uhr", "8–17 Uhr"], ["Samstag", "9–14 Uhr", "9–16 Uhr"], ["Sonntag", "geschlossen", "10–16 Uhr\nnur bei Sonne"]], "headerRow": true, "headerColumn": true}, "note": "An Feiertagen bleibt alles zu."}}
+              - {"block": "frootbox/theme-base/Table", "fields": {"title": "Unsere Sorten", "table": {"rows": [["Sorte", "Herkunft", "Röstung", "Säure", "Körper", "250 g", "1 kg"], [[{"type": "text", "text": "Hausmischung", "marks": [{"type": "bold"}]}], "Brasilien und Äthiopien", "mittel", "mild", "voll", "9,50 €", "32,00 €"], ["Yirgacheffe", "Äthiopien", "hell", "fruchtig", "leicht", "11,00 €", "38,00 €"], ["Huila", "Kolumbien", "mittel", "ausgewogen", "mittel", "10,00 €", "34,00 €"], [[{"type": "text", "text": "Espresso Nonna"}, {"type": "hardBreak"}, {"type": "text", "text": "für Siebträger", "marks": [{"type": "italic"}]}], "Brasilien und Indien", "dunkel", "kaum", "kräftig", "9,00 €", "30,00 €"]]}, "note": "Alle Preise inklusive Mehrwertsteuer."}}
+              - {"block": "frootbox/theme-base/Section", "variant": "Two", "areas": {"first": [{"block": "frootbox/theme-base/Table", "fields": {"title": "Unsere Sorten", "table": {"rows": [["Sorte", "Herkunft", "Röstung", "Säure", "Körper", "250 g", "1 kg"], [[{"type": "text", "text": "Hausmischung", "marks": [{"type": "bold"}]}], "Brasilien und Äthiopien", "mittel", "mild", "voll", "9,50 €", "32,00 €"], ["Yirgacheffe", "Äthiopien", "hell", "fruchtig", "leicht", "11,00 €", "38,00 €"], ["Huila", "Kolumbien", "mittel", "ausgewogen", "mittel", "10,00 €", "34,00 €"], [[{"type": "text", "text": "Espresso Nonna"}, {"type": "hardBreak"}, {"type": "text", "text": "für Siebträger", "marks": [{"type": "italic"}]}], "Brasilien und Indien", "dunkel", "kaum", "kräftig", "9,00 €", "30,00 €"]]}, "note": "Alle Preise inklusive Mehrwertsteuer."}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "OneTwo", "areas": {"first": [{"block": "frootbox/theme-base/Table", "fields": {"title": "Öffnungszeiten", "table": {"rows": [["Tag", "Laden", "Café"], ["Montag bis Freitag", "8–18 Uhr", "8–17 Uhr"], ["Samstag", "9–14 Uhr", "9–16 Uhr"], ["Sonntag", "geschlossen", "10–16 Uhr\nnur bei Sonne"]], "headerRow": true, "headerColumn": true}, "note": "An Feiertagen bleibt alles zu."}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+  as: table
+- page.create:
     layout: frootbox/theme-base/Start
     parentId: '${start.id}'
     translations:
@@ -617,6 +635,7 @@
       - '${contact.id}'
       - '${features.id}'
       - '${downloads.id}'
+      - '${table.id}'
       - '${page_header.id}'
       - '${landing.id}'
       - '${imprint.id}'
@@ -710,6 +729,9 @@
             -
               type: target
               target: 'page:${downloads.id}'
+            -
+              type: target
+              target: 'page:${table.id}'
         -
           type: target
           target: 'page:${landing.id}'

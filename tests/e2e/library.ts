@@ -37,6 +37,7 @@ export const PAGES = {
     contact: '/contact',
     features: '/features',
     downloads: '/downloads',
+    table: '/table',
     landing: '/aktion',
 };
 

@@ -31,6 +31,7 @@ theme:
       - frootbox/theme-base/Contact
       - frootbox/theme-base/Features
       - frootbox/theme-base/Downloads
+      - frootbox/theme-base/Table
   navigations:
     main:
       title: Main navigation

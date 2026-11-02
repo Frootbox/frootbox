@@ -71,13 +71,21 @@ final class LibraryTest extends NotesTestCase
 
         self::assertSame(0, $console->run(new ArrayInput(['command' => 'seed', 'file' => self::THEME . ':demo/library.yaml']), $output), $output->fetch());
 
-        foreach (['/', '/heading', '/text', '/button', '/section', '/text-with-heading', '/quote', '/notice', '/divider', '/call-to-action', '/key-figures', '/hero', '/page-header', '/image-with-text', '/gallery', '/slider', '/video', '/cards', '/logos', '/link-list', '/accordion', '/steps', '/testimonials', '/prices', '/contact', '/features', '/downloads', '/aktion', '/impressum'] as $path) {
+        foreach (['/', '/heading', '/text', '/button', '/section', '/text-with-heading', '/quote', '/notice', '/divider', '/call-to-action', '/key-figures', '/hero', '/page-header', '/image-with-text', '/gallery', '/slider', '/video', '/cards', '/logos', '/link-list', '/accordion', '/steps', '/testimonials', '/prices', '/contact', '/features', '/downloads', '/table', '/aktion', '/impressum'] as $path) {
             $this->get(Urls::class)->clear();
             $this->get(PageOutline::class)->clear();
             $response = $this->get(PageHandler::class)->handle(new ServerRequest('GET', 'https://example.org' . $path));
 
             self::assertSame(200, $response->getStatusCode(), $path);
             self::assertSame([], self::htmlErrors((string) $response->getBody()), $path);
+
+            if ('/table' === $path) {
+                $html = (string) $response->getBody();
+                self::assertStringContainsString('<div class="base-table__scroll" tabindex="0" role="group" aria-label="Öffnungszeiten">', $html);
+                self::assertStringContainsString('<thead><tr><th scope="col">Tag</th><th scope="col">Laden</th><th scope="col">Café</th></tr></thead><tbody><tr><th scope="row">Montag bis Freitag</th><td>8–18 Uhr</td>', $html);
+                self::assertStringContainsString('<td>10–16 Uhr<br>nur bei Sonne</td>', $html);
+                self::assertStringContainsString('<td><strong>Hausmischung</strong></td>', $html);
+            }
 
             if ('/downloads' === $path) {
                 self::assertMatchesRegularExpression('#<a href="/media/[0-9A-Z]{26}/1/price-list-main-[0-9a-f]{16}\.pdf" type="application/pdf">Preisliste 2027 <small>PDF, 1 KB</small></a>#', (string) $response->getBody());

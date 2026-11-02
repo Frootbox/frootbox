@@ -1,0 +1,11 @@
+.base-table__title { margin: 0 0 var(--space-s); font-size: var(--size-2xl); }
+.base-table__scroll { overflow-x: auto; border: var(--border); border-radius: var(--radius); }
+.base-table__scroll:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+.base-table table { inline-size: 100%; font-variant-numeric: tabular-nums; }
+/* Wide tables scroll rather than break each word onto a line of its own. */
+.base-table :is(th, td) { min-inline-size: 6rem; padding: var(--space-2xs) var(--space-s); text-align: start; vertical-align: top; border-block-end: var(--border); }
+.base-table tr:last-child > :is(th, td) { border-block-end: 0; }
+.base-table thead th { background: var(--color-surface); font-weight: 600; white-space: nowrap; }
+.base-table tbody th { font-weight: 600; }
+.base-table tbody tr:nth-child(even) { background: color-mix(in srgb, var(--color-surface) 50%, transparent); }
+.base-table__note { margin: var(--space-2xs) 0 0; color: var(--color-muted); font-size: var(--size-s); }

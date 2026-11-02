@@ -1,0 +1,18 @@
+{# frootbox
+title: Table
+description: Data in rows and columns, e.g. opening hours, prices or technical data. Paste it right from Excel or Google Sheets. Not for layout; for content side by side use the section with columns.
+group: text
+keywords: [Table, Data, Excel, Spreadsheet, Opening hours, Price list, Schedule]
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "Opening hours" }
+  table: { type: table, label: Table }
+  note: { type: text, label: Note, optional: true, maxLength: 300, placeholder: "e.g. All prices include VAT." }
+#}
+<div class="base-table">
+  {{ heading('title', 0, {class: 'base-table__title'}) }}
+  {# Scrolls sideways when the table is wider than the column, also with the keyboard. #}
+  <div class="base-table__scroll" tabindex="0" role="group" aria-label="{{ value('title') ?: t('Table') }}">
+    {{ field('table') }}
+  </div>
+  <p class="base-table__note">{{ field('note') }}</p>
+</div>
