@@ -1,11 +1,12 @@
 {# frootbox
-title: Zentriert
-description: Alles mittig, für den ersten Eindruck.
+title: Centred
+description: Everything centred, for the first impression.
 options:
-  anchor: { type: text, label: Anker für die Navigation }
+  anchor: { type: text, label: Anchor for the navigation }
   tone:
     type: choice
-    choices: { light: Hell, dark: Dunkel }
+    label: Brightness
+    choices: { light: Light, dark: Dark }
 #}
 <section class="hero hero--center hero--{{ options.tone }}"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
   <div class="wrap hero__inner">

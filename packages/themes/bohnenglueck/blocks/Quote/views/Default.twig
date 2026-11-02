@@ -1,12 +1,12 @@
 {# frootbox
-title: Zitat
-description: Ein Kundenstimme oder Leitsatz, groß gesetzt.
+title: Quote
+description: A customer’s voice or a motto, set large.
 group: text
-keywords: [Kundenstimme, Testimonial, Leitsatz]
+keywords: [Customer voice, Testimonial, Motto]
 fields:
-  quote: { type: text, label: Zitat, multiline: true, placeholder: "Was jemand über Dich gesagt hat" }
-  author: { type: headline, label: Name, placeholder: "Wer es gesagt hat" }
-  role: { type: headline, label: Rolle, optional: true }
+  quote: { type: text, label: Quote, multiline: true, placeholder: "What someone said about you" }
+  author: { type: headline, label: Name, placeholder: "Who said it" }
+  role: { type: headline, label: Role, optional: true }
 #}
 <figure class="quote">
   <blockquote><p>{{ field('quote') }}</p></blockquote>

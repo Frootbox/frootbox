@@ -1,10 +1,10 @@
 title: Hero
-description: Großer Einstieg mit Überschrift, Text und bis zu zwei Buttons.
+description: A large opening with a heading, text and up to two buttons.
 group: header
-keywords: [Einstieg, Bühne, Kopfbereich]
+keywords: [Opening, Stage, Header]
 fields:
-  eyebrow: { type: headline, label: Dachzeile, optional: true, maxLength: 60 }
-  title: { type: headline, label: Überschrift, maxLength: 120, placeholder: "Worum geht es auf dieser Seite?" }
-  text: { type: text, label: Text, multiline: true, optional: true, placeholder: "Ein, zwei Sätze, die neugierig machen" }
+  eyebrow: { type: headline, label: Eyebrow, optional: true, maxLength: 60 }
+  title: { type: headline, label: Heading, maxLength: 120, placeholder: "What is this page about?" }
+  text: { type: text, label: Text, multiline: true, optional: true, placeholder: "A sentence or two that make people curious" }
   button: { type: link, label: Button, optional: true }
-  secondary: { type: link, label: Zweiter Button, optional: true }
+  secondary: { type: link, label: Second button, optional: true }

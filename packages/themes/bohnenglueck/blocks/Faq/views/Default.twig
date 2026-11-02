@@ -1,23 +1,23 @@
 {# frootbox
 title: FAQ
-description: Fragen und Antworten zum Aufklappen.
+description: Questions and answers to expand.
 group: list
-keywords: [Fragen, Antworten, Akkordeon]
+keywords: [Questions, Answers, Accordion]
 options:
-  anchor: { type: text, label: Anker für die Navigation }
+  anchor: { type: text, label: Anchor for the navigation }
   open:
     type: boolean
-    label: Erste Antwort geöffnet
+    label: First answer open
 fields:
-  title: { type: headline, label: Überschrift, placeholder: "Häufige Fragen" }
+  title: { type: headline, label: Heading, placeholder: "Frequent questions" }
   items:
     type: list
-    label: Fragen
+    label: Questions
     min: 1
     start: 3
     fields:
-      question: { type: headline, label: Frage, placeholder: "Eine Frage, die oft gestellt wird" }
-      answer: { type: richtext, label: Antwort, placeholder: "Die Antwort in ein paar Sätzen" }
+      question: { type: headline, label: Question, placeholder: "A question people often ask" }
+      answer: { type: richtext, label: Answer, placeholder: "The answer in a few sentences" }
 #}
 <section class="section faq"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
   <div class="wrap faq__inner">

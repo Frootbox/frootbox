@@ -4,15 +4,15 @@ theme:
   parent: frootbox/theme-base
   navigations:
     main:
-      title: Hauptnavigation
+      title: Main navigation
       options:
-        button: { type: boolean, label: Als Button }
+        button: { type: boolean, label: As a button }
     footer: Footer
   # Content that is the same on every page (decision 0128).
   fields:
-    brand: { type: headline, label: Name der Website, maxLength: 60 }
-    address: { type: text, label: Adresse im Footer, maxLength: 200 }
-    note: { type: text, label: Hinweis im Footer, maxLength: 200 }
+    brand: { type: headline, label: Name of the website, maxLength: 60 }
+    address: { type: text, label: Address in the footer, maxLength: 200 }
+    note: { type: text, label: Note in the footer, maxLength: 200 }
   tokens:
     color:
       bg: '#fbf7f2'

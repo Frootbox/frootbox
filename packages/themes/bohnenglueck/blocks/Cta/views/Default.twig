@@ -1,13 +1,13 @@
 {# frootbox
-title: Aufruf
-description: Farbiges Band mit Überschrift, Satz und Button am Ende einer Seite.
+title: Call to action
+description: A coloured band with a heading, a sentence and a button at the end of a page.
 group: callout
-keywords: [Aufruf, Call to Action, Button]
+keywords: [Call to action, Call to Action, Button]
 options:
-  anchor: { type: text, label: Anker für die Navigation }
+  anchor: { type: text, label: Anchor for the navigation }
 fields:
-  title: { type: headline, label: Überschrift, placeholder: "Wozu lädst Du ein?" }
-  text: { type: text, label: Text, optional: true, placeholder: "Ein Satz, der zum Klick bewegt" }
+  title: { type: headline, label: Heading, placeholder: "What do you invite people to?" }
+  text: { type: text, label: Text, optional: true, placeholder: "A sentence that makes people click" }
   button: { type: link, label: Button }
 #}
 <section class="section"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>

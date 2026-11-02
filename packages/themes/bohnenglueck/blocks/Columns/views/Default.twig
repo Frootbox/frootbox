@@ -1,10 +1,10 @@
 {# frootbox
-title: Gleich breit
+title: Equal width
 options:
-  anchor: { type: text, label: Anker für die Navigation }
+  anchor: { type: text, label: Anchor for the navigation }
   ratio:
     type: choice
-    label: Verhältnis
+    label: Ratio
     choices: { even: '1 : 1', wide: '2 : 1' }
 #}
 <section class="section"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>

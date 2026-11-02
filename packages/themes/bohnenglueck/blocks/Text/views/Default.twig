@@ -1,17 +1,17 @@
 {# frootbox
 title: Text
-description: Formatierter Fließtext mit optionaler Überschrift.
+description: Formatted running text with an optional heading.
 group: text
-keywords: [Absatz, Fließtext]
+keywords: [Paragraph, Running text]
 options:
-  anchor: { type: text, label: Anker für die Navigation }
+  anchor: { type: text, label: Anchor for the navigation }
   width:
     type: choice
-    label: Breite
-    choices: { narrow: Schmal, wide: Breit }
+    label: Width
+    choices: { narrow: Narrow, wide: Wide }
 fields:
-  title: { type: headline, label: Überschrift, optional: true }
-  body: { type: richtext, label: Text, placeholder: "Schreib hier Deinen Text" }
+  title: { type: headline, label: Heading, optional: true }
+  body: { type: richtext, label: Text, placeholder: "Write your text here" }
 #}
 <section class="text text--{{ options.width }}"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
   {{ heading('title', 0, {class: 'text__title'}) }}

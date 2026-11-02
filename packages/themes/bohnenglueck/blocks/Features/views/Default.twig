@@ -1,28 +1,28 @@
 {# frootbox
-title: Vorteile
-description: Überschrift mit Einleitung und einem Raster aus kurzen Punkten.
+title: Benefits
+description: A heading with an introduction and a grid of short points.
 group: list
-keywords: [Vorteile, Merkmale, Raster]
+keywords: [Benefits, Features, Grid]
 options:
-  anchor: { type: text, label: Anker für die Navigation }
+  anchor: { type: text, label: Anchor for the navigation }
   columns:
     type: choice
-    label: Spalten
-    choices: { 2: Zwei, 3: Drei, 4: Vier }
+    label: Columns
+    choices: { 2: Two, 3: Three, 4: Four }
     default: 3
 fields:
-  title: { type: headline, label: Überschrift, placeholder: "Was macht Dich besonders?" }
-  intro: { type: text, label: Einleitung, optional: true, placeholder: "Ein Satz, der zu den Punkten hinführt" }
+  title: { type: headline, label: Heading, placeholder: "What makes you special?" }
+  intro: { type: text, label: Introduction, optional: true, placeholder: "A sentence that leads to the points" }
   items:
     type: list
-    label: Punkte
+    label: Points
     min: 1
     max: 8
     start: 3
     fields:
-      icon: { type: headline, label: Symbol, optional: true, maxLength: 4, description: Ein Emoji, placeholder: "✨" }
-      title: { type: headline, label: Titel, placeholder: "Ein Vorteil in wenigen Worten" }
-      text: { type: text, label: Text, multiline: true, optional: true, placeholder: "Ein, zwei Sätze, was dahintersteckt" }
+      icon: { type: headline, label: Symbol, optional: true, maxLength: 4, description: An emoji, placeholder: "✨" }
+      title: { type: headline, label: Title, placeholder: "A benefit in a few words" }
+      text: { type: text, label: Text, multiline: true, optional: true, placeholder: "A sentence or two on what is behind it" }
 #}
 <section class="section features"{% if options.anchor %} id="{{ options.anchor }}"{% endif %}>
   <div class="wrap">
