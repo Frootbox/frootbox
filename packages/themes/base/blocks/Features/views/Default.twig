@@ -1,0 +1,30 @@
+{# frootbox
+title: Benefits
+description: What speaks for an offer, each point with a symbol, a heading and a short text, e.g. delivery, quality and service. Three to six points read best. Not for a sequence (use Steps) or for prices.
+group: list
+keywords: [Features, Advantages, Icons, Symbols, Reasons, Why us, USP]
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "Why us" }
+  items:
+    type: list
+    label: Benefits
+    min: 1
+    max: 12
+    start: 3
+    fields:
+      icon: { type: icon, label: Symbol, optional: true }
+      title: { type: headline, label: Heading, maxLength: 80, placeholder: "What speaks for it" }
+      text: { type: text, label: Text, optional: true, multiline: true, maxLength: 300, placeholder: "A sentence about it" }
+#}
+<div class="base-features">
+  {{ heading('title', 0, {class: 'base-features__title'}) }}
+  <ul class="base-features__list">
+    {% for item in field('items') %}
+      <li class="base-features__item">
+        <span class="base-features__icon">{{ item.field('icon') }}</span>
+        {{ item.heading('title', 1, {class: 'base-features__heading'}) }}
+        <p class="base-features__text">{{ item.field('text') }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+</div>

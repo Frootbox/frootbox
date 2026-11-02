@@ -71,7 +71,7 @@ final class LibraryTest extends NotesTestCase
 
         self::assertSame(0, $console->run(new ArrayInput(['command' => 'seed', 'file' => self::THEME . ':demo/library.yaml']), $output), $output->fetch());
 
-        foreach (['/', '/heading', '/text', '/button', '/section', '/text-with-heading', '/quote', '/notice', '/divider', '/call-to-action', '/key-figures', '/hero', '/page-header', '/image-with-text', '/gallery', '/slider', '/video', '/cards', '/logos', '/link-list', '/accordion', '/steps', '/testimonials', '/prices', '/contact', '/aktion', '/impressum'] as $path) {
+        foreach (['/', '/heading', '/text', '/button', '/section', '/text-with-heading', '/quote', '/notice', '/divider', '/call-to-action', '/key-figures', '/hero', '/page-header', '/image-with-text', '/gallery', '/slider', '/video', '/cards', '/logos', '/link-list', '/accordion', '/steps', '/testimonials', '/prices', '/contact', '/features', '/aktion', '/impressum'] as $path) {
             $this->get(Urls::class)->clear();
             $this->get(PageOutline::class)->clear();
             $response = $this->get(PageHandler::class)->handle(new ServerRequest('GET', 'https://example.org' . $path));

@@ -499,6 +499,23 @@
               - {"block": "frootbox/theme-base/Section", "variant": "OneTwo", "areas": {"first": [{"block": "frootbox/theme-base/Contact", "fields": {"title": "So erreichst Du uns", "address": "Rösterei am Hafen\nKaistraße 12\n20457 Hamburg", "phone": "+49 40 123 456 78", "email": "hallo@example.org", "hoursTitle": "Öffnungszeiten", "hours": [{"days": "Mo bis Fr", "time": "8 bis 18 Uhr"}, {"days": "Sa", "time": "9 bis 14 Uhr"}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
   as: contact
 - page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Vorteile
+        slug: features
+        content:
+          fields:
+            title: Vorteile
+            intro: 'Punkte mit Symbol, Überschrift und kurzem Text.'
+          areas:
+            main:
+              - {"block": "frootbox/theme-base/Features", "fields": {"title": "Warum Bohnenglück", "items": [{"icon": "truck", "title": "Versand am Dienstag", "text": "Montags geröstet, am Tag darauf unterwegs."}, {"icon": "leaf", "title": "Von Höfen, die wir kennen", "text": "Wir kaufen direkt und zahlen über dem Marktpreis."}, {"icon": "cup", "title": "Für jede Kanne", "text": "Ganze Bohnen oder gemahlen, für Filter, French Press und Siebträger."}, {"icon": "clock", "title": "Jederzeit pausieren", "text": "Das Abo ruht, solange Du willst."}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "Two", "areas": {"first": [{"block": "frootbox/theme-base/Features", "fields": {"title": "Warum Bohnenglück", "items": [{"icon": "truck", "title": "Versand am Dienstag", "text": "Montags geröstet, am Tag darauf unterwegs."}, {"icon": "leaf", "title": "Von Höfen, die wir kennen", "text": "Wir kaufen direkt und zahlen über dem Marktpreis."}, {"icon": "cup", "title": "Für jede Kanne", "text": "Ganze Bohnen oder gemahlen, für Filter, French Press und Siebträger."}, {"icon": "clock", "title": "Jederzeit pausieren", "text": "Das Abo ruht, solange Du willst."}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "OneTwo", "areas": {"first": [{"block": "frootbox/theme-base/Features", "fields": {"title": "Warum Bohnenglück", "items": [{"icon": "truck", "title": "Versand am Dienstag", "text": "Montags geröstet, am Tag darauf unterwegs."}, {"icon": "leaf", "title": "Von Höfen, die wir kennen", "text": "Wir kaufen direkt und zahlen über dem Marktpreis."}, {"icon": "cup", "title": "Für jede Kanne", "text": "Ganze Bohnen oder gemahlen, für Filter, French Press und Siebträger."}, {"icon": "clock", "title": "Jederzeit pausieren", "text": "Das Abo ruht, solange Du willst."}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+  as: features
+- page.create:
     layout: frootbox/theme-base/Start
     parentId: '${start.id}'
     translations:
@@ -565,6 +582,7 @@
       - '${testimonials.id}'
       - '${prices.id}'
       - '${contact.id}'
+      - '${features.id}'
       - '${page_header.id}'
       - '${landing.id}'
       - '${imprint.id}'
@@ -652,6 +670,9 @@
             -
               type: target
               target: 'page:${contact.id}'
+            -
+              type: target
+              target: 'page:${features.id}'
         -
           type: target
           target: 'page:${landing.id}'

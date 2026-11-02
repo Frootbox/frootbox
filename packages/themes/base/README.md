@@ -27,6 +27,14 @@ Child themes override any of them in their own `frootbox.yaml`. They
 become CSS custom properties, e.g. `color.primary` is
 `--color-primary`.
 
+## Icons
+
+`icons/` holds the symbols for the field type `icon`, e.g. in the block
+`Features`: SVG files with a `viewBox`, drawn with `currentColor`, named
+in lowercase with hyphens (`map-pin.svg`). A child theme adds its own or
+replaces one by the same name. The page gets them inline and hidden from
+screen readers, so the text next to a symbol carries its meaning.
+
 ## License
 
 MIT, see `LICENSE`.

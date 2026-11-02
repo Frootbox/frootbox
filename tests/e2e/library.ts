@@ -35,6 +35,7 @@ export const PAGES = {
     testimonials: '/testimonials',
     prices: '/prices',
     contact: '/contact',
+    features: '/features',
     landing: '/aktion',
 };
 

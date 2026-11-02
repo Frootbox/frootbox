@@ -29,6 +29,7 @@ theme:
       - frootbox/theme-base/Testimonials
       - frootbox/theme-base/Pricing
       - frootbox/theme-base/Contact
+      - frootbox/theme-base/Features
   navigations:
     main:
       title: Main navigation
