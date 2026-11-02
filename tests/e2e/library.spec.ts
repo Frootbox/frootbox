@@ -177,4 +177,12 @@ test('jumps to a section and keeps the jump bar in view', async ({ page }) => {
     const headingBox = (await heading.boundingBox())!;
     expect(barBox.y).toBeLessThanOrEqual(1);
     expect(headingBox.y).toBeGreaterThanOrEqual(barBox.y + barBox.height);
+
+    // The bar marks the section in view, and none above the first (decision 0200).
+    await expect(bar.getByRole('link', { name: 'Für Firmen' })).toHaveAttribute('aria-current', 'true');
+    await bar.getByRole('link', { name: 'Sorten und Abos' }).click();
+    await expect(bar.getByRole('link', { name: 'Sorten und Abos' })).toHaveAttribute('aria-current', 'true');
+    await expect(bar.locator('[aria-current]')).toHaveCount(1);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(bar.locator('[aria-current]')).toHaveCount(0);
 });

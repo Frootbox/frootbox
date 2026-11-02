@@ -7,13 +7,16 @@ keywords: [Jump links, Anchors, On this page, Table of contents, Page navigation
 {# Decision 0196: the marks come from the page, so the bar never goes out of date. #}
 {% set marks = jump_marks() %}
 {% if marks %}
-  <nav class="base-jump-bar base-full" aria-label="{{ t('On this page') }}">
-    <ul class="base-jump-bar__list">
-      {% for mark in marks %}
-        <li><a href="#{{ mark.id }}">{{ mark.label }}</a></li>
-      {% endfor %}
-    </ul>
-  </nav>
+  {# The element marks the section in view (decision 0200). #}
+  <base-jump-bar class="base-jump-bar base-full">
+    <nav aria-label="{{ t('On this page') }}">
+      <ul class="base-jump-bar__list">
+        {% for mark in marks %}
+          <li><a href="#{{ mark.id }}">{{ mark.label }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </base-jump-bar>
 {% elseif editing() %}
   <p class="base-jump-bar__hint">{{ t('The jump bar shows the sections of this page that have a jump mark. Give a section one in its settings.') }}</p>
 {% endif %}

@@ -4,6 +4,7 @@
  * a sticky head sets --base-sticky-top to its height.
  */
 .base-jump-bar {
+  display: block;
   position: sticky;
   inset-block-start: var(--base-sticky-top, 0);
   z-index: 4;
@@ -36,6 +37,8 @@
   white-space: nowrap;
 }
 .base-jump-bar a:hover { border-color: currentColor; }
+/* The section in view, marked by jump-bar.js (decision 0200). */
+.base-jump-bar a[aria-current] { border-color: var(--color-primary); background: var(--color-primary); color: var(--color-primary-contrast); }
 /* A jump stops below the head and the bar (decision 0196). */
 html:has(.base-jump-bar) { scroll-padding-block-start: calc(var(--base-sticky-top, 0px) + 2.75rem + 2 * var(--space-2xs) + 1px + var(--space-s)); }
 .base-jump-bar__hint { margin: 0; padding: var(--space-s); border: 1px dashed var(--color-line); color: var(--color-muted); font-size: var(--size-s); }

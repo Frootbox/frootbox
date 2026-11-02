@@ -118,7 +118,7 @@ final class LibraryTest extends NotesTestCase
 
             if ('/jump-bar' === $path) {
                 $html = (string) $response->getBody();
-                self::assertMatchesRegularExpression('#<nav class="base-jump-bar base-full" aria-label="Auf dieser Seite">\s*<ul class="base-jump-bar__list">\s*<li><a href="\#roesterei">Rösterei</a></li>\s*<li><a href="\#sorten-und-abos">Sorten und Abos</a></li>\s*<li><a href="\#fuer-firmen">Für Firmen</a></li>#', $html, 'The bar fills itself from the jump marks below it (decision 0196).');
+                self::assertMatchesRegularExpression('#<base-jump-bar class="base-jump-bar base-full">\s*<nav aria-label="Auf dieser Seite">\s*<ul class="base-jump-bar__list">\s*<li><a href="\#roesterei">Rösterei</a></li>\s*<li><a href="\#sorten-und-abos">Sorten und Abos</a></li>\s*<li><a href="\#fuer-firmen">Für Firmen</a></li>#', $html, 'The bar fills itself from the jump marks below it (decision 0196).');
                 self::assertStringContainsString('<section id="fuer-firmen" class="base-section', $html);
                 self::assertStringNotContainsString('base-jump-bar__hint', $html, 'The hint is for editors only.');
             }
