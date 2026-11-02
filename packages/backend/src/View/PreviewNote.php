@@ -12,6 +12,7 @@ use Frootbox\Backend\BackendExtension;
 use Frootbox\Backend\Design\Design;
 use Frootbox\Backend\I18n\Translator;
 use Frootbox\Core\Asset\PublicAssets;
+use Frootbox\Core\Language\Direction;
 use Frootbox\Core\Preview\PreviewAccess;
 use Frootbox\Core\Preview\PreviewEditor;
 use Frootbox\Core\Routing\Router;
@@ -55,6 +56,8 @@ final readonly class PreviewNote
             'comments' => null !== $pageId,
             'pageId' => $pageId,
             'language' => $event->head->language,
+            // The bar follows the language of the backend, not of the page (decision 0133).
+            'ui' => ['language' => $this->translator->language(), 'direction' => Direction::of($this->translator->language())->value],
             'actions' => substr($this->router->path('backend.preview.action', ['name' => 'x']), 0, -1),
             'queries' => substr($this->router->path('backend.preview.query', ['name' => 'x']), 0, -1),
             'labels' => [

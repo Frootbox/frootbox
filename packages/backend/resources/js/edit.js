@@ -9,5 +9,8 @@ const source = document.getElementById('fb-edit-config');
 if (source) {
     const bar = document.createElement('fb-editor-bar');
     bar.config = JSON.parse(source.textContent ?? '{}');
+    // The bar speaks the language of the backend (decision 0133).
+    bar.lang = bar.config.ui?.language ?? '';
+    bar.dir = bar.config.ui?.direction ?? 'ltr';
     document.body.append(bar);
 }

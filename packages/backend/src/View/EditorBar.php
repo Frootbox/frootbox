@@ -17,6 +17,7 @@ use Frootbox\Backend\Security\Csrf;
 use Frootbox\Core\Action\AccessDeniedException;
 use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Asset\PublicAssets;
+use Frootbox\Core\Language\Direction;
 use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Media\ListMedia;
 use Frootbox\Core\Media\ListMediumUsages;
@@ -84,6 +85,8 @@ final readonly class EditorBar
             'actions' => substr($this->router->path('backend.action', ['name' => 'x']), 0, -1),
             'queries' => substr($this->router->path('backend.query', ['name' => 'x']), 0, -1),
             'language' => $event->head->language,
+            // The bar follows the language of the backend, not of the page (decision 0133).
+            'ui' => ['language' => $this->translator->language(), 'direction' => Direction::of($this->translator->language())->value],
             'toggle' => $this->router->path('backend.edit-mode'),
             'pages' => $this->router->path('backend.pages'),
             'uploads' => $this->router->path('backend.uploads'),

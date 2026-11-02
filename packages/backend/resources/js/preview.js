@@ -604,5 +604,8 @@ if (source) {
     customElements.define('fb-preview-note', PreviewNote);
     const note = document.createElement('fb-preview-note');
     note.config = JSON.parse(source.textContent ?? '{}');
+    // The note speaks the language of the backend (decision 0133).
+    note.lang = note.config.ui?.language ?? '';
+    note.dir = note.config.ui?.direction ?? 'ltr';
     document.body.append(note);
 }

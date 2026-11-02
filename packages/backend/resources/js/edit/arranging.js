@@ -1,4 +1,5 @@
 import { css, html, nothing } from 'lit';
+import { endFromEnd } from './edges.js';
 import { entryAt, fieldsOf, markEntries, ownerOf, sideBySide } from './entries.js';
 import { icon } from './icons.js';
 
@@ -113,13 +114,13 @@ export const arrangingStyles = css`
         border: var(--fb-size-border) solid var(--fb-border);
         border-radius: var(--fb-radius-md);
         box-shadow: var(--fb-shadow-sm);
-        translate: -100% -100%;
+        translate: 0 -100%;
     }
 
-    .block-tools.inside { translate: -100% 0; }
+    .block-tools.inside { translate: none; }
 
     /* Inside the corner of the entry, so it does not cover the buttons of the block. */
-    .entry-tools { translate: calc(-100% - var(--fb-space-1)) var(--fb-space-1); }
+    .entry-tools { margin-inline-end: var(--fb-space-1); translate: 0 var(--fb-space-1); }
 
     .block-tools button {
         justify-content: center;
@@ -568,7 +569,7 @@ export class Arranging {
         const labels = this.labels;
         const inside = rect.top < 48;
         const top = inside ? Math.max(rect.top, 0) : rect.top;
-        const left = Math.min(rect.right, innerWidth);
+        const end = endFromEnd(this.bar, rect);
         const parent = parentOf(block);
         const siblings = siblingsOf(parent, block.dataset.fbArea);
         const index = siblings.indexOf(block);
@@ -591,7 +592,7 @@ export class Arranging {
 
         return html`<div class="block-tools ${inside ? 'inside' : ''}" role="toolbar"
             aria-label=${labels.blockTools.replace('{block}', title)}
-            style="inset-block-start: ${top}px; inset-inline-start: ${left}px"
+            style="inset-block-start: ${top}px; inset-inline-end: ${end}px"
             @keydown=${(event) => this.toolsKey(event, block)}>${content}</div>`;
     }
 
@@ -645,7 +646,7 @@ export class Arranging {
 
         return html`<div class="block-tools entry-tools" role="toolbar"
             aria-label=${labels.entryTools.replace('{number}', number).replace('{list}', name)}
-            style="inset-block-start: ${Math.max(rect.top, 0)}px; inset-inline-start: ${Math.min(rect.right, innerWidth)}px"
+            style="inset-block-start: ${Math.max(rect.top, 0)}px; inset-inline-end: ${endFromEnd(this.bar, rect)}px"
             @keydown=${(event) => this.entryToolsKey(event)}>
             ${button(across ? 'left' : 'up', labels.moveEarlier, () => this.moveEntry(entry, entry.index - 1), entry.index === 0)}
             ${button(across ? 'right' : 'down', labels.moveLater, () => this.moveEntry(entry, entry.index + 1), entry.index >= entry.count - 1)}

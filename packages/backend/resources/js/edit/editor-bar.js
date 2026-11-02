@@ -4,6 +4,7 @@ import { CommentsPanel, commentStyles } from './comments.js';
 import { DesignPanel, designStyles } from './design.js';
 import { Editing } from './editing.js';
 import { follow, registerFieldTools, toolsOf } from './field-tools.js';
+import { fromStart } from './edges.js';
 import { icon } from './icons.js';
 import { MediaPicker, mediaStyles } from './media.js';
 import { OutlinePanel, outlineStyles } from './outline.js';
@@ -117,6 +118,11 @@ function kindOf(element) {
     }
 
     return element.hasAttribute('data-fb-entry') ? 'entry' : 'area';
+}
+
+/** The direction of a marked place, so its tab stands at its start (decision 0133). */
+function directionOf(element) {
+    return getComputedStyle(element).direction === 'rtl' ? 'rtl' : 'ltr';
 }
 
 /**
@@ -1154,7 +1160,7 @@ export class EditorBar extends LitElement {
             const below = rect.top < 24;
 
             return html`<div class="outline ${below ? 'below' : ''}" data-kind=${kindOf(element)}
-                style="inset-block-start: ${rect.top}px; inset-inline-start: ${rect.left}px; inline-size: ${rect.width}px; block-size: ${rect.height}px">
+                dir=${directionOf(element)} style="top: ${rect.top}px; left: ${rect.left}px; width: ${rect.width}px; height: ${rect.height}px">
                 ${this.fieldTab(element, labelOf(element))}
             </div>`;
         })}`;
@@ -1174,7 +1180,7 @@ export class EditorBar extends LitElement {
             }
 
             return html`<div class="outline ${rect.top < 24 ? 'below' : ''}" data-kind="problem"
-                style="inset-block-start: ${rect.top}px; inset-inline-start: ${rect.left}px; inline-size: ${rect.width}px; block-size: ${rect.height}px">
+                dir=${directionOf(element)} style="top: ${rect.top}px; left: ${rect.left}px; width: ${rect.width}px; height: ${rect.height}px">
                 ${this.fieldTab(element, element === this.current ? `${labelOf(element)}: ${message}` : labelOf(element))}
             </div>`;
         });
@@ -1514,7 +1520,7 @@ export class EditorBar extends LitElement {
         const coords = editor.view.coordsAtPos(editor.state.selection.from);
         const below = coords.top < 64;
         const top = below ? coords.bottom : coords.top;
-        const left = Math.max(8, Math.min(coords.left, innerWidth - 320));
+        const left = Math.max(8, Math.min(fromStart(this, coords.left), this.clientWidth - 320));
         const run = (command) => command(editor.chain().focus()).run();
         const items = [
             ['bold', 'bold', labels.bold, () => run((chain) => chain.toggleBold())],

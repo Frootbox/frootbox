@@ -1,4 +1,5 @@
 import { css, html, nothing } from 'lit';
+import { endFromEnd } from './edges.js';
 import { icon } from './icons.js';
 
 /** Every heading of the page, outside the bar. */
@@ -167,7 +168,7 @@ export class OutlinePanel {
             }
 
             return html`<span class="level-badge" aria-hidden="true"
-                style="inset-block-start: ${rect.top}px; inset-inline-start: ${rect.right}px">H${element.localName.slice(1)}</span>`;
+                style="inset-block-start: ${rect.top}px; inset-inline-end: ${endFromEnd(this.bar, rect)}px">H${element.localName.slice(1)}</span>`;
         });
     }
 }
@@ -232,9 +233,9 @@ export const outlineStyles = css`
 
     .level-badge {
         position: absolute;
-        translate: -100% 0;
         padding: var(--fb-space-0) var(--fb-space-1);
-        border-radius: 0 0 0 var(--fb-radius-sm);
+        border-radius: 0;
+        border-end-start-radius: var(--fb-radius-sm);
         background: var(--fb-text);
         color: var(--fb-surface);
         font-size: var(--fb-text-2xs);

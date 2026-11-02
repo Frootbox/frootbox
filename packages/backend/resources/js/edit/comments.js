@@ -1,5 +1,6 @@
 import { css, html, nothing } from 'lit';
 import { elementOf, isContent, placeOf } from '../comments/place.js';
+import { endFromStart } from './edges.js';
 import { icon } from './icons.js';
 
 /**
@@ -214,7 +215,7 @@ export class CommentsPanel {
             const number = this.threads.length - index;
 
             return html`<button type="button" class="comment-pin ${thread.status === 'done' ? 'done' : ''} ${this.state?.current === thread.id ? 'current' : ''}"
-                style="inset-block-start: ${Math.max(0, rect.top - 10)}px; inset-inline-start: ${Math.max(0, rect.right - 10)}px"
+                style="inset-block-start: ${Math.max(0, rect.top - 10)}px; inset-inline-start: ${Math.max(0, endFromStart(this.bar, rect) - 10)}px"
                 aria-label=${labels.commentPin.replace('{number}', number).replace('{text}', thread.comment.body.slice(0, 60))}
                 @click=${() => this.show(thread.id)}>${number}</button>`;
         });
@@ -389,7 +390,8 @@ export const commentStyles = css`
         padding: 0 var(--fb-space-1);
         pointer-events: auto;
         border: var(--fb-size-border) solid var(--fb-on-accent);
-        border-radius: var(--fb-radius-full) var(--fb-radius-full) var(--fb-radius-full) 0;
+        border-radius: var(--fb-radius-full);
+        border-end-start-radius: 0;
         background: var(--fb-accent);
         color: var(--fb-on-accent);
         font-size: var(--fb-text-xs);
