@@ -1,0 +1,7 @@
+title: Video
+description: A video from the media with player controls and a caption if you like. It never starts by itself. Give it a poster image and, in the media, a file in MP4 with H.264 that every browser plays. Not for a single image, use the image widget.
+group: media
+keywords: [Film, Clip, Movie, Player]
+fields:
+  video: { type: video, label: Video }
+  caption: { type: text, label: Caption, optional: true, maxLength: 200 }

@@ -6,7 +6,8 @@
 # the main area, in one of two columns and in a narrow column of a third.
 # The browser tests take screenshots of them and check them with axe.
 # Needs the language de. The images in media/ are abstract colour
-# gradients made for this file, under the licence of the theme.
+# gradients made for this file, the clip roasting.webm comes from
+# tools/demo-video.php; all under the licence of the theme.
 - upload:
     file: media/harbour.jpg
   as: file_harbour
@@ -43,6 +44,21 @@
       de:
         alt: 'Blauer Kreis auf grünem Verlauf'
   as: img_tasting
+- upload:
+    file: media/roasting.webm
+  as: file_roasting
+- media.create:
+    upload: '${file_roasting.token}'
+    texts:
+      de:
+        alt: 'Film: Lichtkreise ziehen über dunkles Braun'
+  as: vid_roasting
+- upload:
+    file: media/roasting.jpg
+  as: file_roasting_poster
+- media.create:
+    upload: '${file_roasting_poster.token}'
+  as: img_roasting
 - upload:
     file: media/portrait.jpg
   as: file_portrait
@@ -328,6 +344,24 @@
               - { block: frootbox/theme-base/Section, variant: OneTwo, areas: { first: [{ block: frootbox/theme-base/Slider, fields: { title: 'Ein Blick hinein', items: [{ image: { media: '${img_roastery.id}' }, caption: 'Der Röster am Morgen' }, { image: { media: '${img_beans.id}' }, caption: '' }, { image: { media: '${img_tasting.id}' }, caption: 'Verkostung am Freitag' }, { image: { media: '${img_harbour.id}' }, caption: '' }] } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
   as: slider
 - page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Video
+        slug: video
+        content:
+          fields:
+            title: Video
+            intro: 'Mit Vorschaubild, startet nie von selbst.'
+          areas:
+            main:
+              - { block: frootbox/theme-base/Video, variant: Default, fields: { video: { media: '${vid_roasting.id}', poster: '${img_roasting.id}' }, caption: 'Licht in der Rösterei' } }
+              - { block: frootbox/theme-base/Video, variant: Narrow, fields: { video: { media: '${vid_roasting.id}', poster: '${img_roasting.id}' }, caption: 'Licht in der Rösterei' } }
+              - { block: frootbox/theme-base/Section, variant: Two, areas: { first: [{ block: frootbox/theme-base/Video, variant: Default, fields: { video: { media: '${vid_roasting.id}', poster: '${img_roasting.id}' }, caption: 'Licht in der Rösterei' } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: OneTwo, areas: { first: [{ block: frootbox/theme-base/Video, variant: Default, fields: { video: { media: '${vid_roasting.id}', poster: '${img_roasting.id}' }, caption: 'Licht in der Rösterei' } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+  as: video
+- page.create:
     layout: frootbox/theme-base/Start
     parentId: '${start.id}'
     translations:
@@ -385,6 +419,7 @@
       - '${image_with_text.id}'
       - '${gallery.id}'
       - '${slider.id}'
+      - '${video.id}'
       - '${page_header.id}'
       - '${landing.id}'
       - '${imprint.id}'
@@ -445,6 +480,9 @@
             -
               type: target
               target: 'page:${slider.id}'
+            -
+              type: target
+              target: 'page:${video.id}'
         -
           type: target
           target: 'page:${landing.id}'
