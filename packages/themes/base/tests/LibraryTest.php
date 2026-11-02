@@ -71,7 +71,7 @@ final class LibraryTest extends NotesTestCase
 
         self::assertSame(0, $console->run(new ArrayInput(['command' => 'seed', 'file' => self::THEME . ':demo/library.yaml']), $output), $output->fetch());
 
-        foreach (['/', '/heading', '/text', '/button', '/section', '/text-with-heading', '/quote', '/notice', '/divider', '/call-to-action', '/key-figures', '/hero', '/page-header', '/image-with-text', '/gallery', '/slider', '/video', '/cards', '/logos', '/link-list', '/accordion', '/steps', '/testimonials', '/prices', '/contact', '/features', '/downloads', '/table', '/code', '/on-primary', '/jump-bar', '/aktion', '/impressum'] as $path) {
+        foreach (['/', '/heading', '/text', '/button', '/section', '/text-with-heading', '/quote', '/notice', '/divider', '/call-to-action', '/key-figures', '/hero', '/page-header', '/image-with-text', '/gallery', '/slider', '/video', '/cards', '/logos', '/link-list', '/accordion', '/steps', '/testimonials', '/prices', '/contact', '/features', '/downloads', '/table', '/code', '/on-primary', '/on-dark', '/jump-bar', '/aktion', '/impressum'] as $path) {
             $this->get(Urls::class)->clear();
             $this->get(PageOutline::class)->clear();
             $response = $this->get(PageHandler::class)->handle(new ServerRequest('GET', 'https://example.org' . $path));
@@ -119,6 +119,10 @@ final class LibraryTest extends NotesTestCase
                 self::assertMatchesRegularExpression('#<nav class="base-jump-bar base-full" aria-label="Auf dieser Seite">\s*<ul class="base-jump-bar__list">\s*<li><a href="\#roesterei">Rösterei</a></li>\s*<li><a href="\#sorten-und-abos">Sorten und Abos</a></li>\s*<li><a href="\#fuer-firmen">Für Firmen</a></li>#', $html, 'The bar fills itself from the jump marks below it (decision 0196).');
                 self::assertStringContainsString('<section id="fuer-firmen" class="base-section', $html);
                 self::assertStringNotContainsString('base-jump-bar__hint', $html, 'The hint is for editors only.');
+            }
+
+            if ('/on-dark' === $path) {
+                self::assertSame(4, substr_count((string) $response->getBody(), 'base-section--dark'), 'The blocks stand on the dark colour (decision 0198).');
             }
 
             if ('/on-primary' === $path) {

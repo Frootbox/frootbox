@@ -4,9 +4,10 @@
 .base-section--large { padding-block: calc(var(--space) * 1.5); }
 .base-section--surface { background: var(--color-surface); }
 /*
- * On the main colour all text takes its contrast colour, muted text too,
- * so every block stays readable (WCAG AA). Blocks with a surface of their
- * own keep the colours of the page, kept on :root for them.
+ * On the main colour and on the dark colour all text takes the contrast
+ * colour, muted text too, so every block stays readable (WCAG AA, decisions
+ * 0191 and 0198). Blocks with a surface of their own keep the colours of
+ * the page, kept on :root for them.
  */
 :root { --base-page-text: var(--color-text); --base-page-muted: var(--color-muted); }
 .base-section--primary {
@@ -15,19 +16,27 @@
   background: var(--color-primary);
   color: var(--color-text);
 }
-.base-section--primary a { color: inherit; }
-.base-section--primary :is(.base-cards__item, .base-notice, .base-accordion--faq .base-accordion__item, .base-voices__figure, .base-prices__item, .base-table__scroll, .base-cta--surface, .base-slider__button) {
+.base-section--dark {
+  --color-text: var(--color-bg);
+  --color-muted: color-mix(in srgb, var(--color-bg) 78%, var(--color-dark));
+  background: var(--color-dark);
+  color: var(--color-text);
+}
+:is(.base-section--primary, .base-section--dark) a { color: inherit; }
+:is(.base-section--primary, .base-section--dark) :is(.base-cards__item, .base-notice, .base-accordion--faq .base-accordion__item, .base-voices__figure, .base-prices__item, .base-table__scroll, .base-cta--surface, .base-slider__button) {
   --color-text: var(--base-page-text);
   --color-muted: var(--base-page-muted);
   color: var(--color-text);
 }
 /* Marks in the main colour swap their colours, so they stay visible. */
 .base-section--primary .base-steps__item::before { background: var(--color-primary-contrast); color: var(--color-primary); }
-.base-section--primary .base-head__eyebrow { color: inherit; }
+/* The main colour as text or mark is too weak on both. */
+:is(.base-section--primary, .base-section--dark) .base-head__eyebrow,
+:is(.base-section--primary, .base-section--dark) .base-accordion__summary::after { color: inherit; }
 /* Prices and tables have no surface of their own: they get the page background. */
-.base-section--primary :is(.base-prices__item, .base-table__scroll) { background: var(--color-bg); }
+:is(.base-section--primary, .base-section--dark) :is(.base-prices__item, .base-table__scroll) { background: var(--color-bg); }
 /* The focus ring would have the colour of the background. */
-.base-section--primary :focus-visible { outline-color: currentColor; }
+:is(.base-section--primary, .base-section--dark) :focus-visible { outline-color: currentColor; }
 
 .base-section__grid {
   display: grid;

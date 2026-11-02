@@ -609,6 +609,24 @@
     parentId: '${start.id}'
     translations:
       de:
+        title: Auf Dunkel
+        slug: on-dark
+        content:
+          fields:
+            title: Auf Dunkel
+            intro: 'Blöcke in einem Abschnitt mit dem Hintergrund Dunkel: Text in der Farbe des Hintergrunds der Seite, Knöpfe und Marken in der Hauptfarbe, eigene Flächen in den Farben der Seite.'
+          areas:
+            main:
+              - {"block":"frootbox/theme-base/Section","variant":"Two","options":{"background":"dark"},"areas":{"first":[{"block":"frootbox/theme-base/TextWithHeading","fields":{"title":"Frisch geröstet in Hamburg","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Text, Listen und Links stehen in der Kontrastfarbe, auch gedämpfter Text."}]},{"type":"bulletList","content":[{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Ganze Bohnen oder gemahlen"}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Versand jeden Dienstag"}]}]}]}]}}},{"block":"frootbox/theme-base/Button","options":{"style":"secondary"},"fields":{"link":{"url":"https://example.org/","text":"Zu den Sorten"}}}],"second":[{"block":"frootbox/theme-base/KeyFigures","fields":{"title":"In Zahlen","items":[{"value":"12","label":"Jahre Röstererfahrung"},{"value":"9","label":"Sorten im Regal"}]}},{"block":"frootbox/theme-base/Notice","options":{"tone":"info"},"fields":{"title":"Neue Öffnungszeiten","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Ab März auch samstags von 9 bis 14 Uhr."}]}]}}}]}}
+              - {"block":"frootbox/theme-base/Section","variant":"Two","options":{"background":"dark"},"areas":{"first":[{"block":"frootbox/theme-base/Features","fields":{"title":"Warum Bohnenglück","items":[{"icon":"truck","title":"Versand am Dienstag","text":"Montags geröstet, am Tag darauf unterwegs."},{"icon":"leaf","title":"Von Höfen, die wir kennen","text":"Wir kaufen direkt."}]}},{"block":"frootbox/theme-base/Steps","fields":{"title":"So funktioniert das Abo","items":[{"title":"Sorte wählen","text":"Hell, mittel oder dunkel."},{"title":"Genießen","text":"Wir rösten am Montag."}]}}],"second":[{"block":"frootbox/theme-base/Cards","options":{"columns":"two"},"fields":{"title":"Unsere Angebote","items":[{"title":"Röstkurs","text":"Zwei Stunden an der Trommel.","link":{"url":"https://example.org/","text":"Zum Kurs"}},{"title":"Verkostung","text":"Freitags ab 17 Uhr.","link":{"url":"https://example.org/","text":"Mehr erfahren"}}]}},{"block":"frootbox/theme-base/Accordion","variant":"Faq","fields":{"title":"Gut zu wissen","items":[{"title":"Wie lange ist Kaffee haltbar?","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Offen am besten in vier Wochen trinken."}]}]}},{"title":"Versendet ihr ins Ausland?","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Innerhalb der EU."}]}]}}]}}]}}
+              - {"block":"frootbox/theme-base/Section","variant":"Two","options":{"background":"dark"},"areas":{"first":[{"block":"frootbox/theme-base/Pricing","fields":{"title":"Unsere Abos","items":[{"name":"Klein","price":"14 €","period":"pro Lieferung","text":"Für eine Person.","features":"250 g Kaffee\nVersand frei","link":{"url":"https://example.org/","text":"Klein wählen"},"badge":""},{"name":"Mittel","price":"24 €","period":"pro Lieferung","text":"Für Paare.","features":"500 g Kaffee\nVersand frei","link":{"url":"https://example.org/","text":"Mittel wählen"},"badge":"Beliebt"}]}}],"second":[{"block":"frootbox/theme-base/Table","fields":{"title":"Öffnungszeiten","table":{"rows":[["Tag","Laden"],["Montag bis Freitag","8–18 Uhr"],["Samstag","9–14 Uhr"]],"headerRow":true,"headerColumn":true},"note":"An Feiertagen bleibt alles zu."}},{"block":"frootbox/theme-base/CallToAction","options":{"background":"surface"},"fields":{"title":"Lust auf eine Verkostung?","text":"Jeden ersten Freitag im Monat.","link":{"url":"https://example.org/","text":"Platz reservieren"}}}]}}
+              - {"block":"frootbox/theme-base/Section","variant":"Two","options":{"background":"dark"},"areas":{"first":[{"block":"frootbox/theme-base/Button","options":{"style":"primary"},"fields":{"link":{"url":"https://example.org/","text":"Jetzt bestellen"}}},{"block":"frootbox/theme-base/Text","fields":{"body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Die Mühle stellst Du mit "},{"type":"text","text":"mahlgrad --fein","marks":[{"type":"code"}]},{"type":"text","text":" auf Espresso ein."}]},{"type":"codeBlock","attrs":{"language":"shell"},"content":[{"type":"text","text":"mahlgrad --sorte=hafenmorgen --fein"}]}]}}}],"second":[{"block":"frootbox/theme-base/Accordion","fields":{"title":"Fragen zum Abo","items":[{"title":"Kann ich pausieren?","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Jederzeit, bis Sonntag für die nächste Woche."}]}]}},{"title":"Kann ich die Sorte wechseln?","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Ja, mit jeder Lieferung."}]}]}}]}}]}}
+  as: on_dark
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
         title: Sprungleiste
         slug: jump-bar
         content:
@@ -694,6 +712,7 @@
       - '${table.id}'
       - '${code.id}'
       - '${on_primary.id}'
+      - '${on_dark.id}'
       - '${jump_bar.id}'
       - '${page_header.id}'
       - '${landing.id}'
