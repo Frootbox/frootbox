@@ -102,8 +102,8 @@ test('uploads an image, sets its focus and shows it on a published page', async 
     // A file that is no image says so.
     const refused = page.waitForEvent('filechooser');
     await page.getByRole('button', { name: 'Hochladen' }).click();
-    await (await refused).setFiles({ name: 'notiz.txt', mimeType: 'text/plain', buffer: Buffer.from('Kaffee') });
-    await expect(page.getByRole('alert')).toContainText('notiz.txt: Die Datei ist kein Bild (JPEG, PNG, WebP, GIF) und kein Video (MP4, WebM).');
+    await (await refused).setFiles({ name: 'notiz.html', mimeType: 'text/html', buffer: Buffer.from('<p>Kaffee</p>') });
+    await expect(page.getByRole('alert')).toContainText('notiz.html: Die Datei ist weder Bild (JPEG, PNG, WebP, GIF) noch Video (MP4, WebM) noch Dokument (PDF, Office, OpenDocument, Text, CSV, ZIP).');
 
     // Focus point by click, alternative text, tags.
     await tile.click();

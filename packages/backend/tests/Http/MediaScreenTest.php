@@ -181,7 +181,7 @@ final class MediaScreenTest extends BackendTestCase
         $response = $this->send(new UploadedFile($file, (int) filesize($file), \UPLOAD_ERR_OK, 'shell.php'));
         self::assertSame(422, $response->getStatusCode());
         self::assertSame('application/problem+json', $response->getHeaderLine('Content-Type'));
-        self::assertStringContainsString('Die Datei ist kein Bild (JPEG, PNG, WebP, GIF) und kein Video (MP4, WebM).', (string) $response->getBody());
+        self::assertStringContainsString('Die Datei ist weder Bild (JPEG, PNG, WebP, GIF) noch Video (MP4, WebM) noch Dokument (PDF, Office, OpenDocument, Text, CSV, ZIP).', (string) $response->getBody());
 
         $response = $this->send(new UploadedFile($file, 30 * 1024 * 1024, \UPLOAD_ERR_INI_SIZE, 'big.jpg'));
         self::assertStringContainsString('Die Datei ist zu groß', (string) $response->getBody());
