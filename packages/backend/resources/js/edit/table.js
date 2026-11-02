@@ -1,5 +1,5 @@
 /**
- * Tables on the website (decision 0184): Tiptap with prosemirror-tables
+ * Tables on the website (decision 0187): Tiptap with prosemirror-tables
  * right on the element of the field, loaded as a chunk of its own on the
  * first focus of such a field. The value is the short JSON of the core,
  *

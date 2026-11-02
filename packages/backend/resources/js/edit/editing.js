@@ -356,7 +356,7 @@ export class Editing {
         });
     }
 
-    /** Rich text with Tiptap, a table with Tiptap and prosemirror-tables (decision 0184). */
+    /** Rich text with Tiptap, a table with Tiptap and prosemirror-tables (decision 0187). */
     async richText(element) {
         const table = element.dataset.fbType === 'table';
         const module = table ? (this.tableLoading ??= import('./table.js')) : (this.loading ??= import('./richtext.js'));

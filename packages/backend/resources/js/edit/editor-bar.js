@@ -20,7 +20,7 @@ const UNDO = 'fb-edit-undo:';
 /** Whether the block at the cursor runs the other way than its field (decision 0133). */
 /**
  * Whether the first row and the first column of a table are heads
- * (decision 0184); the row of heads does not count for the column.
+ * (decision 0187); the row of heads does not count for the column.
  */
 function tableHeaders(editor) {
     const table = editor.state.doc.firstChild;
@@ -1550,7 +1550,7 @@ export class EditorBar extends LitElement {
             ['link', 'link', labels.link, () => this.richLink(editor)],
             // For a paragraph in another language, e.g. English in Arabic (decision 0133).
             ...editor.commands.toggleBlockDirection ? [['direction', () => otherDirection(editor), labels.otherDirection, () => run((chain) => chain.toggleBlockDirection())]] : [],
-            // The heads of a table (decision 0184).
+            // The heads of a table (decision 0187).
             ...table ? [
                 ['headerRow', () => table.row, labels.headerRow, () => run((chain) => chain.toggleHeaderRow())],
                 ['headerColumn', () => table.column, labels.headerColumn, () => run((chain) => chain.toggleHeaderColumn())],
@@ -1597,7 +1597,7 @@ export class EditorBar extends LitElement {
         </select>`;
     }
 
-    /** Rows and columns of a table to add or remove (decision 0184). */
+    /** Rows and columns of a table to add or remove (decision 0187). */
     tableSelect(editor, run) {
         if (!editor.schema.nodes.table) {
             return nothing;

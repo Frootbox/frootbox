@@ -6,7 +6,7 @@ import { expect, test } from '@playwright/test';
 import { action, signIn } from './admin';
 import { LIBRARY } from './library';
 
-// The field type "table" (decision 0184): edited right on the website,
+// The field type "table" (decision 0187): edited right on the website,
 // with rows, columns and heads from the toolbar and cells pasted from a
 // spreadsheet.
 
