@@ -15,3 +15,4 @@ export { bindFills } from './fill.js';
 export { bindCopies } from './copy.js';
 export { DOCUMENT_TYPES, IMAGE_TYPES, VIDEO_TYPES, Upload, sendUpload, uploadMedium } from './upload.js';
 export { Focus } from './focus.js';
+export { Search } from './search.js';

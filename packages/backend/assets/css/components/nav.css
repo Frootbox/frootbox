@@ -73,3 +73,19 @@
     line-height: var(--fb-size-icon);
     text-align: center;
 }
+
+/* The search of the sidebar: an item with a frame and the keys that open it (decision 0217). */
+.fb-nav__item--search {
+    border: var(--fb-size-border) solid var(--fb-border);
+    background: var(--fb-surface);
+}
+
+.fb-nav__keys {
+    margin-inline-start: auto;
+    padding-inline: var(--fb-space-1);
+    border: var(--fb-size-border) solid var(--fb-border);
+    border-radius: var(--fb-radius-sm);
+    color: var(--fb-text-muted);
+    font-family: inherit;
+    font-size: var(--fb-text-xs);
+}

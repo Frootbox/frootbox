@@ -26,6 +26,7 @@ use Frootbox\Backend\Http\Pages\PagesHandler;
 use Frootbox\Backend\Http\PreviewActionHandler;
 use Frootbox\Backend\Http\QueryHandler;
 use Frootbox\Backend\Http\Redirects\RedirectsHandler;
+use Frootbox\Backend\Http\Search\SearchHandler;
 use Frootbox\Backend\Http\Theme\ThemeHandler;
 use Frootbox\Backend\Http\Users\RoleHandler;
 use Frootbox\Backend\Http\Users\RolesHandler;
@@ -67,6 +68,7 @@ final class BackendExtension implements Extension
             ->post('/edit-mode', EditModeHandler::class, 'backend.edit-mode')
             ->get('/design', DesignHandler::class, 'backend.design')
             ->get('/account', AccountHandler::class, 'backend.account')
+            ->get('/search', SearchHandler::class, 'backend.search')
             ->get('/pages', PagesHandler::class, 'backend.pages')
             ->get('/pages/new', NewPageHandler::class, 'backend.pages.new')
             ->get('/pages/{id:' . self::ULID . '}', PagesHandler::class, 'backend.pages.show')
@@ -104,5 +106,18 @@ final class BackendExtension implements Extension
         $registry->add(Screen::class, new Screen('Users', 'backend.users', Screen::ADMINISTRATION, 'users', UsersHandler::PERMISSION, order: 100));
         $registry->add(Screen::class, new Screen('Roles', 'backend.roles', Screen::ADMINISTRATION, 'shield', RolesHandler::PERMISSION, order: 110));
         $registry->add(Screen::class, new Screen('Design system', 'backend.design', Screen::ADMINISTRATION, 'palette', DesignHandler::PERMISSION, order: 900, development: true));
+
+        // Where hits of the search open, and what it offers to do (decision 0217).
+        $registry->add(SearchLink::class, new SearchLink('page', 'backend.pages.show', 'id', 'pages'));
+        $registry->add(SearchLink::class, new SearchLink('medium', 'backend.media.show', 'id', 'image'));
+        $registry->add(SearchLink::class, new SearchLink('navigation', 'backend.navigations.show', 'name', 'navigation'));
+        $registry->add(SearchLink::class, new SearchLink('site', 'backend.theme', null, 'palette'));
+        $registry->add(SearchLink::class, new SearchLink('redirect', 'backend.redirects', null, 'redirect'));
+        $registry->add(SearchLink::class, new SearchLink('user', 'backend.users.show', 'id', 'users'));
+        $registry->add(SearchLink::class, new SearchLink('role', 'backend.roles.show', 'name', 'shield'));
+        $registry->add(SearchCommand::class, new SearchCommand('New page', 'backend.pages.new', 'page.create'));
+        $registry->add(SearchCommand::class, new SearchCommand('Upload files', 'backend.media', 'media.create'));
+        $registry->add(SearchCommand::class, new SearchCommand('New user', 'backend.users.new', 'user.create'));
+        $registry->add(SearchCommand::class, new SearchCommand('New role', 'backend.roles.new', 'role.create'));
     }
 }

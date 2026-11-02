@@ -451,6 +451,38 @@ through invoker commands: `commandfor="<id>" command="show-modal"` and
 `command="close"`. A confirmation that runs an action puts an
 `<fb-form>` inside (see Form).
 
+### Search
+
+```twig
+{{ ui.search(path('backend.search')) }}
+```
+
+The search of the backend (decisions 0214, 0217) as `<fb-search>`: a
+link to the screen of the search, which opens a dialog instead, and
+Ctrl+K or ⌘+K from anywhere (`shortcut`, once per page). The frame puts
+it at the top of the sidebar as `.fb-nav__item--search`, with a border,
+`--fb-surface` and the keys in `.fb-nav__keys` at the end; the editor
+bar has the same dialog behind a button with the search icon.
+
+The dialog keeps its own styles in its shadow root, so it looks the
+same in the backend and on the website: width `--fb-size-dialog`,
+64 px from the top, radius 14 px, shadow `--fb-shadow-lg`. At the top
+the field (combobox, 17 px, no frame) with the search icon and "Close";
+below the hits, grouped by kind under 12 px capitals in the muted color.
+A hit is 44 px high at least: title medium, languages on the right in
+12 px, the line where the words were found below in 14 px muted, cut
+with an ellipsis. The chosen hit gets `--fb-accent-soft` /
+`--fb-accent-text`. At the foot the number of hits as a status for
+screen readers and "Show all hits", or a hint on the keys.
+
+Arrow up and down choose, Enter opens the chosen hit, Enter without one
+shows all hits on the screen of the search, Escape closes. Hits come
+after 120 ms without typing; a newer input cancels the older request.
+Extensions add where their hits open and commands such as "New article"
+with `SearchLink` and `SearchCommand` (see [Screens of
+extensions](#screens-of-extensions)). `static` shows it open with
+sample `groups`, as on the design page.
+
 ### Form
 
 ```twig
@@ -1323,3 +1355,15 @@ The handler renders a view of the extension with `BackendView::render()`;
 views are found as `@acme/shop/orders.twig` in `views/` of the package and
 extend `@backend/layout.twig` (block `title` and block `content`). Labels
 of screens are English and translated like all texts.
+
+Hits of a search source of the extension open where a `SearchLink`
+says; without one they stay out of the backend search. A
+`SearchCommand` offers a screen by its label, e.g. "New article":
+
+```php
+use Frootbox\Backend\SearchCommand;
+use Frootbox\Backend\SearchLink;
+
+$registry->add(SearchLink::class, new SearchLink('acme/shop/order', 'acme.orders.show', 'id', 'inbox'));
+$registry->add(SearchCommand::class, new SearchCommand('New order', 'acme.orders.new', 'acme/shop/order.create'));
+```

@@ -1,0 +1,46 @@
+{#- The screen of the search (decisions 0214, 0217): all hits, also without a script. -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ q ? t('Search for “{q}”', {q: q}) : t('Search') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Search') }}</h1>
+            <p class="fb-muted">{{ t('Finds pages, media, users and everything else you may see, drafts included.') }}</p>
+        </div>
+    </header>
+
+    <form class="fb-cluster fb-search-form" method="get" action="{{ path('backend.search') }}" role="search">
+        {{ ui.field({label: t('Search for'), name: 'q', type: 'search', value: q, autocomplete: 'off', autofocus: q is empty, attrs: {maxlength: 200}}) }}
+        {{ ui.button({label: t('Search'), type: 'submit', variant: 'outline', icon: 'search'}) }}
+    </form>
+
+    {% if q is not empty %}
+    <section class="fb-stack" aria-label="{{ t('Hits') }}">
+        {% if groups is empty %}
+            {{ ui.empty({icon: 'search', title: t('Nothing found for “{q}”.', {q: q}), text: t('Check the spelling or search for fewer words.')}) }}
+        {% endif %}
+        {% for group in groups %}
+        <section class="fb-card" aria-labelledby="search-group-{{ loop.index }}">
+            <div class="fb-card__header fb-card__header--tight"><h2 class="fb-heading-4" id="search-group-{{ loop.index }}">{{ group.title }}</h2></div>
+            <ul>
+                {%- for item in group.items %}
+                <li class="fb-list__item">
+                    {{ icon(item.icon) }}
+                    <span class="fb-list__main">
+                        <a class="fb-list__title fb-list__link" href="{{ item.url }}">{{ item.title }}</a>
+                        {%- if item.excerpt %}<span class="fb-list__meta">{{ item.excerpt }}</span>{% endif %}
+                    </span>
+                    {%- if item.meta %}<span class="fb-list__meta">{{ item.meta }}</span>{% endif %}
+                </li>
+                {%- endfor %}
+            </ul>
+        </section>
+        {% endfor %}
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

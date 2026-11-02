@@ -1033,3 +1033,19 @@ None: Keine
 'A link opens all elements of the website in the draft. Whoever has it comments on them without an account.': 'Ein Link öffnet alle Elemente der Website im Entwurf. Wer ihn hat, kommentiert sie ohne Konto.'
 'Link for the agency': 'Link für die Agentur'
 'Whoever has the link sees all drafts of the website and can pass it on. Revoke it under Access when it is no longer needed.': 'Wer den Link hat, sieht alle Entwürfe der Website und kann ihn weitergeben. Zieh ihn unter „Zugang“ zurück, wenn er nicht mehr gebraucht wird.'
+
+# Global search (decisions 0214, 0217)
+Search pages, media, users …: Seiten, Medien, Benutzer suchen …
+Searching …: Suche läuft …
+Nothing found for “{q}”.: "Nichts gefunden für „{q}“."
+"{count} hits": "{count} Treffer"
+The search did not answer. Try again.: Die Suche antwortet nicht. Versuch es noch einmal.
+Show all hits: Alle Treffer zeigen
+↑ ↓ to choose, ↵ to open, Esc to close: ↑ ↓ wählen, ↵ öffnen, Esc schließen
+Search for “{q}”: "Suche nach „{q}“"
+Finds pages, media, users and everything else you may see, drafts included.: Findet Seiten, Medien, Benutzer und alles andere, was Du sehen darfst, auch Entwürfe.
+Search for: Suchen nach
+Hits: Treffer
+Check the spelling or search for fewer words.: Prüf die Schreibweise oder such nach weniger Wörtern.
+Go to: Gehe zu
+Upload files: Dateien hochladen

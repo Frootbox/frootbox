@@ -1,4 +1,5 @@
 import { LitElement, css, html, nothing } from 'lit';
+import { Search } from '../ui/search.js';
 import { Arranging, arrangingStyles } from './arranging.js';
 import { CommentsPanel, commentStyles } from './comments.js';
 import { DesignPanel, designStyles } from './design.js';
@@ -633,7 +634,7 @@ export class EditorBar extends LitElement {
         @media (max-width: 30rem) {
             .bar { --pad: var(--fb-space-1); flex-wrap: nowrap; gap: var(--fb-space-1); }
             .bar > * { flex-shrink: 0; }
-            .bar > button { padding-inline: var(--fb-space-2); }
+            .bar > button, .bar > fb-search > button { padding-inline: var(--fb-space-2); }
             .state { padding-inline: var(--fb-space-1); }
 
             .bar > .primary {
@@ -874,6 +875,7 @@ export class EditorBar extends LitElement {
             </button>
             ${editing ? this.pageControls(page) : nothing}
             ${editing ? this.comments.button() : nothing}
+            ${this.search()}
             ${this.more()}
             <button type="button" aria-label=${labels.collapse} title=${labels.collapse} aria-expanded="true"
                 @click=${() => this.collapse(true)}>${icon('collapse')}</button>
@@ -1030,6 +1032,16 @@ export class EditorBar extends LitElement {
      * sections for this page and for the whole website, each entry only
      * with its right. Without entries there is no menu.
      */
+    /** The search of the backend, also with Ctrl+K or ⌘+K (decision 0217). */
+    search() {
+        const search = this.config.search;
+
+        return search ? html`<fb-search src=${search.src} shortcut .labels=${search.labels}>
+            <button type="button" aria-label=${search.labels.search} title=${`${search.labels.search} (${Search.keys()})`}
+                aria-keyshortcuts="Control+K Meta+K">${icon('search')}</button>
+        </fb-search>` : nothing;
+    }
+
     more() {
         const { editing, page } = this.config;
         const labels = this.labels;

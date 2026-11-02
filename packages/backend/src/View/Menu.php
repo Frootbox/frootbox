@@ -91,12 +91,19 @@ final readonly class Menu
             throw new ViewException(\sprintf('The screen "%s" has the group "%s". Groups: %s.', $screen->label, $screen->group, implode(', ', array_keys(Screen::GROUPS))));
         }
 
-        return null === $screen->permission
-            || ($screen->development && $this->environment->isDevelopment())
-            // A screen named after a query shows when the query may run,
-            // e.g. pages with a role only within a branch (decision 0118).
-            || ($this->catalog->has($screen->permission)
-                ? $this->gate->allows($actor, $this->catalog->get($screen->permission))
-                : $this->permissions->allows($actor, $screen->permission));
+        return ($screen->development && $this->environment->isDevelopment()) || $this->permits($actor, $screen->permission);
+    }
+
+    /**
+     * Whether the actor has the permission; a permission named after an
+     * action or a query counts when it may run, e.g. pages with a role
+     * only within a branch (decision 0118). None is for everyone.
+     */
+    public function permits(Actor $actor, ?string $permission): bool
+    {
+        return null === $permission
+            || ($this->catalog->has($permission)
+                ? $this->gate->allows($actor, $this->catalog->get($permission))
+                : $this->permissions->allows($actor, $permission));
     }
 }

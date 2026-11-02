@@ -2,6 +2,7 @@ import { html, svg } from 'lit';
 
 /** The icons of the bar, drawn with the text colour. */
 const ICONS = {
+    search: svg`<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.4-4.4"/>`,
     pencil: svg`<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>`,
     external: svg`<path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/>`,
     collapse: svg`<path d="m6 9 6 6 6-6"/>`,

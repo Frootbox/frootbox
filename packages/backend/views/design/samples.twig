@@ -140,6 +140,17 @@
 </div>
 
 <div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Search') }}</p>
+    <fb-search static src="#" query="kaffee" labels="{{ {search: t('Search'), placeholder: t('Search pages, media, users …'), close: t('Close'), found: t('{count} hits'), all: t('Show all hits')}|json_encode }}" groups="{{ [
+        {title: t('Go to'), items: [{title: t('New page'), url: '#', excerpt: '', meta: ''}]},
+        {title: t('Pages'), items: [
+            {title: 'Kaffeesorten', url: '#', excerpt: 'Frisch geröstet in der Rösterei am Hafen.', meta: 'DE · EN'},
+            {title: 'Über uns', url: '#', excerpt: 'Wir lieben Kaffee seit 1987.', meta: 'DE'},
+        ]},
+    ]|json_encode }}"></fb-search>
+</div>
+
+<div class="fb-design-sample">
     <p class="fb-design-sample__title">{{ t('Empty state') }}</p>
     {{ ui.empty({icon: 'image', title: t('No media yet'), text: t('Upload images and files to use them on your pages.'), action: {label: t('Upload'), icon: 'plus'}}) }}
 </div>

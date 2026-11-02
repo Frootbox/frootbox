@@ -88,3 +88,13 @@ fb-form[busy] {
     overflow-wrap: anywhere;
     user-select: all;
 }
+
+/* The form of the search screen: the field as wide as it can be, the button at its foot (decision 0217). */
+.fb-search-form {
+    align-items: end;
+    max-inline-size: var(--fb-size-form);
+}
+
+.fb-search-form > .fb-field {
+    flex: 1 1 var(--fb-size-narrow);
+}

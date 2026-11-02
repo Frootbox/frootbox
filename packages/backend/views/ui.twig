@@ -188,3 +188,20 @@
         <span class="fb-brand">{{ inner }}</span>
     {%- endif -%}
 {%- endmacro %}
+
+{#- The search of the backend (decision 0217): a link to its screen that opens the dialog, with Ctrl+K or ⌘+K from anywhere. -#}
+{% macro search(href, shortcut = true) -%}
+<fb-search src="{{ href }}"{% if shortcut %} shortcut{% endif %} labels="{{ {
+    search: t('Search'),
+    placeholder: t('Search pages, media, users …'),
+    close: t('Close'),
+    searching: t('Searching …'),
+    none: t('Nothing found for “{q}”.'),
+    found: t('{count} hits'),
+    failed: t('The search did not answer. Try again.'),
+    all: t('Show all hits'),
+    hint: t('↑ ↓ to choose, ↵ to open, Esc to close'),
+}|json_encode }}">
+    <a class="fb-nav__item fb-nav__item--small fb-nav__item--search" href="{{ href }}" aria-keyshortcuts="Control+K Meta+K">{{ icon('search', 'fb-icon fb-icon--small') }}<span>{{ t('Search') }}</span><kbd class="fb-nav__keys" data-fb-keys>Ctrl K</kbd></a>
+</fb-search>
+{%- endmacro %}

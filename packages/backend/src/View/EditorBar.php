@@ -93,6 +93,8 @@ final readonly class EditorBar
             'ui' => ['language' => $this->translator->language(), 'direction' => Direction::of($this->translator->language())->value],
             'toggle' => $this->router->path('backend.edit-mode'),
             'pages' => $this->router->path('backend.pages'),
+            // The search of the backend (decision 0217).
+            'search' => ['src' => $this->router->path('backend.search'), 'labels' => $this->searchLabels()],
             'uploads' => $this->router->path('backend.uploads'),
             // Files go in parts of this size (decision 0177).
             'uploadPart' => UploadReceiver::partBytes(),
@@ -249,6 +251,28 @@ final readonly class EditorBar
             'label' => $this->translator->get(['{count} day', '{count} days'], ['count' => $duration['days']]),
             'selected' => $duration['selected'],
         ], AccessHandler::durations());
+    }
+
+    /**
+     * The texts of <fb-search>, as the macro ui.search gives them.
+     *
+     * @return array<string, string>
+     */
+    private function searchLabels(): array
+    {
+        $t = $this->translator->get(...);
+
+        return [
+            'search' => $t('Search'),
+            'placeholder' => $t('Search pages, media, users …'),
+            'close' => $t('Close'),
+            'searching' => $t('Searching …'),
+            'none' => $t('Nothing found for “{q}”.'),
+            'found' => $t('{count} hits'),
+            'failed' => $t('The search did not answer. Try again.'),
+            'all' => $t('Show all hits'),
+            'hint' => $t('↑ ↓ to choose, ↵ to open, Esc to close'),
+        ];
     }
 
     /**
