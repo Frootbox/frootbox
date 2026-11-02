@@ -20,8 +20,9 @@ for (const [name, path] of Object.entries(PAGES)) {
             const language = prefix ? 'ar' : 'de';
 
             test(`${name}, ${width}, ${language}`, async ({ page }) => {
-                // The first visit of a page with images makes their sizes.
-                test.slow();
+                // The first visit of a page with images makes their sizes,
+                // with AVIF slowly and one after the other on the test server.
+                test.setTimeout(300_000);
                 await page.setViewportSize(viewport);
                 await page.goto(prefix + (path === '/' && prefix ? '' : path));
                 await page.evaluate(() => document.fonts.ready);

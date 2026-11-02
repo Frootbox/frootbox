@@ -36,6 +36,12 @@ export async function loadImages(page: Page): Promise<void> {
     await page.evaluate(async () => {
         const images = [...document.images];
         images.forEach((image) => (image.loading = 'eager'));
-        await Promise.all(images.map((image) => (image.complete ? image.decode() : new Promise((done) => image.addEventListener('load', done, { once: true })))).map((wait) => wait.catch(() => null)));
+        // An image that fails counts as done, the screenshot shows it.
+        const loaded = (image: HTMLImageElement) =>
+            new Promise((done) => {
+                image.addEventListener('load', done, { once: true });
+                image.addEventListener('error', done, { once: true });
+            });
+        await Promise.all(images.map((image) => (image.complete ? image.decode() : loaded(image)).catch(() => null)));
     });
 }
