@@ -873,3 +873,8 @@ The thread is open again.: Der Faden ist wieder offen.
 The thread is done.: Der Faden ist erledigt.
 The thread is deleted.: Der Faden ist gelöscht.
 Nobody sees it afterwards, not the customer either.: Danach sieht ihn niemand mehr, auch der Kunde nicht.
+Language: Sprache
+Language of the backend: Sprache des Backends
+"Automatic ({language})": "Automatisch ({language})"
+Only for you. The languages of the website stay as they are.: Nur für Dich. Die Sprachen der Website bleiben, wie sie sind.
+The language is changed.: Die Sprache ist geändert.

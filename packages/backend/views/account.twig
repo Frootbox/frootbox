@@ -1,4 +1,4 @@
-{#- The own account: password, sessions and API tokens (decision 0115). -#}
+{#- The own account: language, password, sessions and API tokens (decisions 0115, 0161). -#}
 {% extends '@backend/layout.twig' %}
 {% import '@backend/ui.twig' as ui %}
 
@@ -12,6 +12,21 @@
             <p class="fb-muted">{{ profile.user.name }} · {{ profile.user.email }}</p>
         </div>
     </header>
+
+    <section class="fb-card" aria-labelledby="fb-language-title">
+        <div class="fb-card__header"><h2 class="fb-heading-4" id="fb-language-title">{{ t('Language') }}</h2></div>
+        <div class="fb-card__body">
+            {%- set standard = (languages.languages|filter(language => language.code == languages.standard)|first).name ?? languages.standard -%}
+            <fb-form action="account.update-language" next="{{ path('backend.account') }}" done="{{ t('The language is changed.') }}">
+                <form class="fb-stack" novalidate>
+                    {{ ui.select({label: t('Language of the backend'), name: 'language', value: languages.chosen ?? '', attrs: {'data-empty': 'null'},
+                        hint: t('Only for you. The languages of the website stay as they are.'),
+                        options: [{value: '', label: t('Automatic ({language})', {language: standard})}]|merge(languages.languages|map(language => {value: language.code, label: language.name, attrs: {lang: language.code}}))}) }}
+                    <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit'}) }}</div>
+                </form>
+            </fb-form>
+        </div>
+    </section>
 
     <section class="fb-card" aria-labelledby="fb-password-title">
         <div class="fb-card__header"><h2 class="fb-heading-4" id="fb-password-title">{{ t('Change the password') }}</h2></div>

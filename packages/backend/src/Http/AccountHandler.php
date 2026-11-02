@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Frootbox\Backend\Http;
 
 use Frootbox\Backend\View\BackendView;
+use Frootbox\Core\Account\ListLanguages;
 use Frootbox\Core\Account\ListTokens;
 use Frootbox\Core\Account\ShowAccount;
 use Frootbox\Core\Action\CurrentContext;
@@ -20,8 +21,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * The own account (decision 0115): name and email, the password, the
- * sessions and API tokens. For everyone signed in.
+ * The own account (decision 0115): name and email, the language of the
+ * backend (decision 0161), the password, the sessions and API tokens.
+ * For everyone signed in.
  */
 final readonly class AccountHandler implements RequestHandlerInterface
 {
@@ -42,6 +44,7 @@ final readonly class AccountHandler implements RequestHandlerInterface
 
         return $this->view->render($request, '@backend/account.twig', [
             'profile' => $this->runner->ask(new ShowAccount()),
+            'languages' => $this->runner->ask(new ListLanguages()),
             'sessions' => array_values(array_filter($tokens, static fn(AccessToken $token): bool => TokenType::Session === $token->type)),
             'tokens' => array_values(array_filter($tokens, static fn(AccessToken $token): bool => TokenType::Api === $token->type)),
             'current' => $current,
