@@ -36,12 +36,14 @@ jobs:
           name: screenshots
           path: tests/e2e/__screenshots__/
           retention-days: 7
-      # The requests and errors of both test servers, to see why a page looks wrong.
+      # The requests and errors of both test servers and the image sizes
+      # they made, to see why a page looks wrong.
       - if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: server-logs
+          name: servers
           path: |
             var/e2e/var/log/
             var/e2e-base/var/log/
+            var/e2e-base/public/media/
           retention-days: 7
