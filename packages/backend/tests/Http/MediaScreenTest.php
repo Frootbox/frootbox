@@ -14,6 +14,7 @@ use Frootbox\Backend\Http\Media\UploadHandler;
 use Frootbox\Backend\Security\Csrf;
 use Frootbox\Backend\Tests\Support\BackendTestCase;
 use Frootbox\Core\ProjectPaths;
+use Frootbox\Core\Tests\Support\VideoFiles;
 use Nyholm\Psr7\UploadedFile;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Psr\Http\Message\ResponseInterface;
@@ -143,6 +144,34 @@ final class MediaScreenTest extends BackendTestCase
         $this->action('media.delete', ['id' => $id], $this->session);
     }
 
+    public function testShowsAVideoWithItsFurtherFiles(): void
+    {
+        $id = $this->upload('roestung.webm', file: VideoFiles::webm($this->path('webm'), 640, 360));
+
+        $list = $this->html($this->request('GET', '/cms/media', session: $this->session));
+        self::assertMatchesRegularExpression('/<video src="[^"]+" preload="metadata" muted playsinline tabindex="-1" aria-hidden="true" width="640" height="360"><\/video>/', $list);
+        self::assertStringContainsString('<meta name="fb-upload-part" content="', $list, 'Uploads go in parts.');
+
+        $detail = $this->html($this->request('GET', '/cms/media/' . $id, session: $this->session));
+        self::assertStringContainsString('WebM (vp9) · 640 × 360 px', $detail);
+        self::assertStringContainsString('<video class="fb-media-video"', $detail);
+        self::assertStringNotContainsString('<fb-focus', $detail, 'A video has no focus point.');
+        self::assertStringContainsString('Weitere Dateien', $detail);
+        self::assertStringContainsString('Ergänz eine Datei als MP4 mit H.264 (avc1).', $detail);
+        self::assertStringContainsString('source="' . $id . '" accept="video"', $detail);
+        self::assertStringContainsString('accept="video" label="Video hier ablegen, um die Datei zu ersetzen"', $detail);
+
+        $token = $this->send($this->file(VideoFiles::mp4($this->path('mp4'), 640, 360), 'roestung.mp4'));
+        $body = json_decode((string) $token->getBody(), true, flags: \JSON_THROW_ON_ERROR);
+        self::assertIsArray($body);
+        self::assertIsArray($body['data']);
+        $this->action('media.source-add', ['id' => $id, 'upload' => $body['data']['upload']], $this->session);
+
+        $detail = $this->html($this->request('GET', '/cms/media/' . $id, session: $this->session));
+        self::assertStringContainsString('<span class="fb-list__title">MP4 (avc1)</span>', $detail);
+        self::assertStringNotContainsString('Ergänz eine Datei als MP4', $detail);
+    }
+
     public function testExplainsWhatIsWrongWithAFile(): void
     {
         $file = $this->get(ProjectPaths::class)->var('shell.php');
@@ -152,7 +181,7 @@ final class MediaScreenTest extends BackendTestCase
         $response = $this->send(new UploadedFile($file, (int) filesize($file), \UPLOAD_ERR_OK, 'shell.php'));
         self::assertSame(422, $response->getStatusCode());
         self::assertSame('application/problem+json', $response->getHeaderLine('Content-Type'));
-        self::assertStringContainsString('Die Datei ist kein Bild im Format JPEG, PNG, WebP oder GIF.', (string) $response->getBody());
+        self::assertStringContainsString('Die Datei ist kein Bild (JPEG, PNG, WebP, GIF) und kein Video (MP4, WebM).', (string) $response->getBody());
 
         $response = $this->send(new UploadedFile($file, 30 * 1024 * 1024, \UPLOAD_ERR_INI_SIZE, 'big.jpg'));
         self::assertStringContainsString('Die Datei ist zu groß', (string) $response->getBody());
@@ -180,10 +209,9 @@ final class MediaScreenTest extends BackendTestCase
         return ['backend' => ['language' => 'de']];
     }
 
-    private function upload(string $name, ?string $folder = null): string
+    private function upload(string $name, ?string $folder = null, ?string $file = null): string
     {
-        $file = $this->image();
-        $response = $this->send(new UploadedFile($file, (int) filesize($file), \UPLOAD_ERR_OK, $name));
+        $response = $this->send($this->file($file ?? $this->image(), $name));
         self::assertSame(201, $response->getStatusCode(), (string) $response->getBody());
         $body = json_decode((string) $response->getBody(), true, flags: \JSON_THROW_ON_ERROR);
         self::assertIsArray($body);
@@ -195,6 +223,19 @@ final class MediaScreenTest extends BackendTestCase
         self::assertIsString($medium['id']);
 
         return $medium['id'];
+    }
+
+    private function file(string $path, string $name): UploadedFile
+    {
+        return new UploadedFile($path, (int) filesize($path), \UPLOAD_ERR_OK, $name);
+    }
+
+    private function path(string $extension): string
+    {
+        $file = $this->get(ProjectPaths::class)->var('upload-' . bin2hex(random_bytes(4)) . '.' . $extension);
+        @mkdir(\dirname($file), 0o775, true);
+
+        return $file;
     }
 
     private function send(UploadedFile $file): ResponseInterface

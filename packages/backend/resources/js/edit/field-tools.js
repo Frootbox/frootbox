@@ -66,3 +66,12 @@ registerFieldTools('image', (field, bar) => {
         ...(removable(field) ? [{ icon: 'trash', label: labels.removeImage, run: () => bar.editing?.save(field, null), tone: 'danger' }] : []),
     ];
 });
+
+registerFieldTools('video', (field, bar) => {
+    const labels = bar.labels;
+
+    return [
+        { icon: 'video', label: field.dataset.fbValue === undefined ? labels.chooseVideo : labels.videoChosen, run: () => bar.editing?.editImage(field) },
+        ...(removable(field) ? [{ icon: 'trash', label: labels.removeVideo, run: () => bar.editing?.save(field, null), tone: 'danger' }] : []),
+    ];
+});

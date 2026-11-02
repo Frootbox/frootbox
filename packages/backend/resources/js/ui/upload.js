@@ -1,9 +1,9 @@
 import { LitElement } from 'lit';
 import { refresh as refreshParts, runAction } from './action.js';
+import { IMAGE_TYPES, VIDEO_TYPES, sendInParts } from './parts.js';
 import { showToast } from './toast.js';
 
-/** The image types the media library takes (decision 0126). */
-export const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+export { IMAGE_TYPES, VIDEO_TYPES };
 
 function meta(name) {
     return document.querySelector(`meta[name="${name}"]`)?.getAttribute('content') ?? '';
@@ -14,43 +14,46 @@ function failedText() {
 }
 
 /**
- * Uploads one file and adds it to the media library: the file goes to
- * the upload address, its token to media.create, or to media.replace
- * with the id of a medium in replace (decision 0146). Returns { ok,
- * data, problem } like runAction(); data is the medium, problem.errors a
- * list of { pointer, message }.
+ * Sends one file to the upload address in parts (decision 0177) and
+ * returns { ok, data, problem } with data.upload as the token.
  */
-export async function uploadMedium(url, file, folderId = null, replace = null) {
-    const body = new FormData();
-    body.append('file', file, file.name);
-    let response;
-    let answer = null;
-
-    try {
-        response = await fetch(url, {
-            method: 'POST',
-            headers: { Accept: 'application/json', 'X-CSRF-Token': meta('fb-csrf') },
-            credentials: 'same-origin',
-            body,
-        });
-        answer = await response.json().catch(() => null);
-    } catch {
-        return { ok: false, data: null, problem: { detail: failedText(), errors: {} } };
-    }
-
-    if (!response.ok) {
-        return { ok: false, data: null, problem: { detail: answer?.detail ?? failedText(), errors: answer?.errors ?? [], status: response.status } };
-    }
-
-    if (replace) {
-        return runAction('media.replace', { id: replace, upload: answer.data.upload });
-    }
-
-    return runAction('media.create', { upload: answer.data.upload, folderId: folderId || null });
+export function sendUpload(url, file, progress = () => {}) {
+    return sendInParts(url, file, {
+        headers: { 'X-CSRF-Token': meta('fb-csrf') },
+        partBytes: meta('fb-upload-part'),
+        failed: failedText(),
+        progress,
+    });
 }
 
 /**
- * <fb-upload>: uploads images into the media library, by a button inside
+ * Uploads one file and adds it to the media library: the file goes to
+ * the upload address in parts, its token to media.create, to
+ * media.replace with the id of a medium in replace (decision 0146) or to
+ * media.source-add with the id of a video in source (decision 0177).
+ * Returns { ok, data, problem } like runAction(); data is the medium,
+ * problem.errors a list of { pointer, message }.
+ */
+export async function uploadMedium(url, file, folderId = null, replace = null, source = null, progress = () => {}) {
+    const sent = await sendUpload(url, file, progress);
+
+    if (!sent.ok) {
+        return sent;
+    }
+
+    if (source) {
+        return runAction('media.source-add', { id: source, upload: sent.data.upload });
+    }
+
+    if (replace) {
+        return runAction('media.replace', { id: replace, upload: sent.data.upload });
+    }
+
+    return runAction('media.create', { upload: sent.data.upload, folderId: folderId || null });
+}
+
+/**
+ * <fb-upload>: uploads images and videos into the media library, by a button inside
  * it with data-fb-upload or by dropping files onto it (decision 0126).
  *
  *     <fb-upload url="/cms/uploads" folder="01J…" refresh="media-grid" done="Uploaded" progress="Uploading {done} of {total} …">
@@ -66,8 +69,14 @@ export async function uploadMedium(url, file, folderId = null, replace = null) {
  *
  * - existing: the note for a file that is already in the library, with
  *   {name} (decision 0146); such a file is not added a second time
- * - replace: the id of a medium whose file one image replaces
+ * - replace: the id of a medium whose file one file replaces
  *   (media.replace) instead of adding new ones
+ * - source: the id of a video that gets one more file in another format
+ *   (media.source-add, decision 0177)
+ * - accept: "image", "video" or empty for both
+ *
+ * Files go in parts (decision 0177); the status shows the percentage of
+ * the current file with {percent} in progress.
  *
  * Errors appear as an alert above the content, one line per file, notes
  * on files already in the library as a calm alert. Fires "fb-uploaded"
@@ -83,6 +92,8 @@ export class Upload extends LitElement {
         done: {},
         existing: {},
         replace: {},
+        source: {},
+        accept: {},
         disabled: { type: Boolean, reflect: true },
         dragging: { type: Boolean, reflect: true },
         busy: { type: Boolean, reflect: true },
@@ -98,6 +109,8 @@ export class Upload extends LitElement {
         this.done = null;
         this.existing = '{name} is already in the media library.';
         this.replace = '';
+        this.source = '';
+        this.accept = '';
         this.disabled = false;
         this.dragging = false;
         this.busy = false;
@@ -140,10 +153,14 @@ export class Upload extends LitElement {
 
         const input = document.createElement('input');
         input.type = 'file';
-        input.multiple = !this.replace;
-        input.accept = IMAGE_TYPES.join(',');
+        input.multiple = !this.replace && !this.source;
+        input.accept = this.types().join(',');
         input.addEventListener('change', () => this.upload([...(input.files ?? [])]));
         input.click();
+    }
+
+    types() {
+        return { image: IMAGE_TYPES, video: VIDEO_TYPES }[this.accept] ?? [...IMAGE_TYPES, ...VIDEO_TYPES];
     }
 
     onClick(event) {
@@ -202,8 +219,8 @@ export class Upload extends LitElement {
             return;
         }
 
-        // One file replaces one file.
-        files = this.replace ? files.slice(0, 1) : files;
+        // One file replaces one file, a video gets one file at a time.
+        files = this.replace || this.source ? files.slice(0, 1) : files;
 
         this.busy = true;
         this.querySelectorAll(':scope > .fb-alert').forEach((alert) => alert.remove());
@@ -212,8 +229,9 @@ export class Upload extends LitElement {
         const known = [];
 
         for (const [index, file] of files.entries()) {
-            this.status(this.progress.replace('{done}', String(index + 1)).replace('{total}', String(files.length)));
-            const result = await uploadMedium(this.url, file, this.folder, this.replace || null);
+            const text = (percent) => this.progress.replace('{done}', String(index + 1)).replace('{total}', String(files.length)).replace('{percent}', String(percent));
+            this.status(text(0));
+            const result = await uploadMedium(this.url, file, this.folder, this.replace || null, this.source || null, (sent, total) => this.status(text(Math.round((sent / Math.max(1, total)) * 100))));
 
             if (result.ok && result.data.existing) {
                 known.push(this.existing.replace('{name}', result.data.fileName));

@@ -1,7 +1,6 @@
 import { css, html, nothing } from 'lit';
+import { IMAGE_TYPES, VIDEO_TYPES, sendInParts } from '../ui/parts.js';
 
-/** The image types the media library takes (decision 0126). */
-const TYPES = 'image/jpeg,image/png,image/webp,image/gif';
 const PER_PAGE = 24;
 const SEARCH_DELAY = 300;
 
@@ -15,6 +14,11 @@ const SEARCH_DELAY = 300;
  * there is used at other places as well, the dialog asks whether the
  * new one counts only here (a new medium) or everywhere (media.replace,
  * decision 0146).
+ *
+ * A video field (decision 0177) has two tabs: the video and the image
+ * shown before it starts. Its value is {media, poster?}; the description
+ * from the media library names the video, so it has no text here.
+ * Files go in parts, so large videos arrive as well.
  */
 export class MediaPicker {
     constructor(bar) {
@@ -28,16 +32,21 @@ export class MediaPicker {
     }
 
     /**
-     * value: the stored value {media, alt?} or null; apply(value) and
-     * remove() save, done() gives the focus back.
+     * kind: "image" or "video"; value: the stored value {media, alt?} or
+     * {media, poster?} or null; apply(value) and remove() save, done()
+     * gives the focus back.
      */
-    open({ value, apply, remove, done }) {
+    open({ kind = 'image', value, apply, remove, done }) {
         this.state = {
+            kind,
+            tab: 'media',
             value,
             apply,
             remove,
             done,
             chosen: value?.media ?? null,
+            poster: value?.poster ?? null,
+            seen: {},
             alt: value?.alt ?? '',
             query: '',
             items: [],
@@ -63,9 +72,32 @@ export class MediaPicker {
         this.bar.requestUpdate();
     }
 
+    /** What the list shows: videos on the first tab of a video field, else images. */
+    listKind(state = this.state) {
+        return state.kind === 'video' && state.tab === 'media' ? 'video' : 'image';
+    }
+
+    /** The choice of the open tab. */
+    picked(state = this.state) {
+        return state.tab === 'poster' ? state.poster : state.chosen;
+    }
+
+    pick(id) {
+        const item = this.state.items.find((entry) => entry.id === id);
+        const seen = item ? { ...this.state.seen, [id]: item } : this.state.seen;
+        this.update(this.state.tab === 'poster' ? { poster: id, seen } : { chosen: id, seen });
+    }
+
+    tab(name) {
+        if (this.state.tab !== name) {
+            this.update({ tab: name, items: [], total: 0, problems: [], notices: [] });
+            this.load(1);
+        }
+    }
+
     async load(page) {
         const state = this.state;
-        const query = new URLSearchParams({ page: String(page), perPage: String(PER_PAGE) });
+        const query = new URLSearchParams({ page: String(page), perPage: String(PER_PAGE), kind: this.listKind(state) });
 
         if (state.query.trim() !== '') {
             query.set('search', state.query.trim());
@@ -81,8 +113,8 @@ export class MediaPicker {
             body = null;
         }
 
-        // A newer search or a closed dialog wins.
-        if (this.state !== null && this.state.query === state.query) {
+        // A newer search, another tab or a closed dialog wins.
+        if (this.state !== null && this.state.query === state.query && this.state.tab === state.tab) {
             const items = body?.data?.items ?? [];
             this.update({
                 loading: false,
@@ -104,17 +136,21 @@ export class MediaPicker {
     async upload(files) {
         const problems = [];
         const notices = [];
-        const current = this.state.value?.media ?? null;
+        // Replacing everywhere is for the image or video itself, not for a poster.
+        const current = this.state.tab === 'media' ? (this.state.value?.media ?? null) : null;
 
         for (const [index, file] of files.entries()) {
-            this.update({ uploading: this.labels.uploading.replace('{done}', String(index + 1)).replace('{total}', String(files.length)) });
-            const body = new FormData();
-            body.append('file', file, file.name);
-            const response = await this.bar.send(this.bar.config.uploads, body);
-            const answer = response ? await response.json().catch(() => null) : null;
+            const text = (percent) => this.labels.uploading.replace('{done}', String(index + 1)).replace('{total}', String(files.length)).replace('{percent}', String(percent));
+            this.update({ uploading: text(0) });
+            const sent = await sendInParts(this.bar.config.uploads, file, {
+                headers: { 'X-CSRF-Token': this.bar.config.csrf ?? '' },
+                partBytes: this.bar.config.uploadPart,
+                failed: this.labels.failed,
+                progress: (done, total) => this.state && this.update({ uploading: text(Math.round((done / Math.max(1, total)) * 100)) }),
+            });
 
-            if (!response?.ok) {
-                problems.push(`${file.name}: ${answer?.errors?.[0]?.message ?? answer?.detail ?? this.labels.failed}`);
+            if (!sent.ok) {
+                problems.push(`${file.name}: ${sent.problem.errors?.[0]?.message ?? sent.problem.detail}`);
 
                 continue;
             }
@@ -122,12 +158,12 @@ export class MediaPicker {
             const elsewhere = files.length === 1 && current && this.bar.config.mayReplace ? await this.elsewhere(current) : 0;
 
             if (elsewhere > 0 && this.state) {
-                this.update({ uploading: null, problems, notices, question: { upload: answer.data.upload, name: file.name, media: current, places: elsewhere + 1 } });
+                this.update({ uploading: null, problems, notices, question: { upload: sent.data.upload, name: file.name, media: current, places: elsewhere + 1 } });
 
                 return;
             }
 
-            await this.create(answer.data.upload, file.name, problems, notices);
+            await this.create(sent.data.upload, file.name, problems, notices);
         }
 
         if (this.state) {
@@ -159,7 +195,8 @@ export class MediaPicker {
         if (created.ok && this.state) {
             // The same file is already in the library: no second copy (decision 0146).
             const others = this.state.items.filter((item) => item.id !== created.data.id);
-            this.update({ items: [created.data, ...others], total: this.state.total + (created.data.existing ? 0 : 1), chosen: created.data.id });
+            this.update({ items: [created.data, ...others], total: this.state.total + (created.data.existing ? 0 : 1) });
+            this.pick(created.data.id);
 
             if (created.data.existing) {
                 notices.push(this.labels.alreadyInLibrary.replace('{name}', created.data.fileName));
@@ -188,7 +225,8 @@ export class MediaPicker {
 
             if (replaced.ok && this.state) {
                 const others = this.state.items.filter((item) => item.id !== replaced.data.id);
-                this.update({ items: [replaced.data, ...others], chosen: replaced.data.id, replaced: true });
+                this.update({ items: [replaced.data, ...others], replaced: true });
+                this.pick(replaced.data.id);
                 notices.push(replaced.data.draft ? this.labels.replacedInDraft : this.labels.replacedEverywhere);
             } else if (!replaced.ok) {
                 problems.push(`${question.name}: ${this.bar.message?.text ?? this.labels.failed}`);
@@ -204,7 +242,7 @@ export class MediaPicker {
         const input = document.createElement('input');
         input.type = 'file';
         input.multiple = true;
-        input.accept = TYPES;
+        input.accept = (this.listKind() === 'video' ? VIDEO_TYPES : IMAGE_TYPES).join(',');
         input.addEventListener('change', () => this.upload([...(input.files ?? [])]));
         input.click();
     }
@@ -217,9 +255,15 @@ export class MediaPicker {
         }
 
         const value = { media: state.chosen };
-        this.bar.mediaChosen(state.items.find((item) => item.id === state.chosen));
+        const item = (id) => state.items.find((entry) => entry.id === id) ?? state.seen[id];
+        this.bar.mediaChosen(item(state.chosen));
 
-        if (state.alt.trim() !== '') {
+        if (state.kind === 'video') {
+            if (state.poster) {
+                value.poster = state.poster;
+                this.bar.mediaChosen(item(state.poster));
+            }
+        } else if (state.alt.trim() !== '') {
             value.alt = state.alt.trim();
         }
 
@@ -250,23 +294,44 @@ export class MediaPicker {
 
         const labels = this.labels;
         const more = state.items.length < state.total;
+        const video = state.kind === 'video';
+        const picked = this.picked(state);
         let list;
 
         if (state.items.length === 0) {
-            list = html`<p class="hint">${state.loading ? labels.loading : state.query.trim() !== '' ? labels.noMediaFound : labels.noMedia}</p>`;
+            const empty = this.listKind(state) === 'video' ? labels.noVideos : labels.noMedia;
+            list = html`<p class="hint">${state.loading ? labels.loading : state.query.trim() !== '' ? labels.noMediaFound : empty}</p>`;
         } else {
             list = html`<ul class="media-grid" aria-label=${labels.mediaLibrary}>
-                ${state.items.map((item) => html`<li><button type="button" aria-pressed=${String(item.id === state.chosen)}
-                    @click=${() => this.update({ chosen: item.id })} @dblclick=${() => { this.update({ chosen: item.id }); this.apply(); }}>
-                    <img src=${item.preview} alt="" width=${item.width} height=${item.height} loading="lazy" decoding="async">
+                ${state.items.map((item) => html`<li><button type="button" aria-pressed=${String(item.id === picked)}
+                    @click=${() => this.pick(item.id)} @dblclick=${() => { this.pick(item.id); this.apply(); }}>
+                    ${item.kind === 'video'
+                        ? html`<video src=${item.preview} preload="metadata" muted playsinline aria-hidden="true"></video>`
+                        : html`<img src=${item.preview} alt="" width=${item.width} height=${item.height} loading="lazy" decoding="async">`}
                     <span>${item.fileName}</span></button></li>`)}
             </ul>
             ${more ? html`<button type="button" ?disabled=${state.loading} @click=${() => this.load(state.page + 1)}>${labels.loadMore}</button>` : nothing}`;
         }
 
+        const tabs = video
+            ? html`<div class="media-tabs" role="group" aria-label=${labels.chooseVideo}>
+                ${[['media', labels.videoTab], ['poster', labels.posterTab]].map(([name, label]) => html`<button type="button" aria-pressed=${String(state.tab === name)} @click=${() => this.tab(name)}>${label}</button>`)}
+            </div>`
+            : nothing;
+        const texts = video
+            ? (state.tab === 'poster'
+                ? html`<p class="hint">${labels.posterHint}</p>
+                    ${state.poster ? html`<div class="actions start"><button type="button" @click=${() => this.update({ poster: null })}>${labels.noPoster}</button></div>` : nothing}`
+                : html`<p class="hint">${labels.videoHint}</p>`)
+            : html`<label>${labels.altHere}
+                    <input type="text" .value=${state.alt} maxlength="500" aria-describedby="fb-media-alt-hint"
+                        @input=${(event) => this.update({ alt: event.target.value })}></label>
+                <p class="hint" id="fb-media-alt-hint">${labels.altHereHint}</p>`;
+
         return html`<dialog class="media" aria-labelledby="fb-media-title" @cancel=${(event) => { event.preventDefault(); this.close(); }}>
             <form @submit=${(event) => { event.preventDefault(); this.apply(); }}>
-                <h2 id="fb-media-title">${labels.chooseImage}</h2>
+                <h2 id="fb-media-title">${video ? labels.chooseVideo : labels.chooseImage}</h2>
+                ${tabs}
                 <div class="media-tools">
                     <label>${labels.search}
                         <input type="search" .value=${state.query} autocomplete="off" @input=${(event) => this.search(event.target.value)}></label>
@@ -283,12 +348,9 @@ export class MediaPicker {
                 ${state.problems.length > 0 ? html`<ul class="problems" role="alert">${state.problems.map((problem) => html`<li>${problem}</li>`)}</ul>` : nothing}
                 ${state.notices.length > 0 ? html`<ul class="notices" role="status">${state.notices.map((notice) => html`<li>${notice}</li>`)}</ul>` : nothing}
                 ${list}
-                <label>${labels.altHere}
-                    <input type="text" .value=${state.alt} maxlength="500" aria-describedby="fb-media-alt-hint"
-                        @input=${(event) => this.update({ alt: event.target.value })}></label>
-                <p class="hint" id="fb-media-alt-hint">${labels.altHereHint}</p>
+                ${texts}
                 <div class="actions">
-                    ${state.value ? html`<button type="button" class="danger" @click=${() => this.close(state.remove)}>${labels.removeImage}</button>` : nothing}
+                    ${state.value ? html`<button type="button" class="danger" @click=${() => this.close(state.remove)}>${video ? labels.removeVideo : labels.removeImage}</button>` : nothing}
                     <button type="button" @click=${() => this.close()}>${labels.cancel}</button>
                     <button type="submit" class="primary" ?disabled=${!state.chosen || state.question !== null}>${labels.apply}</button>
                 </div>
@@ -336,7 +398,17 @@ export const mediaStyles = css`
         text-align: start;
     }
 
-    .media-grid img {
+    .media-tabs { display: flex; gap: var(--fb-space-2); }
+
+    .media-tabs button[aria-pressed="true"] {
+        border-color: var(--fb-accent);
+        background: var(--fb-accent-soft);
+        color: var(--fb-accent-text);
+    }
+
+    .actions.start { justify-content: flex-start; }
+
+    .media-grid :is(img, video) {
         inline-size: 100%;
         block-size: auto;
         aspect-ratio: 1;

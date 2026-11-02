@@ -13,5 +13,5 @@ export { bindSlugs, slugify } from './slug.js';
 export { localTimes } from './time.js';
 export { bindFills } from './fill.js';
 export { bindCopies } from './copy.js';
-export { IMAGE_TYPES, Upload, uploadMedium } from './upload.js';
+export { IMAGE_TYPES, VIDEO_TYPES, Upload, sendUpload, uploadMedium } from './upload.js';
 export { Focus } from './focus.js';

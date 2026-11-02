@@ -158,7 +158,7 @@ export class Editing {
         } else if (type === 'link' && (event.key === 'Enter' || event.key === ' ')) {
             event.preventDefault();
             this.editLink(element);
-        } else if (type === 'image' && (event.key === 'Enter' || event.key === ' ')) {
+        } else if ((type === 'image' || type === 'video') && (event.key === 'Enter' || event.key === ' ')) {
             event.preventDefault();
             this.editImage(element);
         } else if (type === 'richtext' && event.key === 'F10' && event.altKey) {
@@ -194,7 +194,7 @@ export class Editing {
         } else if (element?.dataset.fbType === 'link') {
             event.preventDefault();
             this.editLink(element);
-        } else if (element?.dataset.fbType === 'image') {
+        } else if (element?.dataset.fbType === 'image' || element?.dataset.fbType === 'video') {
             event.preventDefault();
             this.editImage(element);
         }
@@ -287,7 +287,7 @@ export class Editing {
             element.dataset.fbValue = JSON.stringify(data.value);
         }
 
-        if (element.dataset.fbType === 'link' || element.dataset.fbType === 'image') {
+        if (['link', 'image', 'video'].includes(element.dataset.fbType)) {
             element.innerHTML = data.html;
         }
 
@@ -328,8 +328,10 @@ export class Editing {
         });
     }
 
+    /** Images and videos (decision 0177) both come from the media library. */
     editImage(element) {
         this.bar.media.open({
+            kind: element.dataset.fbType === 'video' ? 'video' : 'image',
             value: this.savedValue(element),
             apply: (value) => this.save(element, value),
             remove: () => this.save(element, null),

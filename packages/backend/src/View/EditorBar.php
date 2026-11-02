@@ -21,6 +21,7 @@ use Frootbox\Core\Language\Direction;
 use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Media\ListMedia;
 use Frootbox\Core\Media\ListMediumUsages;
+use Frootbox\Core\Media\UploadReceiver;
 use Frootbox\Core\Page\EditMode;
 use Frootbox\Core\Page\PageStatus;
 use Frootbox\Core\Page\ShowPage;
@@ -90,6 +91,8 @@ final readonly class EditorBar
             'toggle' => $this->router->path('backend.edit-mode'),
             'pages' => $this->router->path('backend.pages'),
             'uploads' => $this->router->path('backend.uploads'),
+            // Files go in parts of this size (decision 0177).
+            'uploadPart' => UploadReceiver::partBytes(),
             'mayUpload' => $this->permissions->can('media.create'),
             'mayReplace' => $this->permissions->can('media.replace'),
             'site' => $this->site(),
@@ -352,7 +355,7 @@ final readonly class EditorBar
             'chooseImage' => $t('Choose an image'),
             'mediaLibrary' => $t('Media'),
             'upload' => $t('Upload'),
-            'uploading' => $t('Uploading {done} of {total} …'),
+            'uploading' => $t('Uploading {done} of {total} … {percent} %'),
             'noMedia' => $t('No images yet. Upload the first one.'),
             'noMediaFound' => $t('Nothing found'),
             'alreadyInLibrary' => $t('“{name}” is already in the media library. The image there is used.'),
@@ -367,6 +370,16 @@ final readonly class EditorBar
             'removeImage' => $t('Remove the image'),
             'imageChosen' => $t('Change the image'),
             'noImage' => $t('No image'),
+            'chooseVideo' => $t('Choose a video'),
+            'videoChosen' => $t('Change the video'),
+            'removeVideo' => $t('Remove the video'),
+            'noVideo' => $t('No video'),
+            'noVideos' => $t('No videos yet. Upload the first one.'),
+            'videoTab' => $t('Video'),
+            'posterTab' => $t('Poster image'),
+            'videoHint' => $t('The description from the media library names the video for people who cannot see it.'),
+            'posterHint' => $t('Shown before the video starts. Without one the browser shows the first picture of the video.'),
+            'noPoster' => $t('No poster image'),
             'blockTools' => $t('Block {block}'),
             'parentBlock' => $t('Select the block around it'),
             'moveUp' => $t('Move up'),

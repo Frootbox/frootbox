@@ -547,7 +547,6 @@ Options: Optionen
 
 # Media (decision 0126)
 Media: Medien
-'Images for your pages. They become visible to visitors with the first published page that uses them.': 'Bilder für Deine Seiten. Besucher sehen sie, sobald eine veröffentlichte Seite sie verwendet.'
 Folders: Ordner
 New folder: Neuer Ordner
 'New folder in {folder}': 'Neuer Ordner in {folder}'
@@ -557,14 +556,11 @@ Rename: Umbenennen
 Delete the folder: Ordner löschen
 'Drop images here to upload them': 'Bilder hier ablegen, um sie hochzuladen'
 'Uploading {done} of {total} …': 'Lade {done} von {total} hoch …'
-'The images are uploaded.': 'Die Bilder sind hochgeladen.'
 File name or text: Dateiname oder Text
 Tag: Schlagwort
 Tags: Schlagwörter
 Nothing found: Nichts gefunden
 Try another search.: Versuch es mit einer anderen Suche.
-No images yet: Noch keine Bilder
-Upload images with the button or drop them here.: Lade Bilder mit dem Button hoch oder leg sie hier ab.
 Pages of the list: Seiten der Liste
 Back: Zurück
 Next: Weiter
@@ -575,7 +571,6 @@ The folder is saved.: Der Ordner ist gespeichert.
 The folder is deleted.: Der Ordner ist gelöscht.
 Rename the folder: Ordner umbenennen
 Delete the folder?: Ordner löschen?
-'Only an empty folder can be deleted. Move its images and folders elsewhere first.': 'Nur ein leerer Ordner lässt sich löschen. Verschieb seine Bilder und Ordner vorher woandershin.'
 Back to the overview: Zurück zur Übersicht
 Uploaded: Hochgeladen
 Visible: Sichtbar
@@ -617,7 +612,6 @@ Discard the changes?: Änderungen verwerfen?
 # Replacing the file of a medium (decisions 0146, 0147)
 Replace the file: Datei ersetzen
 Drop an image here to replace the file: Bild hierher ziehen, um die Datei zu ersetzen
-Uploading …: Wird hochgeladen …
 The new file is in the draft.: Die neue Datei liegt im Entwurf.
 The file is replaced.: Die Datei ist ersetzt.
 The new file counts at every place that uses the image. The focus point stays.: Die neue Datei gilt an allen Stellen, die das Bild nutzen. Der Fokuspunkt bleibt.
@@ -886,3 +880,59 @@ The language is changed.: Die Sprache ist geändert.
 "Not included, they go online at their scheduled time: {pages}.": "Nicht dabei, weil sie zu ihrer geplanten Zeit online gehen: {pages}."
 "Not included, you may not publish them or a page above them: {pages}.": "Nicht dabei, weil Du sie oder eine Seite darüber nicht veröffentlichen darfst: {pages}."
 "Undone. The changes are in the drafts again.": "Rückgängig gemacht. Die Änderungen stehen wieder im Entwurf."
+
+# Videos and uploads in parts (decision 0177)
+"{size} MB": "{size} MB"
+"{size} KB": "{size} KB"
+"Images and videos for your pages. They become visible to visitors with the first published page that uses them.": "Bilder und Videos für Deine Seiten. Besucher sehen sie, sobald eine veröffentlichte Seite sie verwendet."
+"Drop images or videos here to upload them": "Bilder oder Videos hier ablegen, um sie hochzuladen"
+"Uploading {done} of {total} … {percent} %": "Lade {done} von {total} hoch … {percent} %"
+"Uploading … {percent} %": "Lade hoch … {percent} %"
+"The files are uploaded.": "Die Dateien sind hochgeladen."
+"Upload images or videos with the button or drop them here.": "Lade Bilder oder Videos mit dem Button hoch oder leg sie hier ab."
+"Only an empty folder can be deleted. Move its media and folders elsewhere first.": "Nur ein leerer Ordner lässt sich löschen. Verschieb seine Medien und Ordner vorher woandershin."
+Video: Video
+"The changes to the video are published.": "Die Änderungen am Video sind veröffentlicht."
+"The changes to the video are discarded.": "Die Änderungen am Video sind verworfen."
+"Changes to the file and the texts wait in a draft until you publish them.": "Änderungen an Datei und Texten warten im Entwurf, bis Du sie veröffentlichst."
+"Drop a video here to replace the file": "Video hier ablegen, um die Datei zu ersetzen"
+"The new file counts at every place that uses the video. The further files stay.": "Die neue Datei gilt an jeder Stelle, die das Video verwendet. Die weiteren Dateien bleiben."
+"Further files": "Weitere Dateien"
+"The same video in other formats. Each browser plays the first file it can, the most efficient first.": "Dasselbe Video in anderen Formaten. Jeder Browser spielt die erste Datei, die er kann, die sparsamste zuerst."
+"The file is deleted.": "Die Datei ist gelöscht."
+"Delete {format}": "{format} löschen"
+"Add a file in MP4 with H.264 (avc1). Every browser plays it, other formats not everywhere.": "Ergänz eine Datei als MP4 mit H.264 (avc1). Die spielt jeder Browser, andere Formate nicht überall."
+"Drop a video here to add it as a further file": "Video hier ablegen, um es als weitere Datei hinzuzufügen"
+"The file is added.": "Die Datei ist hinzugefügt."
+"Add a file": "Datei hinzufügen"
+"The video is saved.": "Das Video ist gespeichert."
+"Names the video for people who cannot see it, e.g. “Film: How we roast”.": "Benennt das Video für Menschen, die es nicht sehen, z. B. „Film: So rösten wir“."
+"The video is deleted.": "Das Video ist gelöscht."
+"The video cannot be deleted yet": "Das Video lässt sich noch nicht löschen"
+"Delete the video?": "Video löschen?"
+"Choose a video": "Video auswählen"
+"Change the video": "Video ändern"
+"Remove the video": "Video entfernen"
+"No video": "Kein Video"
+"No videos yet. Upload the first one.": "Noch keine Videos. Lade das erste hoch."
+"Poster image": "Vorschaubild"
+"The description from the media library names the video for people who cannot see it.": "Die Beschreibung aus den Medien benennt das Video für Menschen, die es nicht sehen."
+"Shown before the video starts. Without one the browser shows the first picture of the video.": "Erscheint, bevor das Video startet. Ohne Vorschaubild zeigt der Browser das erste Bild des Videos."
+"No poster image": "Kein Vorschaubild"
+"The file is no image (JPEG, PNG, WebP, GIF) or video (MP4, WebM).": "Die Datei ist kein Bild (JPEG, PNG, WebP, GIF) und kein Video (MP4, WebM)."
+"The file is no video of type MP4 or WebM. Save it as MP4 with H.264, all browsers play that.": "Die Datei ist kein Video im Format MP4 oder WebM. Speicher es als MP4 mit H.264, das spielen alle Browser."
+"The video could not be saved.": "Das Video ließ sich nicht speichern."
+"The part is too large for the server, at most {max} MB.": "Der Teil ist zu groß für den Server, höchstens {max} MB."
+"The size of the whole file in bytes.": "Die Größe der ganzen Datei in Byte."
+"Where this part starts in the file, in bytes.": "Wo dieser Teil in der Datei beginnt, in Byte."
+"The first part starts at 0.": "Der erste Teil beginnt bei 0."
+"There is no upload with this token (any more). Start again.": "Diesen Upload gibt es nicht (mehr). Fang noch einmal an."
+"The parts are larger than the file. Start again.": "Die Teile sind größer als die Datei. Fang noch einmal an."
+"This part does not start where the upload stands. Go on at byte {received}.": "Dieser Teil beginnt nicht dort, wo der Upload steht. Mach bei Byte {received} weiter."
+"Only a video has further files.": "Nur ein Video hat weitere Dateien."
+"The video has this file already.": "Das Video hat diese Datei schon."
+"The video has a file in {format} already. Delete that one first to replace it.": "Das Video hat schon eine Datei als {format}. Lösch sie zuerst, um sie zu ersetzen."
+"The video has no file with this id.": "Das Video hat keine Datei mit dieser ID."
+"A video has no focus point.": "Ein Video hat keinen Fokuspunkt."
+"Replace a video only with a video.": "Ersetz ein Video nur durch ein Video."
+"Replace an image only with an image.": "Ersetz ein Bild nur durch ein Bild."

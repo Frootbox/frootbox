@@ -1,13 +1,14 @@
-{#- The details of one medium: focus point, texts per language, tags, folder (decision 0126), where it is used and its file replaced (0146), its draft (0147). -#}
+{#- The details of one medium: focus point, texts per language, tags, folder (decision 0126), where it is used and its file replaced (0146), its draft (0147), the files of a video (0177). -#}
 {% import '@backend/ui.twig' as ui %}
 {% set editable = can('media.update') %}
+{% set video = medium.kind == 'video' %}
 {% set live = usages|filter(usage => usage.published)|length %}
 <section class="fb-card fb-split__main" id="media-detail" aria-labelledby="media-detail-title">
     <div class="fb-card__header">
         <div class="fb-stack fb-stack--sm">
             <a class="fb-muted" href="{{ back }}">← {{ t('Back to the overview') }}</a>
             <h2 class="fb-heading-4" id="media-detail-title" tabindex="-1" data-fb-focus>{{ medium.fileName }}</h2>
-            <p class="fb-muted">{{ medium.width }} × {{ medium.height }} px · {{ (medium.size / 1024)|round }} KB · {{ t('Uploaded') }} {{ ui.time(medium.createdAt) }}</p>
+            <p class="fb-muted">{% if video %}{{ medium.format }} · {% endif %}{% if medium.width > 0 %}{{ medium.width }} × {{ medium.height }} px · {% endif %}{{ medium.size >= 1048576 ? t('{size} MB', {size: (medium.size / 1048576)|round(1)}) : t('{size} KB', {size: (medium.size / 1024)|round}) }} · {{ t('Uploaded') }} {{ ui.time(medium.createdAt) }}</p>
         </div>
         {% if medium.draft %}{{ ui.status('changed') }}{% else %}{{ medium.public ? ui.badge('published', t('Visible')) : ui.badge('draft', t('Not used on a published page yet')) }}{% endif %}
     </div>
@@ -17,7 +18,7 @@
         <p>{{ live > 0 ? t('Visitors see the changes once they are published. That changes the image in {count} published place.', {count: live}) : t('Visitors see the changes once they are published.') }}</p>
         <div class="fb-cluster">
             {% if can('media.publish') %}
-            <fb-form action="media.publish" refresh="media-detail" done="{{ t('The changes to the image are published.') }}">
+            <fb-form action="media.publish" refresh="media-detail" done="{{ video ? t('The changes to the video are published.') : t('The changes to the image are published.') }}">
                 <form novalidate>
                     <input type="hidden" name="ids[]" value="{{ medium.id }}">
                     {{ ui.button({label: t('Publish'), type: 'submit'}) }}
@@ -31,36 +32,79 @@
     </div>
     {% elseif medium.public %}
     <div class="fb-card__body">
-        <p class="fb-hint">{{ t('Changes to the file, the focus point and the texts wait in a draft until you publish them.') }}</p>
+        <p class="fb-hint">{{ video ? t('Changes to the file and the texts wait in a draft until you publish them.') : t('Changes to the file, the focus point and the texts wait in a draft until you publish them.') }}</p>
     </div>
     {% endif %}
 
     {% if can('media.replace') %}
-    <fb-upload class="fb-card__body fb-stack fb-stack--sm" url="{{ path('backend.uploads') }}" replace="{{ medium.id }}" refresh="media-detail" label="{{ t('Drop an image here to replace the file') }}" progress="{{ t('Uploading …') }}" done="{{ medium.public ? t('The new file is in the draft.') : t('The file is replaced.') }}">
+    <fb-upload class="fb-card__body fb-stack fb-stack--sm" url="{{ path('backend.uploads') }}" replace="{{ medium.id }}" refresh="media-detail" accept="{{ medium.kind }}" label="{{ video ? t('Drop a video here to replace the file') : t('Drop an image here to replace the file') }}" progress="{{ t('Uploading … {percent} %') }}" done="{{ medium.public ? t('The new file is in the draft.') : t('The file is replaced.') }}">
         <div class="fb-cluster">
             {{ ui.button({label: t('Replace the file'), variant: 'outline', attrs: {'data-fb-upload': true}}) }}
         </div>
-        <p class="fb-hint">{{ t('The new file counts at every place that uses the image. The focus point stays.') }}</p>
+        <p class="fb-hint">{{ video ? t('The new file counts at every place that uses the video. The further files stay.') : t('The new file counts at every place that uses the image. The focus point stays.') }}</p>
         <p class="fb-visually-hidden" role="status" data-fb-upload-status></p>
     </fb-upload>
     {% endif %}
 
-    <fb-form action="media.update" refresh="media-detail" done="{{ t('The image is saved.') }}">
+    {% if video %}
+    <div class="fb-card__body fb-stack fb-stack--sm" id="media-sources">
+        <video class="fb-media-video" src="{{ medium.preview }}" controls preload="metadata" playsinline{% if medium.width > 0 %} width="{{ medium.width }}" height="{{ medium.height }}"{% endif %}></video>
+        <h3 class="fb-heading-4">{{ t('Further files') }}</h3>
+        <p class="fb-hint">{{ t('The same video in other formats. Each browser plays the first file it can, the most efficient first.') }}</p>
+        {% if medium.sources is not empty %}
+        <ul class="fb-list">
+            {%- for source in medium.sources %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title">{{ source.format }}</span>
+                    <span class="fb-list__meta">{% if source.width > 0 %}{{ source.width }} × {{ source.height }} px · {% endif %}{{ source.size >= 1048576 ? t('{size} MB', {size: (source.size / 1048576)|round(1)}) : t('{size} KB', {size: (source.size / 1024)|round}) }}</span>
+                </span>
+                {% if can('media.source-delete') %}
+                <fb-form action="media.source-delete" refresh="media-detail" done="{{ t('The file is deleted.') }}">
+                    <form novalidate>
+                        <input type="hidden" name="id" value="{{ medium.id }}">
+                        <input type="hidden" name="sourceId" value="{{ source.id }}">
+                        {{ ui.button({label: t('Delete {format}', {format: source.format}), variant: 'ghost', small: true, icon: 'trash', icon_only: true, type: 'submit'}) }}
+                    </form>
+                </fb-form>
+                {% endif %}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+        {% set codecs = [medium.codec]|merge(medium.sources|map(source => source.codec)) %}
+        {% if codecs|filter(codec => codec starts with 'avc')|length == 0 %}
+        {{ ui.alert({tone: 'warning', text: t('Add a file in MP4 with H.264 (avc1). Every browser plays it, other formats not everywhere.')}) }}
+        {% endif %}
+        {% if can('media.source-add') %}
+        <fb-upload class="fb-stack fb-stack--sm" url="{{ path('backend.uploads') }}" source="{{ medium.id }}" accept="video" refresh="media-detail" label="{{ t('Drop a video here to add it as a further file') }}" progress="{{ t('Uploading … {percent} %') }}" done="{{ t('The file is added.') }}">
+            <div class="fb-cluster">
+                {{ ui.button({label: t('Add a file'), variant: 'outline', icon: 'plus', attrs: {'data-fb-upload': true}}) }}
+            </div>
+            <p class="fb-visually-hidden" role="status" data-fb-upload-status></p>
+        </fb-upload>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <fb-form action="media.update" refresh="media-detail" done="{{ video ? t('The video is saved.') : t('The image is saved.') }}">
         <form class="fb-card__body fb-stack" novalidate>
             <input type="hidden" name="id" value="{{ medium.id }}">
+            {% if not video %}
             <fb-focus class="fb-focus" x="{{ medium.focus.x }}" y="{{ medium.focus.y }}" label="{{ t('Focus point') }}" position="{{ t('{x} % from the left, {y} % from the top') }}"{% if not editable %} disabled{% endif %}>
                 <img src="{{ medium.preview }}" alt="" width="{{ medium.width }}" height="{{ medium.height }}">
                 <input type="hidden" name="focusX" data-type="number" value="{{ medium.focus.x }}">
                 <input type="hidden" name="focusY" data-type="number" value="{{ medium.focus.y }}">
             </fb-focus>
             <p class="fb-hint">{{ t('Click on what matters most. Cut images keep this point in view.') }}</p>
+            {% endif %}
 
             {% for language in languages %}
             {% set text = medium.texts[language.code] ?? {alt: '', title: ''} %}
             <fieldset class="fb-fieldset">
                 {% if languages|length > 1 %}<legend class="fb-fieldset__legend">{{ language.title }}</legend>{% endif %}
                 <div class="fb-stack fb-stack--sm">
-                    {{ ui.field({label: t('Alternative text'), name: 'texts.' ~ language.code ~ '.alt', id: 'media-alt-' ~ language.code, value: text.alt, hint: t('Describes the image for people who cannot see it. Leave it empty for pure decoration.'), disabled: not editable, attrs: {maxlength: 500, lang: language.code, dir: language.direction.value}}) }}
+                    {{ ui.field({label: video ? t('Description') : t('Alternative text'), name: 'texts.' ~ language.code ~ '.alt', id: 'media-alt-' ~ language.code, value: text.alt, hint: video ? t('Names the video for people who cannot see it, e.g. “Film: How we roast”.') : t('Describes the image for people who cannot see it. Leave it empty for pure decoration.'), disabled: not editable, attrs: {maxlength: 500, lang: language.code, dir: language.direction.value}}) }}
                     {{ ui.field({label: t('Title'), name: 'texts.' ~ language.code ~ '.title', id: 'media-title-' ~ language.code, value: text.title, optional: true, disabled: not editable, attrs: {maxlength: 200, lang: language.code, dir: language.direction.value}}) }}
                 </div>
             </fieldset>
@@ -107,7 +151,7 @@
 
 {% if medium.draft and can('media.discard') %}
 <dialog class="fb-dialog" id="media-discard" aria-labelledby="media-discard-title">
-    <fb-form action="media.discard" refresh="media-detail" done="{{ t('The changes to the image are discarded.') }}">
+    <fb-form action="media.discard" refresh="media-detail" done="{{ video ? t('The changes to the video are discarded.') : t('The changes to the image are discarded.') }}">
         <form novalidate>
             <input type="hidden" name="id" value="{{ medium.id }}">
             <div class="fb-dialog__body">
@@ -125,15 +169,15 @@
 
 {% if can('media.delete') %}
 <dialog class="fb-dialog" id="media-delete" aria-labelledby="media-delete-title">
-    <fb-form action="media.delete" next="{{ back }}" done="{{ t('The image is deleted.') }}">
+    <fb-form action="media.delete" next="{{ back }}" done="{{ video ? t('The video is deleted.') : t('The image is deleted.') }}">
         <form novalidate>
             <input type="hidden" name="id" value="{{ medium.id }}">
             <div class="fb-dialog__body">
                 {% if live > 0 %}
-                <h2 class="fb-dialog__title" id="media-delete-title">{{ t('The image cannot be deleted yet') }}</h2>
+                <h2 class="fb-dialog__title" id="media-delete-title">{{ video ? t('The video cannot be deleted yet') : t('The image cannot be deleted yet') }}</h2>
                 <p>{{ t('The image is used in {count} published place. Take it out there and publish, then delete it.', {count: live}) }}</p>
                 {% else %}
-                <h2 class="fb-dialog__title" id="media-delete-title">{{ t('Delete the image?') }}</h2>
+                <h2 class="fb-dialog__title" id="media-delete-title">{{ video ? t('Delete the video?') : t('Delete the image?') }}</h2>
                 <p>{% if usages is empty %}{{ t('It is not used anywhere.') }}{% else %}{{ t('It is used in {count} draft. It shows nothing there any more.', {count: usages|length}) }}{% endif %}</p>
                 {% endif %}
             </div>

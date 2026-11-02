@@ -1,5 +1,5 @@
-/* The media library (decision 0126): a grid of images, the drop zone of
-   <fb-upload> and the focus point of <fb-focus>. */
+/* The media library (decision 0126): a grid of images and videos
+   (0177), the drop zone of <fb-upload> and the focus point of <fb-focus>. */
 
 .fb-media-grid {
     display: grid;
@@ -9,6 +9,7 @@
 }
 
 .fb-media-grid__item {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: var(--fb-space-2);
@@ -17,7 +18,7 @@
     text-decoration: none;
 }
 
-.fb-media-grid__item img {
+.fb-media-grid__item :is(img, video) {
     width: 100%;
     height: auto;
     aspect-ratio: 1;
@@ -27,13 +28,13 @@
     background: var(--fb-surface-2);
 }
 
-.fb-media-grid__item[aria-current="true"] img,
-.fb-media-grid__item[aria-pressed="true"] img {
+.fb-media-grid__item[aria-current="true"] :is(img, video),
+.fb-media-grid__item[aria-pressed="true"] :is(img, video) {
     outline: var(--fb-size-indicator) solid var(--fb-accent);
     outline-offset: var(--fb-size-focus-offset);
 }
 
-.fb-media-grid__item:hover img {
+.fb-media-grid__item:hover :is(img, video) {
     border-color: var(--fb-border-strong);
 }
 
@@ -44,6 +45,22 @@
 
 .fb-media-grid__item .fb-badge {
     align-self: flex-start;
+}
+
+.fb-media-grid__item video {
+    pointer-events: none;
+}
+
+/* Marks a video on its first picture. */
+.fb-media-grid__kind {
+    position: absolute;
+    inset-block-start: var(--fb-space-2);
+    inset-inline-start: var(--fb-space-2);
+    display: flex;
+    padding: var(--fb-space-1);
+    border-radius: var(--fb-radius-sm);
+    background: var(--fb-surface);
+    color: var(--fb-text);
 }
 
 .fb-media-grid__name {
@@ -120,4 +137,14 @@ fb-upload[busy] [data-fb-upload] {
 .fb-focus__marker:focus-visible {
     outline: var(--fb-size-focus) solid var(--fb-focus);
     outline-offset: var(--fb-size-focus-offset);
+}
+
+/* The player of a video in its details (decision 0177). */
+.fb-media-video {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    max-block-size: calc(var(--fb-space-16) * 6);
+    border-radius: var(--fb-radius-md);
+    background: var(--fb-surface-2);
 }

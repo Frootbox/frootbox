@@ -14,6 +14,7 @@ use Frootbox\Core\Asset\AssetList;
 use Frootbox\Core\Asset\AssetTags;
 use Frootbox\Core\Asset\ImportMap;
 use Frootbox\Core\Extension\Registry;
+use Frootbox\Core\Media\UploadReceiver;
 use Frootbox\RichText\Html;
 
 /**
@@ -67,6 +68,8 @@ final readonly class Head
             null === $favicon ? '' : '<link rel="icon" href="' . Html::escape($favicon) . '">',
             null === $csrf ? '' : '<meta name="fb-csrf" content="' . Html::escape($csrf) . '">',
             null === $actions ? '' : '<meta name="fb-actions" content="' . Html::escape($actions) . '">',
+            // Uploads go in parts of this size, under the limits of the server (decision 0177).
+            null === $csrf ? '' : '<meta name="fb-upload-part" content="' . UploadReceiver::partBytes() . '">',
             '<script>' . self::THEME_SCRIPT . self::FORM_SCRIPT . '</script>',
             '<style>' . $assets->layerOrder() . '</style>',
             '<style>@layer tokens{' . $this->design->css() . '}</style>',

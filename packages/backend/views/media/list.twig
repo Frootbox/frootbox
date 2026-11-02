@@ -11,7 +11,7 @@
     <header class="fb-page-header">
         <div class="fb-page-header__text">
             <h1 class="fb-heading-1">{{ t('Media') }}</h1>
-            <p class="fb-muted">{{ t('Images for your pages. They become visible to visitors with the first published page that uses them.') }}</p>
+            <p class="fb-muted">{{ t('Images and videos for your pages. They become visible to visitors with the first published page that uses them.') }}</p>
         </div>
     </header>
 
@@ -44,7 +44,7 @@
         {% if medium %}
         {% include '@backend/media/detail.twig' %}
         {% else %}
-        <fb-upload class="fb-split__main" url="{{ path('backend.uploads') }}" folder="{{ current ? current.id : '' }}" refresh="media-grid media-folders" label="{{ t('Drop images here to upload them') }}" progress="{{ t('Uploading {done} of {total} …') }}" done="{{ t('The images are uploaded.') }}" existing="{{ t('“{name}” is already in the media library and was not added again.') }}"{% if not can('media.create') %} disabled{% endif %}>
+        <fb-upload class="fb-split__main" url="{{ path('backend.uploads') }}" folder="{{ current ? current.id : '' }}" refresh="media-grid media-folders" label="{{ t('Drop images or videos here to upload them') }}" progress="{{ t('Uploading {done} of {total} … {percent} %') }}" done="{{ t('The files are uploaded.') }}" existing="{{ t('“{name}” is already in the media library and was not added again.') }}"{% if not can('media.create') %} disabled{% endif %}>
             <section class="fb-card" id="media-grid" aria-labelledby="media-grid-title">
                 <div class="fb-card__header">
                     <h2 class="fb-heading-4" id="media-grid-title" tabindex="-1" data-fb-focus>{{ current ? current.name : (folder == 'top' ? t('Outside of folders') : t('All media')) }}</h2>
@@ -64,14 +64,19 @@
                 <p class="fb-visually-hidden" role="status" data-fb-upload-status></p>
                 {% if list.items is empty %}
                 <div class="fb-card__body">
-                    {{ ui.empty({icon: 'image', title: search or tag or unused or changed ? t('Nothing found') : t('No images yet'), text: search or tag or unused or changed ? t('Try another search.') : t('Upload images with the button or drop them here.')}) }}
+                    {{ ui.empty({icon: 'image', title: search or tag or unused or changed ? t('Nothing found') : t('No media yet'), text: search or tag or unused or changed ? t('Try another search.') : t('Upload images or videos with the button or drop them here.')}) }}
                 </div>
                 {% else %}
                 <ul class="fb-media-grid">
                     {%- for item in list.items %}
                     <li>
                         <a class="fb-media-grid__item" href="{{ base }}/{{ item.id }}{{ query }}">
+                            {% if item.kind == 'video' %}
+                            <video src="{{ item.preview }}" preload="metadata" muted playsinline tabindex="-1" aria-hidden="true"{% if item.width > 0 %} width="{{ item.width }}" height="{{ item.height }}"{% endif %}></video>
+                            <span class="fb-media-grid__kind">{{ icon('video', 'fb-icon fb-icon--small') }}<span class="fb-visually-hidden">{{ t('Video') }}</span></span>
+                            {% else %}
                             <img src="{{ item.preview }}" alt="" width="{{ item.width }}" height="{{ item.height }}" loading="lazy" decoding="async">
+                            {% endif %}
                             <span class="fb-media-grid__name">{{ item.fileName }}</span>
                             {% if item.draft %}{{ ui.status('changed') }}{% endif %}
                         </a>
@@ -136,7 +141,7 @@
             <input type="hidden" name="id">
             <div class="fb-dialog__body">
                 <h2 class="fb-dialog__title" id="media-folder-delete-title">{{ t('Delete the folder?') }}</h2>
-                <p>{{ t('Only an empty folder can be deleted. Move its images and folders elsewhere first.') }}</p>
+                <p>{{ t('Only an empty folder can be deleted. Move its media and folders elsewhere first.') }}</p>
             </div>
             <div class="fb-dialog__actions">
                 {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'media-folder-delete', command: 'close', autofocus: true}}) }}
