@@ -5,7 +5,7 @@
 // With comments (0156): "Comment" lets the guest click a field or block,
 // write and send; "Comments" lists the threads of their link with the
 // replies and the status, and pins mark the places on the page.
-import { elementOf, isContent, placeOf } from './comments/place.js';
+import { WHOLE_DESIGN_PAGE, elementOf, isContent, placeOf } from './comments/place.js';
 
 const source = document.getElementById('fb-preview-config');
 const NAME = 'frootbox-comment-name';
@@ -425,15 +425,18 @@ class PreviewNote extends HTMLElement {
         const authorName = String(data.get('authorName') ?? this.storedName() ?? '').trim();
 
         await this.submit(form, error, async () => {
+            // On the design page an element of it instead of a page (decision 0210).
+            const design = this.settings.design ? place.design ?? WHOLE_DESIGN_PAGE : null;
             await this.call('action', 'comment.create', {
-                pageId: this.settings.pageId,
+                pageId: design ? null : this.settings.pageId,
+                design,
                 body: String(data.get('body') ?? ''),
                 authorName,
                 blockId: place.blockId,
                 field: place.field,
                 site: place.site,
                 language: this.settings.language,
-                path: location.pathname,
+                path: design ? location.pathname + location.search : location.pathname,
                 excerpt: place.excerpt,
                 viewport: window.innerWidth,
             });
@@ -473,8 +476,8 @@ class PreviewNote extends HTMLElement {
     }
 
     showList(current = null) {
-        const here = this.threads.filter((thread) => thread.pageId === this.settings.pageId);
-        const elsewhere = this.threads.filter((thread) => thread.pageId !== this.settings.pageId);
+        const here = this.threads.filter((thread) => this.isHere(thread));
+        const elsewhere = this.threads.filter((thread) => !this.isHere(thread));
         const content = 0 === this.threads.length
             ? [h('p', { class: 'muted' }, this.t('noComments'))]
             : [
@@ -489,9 +492,9 @@ class PreviewNote extends HTMLElement {
 
     thread(thread, current) {
         const done = 'done' === thread.status;
-        const element = thread.pageId === this.settings.pageId ? elementOf(thread) : null;
-        const place = thread.pageId !== this.settings.pageId
-            ? h('a', { href: thread.path ?? '/' }, thread.pageTitle ?? this.t('page'))
+        const element = this.isHere(thread) ? elementOf(thread) : null;
+        const place = !this.isHere(thread)
+            ? h('a', { href: thread.path ?? '/' }, thread.pageTitle ?? (thread.design ? this.t('designElements') : this.t('page')))
             : element
                 ? h('button', { type: 'button', onclick: () => element.scrollIntoView({ behavior: 'smooth', block: 'center' }) }, this.t('showPlace'))
                 : null;
@@ -525,7 +528,7 @@ class PreviewNote extends HTMLElement {
         let number = 0;
 
         for (const thread of this.threads) {
-            if (thread.pageId !== this.settings.pageId) {
+            if (!this.isHere(thread)) {
                 continue;
             }
 
@@ -547,6 +550,11 @@ class PreviewNote extends HTMLElement {
             this.layer.append(pin);
             this.pins.push(pin);
         }
+    }
+
+    /** Whether a thread belongs to this page, or to the design page shown. */
+    isHere(thread) {
+        return this.settings.design ? Boolean(thread.design) : !thread.design && thread.pageId === this.settings.pageId;
     }
 
     async load() {

@@ -1022,3 +1022,8 @@ Surface: Fläche
 None: Keine
 'The place "{place}" cannot stand on the surface "{surface}".': 'Die Stelle „{place}“ kann nicht auf der Fläche „{surface}“ stehen.'
 "This block cannot be shown: {message}": "Dieser Block lässt sich nicht zeigen: {message}"
+# Links for an agency on the screen "Design" (decision 0210)
+'Approval by an agency': 'Abnahme durch die Agentur'
+'A link opens all elements of the website in the draft. Whoever has it comments on them without an account.': 'Ein Link öffnet alle Elemente der Website im Entwurf. Wer ihn hat, kommentiert sie ohne Konto.'
+'Link for the agency': 'Link für die Agentur'
+'Whoever has the link sees all drafts of the website and can pass it on. Revoke it under Access when it is no longer needed.': 'Wer den Link hat, sieht alle Entwürfe der Website und kann ihn weitergeben. Zieh ihn unter „Zugang“ zurück, wenn er nicht mehr gebraucht wird.'

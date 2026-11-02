@@ -56,7 +56,7 @@ final readonly class AccessHandler implements RequestHandlerInterface
             'protection' => $this->runner->ask(new ShowProtection()),
             'previews' => null === $previews ? null : array_map(fn(PreviewSummary $preview): array => [
                 'preview' => $preview,
-                'link' => $this->link($preview, $base),
+                'link' => self::link($preview, $base),
                 'page' => null === $preview->path ? null : (string) parse_url($preview->path, \PHP_URL_PATH),
             ], $previews),
             'durations' => self::durations(),
@@ -84,7 +84,7 @@ final readonly class AccessHandler implements RequestHandlerInterface
      * The full address to copy; without "app.url" with the address of
      * this request. Null if the token cannot be read any more.
      */
-    private function link(PreviewSummary $preview, ?string $base): ?string
+    public static function link(PreviewSummary $preview, ?string $base): ?string
     {
         if (null !== $preview->url) {
             return $preview->url;

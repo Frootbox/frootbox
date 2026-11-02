@@ -30,8 +30,13 @@
             <div class="fb-card__header">
                 <div class="fb-stack fb-stack--sm">
                     <h2 class="fb-heading-4" id="thread-{{ thread.id }}">
+                        {%- if thread.design -%}
+                            {#- An element of the design page, in the view it was written in (decision 0210). -#}
+                            <a href="{{ thread.path ?: '/_design' }}">{{ t('All elements') }}</a>
+                        {%- else -%}
                         {%- set href = thread.pageTitle is null ? null : (thread.path ?: path('backend.pages.show', {id: thread.pageId})) -%}
                         {%- if href %}<a href="{{ href }}">{{ thread.pageTitle }}</a>{% else %}{{ t('Deleted page') }}{% endif -%}
+                        {%- endif -%}
                     </h2>
                     {% if thread.excerpt %}<p class="fb-muted">„{{ thread.excerpt|length > 120 ? thread.excerpt|slice(0, 120) ~ ' …' : thread.excerpt }}“</p>{% endif %}
                 </div>

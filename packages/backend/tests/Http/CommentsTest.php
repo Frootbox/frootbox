@@ -123,6 +123,32 @@ final class CommentsTest extends BackendTestCase
         self::assertSame('Ist getauscht.', self::at($seen, 0, 'replies', 0, 'body'));
     }
 
+    public function testAnAgencyCommentsOnTheDesignPage(): void
+    {
+        // Decision 0210: a link straight to the design page, comments on its elements.
+        $link = $this->action('preview.create', ['note' => 'Agentur', 'design' => true], $this->session)['data'];
+        self::assertIsArray($link);
+        self::assertIsString($link['path']);
+        $open = $this->request('GET', $link['path']);
+        self::assertSame('/_design', $open->getHeaderLine('Location'));
+        $this->cookie = self::cookie($open, PreviewAccess::COOKIE);
+
+        $html = $this->html($this->request('GET', '/_design', cookies: [PreviewAccess::COOKIE => $this->cookie]));
+        self::assertStringContainsString('"comments":true,"pageId":null,"design":true', $html);
+        self::assertStringContainsString('data-fb-design="tokens"', $html);
+
+        $thread = $this->guest('POST', 'actions/comment.create', ['design' => 'tokens', 'body' => 'Das Blau ist zu hell.', 'authorName' => 'Agentur', 'path' => '/_design?surface=dark']);
+        self::assertSame(200, $thread->getStatusCode(), (string) $thread->getBody());
+        $this->guest('POST', 'actions/comment.create', ['pageId' => $this->about, 'body' => 'Auf einer Seite.', 'authorName' => 'Agentur']);
+
+        $list = self::data($this->guest('GET', 'queries/comment.list?design=true'));
+        self::assertCount(1, $list, 'Only the threads of the design page.');
+        self::assertSame('tokens', self::at($list, 0, 'design'));
+
+        $screen = $this->html($this->request('GET', '/cms/comments', session: $this->session));
+        self::assertStringContainsString('<a href="/_design?surface=dark">Alle Elemente</a>', $screen, 'The comments screen leads to the view.');
+    }
+
     public function testTheBarHasTheComments(): void
     {
         $html = $this->html($this->request('GET', '/ueber-uns', cookies: [AuthenticationMiddleware::COOKIE => $this->session, EditMode::COOKIE => '1']));

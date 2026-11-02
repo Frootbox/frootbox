@@ -1,6 +1,10 @@
 // Where a comment is (decision 0156): the field or block an element belongs
 // to, read from the marks of the editing mode or the light marks of a
-// preview, and back from a thread to its element on the page.
+// preview, and back from a thread to its element on the page. On the
+// design page an element of it instead (decision 0210).
+
+/** A comment on all of the design page. */
+export const WHOLE_DESIGN_PAGE = 'page';
 
 const MAX_EXCERPT = 300;
 
@@ -9,6 +13,12 @@ const MAX_EXCERPT = 300;
  * block, else the page.
  */
 export function placeOf(element) {
+    const design = element.closest('[data-fb-design]');
+
+    if (design) {
+        return { blockId: null, field: null, site: false, design: design.dataset.fbDesign, label: design.dataset.fbTitle ?? null, excerpt: excerptOf(design), element: design };
+    }
+
     const field = element.closest('[data-fb-field]');
     const block = (field ?? element).closest('[data-fb-block]');
     const target = field ?? block;
@@ -28,6 +38,10 @@ export function placeOf(element) {
  * the comment counts for the page.
  */
 export function elementOf(thread, root = document) {
+    if (thread.design) {
+        return thread.design === WHOLE_DESIGN_PAGE ? null : root.querySelector(`[data-fb-design="${CSS.escape(thread.design)}"]`);
+    }
+
     const field = thread.field ? `[data-fb-field="${CSS.escape(thread.field)}"]` : null;
 
     if (thread.site && field) {

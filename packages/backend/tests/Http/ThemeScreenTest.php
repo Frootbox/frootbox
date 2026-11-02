@@ -55,6 +55,23 @@ final class ThemeScreenTest extends BackendTestCase
         self::assertStringContainsString('/cms/theme"', $html, 'The menu has the screen.');
     }
 
+    public function testCreatesALinkForAnAgency(): void
+    {
+        // Decision 0210: a preview link that opens the design page.
+        $html = $this->html($this->request('GET', '/cms/theme', session: $this->session));
+        self::assertStringContainsString('<h2 class="fb-heading-4" id="design-agency-title" tabindex="-1" data-fb-focus>Abnahme durch die Agentur</h2>', $html);
+        self::assertStringContainsString('<fb-form action="preview.create" refresh="design-agency"', $html);
+        self::assertStringContainsString('<input type="hidden" name="design" value="true" data-type="boolean">', $html);
+
+        $this->action('preview.create', ['note' => 'Agentur Pixel', 'design' => true], $this->session);
+        $this->action('preview.create', ['note' => 'Herr Meier'], $this->session);
+
+        $html = $this->html($this->request('GET', '/cms/theme', session: $this->session));
+        self::assertMatchesRegularExpression('~data-fb-copy="https://example\.org/_design\?fb-preview=[A-Za-z0-9_-]{43}"~', $html);
+        self::assertStringContainsString('Agentur Pixel', $html);
+        self::assertStringNotContainsString('Herr Meier', $html, 'Only links to the design page.');
+    }
+
     public function testOffersToPublishAndRestore(): void
     {
         $this->runner()->run(new UpdateDesign(['radius' => '10px', 'font-heading' => 'lora']), Context::system());

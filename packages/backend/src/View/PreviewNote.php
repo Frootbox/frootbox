@@ -11,6 +11,7 @@ namespace Frootbox\Backend\View;
 use Frootbox\Backend\BackendExtension;
 use Frootbox\Backend\Design\Design;
 use Frootbox\Core\Asset\PublicAssets;
+use Frootbox\Core\Design\DesignPage;
 use Frootbox\Core\I18n\Translator;
 use Frootbox\Core\Language\Direction;
 use Frootbox\Core\Preview\PreviewAccess;
@@ -48,13 +49,16 @@ final readonly class PreviewNote
 
         $t = $this->translator->get(...);
         $pageId = null !== $event->target && $event->target->isPage() ? $event->target->id : null;
+        // The design page has comments of its own, without a page (decision 0210).
+        $design = true === $event->request->getAttribute(DesignPage::class);
         $config = [
             'expiresAt' => $access->expiresAt->format(DATE_ATOM),
             'end' => $event->request->getUri()->getPath() . '?' . PreviewEditor::PARAMETER . '=0',
             'tokens' => $this->design->hostCss(),
             // Comments on the pages of the website (decision 0156).
-            'comments' => null !== $pageId,
+            'comments' => null !== $pageId || $design,
             'pageId' => $pageId,
+            'design' => $design,
             'language' => $event->head->language,
             // The bar follows the language of the backend, not of the page (decision 0133).
             'ui' => ['language' => $this->translator->language(), 'direction' => Direction::of($this->translator->language())->value],
@@ -102,6 +106,7 @@ final readonly class PreviewNote
             'onThisPage' => $t('On this page'),
             'onOtherPages' => $t('On other pages'),
             'page' => $t('Page'),
+            'designElements' => $t('All elements'),
             'showPlace' => $t('Show'),
             'openThread' => $t('Open thread'),
             'doneThread' => $t('Done thread'),

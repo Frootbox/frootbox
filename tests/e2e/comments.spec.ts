@@ -9,7 +9,8 @@ import { action, signIn } from './admin';
 // comments on a block, the editor finds it in the editing mode at the same
 // place, answers and marks it done, and the customer sees that. Guests
 // without the link see nothing of it. The pages are unique, so retries
-// find no leftovers.
+// find no leftovers. An agency comments on the design page with a link
+// from the screen "Design" (decision 0210).
 
 const unique = () => `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
@@ -103,4 +104,56 @@ test('a customer comments in the preview and the editor answers in the mode', as
     expect((await action(page, 'comment.delete', { id: threadId })).status).toBe(200);
     expect((await action(page, 'page.unpublish', { id })).status).toBe(200);
     expect((await action(page, 'page.delete', { id })).status).toBe(200);
+});
+
+test('an agency comments on the design page with a link from the screen Design', async ({ page, browser }) => {
+    const note = `Agentur ${unique()}`;
+    const remark = `Das Blau ist zu hell, ${note}.`;
+
+    // The link opens the design page and is listed for copying.
+    await signIn(page, '/cms/theme');
+    await page.getByRole('button', { name: 'Link für die Agentur' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Link für die Agentur' });
+    await dialog.getByLabel('Notiz').fill(note);
+    await dialog.getByRole('button', { name: 'Link anlegen' }).click();
+    const card = page.getByRole('region', { name: 'Abnahme durch die Agentur' });
+    const copy = card.getByRole('button', { name: `Link ${note} kopieren` });
+    await expect(copy).toBeVisible();
+    const link = new URL((await copy.getAttribute('data-fb-copy'))!);
+    expect(link.pathname).toBe('/_design');
+
+    // The agency picks the tokens, writes and sends.
+    const agencyContext = await browser.newContext();
+    const agency = await agencyContext.newPage();
+    await agency.goto(link.pathname + link.search);
+    await expect(agency).toHaveURL('/_design');
+    const preview = agency.locator('fb-preview-note');
+    await preview.getByRole('button', { name: 'Kommentieren' }).click();
+    await agency.getByRole('heading', { name: 'Tokens', exact: true }).click();
+    const compose = preview.getByRole('region', { name: 'Neuer Kommentar' });
+    await expect(compose).toContainText('Zu: Tokens');
+    await compose.getByLabel('Dein Kommentar').fill(remark);
+    await compose.getByLabel('Dein Name').fill('Agentur Pixel');
+    await compose.getByRole('button', { name: 'Senden' }).click();
+    const list = preview.getByRole('region', { name: 'Kommentare' });
+    await expect(list.getByRole('heading', { name: 'Auf dieser Seite' })).toBeVisible();
+    await expect(list.locator('[data-thread]', { hasText: remark }).getByRole('button', { name: 'Zeigen' })).toBeVisible();
+    await expect(preview.getByRole('button', { name: /^Kommentar 1: Das Blau/ })).toBeVisible();
+    await agencyContext.close();
+
+    // The editor finds it in the bar on the design page.
+    await page.goto('/_design');
+    const bar = page.locator('fb-editor-bar');
+    await bar.getByRole('button', { name: /^Kommentare, \d+ offen$/ }).click();
+    const thread = bar.getByRole('region', { name: 'Kommentare' }).locator('[data-thread]', { hasText: remark });
+    await expect(thread).toContainText('Agentur Pixel');
+    await expect(thread.getByRole('button', { name: 'Zeigen' })).toBeVisible();
+    const threadId = await thread.getAttribute('data-thread');
+
+    // Clean up from the backend: the thread and the link.
+    await page.goto('/cms');
+    expect((await action(page, 'comment.delete', { id: threadId })).status).toBe(200);
+    const links = await page.evaluate(async () => (await (await fetch('/cms/queries/preview.list', { headers: { Accept: 'application/json' } })).json()).data);
+    const created = links.find((entry: { note: string }) => entry.note === note);
+    expect((await action(page, 'preview.revoke', { id: created.id })).status).toBe(200);
 });

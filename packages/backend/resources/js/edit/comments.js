@@ -1,5 +1,5 @@
 import { css, html, nothing } from 'lit';
-import { elementOf, isContent, placeOf } from '../comments/place.js';
+import { WHOLE_DESIGN_PAGE, elementOf, isContent, placeOf } from '../comments/place.js';
 import { endFromStart } from './edges.js';
 import { icon } from './icons.js';
 
@@ -7,7 +7,8 @@ import { icon } from './icons.js';
  * The comments of the bar (decision 0156): the threads of the page as a
  * list in a side panel and as pins at their places, with replying,
  * marking done, opening again and deleting. Editors comment on a place
- * like guests of a preview: pick it, write, send.
+ * like guests of a preview: pick it, write, send. On the design page the
+ * threads of its elements instead (decision 0210).
  */
 export class CommentsPanel {
     constructor(bar) {
@@ -37,18 +38,30 @@ export class CommentsPanel {
         return this.bar.config?.page?.id ?? null;
     }
 
+    /** The design page has threads of its own, without a page. */
+    get designPage() {
+        return Boolean(this.bar.config?.designPage);
+    }
+
+    /** Whether there are threads to show here at all. */
+    get available() {
+        return Boolean(this.config && (this.pageId || this.designPage));
+    }
+
     get open() {
         return this.threads.filter((thread) => thread.status === 'open').length;
     }
 
     /** Loads the threads of the page, for the counter and the pins. */
     async load() {
-        if (!this.config || !this.pageId) {
+        if (!this.available) {
             return;
         }
 
+        const filter = this.designPage ? 'design=true' : `pageId=${encodeURIComponent(this.pageId)}`;
+
         try {
-            const response = await fetch(`${this.bar.config.queries}comment.list?pageId=${encodeURIComponent(this.pageId)}`, { headers: { Accept: 'application/json' }, credentials: 'same-origin' });
+            const response = await fetch(`${this.bar.config.queries}comment.list?${filter}`, { headers: { Accept: 'application/json' }, credentials: 'same-origin' });
             this.threads = response.ok ? (await response.json()).data ?? [] : [];
         } catch {
             this.threads = [];
@@ -142,14 +155,16 @@ export class CommentsPanel {
     async create(event, place) {
         event.preventDefault();
         const body = new FormData(event.currentTarget).get('body');
+        const design = this.designPage ? place?.design ?? WHOLE_DESIGN_PAGE : null;
         const created = await this.run('comment.create', {
-            pageId: this.pageId,
+            pageId: design ? null : this.pageId,
+            design,
             body,
             blockId: place?.blockId ?? null,
             field: place?.field ?? null,
             site: place?.site ?? false,
             language: this.bar.config.language,
-            path: location.pathname,
+            path: design ? location.pathname + location.search : location.pathname,
             excerpt: place?.excerpt ?? null,
             viewport: window.innerWidth,
         }, { composing: null });
@@ -184,7 +199,7 @@ export class CommentsPanel {
 
     /** The button in the bar, with the open threads of the page. */
     button() {
-        if (!this.config || !this.pageId) {
+        if (!this.available) {
             return nothing;
         }
 

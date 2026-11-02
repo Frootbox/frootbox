@@ -1,4 +1,4 @@
-{#- The design of the website (decision 0127): the values now, the draft and earlier versions. Changing happens on the website. -#}
+{#- The design of the website (decision 0127): the values now, the draft and earlier versions, links for an agency (decision 0210). Changing happens on the website. -#}
 {% extends '@backend/layout.twig' %}
 {% import '@backend/ui.twig' as ui %}
 
@@ -48,6 +48,31 @@
             {% endif %}
         </div>
     </section>
+
+    {% if agency is not null %}
+    <section class="fb-card" id="design-agency" aria-labelledby="design-agency-title">
+        <div class="fb-card__header">
+            <div class="fb-stack fb-stack--sm">
+                <h2 class="fb-heading-4" id="design-agency-title" tabindex="-1" data-fb-focus>{{ t('Approval by an agency') }}</h2>
+                <p class="fb-muted">{{ t('A link opens all elements of the website in the draft. Whoever has it comments on them without an account.') }}</p>
+            </div>
+            {% if can('preview.create') %}{{ ui.button({label: t('Link for the agency'), icon: 'plus', variant: 'outline', attrs: {commandfor: 'design-agency-new', command: 'show-modal', 'data-fb-fill': '{}'}}) }}{% endif %}
+        </div>
+        {% if agency is not empty %}
+        <ul>
+            {%- for entry in agency %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title">{{ entry.preview.note ?: t('Preview link') }}</span>
+                    <span class="fb-list__meta">{% set at = t('works until {time}')|split('{time}') %}{{ at[0] }}{{ ui.time(entry.preview.expiresAt) }}{{ at[1] ?? '' }}</span>
+                </span>
+                {% if entry.link %}{{ ui.button({label: t('Copy link'), variant: 'outline', small: true, icon: 'copy', attrs: {'data-fb-copy': entry.link, 'data-fb-copied': t('The link is copied.'), 'aria-label': t('Copy the link {note}', {note: entry.preview.note ?: t('Preview link')})}}) }}{% endif %}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+    </section>
+    {% endif %}
 
     <section class="fb-card" id="design-values" aria-labelledby="design-values-title">
         <div class="fb-card__header">
@@ -115,6 +140,25 @@
             <div class="fb-dialog__actions">
                 {{ ui.button({label: t('Keep the changes'), variant: 'outline', attrs: {commandfor: 'design-discard', command: 'close', autofocus: true}}) }}
                 {{ ui.button({label: t('Discard'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if agency is not null and can('preview.create') %}
+<dialog class="fb-dialog" id="design-agency-new" aria-labelledby="design-agency-new-title">
+    <fb-form action="preview.create" refresh="design-agency" done="{{ t('The link is created. Copy it in the list.') }}">
+        <form novalidate>
+            <input type="hidden" name="design" value="true" data-type="boolean">
+            <div class="fb-dialog__body fb-stack">
+                <h2 class="fb-dialog__title" id="design-agency-new-title">{{ t('Link for the agency') }}</h2>
+                {% include '@backend/access/form.twig' with {prefix: 'design-agency-new'} %}
+                <p class="fb-hint">{{ t('Whoever has the link sees all drafts of the website and can pass it on. Revoke it under Access when it is no longer needed.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'design-agency-new', command: 'close'}}) }}
+                {{ ui.button({label: t('Create the link'), type: 'submit'}) }}
             </div>
         </form>
     </fb-form>
