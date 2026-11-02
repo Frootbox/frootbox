@@ -10,3 +10,59 @@ fields:
   secondary: { type: link, label: Second button, optional: true }
   # The first image of the page: it loads at once (decision 0173).
   image: { type: image, label: Image, description: "Only in the variants with an image", optional: true, eager: true, sizes: "100vw" }
+# Content for the design page (decision 0206).
+examples:
+  - variant: Default
+    fields:
+      eyebrow: 'Roastery by the harbour'
+      title: 'Coffee, freshly roasted in Hamburg'
+      text: 'We roast in small batches and send your coffee out the day after.'
+      primary: { url: 'https://example.org/', text: 'To the shop' }
+      secondary: { url: 'https://example.org/', text: 'About us' }
+  - variant: Default
+    options: { background: primary }
+    fields:
+      eyebrow: 'Roastery by the harbour'
+      title: 'Coffee, freshly roasted in Hamburg'
+      text: 'We roast in small batches and send your coffee out the day after.'
+      primary: { url: 'https://example.org/', text: 'To the shop' }
+      secondary: { url: 'https://example.org/', text: 'About us' }
+  - variant: Default
+    options: { align: start, background: none }
+    fields:
+      eyebrow: 'Roastery by the harbour'
+      title: 'Coffee, freshly roasted in Hamburg'
+      text: 'We roast in small batches and send your coffee out the day after.'
+      primary: { url: 'https://example.org/', text: 'To the shop' }
+      secondary: { url: 'https://example.org/', text: 'About us' }
+  - variant: Split
+    fields:
+      eyebrow: 'Roastery by the harbour'
+      title: 'Coffee, freshly roasted in Hamburg'
+      text: 'We roast in small batches and send your coffee out the day after.'
+      primary: { url: 'https://example.org/', text: 'To the shop' }
+      secondary: { url: 'https://example.org/', text: 'About us' }
+      image: { sample: examples/roastery.jpg, alt: 'Golden light on dark red-brown' }
+  - variant: Split
+    options: { image: start }
+    fields:
+      title: 'Coffee, freshly roasted in Hamburg'
+      text: 'We roast in small batches and send your coffee out the day after.'
+      primary: { url: 'https://example.org/', text: 'To the shop' }
+      secondary: { url: 'https://example.org/', text: 'About us' }
+      image: { sample: examples/square.jpg, alt: 'Orange circle on turquoise' }
+  - variant: Background
+    fields:
+      eyebrow: 'Roastery by the harbour'
+      title: 'Coffee, freshly roasted in Hamburg'
+      text: 'We roast in small batches and send your coffee out the day after.'
+      primary: { url: 'https://example.org/', text: 'To the shop' }
+      secondary: { url: 'https://example.org/', text: 'About us' }
+      image: { sample: examples/harbour.jpg, alt: 'Orange circle of light on deep blue' }
+  - variant: Background
+    options: { height: large }
+    fields:
+      title: 'Coffee, freshly roasted in Hamburg'
+      text: 'We roast in small batches and send your coffee out the day after.'
+      primary: { url: 'https://example.org/', text: 'To the shop' }
+      image: { sample: examples/harbour.jpg, alt: 'Orange circle of light on deep blue' }

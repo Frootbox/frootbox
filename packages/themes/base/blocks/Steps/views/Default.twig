@@ -17,6 +17,17 @@ fields:
       title: { type: headline, label: Heading, maxLength: 100, placeholder: "What happens in this step" }
       text: { type: text, label: Text, optional: true, multiline: true, maxLength: 400, placeholder: "A sentence or two about it" }
   link: { type: link, label: Link below, optional: true, description: "Leads on, e.g. to all offers" }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      eyebrow: 'Your subscription'
+      title: 'How it works'
+      intro: 'Three steps to fresh coffee at home.'
+      items:
+        - { title: 'Choose your coffee', text: 'Pick a kind, whole beans or ground.' }
+        - { title: 'We roast on Monday', text: 'In small batches, so every bag is fresh.' }
+        - { title: 'On Tuesday it is on its way', text: 'It reaches you within two days.' }
+      link: { url: 'https://example.org/', text: 'Start a subscription' }
 #}
 <div class="base-steps">
   <div class="base-steps__head base-head">

@@ -16,7 +16,7 @@ declare(strict_types=1);
 // The first frame goes next to it as JPEG, as poster image.
 // FFMPEG overrides the path of ffmpeg.
 
-$target = $argv[1] ?? __DIR__ . '/../packages/themes/base/demo/media/roasting.webm';
+$target = $argv[1] ?? __DIR__ . '/../packages/themes/base/assets/examples/roasting.webm';
 $ffmpeg = getenv('FFMPEG');
 $ffmpeg = is_string($ffmpeg) && '' !== $ffmpeg ? $ffmpeg : (glob((string) getenv('HOME') . '/Library/Caches/ms-playwright/ffmpeg-*/ffmpeg-mac')[0] ?? (glob((string) getenv('HOME') . '/.cache/ms-playwright/ffmpeg-*/ffmpeg-linux')[0] ?? ''));
 

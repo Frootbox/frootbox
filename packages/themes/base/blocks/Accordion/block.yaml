@@ -13,3 +13,16 @@ fields:
     fields:
       title: { type: headline, label: Heading, maxLength: 150, placeholder: "A question or a topic" }
       body: { type: richtext, label: Text }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      title: 'Good to know'
+      items:
+        - { title: 'How long does coffee keep?', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Whole beans taste best within six weeks of roasting, ground coffee within two.' }] }] } }
+        - { title: 'Can I pause my subscription?', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Yes, as often and as long as you like, in your account.' }] }] } }
+        - { title: 'Do you ship abroad?', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Within the EU, yes. Shipping takes two to four days.' }] }] } }
+  - options: { open: true }
+    fields:
+      items:
+        - { title: 'How long does coffee keep?', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Whole beans taste best within six weeks of roasting, ground coffee within two.' }] }] } }
+        - { title: 'Can I pause my subscription?', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Yes, as often and as long as you like, in your account.' }] }] } }

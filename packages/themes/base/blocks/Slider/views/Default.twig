@@ -13,6 +13,14 @@ fields:
     start: 3
     fields:
       image: { type: image, label: Image, caption: true, ratio: "16:9", sizes: "(min-width: 72rem) 72rem, 100vw" }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      title: 'A look inside'
+      items:
+        - { image: { sample: examples/harbour.jpg, alt: 'Orange circle of light on deep blue', caption: 'The harbour at dawn' } }
+        - { image: { sample: examples/roastery.jpg, alt: 'Golden light on dark red-brown', caption: 'The roaster at work' } }
+        - { image: { sample: examples/tasting.jpg, alt: 'Blue circle on a green gradient', caption: 'At the tasting' } }
 #}
 <base-carousel class="base-slider">
   {{ heading('title', 0, {class: 'base-slider__title'}) }}

@@ -14,6 +14,12 @@ options:
     label: Space
     choices: { small: Small, medium: Medium, large: Large }
     default: medium
+# Content for the design page (decision 0206).
+examples:
+  - {}
+  - options: { style: space }
+  - options: { size: small }
+  - options: { size: large }
 #}
 {% if options.style == 'line' %}
   <hr class="base-divider base-divider--{{ options.size }}">

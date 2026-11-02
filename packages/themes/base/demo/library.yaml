@@ -8,12 +8,13 @@
 # instead of scrolling) and "Auf der Hauptfarbe" (blocks on a section with
 # the background primary stay readable).
 # The browser tests take screenshots of them and check them with axe.
-# Needs the language de. The images in media/ are abstract colour
-# gradients made for this file, the clip roasting.webm comes from
-# tools/demo-video.php, the price list and the table of coffees are
-# made for this file as well; all under the licence of the theme.
+# Needs the language de. The files come from assets/examples/, which the
+# blocks also use as examples on the design page (decision 0206): the
+# images are abstract colour gradients, the clip roasting.webm comes from
+# tools/demo-video.php, the price list and the table of coffees are made
+# for them as well; all under the licence of the theme.
 - upload:
-    file: media/harbour.jpg
+    file: ../assets/examples/harbour.jpg
   as: file_harbour
 - media.create:
     upload: '${file_harbour.token}'
@@ -22,7 +23,7 @@
         alt: 'Orangefarbener Lichtkreis auf tiefblauem Grund'
   as: img_harbour
 - upload:
-    file: media/roastery.jpg
+    file: ../assets/examples/roastery.jpg
   as: file_roastery
 - media.create:
     upload: '${file_roastery.token}'
@@ -31,7 +32,7 @@
         alt: 'Goldenes Licht auf dunklem Rotbraun'
   as: img_roastery
 - upload:
-    file: media/beans.jpg
+    file: ../assets/examples/beans.jpg
   as: file_beans
 - media.create:
     upload: '${file_beans.token}'
@@ -40,7 +41,7 @@
         alt: 'Warmer Verlauf von Braun zu Creme'
   as: img_beans
 - upload:
-    file: media/tasting.jpg
+    file: ../assets/examples/tasting.jpg
   as: file_tasting
 - media.create:
     upload: '${file_tasting.token}'
@@ -49,7 +50,7 @@
         alt: 'Blauer Kreis auf grünem Verlauf'
   as: img_tasting
 - upload:
-    file: media/roasting.webm
+    file: ../assets/examples/roasting.webm
   as: file_roasting
 - media.create:
     upload: '${file_roasting.token}'
@@ -58,13 +59,13 @@
         alt: 'Film: Lichtkreise ziehen über dunkles Braun'
   as: vid_roasting
 - upload:
-    file: media/roasting.jpg
+    file: ../assets/examples/roasting.jpg
   as: file_roasting_poster
 - media.create:
     upload: '${file_roasting_poster.token}'
   as: img_roasting
 - upload:
-    file: media/portrait.jpg
+    file: ../assets/examples/portrait.jpg
   as: file_portrait
 - media.create:
     upload: '${file_portrait.token}'
@@ -73,7 +74,7 @@
         alt: 'Gelbes Licht auf Pink und Violett, hochkant'
   as: img_portrait
 - upload:
-    file: media/square.jpg
+    file: ../assets/examples/square.jpg
   as: file_square
 - media.create:
     upload: '${file_square.token}'
@@ -82,7 +83,7 @@
         alt: 'Orangefarbener Kreis auf Türkis'
   as: img_square
 - upload:
-    file: media/price-list.pdf
+    file: ../assets/examples/price-list.pdf
   as: file_price_list
 - media.create:
     upload: '${file_price_list.token}'
@@ -91,7 +92,7 @@
         title: 'Preisliste 2027'
   as: doc_price_list
 - upload:
-    file: media/coffees.csv
+    file: ../assets/examples/coffees.csv
   as: file_coffees
 - media.create:
     upload: '${file_coffees.token}'

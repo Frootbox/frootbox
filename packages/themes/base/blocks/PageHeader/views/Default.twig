@@ -12,6 +12,15 @@ options:
 fields:
   title: { type: headline, label: Heading, maxLength: 100, placeholder: "What is this page about?" }
   intro: { type: text, label: Introduction, optional: true, multiline: true, maxLength: 400, placeholder: "A few sentences that lead into the page" }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      title: 'About the roastery'
+      intro: 'Since 2014 we roast coffee by the harbour, in small batches and from farms we know.'
+  - options: { background: surface }
+    fields:
+      title: 'About the roastery'
+      intro: 'Since 2014 we roast coffee by the harbour, in small batches and from farms we know.'
 #}
 <header class="base-page-header base-full base-page-header--{{ options.background }}">
   <div class="base-page-header__inner">

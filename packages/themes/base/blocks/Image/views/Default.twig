@@ -6,5 +6,11 @@ keywords: [Photo, Graphic, Picture, Illustration]
 widget: true
 fields:
   image: { type: image, label: Image, caption: true, sizes: "(min-width: 72rem) 36rem, (min-width: 48rem) 50vw, 100vw" }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      image: { sample: examples/tasting.jpg, alt: 'Blue circle on a green gradient', caption: 'At the tasting', copyright: 'Photo: Example Studio' }
+  - fields:
+      image: { sample: examples/portrait.jpg, alt: 'Yellow light on pink and violet, upright' }
 #}
 <figure class="base-image">{{ field('image') }}<figcaption class="base-image__caption"><span>{{ field('image', 'caption') }}</span> <small class="base-image__copyright">{{ field('image', 'copyright') }}</small></figcaption></figure>

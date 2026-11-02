@@ -17,6 +17,22 @@ options:
     default: auto
 fields:
   text: { type: headline, label: Heading }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      text: 'Freshly roasted, every week'
+  - options: { role: sub }
+    fields:
+      text: 'A subheading'
+  - options: { size: large }
+    fields:
+      text: 'Set large'
+  - options: { size: medium }
+    fields:
+      text: 'Set medium'
+  - options: { size: small }
+    fields:
+      text: 'Set small'
 #}
 {# The widget has no main heading of its own: rank 0 stands at the level of its column, rank 2 one below. #}
 {% set size = options.size == 'auto' ? (options.role == 'sub' ? 'medium' : 'large') : options.size %}

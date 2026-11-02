@@ -12,5 +12,12 @@ options:
     default: primary
 fields:
   link: { type: link, label: Link }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      link: { url: 'https://example.org/', text: 'To the shop' }
+  - options: { style: secondary }
+    fields:
+      link: { url: 'https://example.org/', text: 'About us' }
 #}
 <p class="base-button base-button--{{ options.style }}">{{ field('link') }}</p>

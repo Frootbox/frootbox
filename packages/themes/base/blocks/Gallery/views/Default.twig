@@ -13,6 +13,17 @@ fields:
     start: 3
     fields:
       image: { type: image, label: Image, caption: true, sizes: "(min-width: 72rem) 18rem, (min-width: 30rem) 33vw, 50vw" }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      title: Impressions
+      items:
+        - { image: { sample: examples/harbour.jpg, alt: 'Orange circle of light on deep blue', caption: 'The harbour at dawn' } }
+        - { image: { sample: examples/roastery.jpg, alt: 'Golden light on dark red-brown', caption: 'The roaster at work', copyright: 'Photo: Example Studio' } }
+        - { image: { sample: examples/beans.jpg, alt: 'Warm gradient from brown to cream', caption: 'Beans after roasting' } }
+        - { image: { sample: examples/tasting.jpg, alt: 'Blue circle on a green gradient' } }
+        - { image: { sample: examples/portrait.jpg, alt: 'Yellow light on pink and violet, upright' } }
+        - { image: { sample: examples/square.jpg, alt: 'Orange circle on turquoise' } }
 #}
 <base-gallery class="base-gallery">
   {{ heading('title', 0, {class: 'base-gallery__title'}) }}

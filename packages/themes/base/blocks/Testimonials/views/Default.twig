@@ -16,6 +16,14 @@ fields:
       name: { type: headline, label: Name, maxLength: 80, placeholder: "Who said it" }
       role: { type: headline, label: Role, optional: true, maxLength: 80, placeholder: "e.g. Guest since 2019" }
       image: { type: image, label: Photo, optional: true, ratio: "1:1", sizes: "3rem" }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      title: 'What our guests say'
+      items:
+        - { quote: 'The best espresso in town, and I say that as an Italian.', name: 'Giulia R.', role: 'Guest since 2019', image: { sample: examples/portrait.jpg, alt: 'Yellow light on pink and violet, upright' } }
+        - { quote: 'The subscription always arrives on time, and every kind is a small journey.', name: 'Jonas M.', role: Subscriber, image: { sample: examples/square.jpg, alt: 'Orange circle on turquoise' } }
+        - { quote: 'The roasting course was a present and is now my hobby.', name: 'Aylin K.' }
 #}
 <div class="base-voices">
   {{ heading('title', 0, {class: 'base-voices__title'}) }}

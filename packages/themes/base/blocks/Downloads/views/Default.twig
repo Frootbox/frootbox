@@ -14,6 +14,13 @@ fields:
     fields:
       file: { type: file, label: File }
       text: { type: text, label: Description, optional: true, maxLength: 200, placeholder: "What is in it" }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      title: 'To take with you'
+      items:
+        - { file: { sample: examples/price-list.pdf }, text: 'All kinds and subscriptions with prices.' }
+        - { file: { sample: examples/coffees.csv, text: 'Our kinds as a table' }, text: 'Origin and roast, to open in any spreadsheet.' }
 #}
 <div class="base-downloads">
   {{ heading('title', 0, {class: 'base-downloads__title'}) }}

@@ -14,6 +14,16 @@ fields:
     fields:
       image: { type: image, label: Logo, sizes: "10rem" }
       link: { type: link, label: Link, optional: true }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      title: 'Who works with us'
+      items:
+        - { image: { sample: examples/harbour.jpg, alt: 'Northwind Trading' }, link: { url: 'https://example.org/' } }
+        - { image: { sample: examples/square.jpg, alt: 'Blue Harbour' } }
+        - { image: { sample: examples/beans.jpg, alt: 'Elbe Bakery' }, link: { url: 'https://example.org/' } }
+        - { image: { sample: examples/tasting.jpg, alt: 'Green Leaf Farms' } }
+        - { image: { sample: examples/roastery.jpg, alt: 'Copper Mill' } }
 #}
 <div class="base-logos">
   {{ heading('title', 0, {class: 'base-logos__title'}) }}

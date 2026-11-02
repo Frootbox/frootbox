@@ -24,6 +24,17 @@ fields:
       text: { type: text, label: Text, optional: true, multiline: true, maxLength: 300, placeholder: "A sentence or two about it" }
       link: { type: link, label: Link, optional: true }
   link: { type: link, label: Link below, optional: true, description: "Leads on, e.g. to all offers" }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      eyebrow: 'From the roastery'
+      title: 'Our offers'
+      intro: 'Coffee to take home, to learn and to share.'
+      items:
+        - { image: { sample: examples/beans.jpg, alt: 'Warm gradient from brown to cream' }, title: 'Coffee subscription', text: 'Fresh beans every two weeks, paused whenever you like.', link: { url: 'https://example.org/', text: Subscribe } }
+        - { image: { sample: examples/tasting.jpg, alt: 'Blue circle on a green gradient' }, title: 'Roasting course', text: 'Four hours at the roaster, with your own batch to take home.', link: { url: 'https://example.org/', text: 'Book a place' } }
+        - { image: { sample: examples/harbour.jpg, alt: 'Orange circle of light on deep blue' }, title: 'Café by the harbour', text: 'Espresso, cake and a view of the ships.', link: { url: 'https://example.org/', text: 'Opening hours' } }
+      link: { url: 'https://example.org/', text: 'All offers' }
 #}
 <div class="base-cards base-cards--{{ options.columns }}">
   <div class="base-cards__head base-head">

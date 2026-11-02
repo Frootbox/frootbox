@@ -14,6 +14,14 @@ fields:
     fields:
       value: { type: headline, label: Figure, maxLength: 12, placeholder: "120+" }
       label: { type: headline, label: Label, maxLength: 60, placeholder: "What the figure counts" }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      title: 'In figures'
+      items:
+        - { value: '12', label: 'Years of roasting' }
+        - { value: '40', label: 'Kinds of coffee' }
+        - { value: '1,800', label: 'Parcels a month' }
 #}
 <div class="base-figures">
   {{ heading('title', 0, {class: 'base-figures__title'}) }}

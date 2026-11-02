@@ -18,6 +18,17 @@ fields:
     fields:
       days: { type: headline, label: Days, maxLength: 60, placeholder: "Mon to Fri" }
       time: { type: headline, label: Time, maxLength: 60, placeholder: "8:00 to 18:00" }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      title: 'How to reach us'
+      address: "Harbour Street 12\n20457 Hamburg"
+      phone: '+49 40 123456'
+      email: hello@example.org
+      hoursTitle: 'Opening hours'
+      hours:
+        - { days: 'Mon to Fri', time: '8:00 to 18:00' }
+        - { days: Saturday, time: '9:00 to 14:00' }
 #}
 {# Only digits and + call; spaces and dashes are for reading. #}
 {% set phone = (value('phone') ?? '')|split('')|filter(char => char matches '/[0-9+]/')|join %}

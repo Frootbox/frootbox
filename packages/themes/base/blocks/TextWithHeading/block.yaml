@@ -5,3 +5,8 @@ keywords: [Article, Paragraph, Running text]
 fields:
   title: { type: headline, label: Heading, placeholder: "What is this part about?" }
   body: { type: richtext, label: Text }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      title: 'Freshly roasted, every week'
+      body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox builds pages from blocks that are designed and ready. Each block adapts to the room it gets, not to the screen.' }] }, { type: paragraph, content: [{ type: text, text: 'Every block brings its own spacing, so a page stays calm even when editors add many of them. Headings get their level from where they stand.' }] }] }

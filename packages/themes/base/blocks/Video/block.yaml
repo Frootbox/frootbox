@@ -5,3 +5,8 @@ keywords: [Film, Clip, Movie, Player]
 fields:
   video: { type: video, label: Video }
   caption: { type: text, label: Caption, optional: true, maxLength: 200 }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      video: { sample: examples/roasting.webm, poster: examples/roasting.jpg, alt: 'Film: circles of light drift over dark brown' }
+      caption: 'How a roast begins'

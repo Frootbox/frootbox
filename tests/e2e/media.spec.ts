@@ -41,7 +41,7 @@ async function photo(page: Page, name: string): Promise<{ name: string; mimeType
  * bytes at the end, so each run uploads another file (decision 0146).
  */
 function clip(name: string): { name: string; mimeType: string; buffer: Buffer } {
-    const film = readFileSync('packages/themes/base/demo/media/roasting.webm');
+    const film = readFileSync('packages/themes/base/assets/examples/roasting.webm');
     const filler = Buffer.from([0xec, 0x84, ...Array.from({ length: 4 }, () => Math.floor(Math.random() * 256))]);
 
     return { name, mimeType: 'video/webm', buffer: Buffer.concat([film, filler]) };

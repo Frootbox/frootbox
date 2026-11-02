@@ -7,6 +7,12 @@ fields:
   quote: { type: text, label: Quote, multiline: true, maxLength: 400, placeholder: "What someone said" }
   author: { type: headline, label: Name, optional: true, maxLength: 80, placeholder: "Who said it" }
   role: { type: headline, label: Role, optional: true, maxLength: 80, placeholder: "e.g. Head roaster" }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      quote: 'The best espresso in town, and I say that as an Italian.'
+      author: 'Giulia R.'
+      role: 'Guest since 2019'
 #}
 <figure class="base-quote">
   <blockquote class="base-quote__text"><p>{{ field('quote') }}</p></blockquote>

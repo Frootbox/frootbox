@@ -6,5 +6,9 @@ keywords: [Paragraph, Running text, List]
 widget: true
 fields:
   body: { type: richtext, label: Text }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'We roast ' }, { type: text, marks: [{ type: bold }], text: 'on Mondays' }, { type: text, text: ' and ship on Tuesdays. Read more in our ' }, { type: text, marks: [{ type: link, attrs: { href: 'https://example.org/' } }], text: 'guide to brewing' }, { type: text, text: . }] }, { type: bulletList, content: [{ type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Whole beans or ground' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'For filter, French press and espresso' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Pause the subscription at any time' }] }] }] }, { type: paragraph, content: [{ type: text, text: 'Frootbox builds pages from blocks that are designed and ready. Each block adapts to the room it gets, not to the screen.' }] }] }
 #}
 <div class="base-text">{{ field('body') }}</div>

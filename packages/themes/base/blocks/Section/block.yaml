@@ -6,3 +6,65 @@ areas:
   first: { label: First column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures, ImageWithText, Gallery, Slider, Video, Cards, Logos, LinkList, Accordion, Steps, Testimonials, Pricing, Contact, Features, Downloads, Table] }
   second: { label: Second column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures, ImageWithText, Gallery, Slider, Video, Cards, Logos, LinkList, Accordion, Steps, Testimonials, Pricing, Contact, Features, Downloads, Table] }
   third: { label: Third column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures, ImageWithText, Gallery, Slider, Video, Cards, Logos, LinkList, Accordion, Steps, Testimonials, Pricing, Contact, Features, Downloads, Table] }
+# Content for the design page (decision 0206).
+examples:
+  - variant: Default
+    areas:
+      first:
+        - { block: Heading, fields: { text: 'Freshly roasted, every week' } }
+        - { block: Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox builds pages from blocks that are designed and ready. Each block adapts to the room it gets, not to the screen.' }] }, { type: paragraph, content: [{ type: text, text: 'Every block brings its own spacing, so a page stays calm even when editors add many of them. Headings get their level from where they stand.' }] }] } } }
+  - variant: Default
+    options: { background: surface }
+    areas:
+      first:
+        - { block: Heading, fields: { text: 'A section on the surface' } }
+        - { block: Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox builds pages from blocks that are designed and ready. Each block adapts to the room it gets, not to the screen.' }] }] } } }
+        - { block: Button, fields: { link: { url: 'https://example.org/', text: 'To the shop' } } }
+  - variant: Default
+    options: { background: primary }
+    areas:
+      first:
+        - { block: Heading, fields: { text: 'A section on the accent' } }
+        - { block: Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Links stay readable, ' }, { type: text, marks: [{ type: link, attrs: { href: 'https://example.org/' } }], text: 'like this one' }, { type: text, text: . }] }] } } }
+        - { block: Button, fields: { link: { url: 'https://example.org/', text: 'To the shop' } } }
+        - { block: Button, options: { style: secondary }, fields: { link: { url: 'https://example.org/', text: 'About us' } } }
+  - variant: Default
+    options: { background: dark }
+    areas:
+      first:
+        - { block: Heading, fields: { text: 'A section on dark' } }
+        - { block: Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Links stay readable, ' }, { type: text, marks: [{ type: link, attrs: { href: 'https://example.org/' } }], text: 'like this one' }, { type: text, text: . }] }] } } }
+        - { block: Button, fields: { link: { url: 'https://example.org/', text: 'To the shop' } } }
+        - { block: Button, options: { style: secondary }, fields: { link: { url: 'https://example.org/', text: 'About us' } } }
+  - variant: Two
+    areas:
+      first:
+        - { block: Heading, fields: { text: Simple } }
+        - { block: Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox builds pages from blocks that are designed and ready. Each block adapts to the room it gets, not to the screen.' }] }] } } }
+      second:
+        - { block: Heading, fields: { text: Accessible } }
+        - { block: Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox builds pages from blocks that are designed and ready. Each block adapts to the room it gets, not to the screen.' }] }] } } }
+  - variant: Three
+    areas:
+      first:
+        - { block: Heading, fields: { text: Simple } }
+        - { block: Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox builds pages from blocks that are designed and ready. Each block adapts to the room it gets, not to the screen.' }] }] } } }
+      second:
+        - { block: Heading, fields: { text: Accessible } }
+        - { block: Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox builds pages from blocks that are designed and ready. Each block adapts to the room it gets, not to the screen.' }] }] } } }
+      third:
+        - { block: Heading, fields: { text: 'In every language' } }
+        - { block: Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox builds pages from blocks that are designed and ready. Each block adapts to the room it gets, not to the screen.' }] }] } } }
+  - variant: OneTwo
+    areas:
+      first:
+        - { block: Heading, fields: { text: 'The narrow column' } }
+      second:
+        - { block: Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox builds pages from blocks that are designed and ready. Each block adapts to the room it gets, not to the screen.' }] }, { type: paragraph, content: [{ type: text, text: 'Every block brings its own spacing, so a page stays calm even when editors add many of them. Headings get their level from where they stand.' }] }] } } }
+  - variant: TwoOne
+    areas:
+      first:
+        - { block: Heading, fields: { text: 'The wide column' } }
+        - { block: Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox builds pages from blocks that are designed and ready. Each block adapts to the room it gets, not to the screen.' }] }, { type: paragraph, content: [{ type: text, text: 'Every block brings its own spacing, so a page stays calm even when editors add many of them. Headings get their level from where they stand.' }] }] } } }
+      second:
+        - { block: Notice, fields: { title: 'Changed opening hours', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Between Christmas and New Year we close at two in the afternoon.' }] }] } } }

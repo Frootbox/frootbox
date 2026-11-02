@@ -22,6 +22,17 @@ fields:
       link: { type: link, label: Button, optional: true }
       badge: { type: headline, label: Highlight, optional: true, maxLength: 30, placeholder: "e.g. Popular" }
   link: { type: link, label: Link below, optional: true, description: "Leads on, e.g. to all offers" }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      eyebrow: Subscriptions
+      title: 'Our rates'
+      intro: 'Every rate can be paused or cancelled at any time.'
+      items:
+        - { name: Taster, price: '14 €', period: 'per month', text: 'For one person and a cup a day.', features: "250 g every month\nWhole beans or ground\nFree shipping", link: { url: 'https://example.org/', text: Choose } }
+        - { name: Household, price: '26 €', period: 'per month', text: 'For two and the weekend.', features: "500 g every month\nA new kind each time\nFree shipping", link: { url: 'https://example.org/', text: Choose }, badge: Popular }
+        - { name: Office, price: '79 €', period: 'per month', text: 'For teams of up to twelve.', features: "2 kg every month\nA grinder on loan\nPay by invoice", link: { url: 'https://example.org/', text: 'Get in touch' } }
+      link: { url: 'https://example.org/', text: 'Compare all rates' }
 #}
 <div class="base-prices">
   <div class="base-prices__head base-head">

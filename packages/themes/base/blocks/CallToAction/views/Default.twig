@@ -13,6 +13,17 @@ fields:
   title: { type: headline, label: Heading, maxLength: 100, placeholder: "What do you invite people to?" }
   text: { type: text, label: Text, optional: true, multiline: true, maxLength: 300, placeholder: "A sentence that tells why it is worth it" }
   link: { type: link, label: Button }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      title: 'Visit our roastery'
+      text: 'Every Saturday we open the doors and pour the first cups at ten.'
+      link: { url: 'https://example.org/', text: 'Book a tour' }
+  - options: { background: surface }
+    fields:
+      title: 'Visit our roastery'
+      text: 'Every Saturday we open the doors and pour the first cups at ten.'
+      link: { url: 'https://example.org/', text: 'Book a tour' }
 #}
 <div class="base-cta base-full base-cta--{{ options.background }}">
   <div class="base-cta__inner">

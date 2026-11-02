@@ -12,6 +12,19 @@ options:
 fields:
   title: { type: headline, label: Heading, optional: true, maxLength: 80, placeholder: "In short" }
   body: { type: richtext, label: Text }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      title: 'Changed opening hours'
+      body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Between Christmas and New Year we close at two in the afternoon.' }] }] }
+  - options: { tone: warning }
+    fields:
+      title: 'Roasting break'
+      body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'In the first week of August we do not roast. Orders wait until the week after.' }] }] }
+  - options: { tone: success }
+    fields:
+      title: 'Order received'
+      body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Thank you! Your coffee is roasted on Monday and sent out on Tuesday.' }] }] }
 #}
 {% set names = { info: t('Information'), warning: t('Warning'), success: t('Success') } %}
 <div class="base-notice base-notice--{{ options.tone }}" role="note" aria-label="{{ names[options.tone] }}">
