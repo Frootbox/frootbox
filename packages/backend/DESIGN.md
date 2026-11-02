@@ -361,13 +361,17 @@ label always says the status.
 
 ### Alert
 
-`ui.alert({tone, title, text, live})`
+`ui.alert({tone, title, text, live, action})`
 
 A message in the page: `info`, `success`, `warning`, `danger`, each with
 its icon and colors (`--fb-<tone>-bg` / `--fb-<tone>-text`, `info` for
 unknown tones). Padding 12 px 16 px, radius 10 px, text 15 px, the title
 semibold. `danger` has `role="alert"` and is read out at once, the others
 `role="status"`; `live` overrides it.
+
+`action` is HTML at the end of the line, e.g. a small outline button
+"Undo" in its own `<fb-form>`. The alert stays until the screen changes,
+unlike a toast, so the action has no time limit (decision 0176).
 
 Use an alert for something the user should know on this screen, the
 error summary of a form included. Use a toast for a confirmation.

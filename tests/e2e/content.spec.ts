@@ -14,9 +14,10 @@ const unique = () => `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 /**
  * Creates a draft below the start page and returns its id and address.
  * The layout needs a heading before publishing; until the editing mode
- * (phase 4) the test fills it through the action.
+ * (phase 4) the test fills it through the action, unless the draft
+ * should stay incomplete.
  */
-async function createPage(page: Page, title: string, parent: string | null = null): Promise<{ id: string; slug: string }> {
+async function createPage(page: Page, title: string, parent: string | null = null, complete = true): Promise<{ id: string; slug: string }> {
     // A page below another one is made by someone already signed in.
     if (parent === null) {
         await signIn(page, '/cms/pages/new');
@@ -34,6 +35,10 @@ async function createPage(page: Page, title: string, parent: string | null = nul
     // The forms remember their state once their script runs (decision 0130).
     await page.waitForFunction(() => customElements.get('fb-form') !== undefined);
     const id = page.url().split('/').pop() ?? '';
+
+    if (!complete) {
+        return { id, slug };
+    }
 
     const status = await page.evaluate(async ([id, title]) => {
         const meta = (name: string) => document.querySelector(`meta[name="${name}"]`)?.getAttribute('content') ?? '';
@@ -80,6 +85,56 @@ test('creates, publishes and restores a page', async ({ page }) => {
     await detail(page).getByRole('button', { name: 'Entwurf verwerfen' }).click();
     await page.locator('#page-discard').getByRole('button', { name: 'Verwerfen' }).click();
     await expect(page.locator('#page-detail-title')).toHaveText(`${title} neu`);
+});
+
+test('publishes the waiting pages from the dashboard and undoes it', async ({ page }) => {
+    const ready = `Fertig ${unique()}`;
+    const unfinished = `Unfertig ${unique()}`;
+    const { id: readyId, slug } = await createPage(page, ready);
+    const { id: unfinishedId } = await createPage(page, unfinished, readyId, false);
+
+    await page.goto('/cms');
+    await page.waitForFunction(() => customElements.get('fb-form') !== undefined);
+    const card = page.locator('#pending');
+    await expect(card.getByRole('link', { name: ready })).toHaveAttribute('href', `/cms/pages/${readyId}`);
+
+    // Other tests run at the same time; the dialog keeps only the pages of this one.
+    const keep = async (ids: string[]) => {
+        await page.evaluate((ids) => {
+            const items = [...document.querySelectorAll<HTMLElement>('#pending-publish [data-fb-pointer]')];
+            items.filter((item) => !ids.includes(item.querySelector('input')?.value ?? '')).forEach((item) => item.remove());
+            document.querySelectorAll<HTMLElement>('#pending-publish [data-fb-pointer]').forEach((item, index) => (item.dataset.fbPointer = `/ids/${index}`));
+        }, ids);
+    };
+
+    await card.locator('.fb-card__footer').getByRole('button').click();
+    const dialog = page.locator('#pending-publish');
+    await expect(dialog.getByRole('heading')).toHaveText(/Seiten? veröffentlichen\?$/);
+    await keep([readyId, unfinishedId]);
+
+    // The error stays at its page, with the way to edit it.
+    await dialog.getByRole('button', { name: /veröffentlichen$/ }).click();
+    const line = dialog.locator(`#pending-publish-${unfinishedId}`);
+    await expect(line.locator('.fb-error')).not.toHaveCount(0);
+    await expect(dialog.locator('.fb-form__errors a').first()).toHaveText(new RegExp(`^${unfinished}: title: `));
+    await expect(line.getByRole('button', { name: `„${unfinished}“ auf der Website bearbeiten` })).toBeVisible();
+    expect((await page.request.get(`/${slug}`)).status()).toBe(404);
+
+    await keep([readyId]);
+    await dialog.getByRole('button', { name: /veröffentlichen$/ }).click();
+    const undo = page.locator('#pending-undo');
+    await expect(undo).toBeVisible();
+    await expect(undo).toBeFocused();
+    await expect(undo).toContainText('Die Seiten sind veröffentlicht.');
+    await expect(card.getByRole('link', { name: ready })).toHaveCount(0);
+    expect((await page.request.get(`/${slug}`)).status()).toBe(200);
+
+    await undo.getByRole('button', { name: 'Rückgängig' }).click();
+    await expect(page.locator('.fb-toast').last()).toHaveText('Rückgängig gemacht. Die Änderungen stehen wieder im Entwurf.');
+    await expect(undo).toBeHidden();
+    await expect(card.getByRole('link', { name: ready })).toBeVisible();
+    await expect(page.locator('#fb-pending-title')).toBeFocused();
+    expect((await page.request.get(`/${slug}`)).status()).toBe(404);
 });
 
 test('writes the address of a title in Latin letters', async ({ page }) => {

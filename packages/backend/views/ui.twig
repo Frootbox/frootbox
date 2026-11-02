@@ -128,11 +128,12 @@
 
 {# tone: info, success, warning, danger. Danger is read out at once. #}
 {% macro alert(options) -%}
-    {%- set o = {tone: 'info', title: null, text: '', live: null}|merge(options) -%}
+    {%- set o = {tone: 'info', title: null, text: '', live: null, action: null}|merge(options) -%}
     {%- set icons = {info: 'info', success: 'check', warning: 'warning', danger: 'alert'} -%}
     <div class="fb-alert" data-tone="{{ o.tone }}" role="{{ o.live ?? (o.tone == 'danger' ? 'alert' : 'status') }}">
         {{ icon(icons[o.tone] ?? 'info') }}
         <div>{% if o.title %}<p class="fb-alert__title">{{ o.title }}</p>{% endif %}<p>{{ o.text }}</p></div>
+        {%- if o.action %}<div class="fb-alert__action">{{ o.action }}</div>{% endif %}
     </div>
 {%- endmacro %}
 

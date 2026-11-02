@@ -8,6 +8,9 @@ declare(strict_types=1);
 
 namespace Frootbox\Backend\Tests\Http;
 
+use DateTimeImmutable;
+use Frootbox\Backend\Http\ActionHandler;
+use Frootbox\Backend\Http\DashboardHandler;
 use Frootbox\Backend\Http\Navigations\NavigationsHandler;
 use Frootbox\Backend\Http\Pages\NewPageHandler;
 use Frootbox\Backend\Http\Pages\PagesHandler;
@@ -18,10 +21,13 @@ use Frootbox\Core\Action\Context;
 use Frootbox\Core\Extension\Extensions;
 use Frootbox\Core\Page\CreatePage;
 use Frootbox\Core\Page\PublishPages;
+use Frootbox\Core\Page\SchedulePage;
 use Frootbox\Core\Tests\Support\FixtureSite;
 use Frootbox\Core\Url\CreateRedirect;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(DashboardHandler::class)]
+#[CoversClass(ActionHandler::class)]
 #[CoversClass(PagesHandler::class)]
 #[CoversClass(NewPageHandler::class)]
 #[CoversClass(PageTree::class)]
@@ -48,6 +54,44 @@ final class ContentScreensTest extends BackendTestCase
 
         $this->createUser('admin@example.org', ['admin']);
         $this->session = $this->signIn('admin@example.org');
+    }
+
+    public function testTheDashboardLeadsToTheWaitingPages(): void
+    {
+        $html = $this->html($this->request('GET', '/cms', session: $this->session));
+
+        self::assertStringContainsString('<a class="fb-list__title fb-list__link" href="/cms/pages/' . $this->team . '" lang="de" dir="ltr">Team</a>', $html, 'To the page in the sitemap.');
+        self::assertStringContainsString('<span class="fb-list__meta">/ueber-uns/team</span>', $html);
+        self::assertStringContainsString('<input type="hidden" name="next" value="/ueber-uns/team">', $html, 'To the page in the editing mode.');
+        self::assertStringContainsString('aria-label="„Team“ auf der Website bearbeiten"', $html);
+        self::assertStringNotContainsString('>Über uns</a>', $html, 'Published pages are not waiting.');
+    }
+
+    public function testPublishesAllWaitingPagesAndUndoesIt(): void
+    {
+        // Scheduled pages and the subpages of a page that stays offline are left out.
+        $news = $this->createPage($this->about, 'Neuigkeiten');
+        $this->runner()->run(new SchedulePage($news, new DateTimeImmutable('+1 week')), Context::system());
+        $this->createPage($news, 'Erste Meldung');
+
+        $html = $this->html($this->request('GET', '/cms', session: $this->session));
+        self::assertStringContainsString('commandfor="pending-publish" command="show-modal"><span>Veröffentlichen</span>', $html, 'One page, so no "all".');
+        self::assertStringContainsString('<h2 class="fb-dialog__title" id="pending-publish-title">1 Seite veröffentlichen?</h2>', $html);
+        self::assertSame(1, substr_count($html, 'name="ids[]"'));
+        self::assertStringContainsString('data-fb-pointer="/ids/0" data-fb-label="Team">', $html, 'Errors of the page go to its line.');
+        self::assertStringContainsString('<input type="hidden" name="ids[]" value="' . $this->team . '">', $html);
+        self::assertStringContainsString('form="pending-edit-' . $this->team . '"', $html, 'From the dialog to the editing mode.');
+        self::assertStringContainsString('Nicht dabei, weil sie zu ihrer geplanten Zeit online gehen: Neuigkeiten.', $html);
+        self::assertStringContainsString('Nicht dabei, weil Du sie oder eine Seite darüber nicht veröffentlichen darfst: Erste Meldung.', $html);
+        self::assertStringContainsString('<fb-form action="action.undo" refresh="pending"', $html);
+
+        $published = $this->action('page.publish', ['ids' => [$this->team]], $this->session);
+        self::assertIsInt($published['entry'] ?? null, 'The id for undoing it.');
+        self::assertStringNotContainsString('name="ids[]" value="' . $this->team . '"', $this->html($this->request('GET', '/cms', session: $this->session)));
+
+        $undone = $this->action('action.undo', ['id' => $published['entry']], $this->session);
+        self::assertIsInt($undone['entry'] ?? null, 'Undoing can be undone, too.');
+        self::assertStringContainsString('name="ids[]" value="' . $this->team . '"', $this->html($this->request('GET', '/cms', session: $this->session)), 'Waiting again.');
     }
 
     public function testTheSitemapIsCompact(): void

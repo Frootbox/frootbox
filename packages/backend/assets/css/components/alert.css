@@ -15,6 +15,16 @@
     margin-top: var(--fb-space-0);
 }
 
+.fb-alert > div:not([class]) {
+    flex: 1;
+}
+
+/* An action at the end, e.g. "Undo" after publishing. */
+.fb-alert__action {
+    flex: none;
+    margin-block: calc(var(--fb-space-1) * -1);
+}
+
 .fb-alert__title {
     font-weight: var(--fb-weight-semibold);
 }

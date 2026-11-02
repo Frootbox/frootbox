@@ -8,12 +8,22 @@ const TOAST_KEY = 'fb-toast';
 /**
  * The field of an error: "/translations/en/slug" is the field named
  * "translations.en.slug", else "translations.en" and so on; "/roles/1"
- * is "roles" or "roles[]". Null for "/" or no such field.
+ * is "roles" or "roles[]". An element with data-fb-pointer="/ids/2"
+ * takes the errors of that pointer and below, e.g. one page in a list
+ * that is published together (decision 0176). Null for "/" or no such
+ * field.
  */
 function fieldFor(form, pointer) {
-    const parts = pointer.split('/').slice(1).filter((part) => part !== '').map((part) => part.replaceAll('~1', '/').replaceAll('~0', '~'));
+    const raw = pointer.split('/').slice(1).filter((part) => part !== '');
+    const parts = raw.map((part) => part.replaceAll('~1', '/').replaceAll('~0', '~'));
 
     for (let length = parts.length; length > 0; length--) {
+        const target = form.querySelector(`[data-fb-pointer="${CSS.escape('/' + raw.slice(0, length).join('/'))}"]`);
+
+        if (target) {
+            return target;
+        }
+
         const name = parts.slice(0, length).join('.');
         const field = form.elements.namedItem(name) ?? form.elements.namedItem(name + '[]');
 
@@ -23,6 +33,13 @@ function fieldFor(form, pointer) {
     }
 
     return null;
+}
+
+/** "title: is required" for "/translations/de/title", the last name in the pointer that is no number. */
+function withName(pointer, message) {
+    const name = pointer.split('/').filter((part) => part !== '' && !/^\d+$/.test(part)).pop();
+
+    return name ? `${name.replaceAll('~1', '/').replaceAll('~0', '~')}: ${message}` : message;
 }
 
 /** "2026-11-01T18:00" in the time zone of the browser for an ISO time. */
@@ -149,9 +166,11 @@ export function formInput(form) {
  * - failed: the text when the server cannot be reached, by default from
  *   data-fb-failed of the body
  * - reset: empty the form after success
- * - show: the id of a hidden element to show after success, e.g. a new
- *   API token; elements in it with data-fb-value="token" get that value
- *   of the result
+ * - show: the id of a hidden element to show after success and after
+ *   refresh, e.g. a new API token; elements in it with
+ *   data-fb-value="token" get that value of the result, fields with
+ *   data-fb-entry the id for action.undo (decision 0176); without one
+ *   the <fb-form> around such a field is hidden
  * - refresh: ids of elements to load again after success, separated by
  *   spaces (decision 0116); the page stays
  * - base: a JSON pointer whose errors belong to the fields of this form,
@@ -352,6 +371,11 @@ export class Form extends LitElement {
             focused = document.activeElement;
         }
 
+        if (this.refresh) {
+            await refreshParts(this.refresh.split(/\s+/).filter((id) => id !== ''), { active: focused });
+        }
+
+        // After the refresh, which may have loaded it again.
         const shown = this.show ? document.getElementById(this.show) : null;
 
         if (shown) {
@@ -359,13 +383,19 @@ export class Form extends LitElement {
                 element.textContent = String(valueAt(data, element.dataset.fbValue) ?? '');
             }
 
+            for (const field of shown.querySelectorAll('[data-fb-entry]')) {
+                field.value = result.entry === null ? '' : String(result.entry);
+                const form = field.closest('fb-form');
+
+                if (form) {
+                    form.hidden = result.entry === null;
+                    form.remember?.();
+                }
+            }
+
             shown.hidden = false;
             shown.tabIndex = -1;
             shown.focus();
-        }
-
-        if (this.refresh) {
-            await refreshParts(this.refresh.split(/\s+/).filter((id) => id !== ''), { active: focused });
         }
 
         if (this.done) {
@@ -411,13 +441,17 @@ export class Form extends LitElement {
 
             if (!element || !element.id) {
                 // Without a field, the last name in the pointer says what is meant, e.g. "title".
-                const name = (pointer ?? '').split('/').filter((part) => part !== '' && !/^\d+$/.test(part)).pop();
-                items.push({ text: name ? `${name.replaceAll('~1', '/').replaceAll('~0', '~')}: ${message}` : message });
+                items.push({ text: withName(pointer ?? '', message) });
 
                 continue;
             }
 
-            if (element.getAttribute('aria-invalid') !== 'true') {
+            if (element.dataset.fbPointer !== undefined) {
+                // Below the pointer, the last name says what is meant, e.g. "level".
+                const text = withName(this.localPointer(pointer ?? '/').slice(element.dataset.fbPointer.length), message);
+                this.markField(element, text);
+                items.push({ text: this.labelOf(element) + ': ' + text, id: element.id });
+            } else if (element.getAttribute('aria-invalid') !== 'true') {
                 this.markField(element, message);
                 items.push({ text: this.labelOf(element) + ': ' + message, id: element.id });
             }
@@ -492,12 +526,21 @@ export class Form extends LitElement {
     markField(element, message) {
         const error = document.createElement('p');
         error.className = 'fb-error';
-        error.id = element.id + '-error';
         error.dataset.fbForm = '';
         error.innerHTML = ALERT;
         const text = document.createElement('span');
         text.textContent = message;
         error.append(text);
+
+        // An element for a pointer may take several errors, in its part for them.
+        if (element.dataset.fbPointer !== undefined) {
+            error.id = `${element.id}-error-${element.querySelectorAll('.fb-error[data-fb-form]').length}`;
+            (element.querySelector('[data-fb-errors]') ?? element).append(error);
+
+            return;
+        }
+
+        error.id = element.id + '-error';
 
         const described = (element.getAttribute('aria-describedby') ?? '').split(' ').filter((id) => id !== '');
         element.setAttribute('aria-describedby', [...described, error.id].join(' '));
@@ -509,6 +552,10 @@ export class Form extends LitElement {
     }
 
     labelOf(element) {
+        if (element.dataset.fbLabel) {
+            return element.dataset.fbLabel;
+        }
+
         const fieldset = element.closest('fieldset');
         const label = element.type === 'checkbox' || element.type === 'radio'
             ? fieldset?.querySelector('legend')

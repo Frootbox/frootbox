@@ -455,6 +455,7 @@ There is nothing for the scope "{scope}".: „{scope}“ gibt es nicht.
 "Nothing to undo yet": "Noch nichts rückgängig zu machen"
 "Everything is published": "Alles ist veröffentlicht"
 "Edit on the website": "Auf der Website bearbeiten"
+"Edit {title} on the website": "„{title}“ auf der Website bearbeiten"
 "Sign in to edit the website.": "Melde Dich an, um die Website zu bearbeiten."
 "Saving …": "Speichert …"
 "Undo": "Rückgängig"
@@ -878,3 +879,10 @@ Language of the backend: Sprache des Backends
 "Automatic ({language})": "Automatisch ({language})"
 Only for you. The languages of the website stay as they are.: Nur für Dich. Die Sprachen der Website bleiben, wie sie sind.
 The language is changed.: Die Sprache ist geändert.
+"Publish {count} page?":
+  one: "{count} Seite veröffentlichen?"
+  other: "{count} Seiten veröffentlichen?"
+"Visitors then see these pages as they are in the draft. You can undo it right afterwards.": "Besucher sehen diese Seiten danach so, wie sie im Entwurf stehen. Direkt danach kannst Du es rückgängig machen."
+"Not included, they go online at their scheduled time: {pages}.": "Nicht dabei, weil sie zu ihrer geplanten Zeit online gehen: {pages}."
+"Not included, you may not publish them or a page above them: {pages}.": "Nicht dabei, weil Du sie oder eine Seite darüber nicht veröffentlichen darfst: {pages}."
+"Undone. The changes are in the drafts again.": "Rückgängig gemacht. Die Änderungen stehen wieder im Entwurf."

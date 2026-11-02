@@ -13,6 +13,7 @@ use Frootbox\Backend\View\BackendView;
 use Frootbox\Core\Action\ActionException;
 use Frootbox\Core\Action\Catalog;
 use Frootbox\Core\Action\InvalidInputException;
+use Frootbox\Core\Action\Journal;
 use Frootbox\Core\Action\Normalizer;
 use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Action\UnknownActionException;
@@ -32,8 +33,9 @@ use Psr\Http\Server\RequestHandlerInterface;
  * POST <backend.path>/actions/user.create with JSON or a form.
  *
  * Like the REST API, but with the session cookie and its CSRF token, and
- * the messages in the language of the backend. The answer is {"data": …}
- * or application/problem+json with the errors by field.
+ * the messages in the language of the backend. The answer is {"data": …},
+ * with "entry" for an action that can be undone, the id for action.undo
+ * (decision 0176), or application/problem+json with the errors by field.
  */
 final readonly class ActionHandler implements RequestHandlerInterface
 {
@@ -45,6 +47,7 @@ final readonly class ActionHandler implements RequestHandlerInterface
         private JsonResponder $json,
         private Translator $translator,
         private Environment $environment,
+        private Journal $journal,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -71,7 +74,9 @@ final readonly class ActionHandler implements RequestHandlerInterface
             return $this->problem($error);
         }
 
-        return $this->json->respond(['data' => Normalizer::normalize($result)]);
+        $entry = $this->journal->lastUndoableEntryId();
+
+        return $this->json->respond(['data' => Normalizer::normalize($result), ...(null === $entry ? [] : ['entry' => $entry])]);
     }
 
     /**

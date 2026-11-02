@@ -1,7 +1,9 @@
 /**
  * Runs an action of the backend (decision 0115) and returns
- * { ok, data, problem }. problem is { detail, errors, status } as the
- * server sends it, or the text of `failed` if it cannot be reached.
+ * { ok, data, entry, problem }. entry is the id for action.undo if the
+ * action can be undone, else null (decision 0176). problem is
+ * { detail, errors, status } as the server sends it, or the text of
+ * `failed` if it cannot be reached.
  */
 export async function runAction(name, input, failed = defaultFailed()) {
     let response;
@@ -20,14 +22,14 @@ export async function runAction(name, input, failed = defaultFailed()) {
         });
         body = await response.json().catch(() => null);
     } catch {
-        return { ok: false, data: null, problem: { detail: failed, errors: [] } };
+        return { ok: false, data: null, entry: null, problem: { detail: failed, errors: [] } };
     }
 
     if (!response.ok) {
-        return { ok: false, data: null, problem: { detail: body?.detail ?? failed, errors: body?.errors ?? [], status: response.status } };
+        return { ok: false, data: null, entry: null, problem: { detail: body?.detail ?? failed, errors: body?.errors ?? [], status: response.status } };
     }
 
-    return { ok: true, data: body?.data ?? null, problem: null };
+    return { ok: true, data: body?.data ?? null, entry: body?.entry ?? null, problem: null };
 }
 
 /**

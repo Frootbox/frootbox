@@ -92,6 +92,7 @@
     <p class="fb-design-sample__title">{{ t('Messages') }}</p>
     {{ ui.alert({tone: 'info', text: t('The page has a draft with changes.'), live: 'none'}) }}
     {{ ui.alert({tone: 'success', text: t('The page is published.'), live: 'none'}) }}
+    {{ ui.alert({tone: 'success', text: t('The pages are published.'), live: 'none', action: ui.button({label: t('Undo'), variant: 'outline', small: true})}) }}
     {{ ui.alert({tone: 'warning', title: t('Not translated yet'), text: t('Visitors see the German text.'), live: 'none'}) }}
     {{ ui.alert({tone: 'danger', text: t('The email or the password is wrong.'), live: 'none'}) }}
     {{ ui.toast(t('Saved'), true) }}
