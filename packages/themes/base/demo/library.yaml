@@ -2,9 +2,10 @@
 #
 #     php bin/frootbox seed frootbox/theme-base:demo/library.yaml
 #
-# Each subpage shows one block at the three places of decision 0163: across
-# the full width, in one of two columns and in a narrow column of a third.
-# The browser tests take screenshots of them. Needs the language de.
+# Each subpage shows one block at the three places of decision 0163: in
+# the main area, in one of two columns and in a narrow column of a third.
+# The browser tests take screenshots of them and check them with axe.
+# Needs the language de.
 
 - page.create:
     layout: frootbox/theme-base/Start
@@ -16,6 +17,8 @@
             main:
               - { block: frootbox/theme-base/Section, variant: Default, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Die Bibliothek des Basis-Themes' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Jede Unterseite zeigt einen Block an drei Stellen: über die ganze Breite, in einer von zwei Spalten und in einer schmalen Spalte.' }] }] } } }, { block: frootbox/theme-base/Button, options: { style: primary }, fields: { link: { url: /heading, text: 'Zur Überschrift' } } }] } }
               - { block: frootbox/theme-base/Section, variant: Three, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: sub, size: auto }, fields: { text: Einfach } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }], second: [{ block: frootbox/theme-base/Heading, options: { role: sub, size: auto }, fields: { text: Barrierefrei } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }], third: [{ block: frootbox/theme-base/Heading, options: { role: sub, size: auto }, fields: { text: 'In jeder Sprache' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }] } }
+              - { block: frootbox/theme-base/KeyFigures, fields: { title: 'Bohnenglück in Zahlen', items: [{ value: '12', label: 'Jahre Röstererfahrung' }, { value: '4.800', label: 'Kunden im letzten Jahr' }, { value: '9', label: 'Sorten im Regal' }] } }
+              - { block: frootbox/theme-base/CallToAction, options: { background: primary }, fields: { title: 'Lust auf eine Verkostung?', text: 'Jeden ersten Freitag im Monat probieren wir neue Sorten, Du bist herzlich eingeladen.', link: { url: 'https://example.org/', text: 'Platz reservieren' } } }
   as: start
 - page.create:
     layout: frootbox/theme-base/Page
@@ -88,6 +91,118 @@
               - { block: frootbox/theme-base/Section, variant: Three, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Spalte 1' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }], second: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Spalte 2' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }], third: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Spalte 3' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }] } }
   as: section
 - page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: 'Text mit Überschrift'
+        slug: text-with-heading
+        content:
+          fields:
+            title: 'Text mit Überschrift'
+            intro: 'Schmal und breit, im Hauptbereich und in Spalten.'
+          areas:
+            main:
+              - { block: frootbox/theme-base/TextWithHeading, variant: Default, fields: { title: 'Frisch geröstet in Hamburg', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm. Ein zweiter Satz, damit die Zeilen umbrechen und das Maß sichtbar wird.' }] }, { type: bulletList, content: [{ type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ganze Bohnen oder gemahlen' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Versand jeden Dienstag' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ab 30 Euro ohne Versandkosten' }] }] }] }] } } }
+              - { block: frootbox/theme-base/TextWithHeading, variant: Wide, fields: { title: 'Frisch geröstet in Hamburg', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm. Ein zweiter Satz, damit die Zeilen umbrechen und das Maß sichtbar wird.' }] }, { type: bulletList, content: [{ type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ganze Bohnen oder gemahlen' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Versand jeden Dienstag' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ab 30 Euro ohne Versandkosten' }] }] }] }] } } }
+              - { block: frootbox/theme-base/Section, variant: Two, areas: { first: [{ block: frootbox/theme-base/TextWithHeading, variant: Default, fields: { title: 'Frisch geröstet in Hamburg', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm. Ein zweiter Satz, damit die Zeilen umbrechen und das Maß sichtbar wird.' }] }, { type: bulletList, content: [{ type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ganze Bohnen oder gemahlen' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Versand jeden Dienstag' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ab 30 Euro ohne Versandkosten' }] }] }] }] } } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: OneTwo, areas: { first: [{ block: frootbox/theme-base/TextWithHeading, variant: Default, fields: { title: 'Frisch geröstet in Hamburg', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm. Ein zweiter Satz, damit die Zeilen umbrechen und das Maß sichtbar wird.' }] }, { type: bulletList, content: [{ type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ganze Bohnen oder gemahlen' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Versand jeden Dienstag' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ab 30 Euro ohne Versandkosten' }] }] }] }] } } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+  as: text_with_heading
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Zitat
+        slug: quote
+        content:
+          fields:
+            title: Zitat
+            intro: 'Eine einzelne Aussage, groß gesetzt.'
+          areas:
+            main:
+              - { block: frootbox/theme-base/Quote, fields: { quote: 'Der beste Espresso, den ich außerhalb von Italien getrunken habe.', author: 'Maria Rossi', role: 'Stammkundin seit 2019' } }
+              - { block: frootbox/theme-base/Section, variant: Two, areas: { first: [{ block: frootbox/theme-base/Quote, fields: { quote: 'Der beste Espresso, den ich außerhalb von Italien getrunken habe.', author: 'Maria Rossi', role: 'Stammkundin seit 2019' } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: OneTwo, areas: { first: [{ block: frootbox/theme-base/Quote, fields: { quote: 'Der beste Espresso, den ich außerhalb von Italien getrunken habe.', author: 'Maria Rossi', role: 'Stammkundin seit 2019' } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+  as: quote
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Hinweis
+        slug: notice
+        content:
+          fields:
+            title: Hinweis
+            intro: 'Information, Warnung und Erfolg.'
+          areas:
+            main:
+              - { block: frootbox/theme-base/Notice, options: { tone: info }, fields: { title: 'Neue Öffnungszeiten', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Ab März sind wir auch samstags von 9 bis 14 Uhr für Dich da.' }] }] } } }
+              - { block: frootbox/theme-base/Notice, options: { tone: warning }, fields: { title: 'Rösterei geschlossen', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Vom 24. bis 26. Dezember bleibt die Rösterei geschlossen.' }] }] } } }
+              - { block: frootbox/theme-base/Notice, options: { tone: success }, fields: { title: 'Bestellung angekommen', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Danke! Wir rösten Deinen Kaffee am Montag.' }] }] } } }
+              - { block: frootbox/theme-base/Section, variant: Two, areas: { first: [{ block: frootbox/theme-base/Notice, options: { tone: info }, fields: { title: 'Neue Öffnungszeiten', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Ab März sind wir auch samstags von 9 bis 14 Uhr für Dich da.' }] }] } } }, { block: frootbox/theme-base/Notice, options: { tone: warning }, fields: { title: 'Rösterei geschlossen', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Vom 24. bis 26. Dezember bleibt die Rösterei geschlossen.' }] }] } } }, { block: frootbox/theme-base/Notice, options: { tone: success }, fields: { title: 'Bestellung angekommen', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Danke! Wir rösten Deinen Kaffee am Montag.' }] }] } } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: OneTwo, areas: { first: [{ block: frootbox/theme-base/Notice, options: { tone: info }, fields: { title: 'Neue Öffnungszeiten', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Ab März sind wir auch samstags von 9 bis 14 Uhr für Dich da.' }] }] } } }, { block: frootbox/theme-base/Notice, options: { tone: warning }, fields: { title: 'Rösterei geschlossen', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Vom 24. bis 26. Dezember bleibt die Rösterei geschlossen.' }] }] } } }, { block: frootbox/theme-base/Notice, options: { tone: success }, fields: { title: 'Bestellung angekommen', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Danke! Wir rösten Deinen Kaffee am Montag.' }] }] } } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+  as: notice
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Trenner
+        slug: divider
+        content:
+          fields:
+            title: Trenner
+            intro: 'Linie und Abstand in drei Stufen.'
+          areas:
+            main:
+              - { block: frootbox/theme-base/TextWithHeading, variant: Wide, fields: { title: 'Frisch geröstet in Hamburg', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm. Ein zweiter Satz, damit die Zeilen umbrechen und das Maß sichtbar wird.' }] }, { type: bulletList, content: [{ type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ganze Bohnen oder gemahlen' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Versand jeden Dienstag' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ab 30 Euro ohne Versandkosten' }] }] }] }] } } }
+              - { block: frootbox/theme-base/Divider, options: { style: line, size: small } }
+              - { block: frootbox/theme-base/TextWithHeading, variant: Wide, fields: { title: 'Frisch geröstet in Hamburg', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm. Ein zweiter Satz, damit die Zeilen umbrechen und das Maß sichtbar wird.' }] }, { type: bulletList, content: [{ type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ganze Bohnen oder gemahlen' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Versand jeden Dienstag' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ab 30 Euro ohne Versandkosten' }] }] }] }] } } }
+              - { block: frootbox/theme-base/Divider, options: { style: line, size: large } }
+              - { block: frootbox/theme-base/TextWithHeading, variant: Wide, fields: { title: 'Frisch geröstet in Hamburg', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm. Ein zweiter Satz, damit die Zeilen umbrechen und das Maß sichtbar wird.' }] }, { type: bulletList, content: [{ type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ganze Bohnen oder gemahlen' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Versand jeden Dienstag' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ab 30 Euro ohne Versandkosten' }] }] }] }] } } }
+              - { block: frootbox/theme-base/Divider, options: { style: space, size: medium } }
+              - { block: frootbox/theme-base/TextWithHeading, variant: Wide, fields: { title: 'Frisch geröstet in Hamburg', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm. Ein zweiter Satz, damit die Zeilen umbrechen und das Maß sichtbar wird.' }] }, { type: bulletList, content: [{ type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ganze Bohnen oder gemahlen' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Versand jeden Dienstag' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ab 30 Euro ohne Versandkosten' }] }] }] }] } } }
+              - { block: frootbox/theme-base/Section, variant: Two, areas: { first: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }, { block: frootbox/theme-base/Divider, options: { style: line, size: medium } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: OneTwo, areas: { first: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }, { block: frootbox/theme-base/Divider, options: { style: line, size: medium } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+  as: divider
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Aufruf
+        slug: call-to-action
+        content:
+          fields:
+            title: Aufruf
+            intro: 'Als Band über die Seite und als Kasten in Spalten.'
+          areas:
+            main:
+              - { block: frootbox/theme-base/CallToAction, options: { background: primary }, fields: { title: 'Lust auf eine Verkostung?', text: 'Jeden ersten Freitag im Monat probieren wir neue Sorten, Du bist herzlich eingeladen.', link: { url: 'https://example.org/', text: 'Platz reservieren' } } }
+              - { block: frootbox/theme-base/CallToAction, options: { background: surface }, fields: { title: 'Lust auf eine Verkostung?', text: 'Jeden ersten Freitag im Monat probieren wir neue Sorten, Du bist herzlich eingeladen.', link: { url: 'https://example.org/', text: 'Platz reservieren' } } }
+              - { block: frootbox/theme-base/Section, variant: Two, areas: { first: [{ block: frootbox/theme-base/CallToAction, options: { background: primary }, fields: { title: 'Lust auf eine Verkostung?', text: 'Jeden ersten Freitag im Monat probieren wir neue Sorten, Du bist herzlich eingeladen.', link: { url: 'https://example.org/', text: 'Platz reservieren' } } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: OneTwo, areas: { first: [{ block: frootbox/theme-base/CallToAction, options: { background: surface }, fields: { title: 'Lust auf eine Verkostung?', text: 'Jeden ersten Freitag im Monat probieren wir neue Sorten, Du bist herzlich eingeladen.', link: { url: 'https://example.org/', text: 'Platz reservieren' } } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+  as: call_to_action
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Kennzahlen
+        slug: key-figures
+        content:
+          fields:
+            title: Kennzahlen
+            intro: 'Zwei bis vier Zahlen mit Beschriftung.'
+          areas:
+            main:
+              - { block: frootbox/theme-base/KeyFigures, fields: { title: 'Bohnenglück in Zahlen', items: [{ value: '12', label: 'Jahre Röstererfahrung' }, { value: '4.800', label: 'Kunden im letzten Jahr' }, { value: '9', label: 'Sorten im Regal' }] } }
+              - { block: frootbox/theme-base/Section, variant: Two, areas: { first: [{ block: frootbox/theme-base/KeyFigures, fields: { title: 'Bohnenglück in Zahlen', items: [{ value: '12', label: 'Jahre Röstererfahrung' }, { value: '4.800', label: 'Kunden im letzten Jahr' }, { value: '9', label: 'Sorten im Regal' }] } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: OneTwo, areas: { first: [{ block: frootbox/theme-base/KeyFigures, fields: { title: 'Bohnenglück in Zahlen', items: [{ value: '12', label: 'Jahre Röstererfahrung' }, { value: '4.800', label: 'Kunden im letzten Jahr' }, { value: '9', label: 'Sorten im Regal' }] } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+  as: key_figures
+- page.create:
     layout: frootbox/theme-base/Landing
     parentId: '${start.id}'
     translations:
@@ -120,6 +235,12 @@
       - '${text.id}'
       - '${button.id}'
       - '${section.id}'
+      - '${text_with_heading.id}'
+      - '${quote.id}'
+      - '${notice.id}'
+      - '${divider.id}'
+      - '${call_to_action.id}'
+      - '${key_figures.id}'
       - '${landing.id}'
       - '${imprint.id}'
 - navigation.update:
@@ -143,6 +264,28 @@
               type: target
               target: 'page:${button.id}'
         -
+          type: heading
+          label: Blöcke
+          children:
+            -
+              type: target
+              target: 'page:${text_with_heading.id}'
+            -
+              type: target
+              target: 'page:${quote.id}'
+            -
+              type: target
+              target: 'page:${notice.id}'
+            -
+              type: target
+              target: 'page:${divider.id}'
+            -
+              type: target
+              target: 'page:${call_to_action.id}'
+            -
+              type: target
+              target: 'page:${key_figures.id}'
+        -
           type: target
           target: 'page:${landing.id}'
 - navigation.update:
@@ -163,10 +306,7 @@
     language: de
     fields:
       brand: Basis
-      address: |-
-        Muster GmbH
-        Musterstraße 1
-        12345 Musterstadt
+      address: "Muster GmbH\nMusterstraße 1\n12345 Musterstadt"
       note: 'Eine Musterseite des Basis-Themes.'
       profiles:
         -

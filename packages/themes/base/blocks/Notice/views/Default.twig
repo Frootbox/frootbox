@@ -1,0 +1,31 @@
+{# frootbox
+title: Notice
+description: A short note that stands out from the text, as information, warning or success, e.g. changed opening hours. Not for longer texts or for advertising, use a call to action for that.
+group: text
+keywords: [Alert, Info, Warning, Hint, Callout box]
+options:
+  tone:
+    type: choice
+    label: Kind
+    choices: { info: Information, warning: Warning, success: Success }
+    default: info
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 80, placeholder: "In short" }
+  body: { type: richtext, label: Text }
+#}
+{% set names = { info: t('Information'), warning: t('Warning'), success: t('Success') } %}
+<div class="base-notice base-notice--{{ options.tone }}" role="note" aria-label="{{ names[options.tone] }}">
+  <svg class="base-notice__icon" aria-hidden="true" viewBox="0 0 24 24" width="24" height="24">
+    {%- if options.tone == 'warning' -%}
+      <path d="M12 3 2 21h20L12 3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v5M12 18v.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    {%- elseif options.tone == 'success' -%}
+      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="m8 12.5 2.5 2.5L16 9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    {%- else -%}
+      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v6M12 7.5v.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    {%- endif -%}
+  </svg>
+  <div class="base-notice__content">
+    {{ heading('title', 0, {class: 'base-notice__title'}) }}
+    <div class="base-notice__body">{{ field('body') }}</div>
+  </div>
+</div>

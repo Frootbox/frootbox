@@ -5,6 +5,8 @@
 .base-section--surface { background: var(--color-surface); }
 .base-section--primary { background: var(--color-primary); color: var(--color-primary-contrast); }
 .base-section--primary a { color: inherit; }
+/* The focus ring would have the colour of the background. */
+.base-section--primary :focus-visible { outline-color: currentColor; }
 
 .base-section__grid {
   display: grid;

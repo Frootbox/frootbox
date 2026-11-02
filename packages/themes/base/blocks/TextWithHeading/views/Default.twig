@@ -1,0 +1,9 @@
+{# frootbox
+title: Narrow
+description: Short lines that are easy to read, for longer texts.
+#}
+{# base-narrow keeps lines short in the main area; in a column the column sets the width. #}
+<div class="base-prose base-narrow">
+  {{ heading('title', 0, {class: 'base-prose__title'}) }}
+  <div class="base-prose__body">{{ field('body') }}</div>
+</div>

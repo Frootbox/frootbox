@@ -1,0 +1,23 @@
+{# frootbox
+title: Divider
+description: A line or some room between two blocks, e.g. to end a topic. Not to push content into place.
+group: structure
+keywords: [Line, Separator, Space, Spacer, Rule]
+options:
+  style:
+    type: choice
+    label: Style
+    choices: { line: Line, space: Space only }
+    default: line
+  size:
+    type: choice
+    label: Space
+    choices: { small: Small, medium: Medium, large: Large }
+    default: medium
+#}
+{% if options.style == 'line' %}
+  <hr class="base-divider base-divider--{{ options.size }}">
+{% else %}
+  {# Only room, nothing to read for screen readers. #}
+  <div class="base-divider base-divider--space base-divider--{{ options.size }}" aria-hidden="true"></div>
+{% endif %}

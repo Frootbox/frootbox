@@ -1,0 +1,36 @@
+/* A band across the page in the main area (base-full), a box in a column. */
+.base-cta { container-type: inline-size; border-radius: var(--radius); background: var(--color-primary); color: var(--color-primary-contrast); }
+.base-page > .base-cta { border-radius: 0; }
+.base-cta--surface { background: var(--color-surface); color: var(--color-text); }
+.base-cta__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-m);
+  inline-size: min(100% - 2 * var(--gutter), var(--width));
+  margin-inline: auto;
+  padding-block: var(--space-l);
+}
+.base-cta__text { display: flex; flex-direction: column; gap: var(--space-2xs); }
+.base-cta__title { margin: 0; font-size: var(--size-2xl); }
+.base-cta__text p { margin: 0; max-inline-size: var(--width-narrow); }
+.base-cta__button { margin: 0; }
+.base-cta__button a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  padding: var(--space-2xs) var(--space-m);
+  border-radius: 999px;
+  background: var(--color-primary-contrast);
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+.base-cta--surface .base-cta__button a { background: var(--color-primary); color: var(--color-primary-contrast); }
+.base-cta__button a:hover { text-decoration: underline; text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+.base-cta a:focus-visible { outline-color: currentColor; }
+
+/* Text and button side by side where the block has room. */
+@container (min-width: 40rem) {
+  .base-cta__inner { flex-direction: row; align-items: center; justify-content: space-between; }
+}

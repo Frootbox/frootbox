@@ -1,0 +1,25 @@
+{# frootbox
+title: Call to action
+description: A coloured band with a heading, a sentence and a button, e.g. to invite people to book or get in touch, mostly at the end of a page. In a column it becomes a box. Use it once or twice a page, not for plain links.
+group: callout
+keywords: [CTA, Banner, Invitation, Button, Band]
+options:
+  background:
+    type: choice
+    label: Background
+    choices: { primary: Main colour, surface: Surface }
+    default: primary
+fields:
+  title: { type: headline, label: Heading, maxLength: 100, placeholder: "What do you invite people to?" }
+  text: { type: text, label: Text, optional: true, multiline: true, maxLength: 300, placeholder: "A sentence that tells why it is worth it" }
+  link: { type: link, label: Button }
+#}
+<div class="base-cta base-full base-cta--{{ options.background }}">
+  <div class="base-cta__inner">
+    <div class="base-cta__text">
+      {{ heading('title', 0, {class: 'base-cta__title'}) }}
+      <p>{{ field('text') }}</p>
+    </div>
+    <p class="base-cta__button">{{ field('link') }}</p>
+  </div>
+</div>

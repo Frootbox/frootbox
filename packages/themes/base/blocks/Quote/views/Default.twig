@@ -1,0 +1,14 @@
+{# frootbox
+title: Quote
+description: A single statement set large, with who said it. For several voices of customers use the block for testimonials.
+group: text
+keywords: [Citation, Motto, Statement, Testimonial]
+fields:
+  quote: { type: text, label: Quote, multiline: true, maxLength: 400, placeholder: "What someone said" }
+  author: { type: headline, label: Name, optional: true, maxLength: 80, placeholder: "Who said it" }
+  role: { type: headline, label: Role, optional: true, maxLength: 80, placeholder: "e.g. Head roaster" }
+#}
+<figure class="base-quote">
+  <blockquote class="base-quote__text"><p>{{ field('quote') }}</p></blockquote>
+  <figcaption class="base-quote__source"><span class="base-quote__author">{{ field('author') }}</span><span class="base-quote__role">{{ field('role') }}</span></figcaption>
+</figure>

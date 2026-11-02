@@ -43,12 +43,15 @@ final class LibraryTest extends NotesTestCase
 {
     private const string THEME = 'frootbox/theme-base';
 
-    /** The places by the variant of the section around the block; widgets only go into its columns. */
+    /** The places by the variant of the section around the block; in the main area only widgets need one. */
     private const array PLACES = [
         'in the main area' => 'Default',
         'in one of two columns' => 'Two',
         'in a narrow column' => 'OneTwo',
     ];
+
+    /** Blocks that only stand in the main area, all others also go into the columns of a section. */
+    private const array MAIN_AREA_ONLY = ['Section'];
 
     public function testPassesTheChecksOfTheBlocks(): void
     {
@@ -68,7 +71,7 @@ final class LibraryTest extends NotesTestCase
 
         self::assertSame(0, $console->run(new ArrayInput(['command' => 'seed', 'file' => self::THEME . ':demo/library.yaml']), $output), $output->fetch());
 
-        foreach (['/', '/heading', '/text', '/button', '/section', '/aktion', '/impressum'] as $path) {
+        foreach (['/', '/heading', '/text', '/button', '/section', '/text-with-heading', '/quote', '/notice', '/divider', '/call-to-action', '/key-figures', '/aktion', '/impressum'] as $path) {
             $this->get(Urls::class)->clear();
             $this->get(PageOutline::class)->clear();
             $response = $this->get(PageHandler::class)->handle(new ServerRequest('GET', 'https://example.org' . $path));
@@ -90,16 +93,29 @@ final class LibraryTest extends NotesTestCase
         self::assertNotEmpty($blocks);
         $rendered = 0;
 
+        $columns = [];
+
+        foreach ($blocks as $block) {
+            if (self::THEME . '/Section' === $block->name) {
+                $columns = array_map(static fn(string $name): string => basename($name), $block->areas[0]->allow ?? []);
+            }
+        }
+
+        $outside = array_values(array_filter(array_map(static fn(BlockSummary $block): string => basename($block->name), $blocks), static fn(string $name): bool => !\in_array($name, $columns, true)));
+        sort($outside);
+        self::assertSame(self::MAIN_AREA_ONLY, $outside, 'Every block of the library also fits into a column (decision 0163).');
+
         foreach ($blocks as $block) {
             foreach ($block->variants as $variant) {
                 foreach (self::PLACES as $place => $section) {
                     $content = ['block' => $block->name, 'variant' => $variant->name];
 
-                    if ($block->widget) {
-                        $content = ['block' => self::THEME . '/Section', 'variant' => $section, 'areas' => ['first' => [$content]]];
-                    } elseif ('Default' !== $section) {
-                        // Other blocks go into columns once the library has a place for them (decision 0163).
+                    if ('Default' !== $section && !\in_array(basename($block->name), $columns, true)) {
                         continue;
+                    }
+
+                    if ($block->widget || 'Default' !== $section) {
+                        $content = ['block' => self::THEME . '/Section', 'variant' => $section, 'areas' => ['first' => [$content]]];
                     }
 
                     $slug = strtolower(\sprintf('%s-%s-%d', basename($block->name), $variant->name, ++$rendered));

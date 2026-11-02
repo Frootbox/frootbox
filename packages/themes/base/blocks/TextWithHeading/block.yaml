@@ -1,0 +1,7 @@
+title: Text with heading
+description: A heading with formatted text below, for the running text of a page. Narrow keeps lines short and easy to read; wide uses the width of the content. Not for short teasers next to each other, use a section with columns for that.
+group: text
+keywords: [Article, Paragraph, Running text, Content]
+fields:
+  title: { type: headline, label: Heading, placeholder: "What is this part about?" }
+  body: { type: richtext, label: Text }

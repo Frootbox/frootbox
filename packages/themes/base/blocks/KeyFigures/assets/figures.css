@@ -1,0 +1,7 @@
+.base-figures { display: flex; flex-direction: column; gap: var(--space-m); }
+.base-figures__title { margin: 0; font-size: var(--size-2xl); }
+/* As many columns as fit, without media queries. */
+.base-figures__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: var(--space-m); margin: 0; }
+.base-figures__item { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: var(--space-3xs); padding-block-start: var(--space-s); border-block-start: 3px solid var(--color-accent); }
+.base-figures__item dt { color: var(--color-muted); }
+.base-figures__item dd { margin: 0; font-family: var(--font-heading); font-size: var(--size-3xl); font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }

@@ -1,0 +1,8 @@
+.base-quote { margin: 0; padding-inline-start: var(--space-m); border-inline-start: 4px solid var(--color-accent); }
+.base-quote__text { margin: 0; font-family: var(--font-heading); font-size: var(--size-xl); line-height: var(--leading-heading); text-wrap: balance; }
+/* The quotation marks of the language, e.g. „…“ in German and «…» in French. */
+.base-quote__text p { margin: 0; quotes: auto; }
+.base-quote__text p::before { content: open-quote; }
+.base-quote__text p::after { content: close-quote; }
+.base-quote__source { display: flex; flex-wrap: wrap; gap: 0 var(--space-2xs); margin-block-start: var(--space-s); font-size: var(--size-s); color: var(--color-muted); }
+.base-quote__author { color: var(--color-text); font-weight: 600; }

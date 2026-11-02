@@ -1,8 +1,8 @@
 title: Section
-description: Columns with headings, texts, images and buttons. On narrow screens the columns stand one below the other.
+description: Columns with headings, texts, images, buttons and smaller blocks such as quotes, notices or key figures. On narrow screens the columns stand one below the other.
 group: structure
 keywords: [Columns, Grid]
 areas:
-  first: { label: First column, allow: [Heading, Text, Image, Button] }
-  second: { label: Second column, allow: [Heading, Text, Image, Button] }
-  third: { label: Third column, allow: [Heading, Text, Image, Button] }
+  first: { label: First column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures] }
+  second: { label: Second column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures] }
+  third: { label: Third column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures] }

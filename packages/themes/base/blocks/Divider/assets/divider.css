@@ -1,0 +1,5 @@
+.base-divider { margin: 0; padding-block: var(--space-s); border: 0; }
+.base-divider--medium { padding-block: var(--space-l); }
+.base-divider--large { padding-block: var(--space-2xl); }
+/* The line in the middle of its room, from the colour of the lines. */
+hr.base-divider { block-size: 1px; box-sizing: content-box; background: var(--color-line) content-box; }

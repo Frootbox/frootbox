@@ -1,0 +1,26 @@
+{# frootbox
+title: Key figures
+description: Two to four numbers with a short label, e.g. years of experience or customers. Only for figures that are true and say something; not for prices.
+group: callout
+keywords: [Figures, Numbers, Statistics, Facts, Counter]
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "In figures" }
+  items:
+    type: list
+    label: Figures
+    min: 2
+    max: 4
+    start: 3
+    fields:
+      value: { type: headline, label: Figure, maxLength: 12, placeholder: "120+" }
+      label: { type: headline, label: Label, maxLength: 60, placeholder: "What the figure counts" }
+#}
+<div class="base-figures">
+  {{ heading('title', 0, {class: 'base-figures__title'}) }}
+  {# The label first, so screen readers say what is counted before the number. #}
+  <dl class="base-figures__list">
+    {% for item in field('items') %}
+      <div class="base-figures__item"><dt>{{ item.field('label') }}</dt><dd>{{ item.field('value') }}</dd></div>
+    {% endfor %}
+  </dl>
+</div>
