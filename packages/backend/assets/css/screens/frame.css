@@ -55,7 +55,7 @@
         flex: 0 0 var(--fb-size-sidebar);
         height: 100dvh;
         overflow-y: auto;
-        border-right: var(--fb-size-border) solid var(--fb-border);
+        border-inline-end: var(--fb-size-border) solid var(--fb-border);
         border-bottom: 0;
     }
 

@@ -33,7 +33,7 @@
     color: var(--fb-text-muted);
     font-size: var(--fb-text-md);
     font-weight: var(--fb-weight-medium);
-    text-align: left;
+    text-align: start;
     text-decoration: none;
     cursor: pointer;
 }

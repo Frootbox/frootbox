@@ -89,8 +89,8 @@ kbd {
 
 .fb-skip {
     position: absolute;
-    top: var(--fb-space-2);
-    left: var(--fb-space-2);
+    inset-block-start: var(--fb-space-2);
+    inset-inline-start: var(--fb-space-2);
     z-index: var(--fb-layer-dialog);
     padding: var(--fb-space-3) var(--fb-space-4);
     border-radius: var(--fb-radius-md);

@@ -91,7 +91,7 @@ textarea.fb-input {
     display: flex;
     align-items: center;
     padding: 0 var(--fb-space-3);
-    border-right: var(--fb-size-border) solid var(--fb-border);
+    border-inline-end: var(--fb-size-border) solid var(--fb-border);
     background: var(--fb-surface-2);
     color: var(--fb-text-muted);
     font-size: var(--fb-text-md);
@@ -103,14 +103,14 @@ textarea.fb-input {
 }
 
 .fb-select .fb-input {
-    padding-right: var(--fb-space-10);
+    padding-inline-end: var(--fb-space-10);
     appearance: none;
 }
 
 .fb-select .fb-icon {
     position: absolute;
-    top: 50%;
-    right: var(--fb-space-3);
+    inset-block-start: 50%;
+    inset-inline-end: var(--fb-space-3);
     color: var(--fb-text-muted);
     pointer-events: none;
     transform: translateY(-50%);

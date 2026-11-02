@@ -42,7 +42,7 @@
 .fb-design-table td {
     padding: var(--fb-space-2) var(--fb-space-3);
     border-top: var(--fb-size-border) solid var(--fb-border);
-    text-align: left;
+    text-align: start;
     vertical-align: middle;
 }
 

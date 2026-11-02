@@ -1,7 +1,10 @@
 // Values in the CSS of the backend come only from the tokens (decisions
 // 0113, 0114): no colors and no lengths in px, rem or em, except in media
 // queries, where CSS variables do not work. Authors write plain CSS, the
-// layer comes from the folder.
+// layer comes from the folder. Start and end instead of left and right
+// (decision 0133).
+import { MESSAGE, PHYSICAL, logical } from '../../tools/stylelint/logical.mjs';
+
 export default {
     reportNeedlessDisables: true,
     rules: {
@@ -17,7 +20,8 @@ export default {
             '^fb-[a-z0-9]+(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$',
             { message: 'Classes of the backend are "fb-block__element--modifier".' },
         ],
-        'property-disallowed-list': [['/^--/'], { message: 'Define custom properties in tokens.yaml, not in CSS.' }],
+        ...logical,
+        'property-disallowed-list': [['/^--/', ...PHYSICAL], { message: `Define custom properties in tokens.yaml, not in CSS. ${MESSAGE}` }],
         'declaration-property-value-no-unknown': true,
         'property-no-unknown': true,
         'selector-pseudo-class-no-unknown': true,

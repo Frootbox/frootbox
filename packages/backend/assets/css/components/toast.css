@@ -1,9 +1,9 @@
-/* A short confirmation at the bottom right, e.g. after saving. */
+/* A short confirmation at the bottom end, e.g. after saving. */
 
 .fb-toast {
     position: fixed;
-    right: var(--fb-space-6);
-    bottom: var(--fb-space-6);
+    inset-inline-end: var(--fb-space-6);
+    inset-block-end: var(--fb-space-6);
     z-index: var(--fb-layer-toast);
     display: flex;
     gap: var(--fb-space-3);
