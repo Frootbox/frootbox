@@ -5,8 +5,62 @@
 # Each subpage shows one block at the three places of decision 0163: in
 # the main area, in one of two columns and in a narrow column of a third.
 # The browser tests take screenshots of them and check them with axe.
-# Needs the language de.
-
+# Needs the language de. The images in media/ are abstract colour
+# gradients made for this file, under the licence of the theme.
+- upload:
+    file: media/harbour.jpg
+  as: file_harbour
+- media.create:
+    upload: '${file_harbour.token}'
+    texts:
+      de:
+        alt: 'Orangefarbener Lichtkreis auf tiefblauem Grund'
+  as: img_harbour
+- upload:
+    file: media/roastery.jpg
+  as: file_roastery
+- media.create:
+    upload: '${file_roastery.token}'
+    texts:
+      de:
+        alt: 'Goldenes Licht auf dunklem Rotbraun'
+  as: img_roastery
+- upload:
+    file: media/beans.jpg
+  as: file_beans
+- media.create:
+    upload: '${file_beans.token}'
+    texts:
+      de:
+        alt: 'Warmer Verlauf von Braun zu Creme'
+  as: img_beans
+- upload:
+    file: media/tasting.jpg
+  as: file_tasting
+- media.create:
+    upload: '${file_tasting.token}'
+    texts:
+      de:
+        alt: 'Blauer Kreis auf grünem Verlauf'
+  as: img_tasting
+- upload:
+    file: media/portrait.jpg
+  as: file_portrait
+- media.create:
+    upload: '${file_portrait.token}'
+    texts:
+      de:
+        alt: 'Gelbes Licht auf Pink und Violett, hochkant'
+  as: img_portrait
+- upload:
+    file: media/square.jpg
+  as: file_square
+- media.create:
+    upload: '${file_square.token}'
+    texts:
+      de:
+        alt: 'Orangefarbener Kreis auf Türkis'
+  as: img_square
 - page.create:
     layout: frootbox/theme-base/Start
     translations:
@@ -15,7 +69,7 @@
         content:
           areas:
             main:
-              - { block: frootbox/theme-base/Section, variant: Default, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: heading, size: auto }, fields: { text: 'Die Bibliothek des Basis-Themes' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Jede Unterseite zeigt einen Block an drei Stellen: über die ganze Breite, in einer von zwei Spalten und in einer schmalen Spalte.' }] }] } } }, { block: frootbox/theme-base/Button, options: { style: primary }, fields: { link: { url: /heading, text: 'Zur Überschrift' } } }] } }
+              - { block: frootbox/theme-base/Hero, variant: Background, options: { height: medium }, fields: { title: 'Die Bibliothek des Basis-Themes', text: 'Jede Unterseite zeigt einen Block an drei Stellen: über die ganze Breite, in einer von zwei Spalten und in einer schmalen Spalte.', primary: { url: /heading, text: 'Zur Überschrift' }, image: { media: '${img_harbour.id}' } } }
               - { block: frootbox/theme-base/Section, variant: Three, areas: { first: [{ block: frootbox/theme-base/Heading, options: { role: sub, size: auto }, fields: { text: Einfach } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }], second: [{ block: frootbox/theme-base/Heading, options: { role: sub, size: auto }, fields: { text: Barrierefrei } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }], third: [{ block: frootbox/theme-base/Heading, options: { role: sub, size: auto }, fields: { text: 'In jeder Sprache' } }, { block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] } } }] } }
               - { block: frootbox/theme-base/KeyFigures, fields: { title: 'Bohnenglück in Zahlen', items: [{ value: '12', label: 'Jahre Röstererfahrung' }, { value: '4.800', label: 'Kunden im letzten Jahr' }, { value: '9', label: 'Sorten im Regal' }] } }
               - { block: frootbox/theme-base/CallToAction, options: { background: primary }, fields: { title: 'Lust auf eine Verkostung?', text: 'Jeden ersten Freitag im Monat probieren wir neue Sorten, Du bist herzlich eingeladen.', link: { url: 'https://example.org/', text: 'Platz reservieren' } } }
@@ -203,6 +257,92 @@
               - { block: frootbox/theme-base/Section, variant: OneTwo, areas: { first: [{ block: frootbox/theme-base/KeyFigures, fields: { title: 'Bohnenglück in Zahlen', items: [{ value: '12', label: 'Jahre Röstererfahrung' }, { value: '4.800', label: 'Kunden im letzten Jahr' }, { value: '9', label: 'Sorten im Regal' }] } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
   as: key_figures
 - page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Hero
+        slug: hero
+        content:
+          fields:
+            title: Hero
+            intro: 'Zentriert, mit Bild und mit Bild dahinter.'
+          areas:
+            main:
+              - { block: frootbox/theme-base/Hero, variant: Default, options: { background: surface }, fields: { title: 'Kaffee, frisch geröstet in Hamburg', text: 'Wir rösten in kleinen Mengen und schicken Deinen Kaffee am Tag danach los.', primary: { url: 'https://example.org/', text: 'Zum Shop' }, secondary: { url: 'https://example.org/', text: 'Über uns' } } }
+              - { block: frootbox/theme-base/Hero, variant: Default, options: { background: primary }, fields: { title: 'Kaffee, frisch geröstet in Hamburg', text: 'Wir rösten in kleinen Mengen und schicken Deinen Kaffee am Tag danach los.', primary: { url: 'https://example.org/', text: 'Zum Shop' }, secondary: { url: 'https://example.org/', text: 'Über uns' } } }
+              - { block: frootbox/theme-base/Hero, variant: Split, options: { image: end }, fields: { title: 'Kaffee, frisch geröstet in Hamburg', text: 'Wir rösten in kleinen Mengen und schicken Deinen Kaffee am Tag danach los.', primary: { url: 'https://example.org/', text: 'Zum Shop' }, secondary: { url: 'https://example.org/', text: 'Über uns' }, image: { media: '${img_roastery.id}' } } }
+              - { block: frootbox/theme-base/Hero, variant: Split, options: { image: start }, fields: { title: 'Kaffee, frisch geröstet in Hamburg', text: 'Wir rösten in kleinen Mengen und schicken Deinen Kaffee am Tag danach los.', primary: { url: 'https://example.org/', text: 'Zum Shop' }, secondary: { url: 'https://example.org/', text: 'Über uns' }, image: { media: '${img_square.id}' } } }
+              - { block: frootbox/theme-base/Hero, variant: Background, options: { height: medium }, fields: { title: 'Kaffee, frisch geröstet in Hamburg', text: 'Wir rösten in kleinen Mengen und schicken Deinen Kaffee am Tag danach los.', primary: { url: 'https://example.org/', text: 'Zum Shop' }, secondary: { url: 'https://example.org/', text: 'Über uns' }, image: { media: '${img_harbour.id}' } } }
+  as: hero
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: 'Bild mit Text'
+        slug: image-with-text
+        content:
+          fields:
+            title: 'Bild mit Text'
+            intro: 'Bild am Anfang und am Ende.'
+          areas:
+            main:
+              - { block: frootbox/theme-base/ImageWithText, variant: Default, fields: { image: { media: '${img_beans.id}' }, title: 'Geröstet am Hafen', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] }, link: { url: 'https://example.org/', text: 'Mehr über die Rösterei' } } }
+              - { block: frootbox/theme-base/ImageWithText, variant: End, fields: { image: { media: '${img_tasting.id}' }, title: 'Geröstet am Hafen', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] }, link: { url: 'https://example.org/', text: 'Mehr über die Rösterei' } } }
+              - { block: frootbox/theme-base/Section, variant: Two, areas: { first: [{ block: frootbox/theme-base/ImageWithText, variant: Default, fields: { image: { media: '${img_beans.id}' }, title: 'Geröstet am Hafen', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] }, link: { url: 'https://example.org/', text: 'Mehr über die Rösterei' } } }, { block: frootbox/theme-base/ImageWithText, variant: End, fields: { image: { media: '${img_tasting.id}' }, title: 'Geröstet am Hafen', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] }, link: { url: 'https://example.org/', text: 'Mehr über die Rösterei' } } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: OneTwo, areas: { first: [{ block: frootbox/theme-base/ImageWithText, variant: Default, fields: { image: { media: '${img_beans.id}' }, title: 'Geröstet am Hafen', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] }, link: { url: 'https://example.org/', text: 'Mehr über die Rösterei' } } }, { block: frootbox/theme-base/ImageWithText, variant: End, fields: { image: { media: '${img_tasting.id}' }, title: 'Geröstet am Hafen', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm.' }] }] }, link: { url: 'https://example.org/', text: 'Mehr über die Rösterei' } } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+  as: image_with_text
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Galerie
+        slug: gallery
+        content:
+          fields:
+            title: Galerie
+            intro: 'Ein Raster, ein Klick zeigt das Bild groß.'
+          areas:
+            main:
+              - { block: frootbox/theme-base/Gallery, fields: { title: Eindrücke, items: [{ image: { media: '${img_harbour.id}' }, caption: 'Am Hafen' }, { image: { media: '${img_roastery.id}' }, caption: 'In der Rösterei' }, { image: { media: '${img_beans.id}' }, caption: '' }, { image: { media: '${img_tasting.id}' }, caption: Verkostung }, { image: { media: '${img_portrait.id}' }, caption: '' }, { image: { media: '${img_square.id}' }, caption: '' }] } }
+              - { block: frootbox/theme-base/Section, variant: Two, areas: { first: [{ block: frootbox/theme-base/Gallery, fields: { title: Eindrücke, items: [{ image: { media: '${img_harbour.id}' }, caption: 'Am Hafen' }, { image: { media: '${img_roastery.id}' }, caption: 'In der Rösterei' }, { image: { media: '${img_beans.id}' }, caption: '' }, { image: { media: '${img_tasting.id}' }, caption: Verkostung }, { image: { media: '${img_portrait.id}' }, caption: '' }, { image: { media: '${img_square.id}' }, caption: '' }] } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: OneTwo, areas: { first: [{ block: frootbox/theme-base/Gallery, fields: { title: Eindrücke, items: [{ image: { media: '${img_harbour.id}' }, caption: 'Am Hafen' }, { image: { media: '${img_roastery.id}' }, caption: 'In der Rösterei' }, { image: { media: '${img_beans.id}' }, caption: '' }, { image: { media: '${img_tasting.id}' }, caption: Verkostung }, { image: { media: '${img_portrait.id}' }, caption: '' }, { image: { media: '${img_square.id}' }, caption: '' }] } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+  as: gallery
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Bildslider
+        slug: slider
+        content:
+          fields:
+            title: Bildslider
+            intro: 'Zum Wischen und Blättern, läuft nie von selbst.'
+          areas:
+            main:
+              - { block: frootbox/theme-base/Slider, fields: { title: 'Ein Blick hinein', items: [{ image: { media: '${img_roastery.id}' }, caption: 'Der Röster am Morgen' }, { image: { media: '${img_beans.id}' }, caption: '' }, { image: { media: '${img_tasting.id}' }, caption: 'Verkostung am Freitag' }, { image: { media: '${img_harbour.id}' }, caption: '' }] } }
+              - { block: frootbox/theme-base/Section, variant: Two, areas: { first: [{ block: frootbox/theme-base/Slider, fields: { title: 'Ein Blick hinein', items: [{ image: { media: '${img_roastery.id}' }, caption: 'Der Röster am Morgen' }, { image: { media: '${img_beans.id}' }, caption: '' }, { image: { media: '${img_tasting.id}' }, caption: 'Verkostung am Freitag' }, { image: { media: '${img_harbour.id}' }, caption: '' }] } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+              - { block: frootbox/theme-base/Section, variant: OneTwo, areas: { first: [{ block: frootbox/theme-base/Slider, fields: { title: 'Ein Blick hinein', items: [{ image: { media: '${img_roastery.id}' }, caption: 'Der Röster am Morgen' }, { image: { media: '${img_beans.id}' }, caption: '' }, { image: { media: '${img_tasting.id}' }, caption: 'Verkostung am Freitag' }, { image: { media: '${img_harbour.id}' }, caption: '' }] } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
+  as: slider
+- page.create:
+    layout: frootbox/theme-base/Start
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Seitenkopf
+        slug: page-header
+        content:
+          areas:
+            main:
+              - { block: frootbox/theme-base/PageHeader, options: { background: none }, fields: { title: 'Über die Rösterei', intro: 'Seit 2013 rösten wir am Hafen, mit Bohnen von Höfen, die wir kennen.' } }
+              - { block: frootbox/theme-base/TextWithHeading, variant: Default, fields: { title: 'Frisch geröstet in Hamburg', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm. Ein zweiter Satz, damit die Zeilen umbrechen und das Maß sichtbar wird.' }] }, { type: bulletList, content: [{ type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ganze Bohnen oder gemahlen' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Versand jeden Dienstag' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ab 30 Euro ohne Versandkosten' }] }] }] }] } } }
+              - { block: frootbox/theme-base/PageHeader, options: { background: surface }, fields: { title: 'Über die Rösterei', intro: 'Seit 2013 rösten wir am Hafen, mit Bohnen von Höfen, die wir kennen.' } }
+              - { block: frootbox/theme-base/TextWithHeading, variant: Default, fields: { title: 'Frisch geröstet in Hamburg', body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Frootbox setzt Seiten aus fertig gestalteten Blöcken zusammen. Jeder Block passt sich dem Platz an, den er bekommt, nicht dem Bildschirm. Ein zweiter Satz, damit die Zeilen umbrechen und das Maß sichtbar wird.' }] }, { type: bulletList, content: [{ type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ganze Bohnen oder gemahlen' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Versand jeden Dienstag' }] }] }, { type: listItem, content: [{ type: paragraph, content: [{ type: text, text: 'Ab 30 Euro ohne Versandkosten' }] }] }] }] } } }
+  as: page_header
+- page.create:
     layout: frootbox/theme-base/Landing
     parentId: '${start.id}'
     translations:
@@ -241,6 +381,11 @@
       - '${divider.id}'
       - '${call_to_action.id}'
       - '${key_figures.id}'
+      - '${hero.id}'
+      - '${image_with_text.id}'
+      - '${gallery.id}'
+      - '${slider.id}'
+      - '${page_header.id}'
       - '${landing.id}'
       - '${imprint.id}'
 - navigation.update:
@@ -269,7 +414,16 @@
           children:
             -
               type: target
+              target: 'page:${hero.id}'
+            -
+              type: target
+              target: 'page:${page_header.id}'
+            -
+              type: target
               target: 'page:${text_with_heading.id}'
+            -
+              type: target
+              target: 'page:${image_with_text.id}'
             -
               type: target
               target: 'page:${quote.id}'
@@ -285,6 +439,12 @@
             -
               type: target
               target: 'page:${key_figures.id}'
+            -
+              type: target
+              target: 'page:${gallery.id}'
+            -
+              type: target
+              target: 'page:${slider.id}'
         -
           type: target
           target: 'page:${landing.id}'

@@ -1,0 +1,13 @@
+/* Like the head of the layout Page, for layouts without one. */
+.base-page-header__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  inline-size: min(100% - 2 * var(--gutter), var(--width));
+  margin-inline: auto;
+  padding-block: var(--space-xl) var(--space-l);
+}
+.base-page-header__title { margin: 0; max-inline-size: 24ch; font-size: var(--size-4xl); }
+.base-page-header__intro { margin: 0; max-inline-size: var(--width-narrow); color: var(--color-muted); font-size: var(--size-l); }
+.base-page-header--surface { background: var(--color-surface); }
+.base-page-header--surface .base-page-header__inner { padding-block: var(--space-xl); }

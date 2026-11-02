@@ -51,7 +51,7 @@ final class LibraryTest extends NotesTestCase
     ];
 
     /** Blocks that only stand in the main area, all others also go into the columns of a section. */
-    private const array MAIN_AREA_ONLY = ['Section'];
+    private const array MAIN_AREA_ONLY = ['Hero', 'PageHeader', 'Section'];
 
     public function testPassesTheChecksOfTheBlocks(): void
     {
@@ -71,7 +71,7 @@ final class LibraryTest extends NotesTestCase
 
         self::assertSame(0, $console->run(new ArrayInput(['command' => 'seed', 'file' => self::THEME . ':demo/library.yaml']), $output), $output->fetch());
 
-        foreach (['/', '/heading', '/text', '/button', '/section', '/text-with-heading', '/quote', '/notice', '/divider', '/call-to-action', '/key-figures', '/aktion', '/impressum'] as $path) {
+        foreach (['/', '/heading', '/text', '/button', '/section', '/text-with-heading', '/quote', '/notice', '/divider', '/call-to-action', '/key-figures', '/hero', '/page-header', '/image-with-text', '/gallery', '/slider', '/aktion', '/impressum'] as $path) {
             $this->get(Urls::class)->clear();
             $this->get(PageOutline::class)->clear();
             $response = $this->get(PageHandler::class)->handle(new ServerRequest('GET', 'https://example.org' . $path));

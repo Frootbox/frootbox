@@ -1,0 +1,60 @@
+/* The opening of a page across the full width, its content at the width of the content. */
+.base-hero { container-type: inline-size; position: relative; }
+.base-hero__inner {
+  display: grid;
+  gap: var(--space-l);
+  align-items: center;
+  inline-size: min(100% - 2 * var(--gutter), var(--width));
+  margin-inline: auto;
+  padding-block: var(--space-2xl);
+}
+.base-hero__text { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-s); }
+.base-hero__title { margin: 0; font-size: var(--size-4xl); line-height: 1.1; }
+.base-hero__lead { margin: 0; max-inline-size: 38em; font-size: var(--size-l); }
+.base-hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin: var(--space-xs) 0 0; }
+.base-hero__actions a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  padding: var(--space-2xs) var(--space-m);
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.base-hero__actions a:hover { text-decoration: underline; text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+.base-hero__primary a { background: var(--color-primary); color: var(--color-primary-contrast); }
+.base-hero__secondary a { color: inherit; box-shadow: inset 0 0 0 2px currentColor; }
+.base-hero :is(picture, img) { display: block; inline-size: 100%; }
+.base-hero img { block-size: auto; }
+
+/* Centred, on a calm or a coloured background. */
+.base-hero--centred .base-hero__text { align-items: center; margin-inline: auto; text-align: center; }
+.base-hero--centred .base-hero__actions { justify-content: center; }
+.base-hero--surface { background: var(--color-surface); }
+.base-hero--primary { background: var(--color-primary); color: var(--color-primary-contrast); }
+.base-hero--primary .base-hero__primary a { background: var(--color-primary-contrast); color: var(--color-primary); }
+
+/* With image: above the text when narrow, beside it where there is room. */
+.base-hero--split .base-hero__media { order: -1; }
+.base-hero--split .base-hero__title { font-size: var(--size-3xl); }
+/* Any image in the same shape; the focus point keeps its place (decision 0173). */
+.base-hero--split img { aspect-ratio: 4 / 3; border-radius: var(--radius); object-fit: cover; }
+@container (min-width: 48rem) {
+  .base-hero--split .base-hero__inner { grid-template-columns: 1fr 1fr; gap: var(--space-xl); }
+  .base-hero--image-end .base-hero__media { order: 1; }
+}
+
+/* Image behind: a dark layer keeps the text readable on any image. */
+.base-hero--background { display: grid; align-items: end; background: var(--color-dark); color: var(--color-bg); }
+.base-hero--background .base-hero__media { position: absolute; inset: 0; }
+.base-hero--background .base-hero__media :is(picture, img) { block-size: 100%; }
+.base-hero--background .base-hero__media img { object-fit: cover; }
+.base-hero--background .base-hero__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, color-mix(in srgb, var(--color-dark) 85%, transparent), color-mix(in srgb, var(--color-dark) 40%, transparent));
+}
+.base-hero--background .base-hero__inner { position: relative; align-content: end; min-block-size: min(60vh, 32rem); }
+.base-hero--large .base-hero__inner { min-block-size: min(85vh, 46rem); }
+.base-hero:is(.base-hero--primary, .base-hero--background) :focus-visible { outline-color: currentColor; }

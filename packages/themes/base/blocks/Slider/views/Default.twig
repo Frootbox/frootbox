@@ -1,0 +1,39 @@
+{# frootbox
+title: Image slider
+description: Images one after the other in a row, to swipe through or browse with buttons, each with a caption if you like. It never moves on by itself. Not for content people must see, as later images are seen less; for images side by side use the gallery.
+group: media
+keywords: [Slider, Carousel, Slideshow, Images, Photos]
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "A look inside" }
+  items:
+    type: list
+    label: Images
+    min: 2
+    max: 12
+    start: 3
+    fields:
+      image: { type: image, label: Image, ratio: "16:9", sizes: "(min-width: 72rem) 72rem, 100vw" }
+      caption: { type: text, label: Caption, optional: true, maxLength: 200 }
+#}
+<base-carousel class="base-slider">
+  {{ heading('title', 0, {class: 'base-slider__title'}) }}
+  {# Without carousel.js the row can be swiped and scrolled with the arrow keys. #}
+  <ul class="base-slider__track" data-carousel-track tabindex="0" aria-label="{{ t('Images') }}">
+    {% for item in field('items') %}
+      <li class="base-slider__slide">
+        <figure class="base-slider__figure">
+          {{ item.field('image') }}
+          <figcaption class="base-slider__caption">{{ item.field('caption') }}</figcaption>
+        </figure>
+      </li>
+    {% endfor %}
+  </ul>
+  <div class="base-slider__controls" data-carousel-controls hidden>
+    <button type="button" class="base-slider__button" data-carousel-previous aria-label="{{ t('Previous image') }}">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button type="button" class="base-slider__button" data-carousel-next aria-label="{{ t('Next image') }}">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</base-carousel>

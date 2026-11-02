@@ -1,0 +1,20 @@
+{# frootbox
+title: With image
+description: The text on one side, the image on the other. On narrow screens the image stands above the text.
+options:
+  image:
+    type: choice
+    label: Image
+    choices: { end: At the end, start: At the start }
+    default: end
+#}
+<div class="base-hero base-full base-hero--split base-hero--image-{{ options.image }}">
+  <div class="base-hero__inner">
+    <div class="base-hero__text">
+      {{ heading('title', 0, {class: 'base-hero__title'}) }}
+      <p class="base-hero__lead">{{ field('text') }}</p>
+      <p class="base-hero__actions"><span class="base-hero__primary">{{ field('primary') }}</span><span class="base-hero__secondary">{{ field('secondary') }}</span></p>
+    </div>
+    <div class="base-hero__media">{{ field('image') }}</div>
+  </div>
+</div>

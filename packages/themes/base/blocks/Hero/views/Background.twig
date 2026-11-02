@@ -1,0 +1,20 @@
+{# frootbox
+title: Image behind
+description: The image fills the area, the text stands on a dark layer above it, so it stays readable on any image.
+options:
+  height:
+    type: choice
+    label: Height
+    choices: { medium: Medium, large: Large }
+    default: medium
+#}
+<div class="base-hero base-full base-hero--background base-hero--{{ options.height }}">
+  <div class="base-hero__media">{{ field('image') }}</div>
+  <div class="base-hero__inner">
+    <div class="base-hero__text">
+      {{ heading('title', 0, {class: 'base-hero__title'}) }}
+      <p class="base-hero__lead">{{ field('text') }}</p>
+      <p class="base-hero__actions"><span class="base-hero__primary">{{ field('primary') }}</span><span class="base-hero__secondary">{{ field('secondary') }}</span></p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+{# frootbox
+title: Centred
+description: Heading, text and buttons in the middle, without an image.
+options:
+  background:
+    type: choice
+    label: Background
+    choices: { surface: Surface, primary: Main colour, none: None }
+    default: surface
+#}
+<div class="base-hero base-full base-hero--centred base-hero--{{ options.background }}">
+  <div class="base-hero__inner">
+    <div class="base-hero__text">
+      {{ heading('title', 0, {class: 'base-hero__title'}) }}
+      <p class="base-hero__lead">{{ field('text') }}</p>
+      <p class="base-hero__actions"><span class="base-hero__primary">{{ field('primary') }}</span><span class="base-hero__secondary">{{ field('secondary') }}</span></p>
+    </div>
+  </div>
+</div>

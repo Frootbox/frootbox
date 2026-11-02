@@ -1,0 +1,44 @@
+{# frootbox
+title: Gallery
+description: Several images in an even grid, e.g. impressions of a place or an event. A click shows an image large, with the others to browse. Not for a single image, use the image widget; to show images one after the other in a row use the image slider.
+group: media
+keywords: [Images, Photos, Pictures, Grid, Lightbox, Album]
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "Impressions" }
+  items:
+    type: list
+    label: Images
+    min: 2
+    max: 24
+    start: 3
+    fields:
+      image: { type: image, label: Image, sizes: "(min-width: 72rem) 18rem, (min-width: 30rem) 33vw, 50vw" }
+      caption: { type: text, label: Caption, optional: true, maxLength: 200 }
+#}
+<base-gallery class="base-gallery">
+  {{ heading('title', 0, {class: 'base-gallery__title'}) }}
+  <ul class="base-gallery__list">
+    {% for item in field('items') %}
+      <li class="base-gallery__item">
+        <figure class="base-gallery__figure">
+          {{ item.field('image') }}
+          <figcaption class="base-gallery__caption">{{ item.field('caption') }}</figcaption>
+        </figure>
+      </li>
+    {% endfor %}
+  </ul>
+  {# Opened by gallery.js; without it the images stay in the grid. #}
+  <dialog class="base-gallery__dialog" aria-label="{{ t('Images') }}" data-larger="{{ t('Show larger') }}">
+    <div class="base-gallery__stage"></div>
+    <p class="base-gallery__count"></p>
+    <button type="button" class="base-gallery__button base-gallery__button--close" data-close aria-label="{{ t('Close') }}">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <button type="button" class="base-gallery__button base-gallery__button--previous" data-previous aria-label="{{ t('Previous image') }}">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button type="button" class="base-gallery__button base-gallery__button--next" data-next aria-label="{{ t('Next image') }}">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </dialog>
+</base-gallery>

@@ -1,0 +1,38 @@
+/* One image per width, to swipe; carousel.js adds the buttons. */
+.base-slider { display: flex; flex-direction: column; gap: var(--space-s); }
+.base-slider__title { margin: 0; font-size: var(--size-2xl); }
+.base-slider__track {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  list-style: none;
+  border-radius: var(--radius);
+}
+.base-slider__slide { flex: 0 0 100%; scroll-snap-align: start; }
+/* With the buttons the scrollbar is not needed, it would run over the captions. */
+.base-slider[data-ready] .base-slider__track { scrollbar-width: none; }
+.base-slider__figure { display: flex; flex-direction: column; gap: var(--space-2xs); margin: 0; }
+.base-slider__figure :is(picture, img) { display: block; inline-size: 100%; block-size: auto; }
+.base-slider__caption { padding-inline: var(--space-3xs); color: var(--color-muted); font-size: var(--size-s); }
+.base-slider__controls { display: flex; justify-content: flex-end; gap: var(--space-2xs); }
+.base-slider__controls[hidden] { display: none; }
+.base-slider__button {
+  display: grid;
+  place-items: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  padding: 0;
+  border: var(--border);
+  border-color: var(--color-muted);
+  border-radius: 50%;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+.base-slider__button:hover:not(:disabled) { background: var(--color-surface); }
+.base-slider__button:disabled { opacity: 0.4; cursor: default; }
+/* The arrows point the way the images run. */
+.base-slider__button:dir(rtl) svg { scale: -1 1; }

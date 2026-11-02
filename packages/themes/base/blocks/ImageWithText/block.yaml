@@ -1,0 +1,9 @@
+title: Image with text
+description: An image beside a heading, text and an optional link, e.g. to present an offer or a place. Several in a row can alternate the side of the image. On narrow room the image stands above the text. Not for the opening of a page, use the hero for that.
+group: media
+keywords: [Media, Picture, Photo, Teaser, Feature, Split]
+fields:
+  image: { type: image, label: Image, ratio: "3:2", sizes: "(min-width: 72rem) 36rem, (min-width: 48rem) 50vw, 100vw" }
+  title: { type: headline, label: Heading, maxLength: 100, placeholder: "What the image shows" }
+  body: { type: richtext, label: Text }
+  link: { type: link, label: Link, optional: true }

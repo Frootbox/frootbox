@@ -1,0 +1,14 @@
+{# frootbox
+title: Image at the end
+description: The image after the text, on the right in left-to-right languages.
+#}
+<div class="base-image-text base-image-text--end">
+  <div class="base-image-text__inner">
+    <div class="base-image-text__media">{{ field('image') }}</div>
+    <div class="base-image-text__text">
+      {{ heading('title', 0, {class: 'base-image-text__title'}) }}
+      <div class="base-image-text__body">{{ field('body') }}</div>
+      <p class="base-image-text__link">{{ field('link') }}</p>
+    </div>
+  </div>
+</div>

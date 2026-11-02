@@ -1,0 +1,17 @@
+/* The image above the text on narrow room, beside it from 40rem. */
+.base-image-text { container-type: inline-size; }
+.base-image-text__inner { display: grid; gap: var(--space-m); align-items: center; }
+.base-image-text__inner > * { min-inline-size: 0; }
+.base-image-text__media :is(picture, img) { display: block; inline-size: 100%; block-size: auto; }
+.base-image-text__media img { border-radius: var(--radius); }
+.base-image-text__text { display: flex; flex-direction: column; gap: var(--space-s); }
+.base-image-text__title { margin: 0; font-size: var(--size-2xl); }
+.base-image-text__body :is(p, ul, ol, blockquote) { margin-block: 0 0.75em; }
+.base-image-text__body > :last-child { margin-block-end: 0; }
+.base-image-text__body :is(ul, ol) { padding-inline-start: 1.25em; }
+.base-image-text__link { margin: 0; font-weight: 600; }
+
+@container (min-width: 40rem) {
+  .base-image-text__inner { grid-template-columns: 1fr 1fr; gap: var(--space-xl); }
+  .base-image-text--end .base-image-text__media { order: 1; }
+}

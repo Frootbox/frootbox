@@ -1,0 +1,21 @@
+{# frootbox
+title: Page header
+description: Heading and introduction at the top of a page whose layout has no head of its own, such as the start page or a landing page. Not on pages with the layout Page, it brings its own; for an opening with buttons or an image use the hero.
+group: header
+keywords: [Title, Introduction, Header, Heading]
+options:
+  background:
+    type: choice
+    label: Background
+    choices: { none: None, surface: Surface }
+    default: none
+fields:
+  title: { type: headline, label: Heading, maxLength: 100, placeholder: "What is this page about?" }
+  intro: { type: text, label: Introduction, optional: true, multiline: true, maxLength: 400, placeholder: "A few sentences that lead into the page" }
+#}
+<header class="base-page-header base-full base-page-header--{{ options.background }}">
+  <div class="base-page-header__inner">
+    {{ heading('title', 0, {class: 'base-page-header__title'}) }}
+    <p class="base-page-header__intro">{{ field('intro') }}</p>
+  </div>
+</header>
