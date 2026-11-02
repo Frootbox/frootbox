@@ -8,19 +8,22 @@
         "frootbox/backend": "^0.1@dev",
         "frootbox/core": "^0.1@dev",
         "frootbox/database": "^0.1@dev",
+        "frootbox/news": "^0.1@dev",
         "frootbox/rich-text": "^0.1@dev",
         "frootbox/theme-base": "^0.1@dev",
         "frootbox/theme-bohnenglueck": "^0.1@dev"
     },
     "repositories": [
         { "type": "path", "url": "packages/*", "options": { "symlink": true } },
-        { "type": "path", "url": "packages/themes/*", "options": { "symlink": true } }
+        { "type": "path", "url": "packages/themes/*", "options": { "symlink": true } },
+        { "type": "path", "url": "packages/modules/*", "options": { "symlink": true } }
     ],
     "autoload-dev": {
         "psr-4": {
             "Frootbox\\Backend\\Tests\\": "packages/backend/tests/",
             "Frootbox\\Core\\Tests\\": "packages/core/tests/",
             "Frootbox\\Database\\Tests\\": "packages/database/tests/",
+            "Frootbox\\News\\Tests\\": "packages/modules/news/tests/",
             "Frootbox\\RichText\\Tests\\": "packages/rich-text/tests/",
             "Frootbox\\ThemeBase\\Tests\\": "packages/themes/base/tests/",
             "Frootbox\\Tools\\PHPStan\\": "tools/phpstan/src/",

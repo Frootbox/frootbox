@@ -1,0 +1,39 @@
+{
+    "name": "frootbox/news",
+    "description": "News for the Frootbox CMS: articles with drafts, categories, a list with an address for each article, the newest articles as teasers and an RSS feed",
+    "type": "frootbox-extension",
+    "license": "MIT",
+    "keywords": [
+        "cms",
+        "frootbox",
+        "news",
+        "blog"
+    ],
+    "require": {
+        "php": ">=8.5",
+        "frootbox/core": "^0.1",
+        "frootbox/database": "^0.1",
+        "frootbox/rich-text": "^0.1",
+        "psr/http-message": "^2.0",
+        "psr/http-server-handler": "^1.0"
+    },
+    "suggest": {
+        "frootbox/backend": "Screens for the articles and categories"
+    },
+    "autoload": {
+        "psr-4": {
+            "Frootbox\\News\\": "src/",
+            "Frootbox\\News\\Migrations\\": "migrations/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Frootbox\\News\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    }
+}

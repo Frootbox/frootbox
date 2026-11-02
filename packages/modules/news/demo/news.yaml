@@ -1,0 +1,100 @@
+# Demo news in German and English, for a website of the base theme or a
+# child theme with a start page, e.g. after the demo of Bohnenglück:
+#
+#     php bin/frootbox seed frootbox/news:demo/news.yaml
+#
+# A page "Aktuelles" below the start page lists the articles; each one
+# gets its address below it, e.g. /aktuelles/neue-ernte-aus-peru.
+
+- page.tree: {}
+  as: tree
+
+- frootbox/news/category.create:
+    translations:
+      de: { title: Rösterei }
+      en: { title: Roastery }
+  as: roastery
+- frootbox/news/category.create:
+    translations:
+      de: { title: Termine }
+      en: { title: Events }
+  as: events
+
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${tree.0.id}'
+    translations:
+      de:
+        title: Aktuelles
+        content:
+          fields:
+            title: Aktuelles
+            intro: Neues aus der Rösterei, Termine und frische Sorten.
+          areas:
+            main:
+              - block: frootbox/news/ArticleList
+      en:
+        title: News
+        content:
+          fields:
+            title: News
+            intro: News from the roastery, dates and fresh coffees.
+          areas:
+            main:
+              - block: frootbox/news/ArticleList
+  as: news
+- page.publish: { ids: ['${news.id}'] }
+
+- frootbox/news/article.create:
+    date: '2026-09-15T09:00:00+02:00'
+    categories: ['${roastery.id}']
+    translations:
+      de:
+        title: Neue Ernte aus Peru
+        teaser: Die Bohnen aus Cajamarca sind da, hell geröstet, mit Noten von Kakao und roter Beere.
+        text:
+          type: doc
+          content:
+            - { type: paragraph, content: [{ type: text, text: 'Jedes Jahr im September kommt die neue Ernte von der Kooperative in Cajamarca. Wir rösten sie hell, damit die Frucht bleibt.' }] }
+            - { type: paragraph, content: [{ type: text, text: 'Ab sofort im Laden am Hafen und im Abo.' }] }
+      en:
+        title: New harvest from Peru
+        teaser: The beans from Cajamarca have arrived, lightly roasted, with notes of cocoa and red berry.
+        text:
+          type: doc
+          content:
+            - { type: paragraph, content: [{ type: text, text: 'Every September the new harvest arrives from the cooperative in Cajamarca. We roast it lightly so the fruit stays.' }] }
+            - { type: paragraph, content: [{ type: text, text: 'Now in the shop by the harbour and in the subscription.' }] }
+  as: peru
+- frootbox/news/article.create:
+    date: '2026-10-04T10:00:00+02:00'
+    categories: ['${events.id}']
+    translations:
+      de:
+        title: Röstkurs im November
+        teaser: Vier Stunden an der Röstmaschine, mit eigener Charge zum Mitnehmen.
+        text:
+          type: doc
+          content:
+            - { type: paragraph, content: [{ type: text, text: 'Am 22. November zeigen wir, wie aus grünen Bohnen Kaffee wird. Acht Plätze, Anmeldung im Laden.' }] }
+      en:
+        title: Roasting course in November
+        teaser: Four hours at the roaster, with your own batch to take home.
+        text:
+          type: doc
+          content:
+            - { type: paragraph, content: [{ type: text, text: 'On 22 November we show how green beans become coffee. Eight places, sign up in the shop.' }] }
+  as: course
+- frootbox/news/article.create:
+    date: '2026-10-28T08:30:00+01:00'
+    categories: ['${roastery.id}', '${events.id}']
+    translations:
+      de:
+        title: Längere Öffnungszeiten im Advent
+        teaser: Im Dezember sind wir auch sonntags für Euch da.
+        text:
+          type: doc
+          content:
+            - { type: paragraph, content: [{ type: text, text: 'Vom 1. bis 23. Dezember öffnen wir auch sonntags von 11 bis 17 Uhr.' }] }
+  as: advent
+- frootbox/news/article.publish: { ids: ['${peru.id}', '${course.id}', '${advent.id}'] }

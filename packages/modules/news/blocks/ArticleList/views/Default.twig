@@ -1,0 +1,65 @@
+{# frootbox
+title: News
+description: The news articles, newest first, page by page and by category. Each article gets its own address below the first page with this block; there the block shows the article.
+group: list
+keywords: [News, Blog, Articles, Press, Posts]
+query: [page, category, year]
+options:
+  perPage: { type: number, label: Articles per page, default: 10, min: 1, max: 50 }
+  images: { type: boolean, label: Images, default: true }
+  categories: { type: boolean, label: Filter by category, default: true }
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "News" }
+#}
+{% if article is defined %}
+  <article class="news-article">
+    <header class="news-article__head">
+      <p class="news-meta">
+        <time datetime="{{ article.date }}">{{ article.dateText }}</time>
+        {%- for category in article.categories %}<span class="news-meta__sep" aria-hidden="true"> · </span><a href="{{ category.href }}">{{ category.title }}</a>{% endfor %}
+      </p>
+      {{ heading_text(article.title, 0, {class: 'news-article__title'}) }}
+      {% if article.teaser %}<p class="news-article__teaser">{{ article.teaser }}</p>{% endif %}
+    </header>
+    {% if article.image %}<div class="news-article__media">{{ article.image }}</div>{% endif %}
+    <div class="news-article__text">{{ article.text }}</div>
+    {% if back %}<p class="news-article__back"><a href="{{ back }}">{{ t('All news') }}</a></p>{% endif %}
+  </article>
+{% else %}
+  <div class="news-list">
+    {{ heading('title', 0, {class: 'news-list__title'}) }}
+    {% if filters %}
+      <nav class="news-filter" aria-label="{{ t('Categories') }}">
+        <ul class="news-filter__list">
+          {% for filter in filters %}
+            <li><a class="news-filter__link" href="{{ filter.href }}"{% if filter.current %} aria-current="page"{% endif %}>{{ filter.title ?? t('All') }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+    {% endif %}
+    {% if articles %}
+      <ul class="news-list__items">
+        {% for item in articles %}
+          <li class="news-teaser">
+            {% if item.image %}<div class="news-teaser__media">{{ item.image }}</div>{% endif %}
+            <div class="news-teaser__body">
+              <p class="news-meta"><time datetime="{{ item.date }}">{{ item.dateText }}</time></p>
+              {{ heading_text(item.title, 1, {class: 'news-teaser__title'}, item.url) }}
+              {% if item.teaser %}<p class="news-teaser__text">{{ item.teaser }}</p>{% endif %}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="news-list__empty">{{ filtered ? t('No articles match this choice.') : t('No articles yet.') }}</p>
+    {% endif %}
+    {% if pagination.pages > 1 %}
+      <nav class="news-pages" aria-label="{{ t('Pages') }}">
+        {% if pagination.previous %}<a class="news-pages__link" href="{{ pagination.previous }}" rel="prev">{{ t('Newer articles') }}</a>{% endif %}
+        <span class="news-pages__status">{{ t('Page {page} of {pages}', {page: pagination.page, pages: pagination.pages}) }}</span>
+        {% if pagination.next %}<a class="news-pages__link" href="{{ pagination.next }}" rel="next">{{ t('Older articles') }}</a>{% endif %}
+      </nav>
+    {% endif %}
+    {% if feed %}<p class="news-feed"><a href="{{ feed }}" type="application/rss+xml">{{ t('Subscribe via RSS') }}</a></p>{% endif %}
+  </div>
+{% endif %}

@@ -1,0 +1,31 @@
+{# frootbox
+title: Newest articles
+description: The newest news articles as teasers, e.g. on the start page, with a link to all of them.
+group: teaser
+keywords: [News, Blog, Articles, Latest, Teasers]
+options:
+  count: { type: number, label: Number of articles, default: 3, min: 1, max: 12 }
+  images: { type: boolean, label: Images, default: true }
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "News" }
+#}
+<div class="news-latest">
+  {{ heading('title', 0, {class: 'news-latest__title'}) }}
+  {% if articles %}
+    <ul class="news-latest__items">
+      {% for item in articles %}
+        <li class="news-teaser">
+          {% if item.image %}<div class="news-teaser__media">{{ item.image }}</div>{% endif %}
+          <div class="news-teaser__body">
+            <p class="news-meta"><time datetime="{{ item.date }}">{{ item.dateText }}</time></p>
+            {{ heading_text(item.title, 1, {class: 'news-teaser__title'}, item.url) }}
+            {% if item.teaser %}<p class="news-teaser__text">{{ item.teaser }}</p>{% endif %}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+    {% if all %}<p class="news-latest__all"><a href="{{ all }}">{{ t('All news') }}</a></p>{% endif %}
+  {% else %}
+    <p class="news-list__empty">{{ t('No articles yet.') }}</p>
+  {% endif %}
+</div>

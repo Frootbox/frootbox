@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b72dce2600a49553e37d995697ee201",
+    "content-hash": "8d20180f7e73bb83369897421700cdea",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -506,6 +506,57 @@
                 "frootbox",
                 "migrations",
                 "repository"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "frootbox/news",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/modules/news",
+                "reference": "8b36f855a49d4271dc76ba4858e13fbe83e5d398"
+            },
+            "require": {
+                "frootbox/core": "^0.1",
+                "frootbox/database": "^0.1",
+                "frootbox/rich-text": "^0.1",
+                "php": ">=8.5",
+                "psr/http-message": "^2.0",
+                "psr/http-server-handler": "^1.0"
+            },
+            "suggest": {
+                "frootbox/backend": "Screens for the articles and categories"
+            },
+            "type": "frootbox-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\News\\": "src/",
+                    "Frootbox\\News\\Migrations\\": "migrations/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Frootbox\\News\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "News for the Frootbox CMS: articles with drafts, categories, a list with an address for each article, the newest articles as teasers and an RSS feed",
+            "keywords": [
+                "blog",
+                "cms",
+                "frootbox",
+                "news"
             ],
             "transport-options": {
                 "symlink": true,
@@ -6968,6 +7019,7 @@
         "frootbox/backend": 20,
         "frootbox/core": 20,
         "frootbox/database": 20,
+        "frootbox/news": 20,
         "frootbox/rich-text": 20,
         "frootbox/theme-base": 20,
         "frootbox/theme-bohnenglueck": 20
