@@ -1,0 +1,21 @@
+.base-cards { display: flex; flex-direction: column; gap: var(--space-m); }
+.base-cards__title { margin: 0; font-size: var(--size-2xl); }
+/* At most --columns side by side, fewer when a card would get narrower than 15rem. */
+.base-cards__list {
+  --columns: 3;
+  --gap: var(--space-m);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(max(min(100%, 15rem), (100% - (var(--columns) - 1) * var(--gap)) / var(--columns)), 1fr));
+  gap: var(--gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.base-cards--two .base-cards__list { --columns: 2; }
+.base-cards--four .base-cards__list { --columns: 4; }
+.base-cards__item { display: flex; flex-direction: column; overflow: hidden; border-radius: var(--radius); background: var(--color-surface); }
+.base-cards__media :is(picture, img) { display: block; inline-size: 100%; block-size: auto; }
+.base-cards__body { display: flex; flex: 1; flex-direction: column; gap: var(--space-2xs); padding: var(--space-s); }
+.base-cards__heading { margin: 0; font-size: var(--size-l); }
+.base-cards__text { margin: 0; color: var(--color-muted); }
+.base-cards__link { margin: 0; margin-block-start: auto; padding-block-start: var(--space-2xs); font-weight: 600; }

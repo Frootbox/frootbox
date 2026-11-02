@@ -1,0 +1,15 @@
+title: Accordion
+description: Entries that open on a click, e.g. details of a service, conditions or questions and answers. The headings stay visible, the text opens below. Not for what every visitor must read, it stays closed at first.
+group: list
+keywords: [Expand, Collapse, Details, Questions, Answers, FAQ]
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "Good to know" }
+  items:
+    type: list
+    label: Entries
+    min: 1
+    max: 30
+    start: 3
+    fields:
+      title: { type: headline, label: Heading, maxLength: 150, placeholder: "A question or a topic" }
+      body: { type: richtext, label: Text }

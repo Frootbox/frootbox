@@ -1,0 +1,28 @@
+{# frootbox
+title: Logos
+description: A row of logos, e.g. of partners, customers or awards, each with a link if you like. The description of a logo in the media names the company or award. Not for photos, use the gallery for that.
+group: teaser
+keywords: [Partners, Customers, Sponsors, Brands, Awards, References]
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "Who works with us" }
+  items:
+    type: list
+    label: Logos
+    min: 2
+    max: 24
+    start: 4
+    fields:
+      image: { type: image, label: Logo, sizes: "10rem" }
+      link: { type: link, label: Link, optional: true }
+#}
+<div class="base-logos">
+  {{ heading('title', 0, {class: 'base-logos__title'}) }}
+  <ul class="base-logos__list">
+    {% for item in field('items') %}
+      {% set link = item.value('link') %}
+      {% set href = url(link) %}
+      {# With a link the logo is its content, its description names the link. #}
+      <li class="base-logos__item">{% if href %}<a class="base-logos__link" href="{{ href }}"{% if link.newWindow ?? false %} target="_blank" rel="noopener"{% endif %}>{{ item.field('image') }}</a>{% else %}{{ item.field('image') }}{% endif %}</li>
+    {% endfor %}
+  </ul>
+</div>

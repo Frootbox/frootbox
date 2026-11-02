@@ -1,0 +1,43 @@
+{# frootbox
+title: Prices
+description: Two to four rates side by side with price, features and a button, e.g. memberships, packages or subscriptions. One rate can stand out with a label. Not for long price lists.
+group: list
+keywords: [Rates, Plans, Packages, Tariffs, Costs, Subscriptions]
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "Our rates" }
+  items:
+    type: list
+    label: Rates
+    min: 1
+    max: 4
+    start: 3
+    fields:
+      name: { type: headline, label: Name, maxLength: 60, placeholder: "Name of the rate" }
+      price: { type: headline, label: Price, maxLength: 20, placeholder: "29 €" }
+      period: { type: headline, label: Period, optional: true, maxLength: 40, placeholder: "per month" }
+      text: { type: text, label: Description, optional: true, maxLength: 200, placeholder: "For whom the rate is" }
+      features: { type: text, label: Features, optional: true, multiline: true, maxLength: 1000, placeholder: "One feature per line" }
+      link: { type: link, label: Button, optional: true }
+      badge: { type: headline, label: Highlight, optional: true, maxLength: 30, placeholder: "e.g. Popular" }
+#}
+<div class="base-prices">
+  {{ heading('title', 0, {class: 'base-prices__title'}) }}
+  <ul class="base-prices__list">
+    {% for item in field('items') %}
+      {% set features = (item.value('features') ?? '')|split("\n")|map(line => line|trim)|filter(line => line != '') %}
+      <li class="base-prices__item{{ item.value('badge') ? ' base-prices__item--highlight' }}">
+        <p class="base-prices__badge">{{ item.field('badge') }}</p>
+        {{ item.heading('name', 1, {class: 'base-prices__name'}) }}
+        <p class="base-prices__price"><span class="base-prices__amount">{{ item.field('price') }}</span> <span class="base-prices__period">{{ item.field('period') }}</span></p>
+        <p class="base-prices__text">{{ item.field('text') }}</p>
+        {# One feature per line of the field; it is changed in the settings of the block. #}
+        {% if features is not empty %}
+          <ul class="base-prices__features">
+            {% for feature in features %}<li>{{ feature }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+        <p class="base-prices__button">{{ item.field('link') }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+</div>

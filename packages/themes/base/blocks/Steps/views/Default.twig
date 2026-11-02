@@ -1,0 +1,28 @@
+{# frootbox
+title: Steps
+description: A numbered sequence, e.g. how ordering, booking or a first visit works. Three to five steps read best. Not for lists without an order.
+group: list
+keywords: [Process, Sequence, How it works, Procedure, Numbered, Instructions]
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "How it works" }
+  items:
+    type: list
+    label: Steps
+    min: 2
+    max: 8
+    start: 3
+    fields:
+      title: { type: headline, label: Heading, maxLength: 100, placeholder: "What happens in this step" }
+      text: { type: text, label: Text, optional: true, multiline: true, maxLength: 400, placeholder: "A sentence or two about it" }
+#}
+<div class="base-steps">
+  {{ heading('title', 0, {class: 'base-steps__title'}) }}
+  <ol class="base-steps__list">
+    {% for item in field('items') %}
+      <li class="base-steps__item">
+        {{ item.heading('title', 1, {class: 'base-steps__heading'}) }}
+        <p class="base-steps__text">{{ item.field('text') }}</p>
+      </li>
+    {% endfor %}
+  </ol>
+</div>

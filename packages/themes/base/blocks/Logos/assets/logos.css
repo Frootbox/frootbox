@@ -1,0 +1,7 @@
+.base-logos { display: flex; flex-direction: column; gap: var(--space-m); }
+.base-logos__title { margin: 0; font-size: var(--size-2xl); }
+.base-logos__list { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-m) var(--space-l); margin: 0; padding: 0; list-style: none; }
+.base-logos__item { flex: 0 0 auto; }
+.base-logos__item :is(picture, img) { display: block; }
+.base-logos__item img { inline-size: auto; max-inline-size: 10rem; block-size: 3rem; object-fit: contain; }
+.base-logos__link { display: block; border-radius: var(--radius); }

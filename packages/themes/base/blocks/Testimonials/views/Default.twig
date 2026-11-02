@@ -1,0 +1,35 @@
+{# frootbox
+title: Testimonials
+description: Several voices of customers or guests side by side, each with name and, if you like, role and photo. Only real statements, with consent. For a single statement use the quote.
+group: list
+keywords: [Reviews, Customers, Voices, References, Feedback, Quotes]
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "What our guests say" }
+  items:
+    type: list
+    label: Voices
+    min: 1
+    max: 9
+    start: 3
+    fields:
+      quote: { type: text, label: Quote, multiline: true, maxLength: 400, placeholder: "What someone said" }
+      name: { type: headline, label: Name, maxLength: 80, placeholder: "Who said it" }
+      role: { type: headline, label: Role, optional: true, maxLength: 80, placeholder: "e.g. Guest since 2019" }
+      image: { type: image, label: Photo, optional: true, ratio: "1:1", sizes: "3rem" }
+#}
+<div class="base-voices">
+  {{ heading('title', 0, {class: 'base-voices__title'}) }}
+  <ul class="base-voices__list">
+    {% for item in field('items') %}
+      <li class="base-voices__item">
+        <figure class="base-voices__figure">
+          <blockquote class="base-voices__quote"><p>{{ item.field('quote') }}</p></blockquote>
+          <figcaption class="base-voices__source">
+            <span class="base-voices__photo">{{ item.field('image') }}</span>
+            <span class="base-voices__who"><span class="base-voices__name">{{ item.field('name') }}</span><span class="base-voices__role">{{ item.field('role') }}</span></span>
+          </figcaption>
+        </figure>
+      </li>
+    {% endfor %}
+  </ul>
+</div>

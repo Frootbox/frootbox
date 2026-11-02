@@ -1,0 +1,39 @@
+{# frootbox
+title: Contact
+description: Address, phone, email and opening hours in one place, e.g. on the contact page. Phone and email become links. Not for a contact form, that comes with the module for forms.
+group: list
+keywords: [Address, Phone, Email, Opening hours, Location, Reach]
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "How to reach us" }
+  address: { type: text, label: Address, optional: true, multiline: true, maxLength: 300, placeholder: "Street, postcode and town" }
+  phone: { type: headline, label: Phone, optional: true, maxLength: 40, placeholder: "+49 40 123456" }
+  email: { type: headline, label: Email, optional: true, maxLength: 120, placeholder: "hello@example.org" }
+  hoursTitle: { type: headline, label: Heading of the opening hours, optional: true, maxLength: 60, placeholder: "Opening hours" }
+  hours:
+    type: list
+    label: Opening hours
+    optional: true
+    max: 10
+    start: 2
+    fields:
+      days: { type: headline, label: Days, maxLength: 60, placeholder: "Mon to Fri" }
+      time: { type: headline, label: Time, maxLength: 60, placeholder: "8:00 to 18:00" }
+#}
+{# Only digits and + call; spaces and dashes are for reading. #}
+{% set phone = (value('phone') ?? '')|split('')|filter(char => char matches '/[0-9+]/')|join %}
+<div class="base-contact">
+  {{ heading('title', 0, {class: 'base-contact__title'}) }}
+  <p class="base-contact__address">{{ field('address') }}</p>
+  <ul class="base-contact__ways">
+    <li class="base-contact__way base-contact__way--phone"><a href="tel:{{ phone }}">{{ field('phone') }}</a></li>
+    <li class="base-contact__way base-contact__way--email"><a href="mailto:{{ value('email') }}">{{ field('email') }}</a></li>
+  </ul>
+  <div class="base-contact__hours">
+    {{ heading('hoursTitle', 1, {class: 'base-contact__heading'}) }}
+    <dl class="base-contact__times">
+      {% for item in field('hours') %}
+        <div class="base-contact__time"><dt>{{ item.field('days') }}</dt><dd>{{ item.field('time') }}</dd></div>
+      {% endfor %}
+    </dl>
+  </div>
+</div>

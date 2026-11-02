@@ -1,0 +1,20 @@
+.base-prices { display: flex; flex-direction: column; gap: var(--space-m); }
+.base-prices__title { margin: 0; font-size: var(--size-2xl); }
+.base-prices__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: var(--space-m); margin: 0; padding: 0; list-style: none; }
+.base-prices__item { display: flex; flex-direction: column; gap: var(--space-2xs); padding: var(--space-m); border: var(--border); border-radius: var(--radius); }
+.base-prices__item--highlight { border-color: var(--color-primary); box-shadow: inset 0 0 0 1px var(--color-primary), var(--shadow); }
+.base-prices__badge { align-self: flex-start; margin: 0; padding: var(--space-3xs) var(--space-2xs); border-radius: 999px; background: var(--color-primary); color: var(--color-primary-contrast); font-size: var(--size-xs); font-weight: 600; }
+.base-prices__name { margin: 0; font-size: var(--size-l); }
+.base-prices__price { margin: 0; }
+.base-prices__amount { font-family: var(--font-heading); font-size: var(--size-3xl); font-weight: 700; line-height: 1.1; }
+.base-prices__period { color: var(--color-muted); }
+.base-prices__text { margin: 0; color: var(--color-muted); }
+.base-prices__features { display: flex; flex-direction: column; gap: var(--space-3xs); margin: 0; padding: var(--space-2xs) 0 0; list-style: none; }
+/* A check mark of two borders before each feature. */
+.base-prices__features li { display: flex; align-items: baseline; gap: var(--space-2xs); }
+.base-prices__features li::before { content: ""; flex: none; inline-size: 0.35em; block-size: 0.7em; border-block-end: 2px solid var(--color-success); border-inline-end: 2px solid var(--color-success); rotate: 40deg; translate: 0 -0.05em; }
+.base-prices__features li:dir(rtl)::before { rotate: -40deg; }
+.base-prices__button { margin: 0; margin-block-start: auto; padding-block-start: var(--space-s); }
+.base-prices__button a { display: flex; align-items: center; justify-content: center; min-block-size: 2.75rem; padding: var(--space-2xs) var(--space-m); border-radius: 999px; box-shadow: inset 0 0 0 2px currentColor; font-weight: 600; text-decoration: none; }
+.base-prices__item--highlight .base-prices__button a { background: var(--color-primary); color: var(--color-primary-contrast); box-shadow: none; }
+.base-prices__button a:hover { text-decoration: underline; text-underline-offset: 0.18em; }

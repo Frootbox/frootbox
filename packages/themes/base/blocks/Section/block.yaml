@@ -3,6 +3,6 @@ description: Columns with headings, texts, images, buttons and smaller blocks su
 group: structure
 keywords: [Columns, Grid]
 areas:
-  first: { label: First column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures, ImageWithText, Gallery, Slider, Video] }
-  second: { label: Second column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures, ImageWithText, Gallery, Slider, Video] }
-  third: { label: Third column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures, ImageWithText, Gallery, Slider, Video] }
+  first: { label: First column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures, ImageWithText, Gallery, Slider, Video, Cards, Logos, LinkList, Accordion, Steps, Testimonials, Pricing, Contact] }
+  second: { label: Second column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures, ImageWithText, Gallery, Slider, Video, Cards, Logos, LinkList, Accordion, Steps, Testimonials, Pricing, Contact] }
+  third: { label: Third column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures, ImageWithText, Gallery, Slider, Video, Cards, Logos, LinkList, Accordion, Steps, Testimonials, Pricing, Contact] }

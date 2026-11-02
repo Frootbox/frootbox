@@ -1,0 +1,20 @@
+.base-accordion { display: flex; flex-direction: column; gap: var(--space-s); }
+.base-accordion__title { margin: 0; font-size: var(--size-2xl); }
+.base-accordion__list { display: flex; flex-direction: column; border-block-start: var(--border); }
+.base-accordion__item { border-block-end: var(--border); }
+.base-accordion__summary { display: flex; align-items: center; justify-content: space-between; gap: var(--space-s); padding-block: var(--space-xs); cursor: pointer; list-style: none; }
+.base-accordion__summary::-webkit-details-marker { display: none; }
+/* A plus that turns into a cross when the entry is open. */
+.base-accordion__summary::after { content: ""; flex: none; inline-size: 1rem; block-size: 1rem; background: linear-gradient(currentColor 0 0) center / 100% 2px no-repeat, linear-gradient(currentColor 0 0) center / 2px 100% no-repeat; color: var(--color-primary); transition: rotate 0.2s; }
+.base-accordion__item[open] > .base-accordion__summary::after { rotate: 45deg; }
+.base-accordion__heading { margin: 0; font-size: var(--size-m); font-weight: 600; }
+.base-accordion__body { padding-block-end: var(--space-s); }
+.base-accordion__body :is(p, ul, ol, blockquote) { margin-block: 0 0.75em; }
+.base-accordion__body > :last-child { margin-block-end: 0; }
+.base-accordion__body :is(ul, ol) { padding-inline-start: 1.25em; }
+.base-accordion--faq .base-accordion__list { gap: var(--space-2xs); border: 0; }
+.base-accordion--faq .base-accordion__item { padding-inline: var(--space-s); border: 0; border-radius: var(--radius); background: var(--color-surface); }
+
+@media (prefers-reduced-motion: reduce) {
+  .base-accordion__summary::after { transition: none; }
+}

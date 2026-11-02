@@ -362,6 +362,143 @@
               - { block: frootbox/theme-base/Section, variant: OneTwo, areas: { first: [{ block: frootbox/theme-base/Video, variant: Default, fields: { video: { media: '${vid_roasting.id}', poster: '${img_roasting.id}' }, caption: 'Licht in der Rösterei' } }], second: [{ block: frootbox/theme-base/Text, fields: { body: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Eine Spalte daneben, damit die Breite stimmt.' }] }] } } }] } }
   as: video
 - page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Karten
+        slug: cards
+        content:
+          fields:
+            title: Karten
+            intro: 'Teaser nebeneinander, so viele Spalten, wie Platz ist.'
+          areas:
+            main:
+              - {"block": "frootbox/theme-base/Cards", "options": {"columns": "three"}, "fields": {"title": "Unsere Angebote", "items": [{"image": {"media": "${img_roastery.id}"}, "title": "Röstkurs", "text": "Zwei Stunden an der Trommel, mit Verkostung.", "link": {"url": "https://example.org/", "text": "Zum Kurs"}}, {"image": {"media": "${img_beans.id}"}, "title": "Kaffee-Abo", "text": "Jeden Monat eine neue Sorte, frisch geröstet.", "link": {"url": "https://example.org/", "text": "Zum Abo"}}, {"image": {"media": "${img_tasting.id}"}, "title": "Verkostung", "text": "Freitags ab 17 Uhr in der Rösterei.", "link": {"url": "https://example.org/", "text": "Mehr erfahren"}}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "Two", "areas": {"first": [{"block": "frootbox/theme-base/Cards", "options": {"columns": "three"}, "fields": {"title": "Unsere Angebote", "items": [{"image": {"media": "${img_roastery.id}"}, "title": "Röstkurs", "text": "Zwei Stunden an der Trommel, mit Verkostung.", "link": {"url": "https://example.org/", "text": "Zum Kurs"}}, {"image": {"media": "${img_beans.id}"}, "title": "Kaffee-Abo", "text": "Jeden Monat eine neue Sorte, frisch geröstet.", "link": {"url": "https://example.org/", "text": "Zum Abo"}}, {"image": {"media": "${img_tasting.id}"}, "title": "Verkostung", "text": "Freitags ab 17 Uhr in der Rösterei.", "link": {"url": "https://example.org/", "text": "Mehr erfahren"}}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "OneTwo", "areas": {"first": [{"block": "frootbox/theme-base/Cards", "options": {"columns": "three"}, "fields": {"title": "Unsere Angebote", "items": [{"image": {"media": "${img_roastery.id}"}, "title": "Röstkurs", "text": "Zwei Stunden an der Trommel, mit Verkostung.", "link": {"url": "https://example.org/", "text": "Zum Kurs"}}, {"image": {"media": "${img_beans.id}"}, "title": "Kaffee-Abo", "text": "Jeden Monat eine neue Sorte, frisch geröstet.", "link": {"url": "https://example.org/", "text": "Zum Abo"}}, {"image": {"media": "${img_tasting.id}"}, "title": "Verkostung", "text": "Freitags ab 17 Uhr in der Rösterei.", "link": {"url": "https://example.org/", "text": "Mehr erfahren"}}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+  as: cards
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Logos
+        slug: logos
+        content:
+          fields:
+            title: Logos
+            intro: 'Eine Reihe, die umbricht, mit Links nach Wunsch.'
+          areas:
+            main:
+              - {"block": "frootbox/theme-base/Logos", "fields": {"title": "Mit wem wir arbeiten", "items": [{"image": {"media": "${img_harbour.id}"}, "link": {"url": "https://example.org/"}}, {"image": {"media": "${img_square.id}"}}, {"image": {"media": "${img_beans.id}"}, "link": {"url": "https://example.org/"}}, {"image": {"media": "${img_tasting.id}"}}, {"image": {"media": "${img_roastery.id}"}}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "Two", "areas": {"first": [{"block": "frootbox/theme-base/Logos", "fields": {"title": "Mit wem wir arbeiten", "items": [{"image": {"media": "${img_harbour.id}"}, "link": {"url": "https://example.org/"}}, {"image": {"media": "${img_square.id}"}}, {"image": {"media": "${img_beans.id}"}, "link": {"url": "https://example.org/"}}, {"image": {"media": "${img_tasting.id}"}}, {"image": {"media": "${img_roastery.id}"}}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "OneTwo", "areas": {"first": [{"block": "frootbox/theme-base/Logos", "fields": {"title": "Mit wem wir arbeiten", "items": [{"image": {"media": "${img_harbour.id}"}, "link": {"url": "https://example.org/"}}, {"image": {"media": "${img_square.id}"}}, {"image": {"media": "${img_beans.id}"}, "link": {"url": "https://example.org/"}}, {"image": {"media": "${img_tasting.id}"}}, {"image": {"media": "${img_roastery.id}"}}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+  as: logos
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Linkliste
+        slug: link-list
+        content:
+          fields:
+            title: Linkliste
+            intro: 'Links mit kurzer Beschreibung.'
+          areas:
+            main:
+              - {"block": "frootbox/theme-base/LinkList", "fields": {"title": "Weitere Links", "items": [{"link": {"url": "https://example.org/", "text": "Anbau und Ernte"}, "text": "Wie die Bohnen auf den Höfen wachsen."}, {"link": {"url": "https://example.org/", "text": "Zubereitung"}, "text": "Mahlgrad, Wasser und Zeit für jede Kanne."}, {"link": {"url": "https://example.org/", "text": "Großhandel"}, "text": ""}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "Two", "areas": {"first": [{"block": "frootbox/theme-base/LinkList", "fields": {"title": "Weitere Links", "items": [{"link": {"url": "https://example.org/", "text": "Anbau und Ernte"}, "text": "Wie die Bohnen auf den Höfen wachsen."}, {"link": {"url": "https://example.org/", "text": "Zubereitung"}, "text": "Mahlgrad, Wasser und Zeit für jede Kanne."}, {"link": {"url": "https://example.org/", "text": "Großhandel"}, "text": ""}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "OneTwo", "areas": {"first": [{"block": "frootbox/theme-base/LinkList", "fields": {"title": "Weitere Links", "items": [{"link": {"url": "https://example.org/", "text": "Anbau und Ernte"}, "text": "Wie die Bohnen auf den Höfen wachsen."}, {"link": {"url": "https://example.org/", "text": "Zubereitung"}, "text": "Mahlgrad, Wasser und Zeit für jede Kanne."}, {"link": {"url": "https://example.org/", "text": "Großhandel"}, "text": ""}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+  as: link_list
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Akkordeon
+        slug: accordion
+        content:
+          fields:
+            title: Akkordeon
+            intro: 'Einträge zum Aufklappen, als Linien und als Fragen und Antworten.'
+          areas:
+            main:
+              - {"block": "frootbox/theme-base/Accordion", "variant": "Default", "options": {"open": true}, "fields": {"title": "Gut zu wissen", "items": [{"title": "Wie lange ist Kaffee haltbar?", "body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Ungeöffnet gut sechs Monate, offen am besten in vier Wochen trinken."}]}]}}, {"title": "Versendet ihr auch ins Ausland?", "body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Innerhalb der EU, die Versandkosten zeigt der Warenkorb."}]}]}}, {"title": "Kann ich den Röstgrad wählen?", "body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Bei jeder Sorte steht, wie wir sie rösten. Im Abo kannst Du hell oder dunkel wählen."}]}]}}]}}
+              - {"block": "frootbox/theme-base/Accordion", "variant": "Faq", "options": {"open": false}, "fields": {"title": "Häufige Fragen", "items": [{"title": "Wie lange ist Kaffee haltbar?", "body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Ungeöffnet gut sechs Monate, offen am besten in vier Wochen trinken."}]}]}}, {"title": "Versendet ihr auch ins Ausland?", "body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Innerhalb der EU, die Versandkosten zeigt der Warenkorb."}]}]}}, {"title": "Kann ich den Röstgrad wählen?", "body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Bei jeder Sorte steht, wie wir sie rösten. Im Abo kannst Du hell oder dunkel wählen."}]}]}}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "Two", "areas": {"first": [{"block": "frootbox/theme-base/Accordion", "variant": "Default", "options": {"open": true}, "fields": {"title": "Gut zu wissen", "items": [{"title": "Wie lange ist Kaffee haltbar?", "body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Ungeöffnet gut sechs Monate, offen am besten in vier Wochen trinken."}]}]}}, {"title": "Versendet ihr auch ins Ausland?", "body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Innerhalb der EU, die Versandkosten zeigt der Warenkorb."}]}]}}, {"title": "Kann ich den Röstgrad wählen?", "body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Bei jeder Sorte steht, wie wir sie rösten. Im Abo kannst Du hell oder dunkel wählen."}]}]}}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "OneTwo", "areas": {"first": [{"block": "frootbox/theme-base/Accordion", "variant": "Default", "options": {"open": true}, "fields": {"title": "Gut zu wissen", "items": [{"title": "Wie lange ist Kaffee haltbar?", "body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Ungeöffnet gut sechs Monate, offen am besten in vier Wochen trinken."}]}]}}, {"title": "Versendet ihr auch ins Ausland?", "body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Innerhalb der EU, die Versandkosten zeigt der Warenkorb."}]}]}}, {"title": "Kann ich den Röstgrad wählen?", "body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Bei jeder Sorte steht, wie wir sie rösten. Im Abo kannst Du hell oder dunkel wählen."}]}]}}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+  as: accordion
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Schritte
+        slug: steps
+        content:
+          fields:
+            title: Schritte
+            intro: 'Eine nummerierte Abfolge.'
+          areas:
+            main:
+              - {"block": "frootbox/theme-base/Steps", "fields": {"title": "So funktioniert das Abo", "items": [{"title": "Sorte wählen", "text": "Hell, mittel oder dunkel, ganz oder gemahlen."}, {"title": "Rhythmus festlegen", "text": "Alle zwei oder vier Wochen."}, {"title": "Genießen", "text": "Wir rösten am Montag und schicken am Dienstag."}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "Two", "areas": {"first": [{"block": "frootbox/theme-base/Steps", "fields": {"title": "So funktioniert das Abo", "items": [{"title": "Sorte wählen", "text": "Hell, mittel oder dunkel, ganz oder gemahlen."}, {"title": "Rhythmus festlegen", "text": "Alle zwei oder vier Wochen."}, {"title": "Genießen", "text": "Wir rösten am Montag und schicken am Dienstag."}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "OneTwo", "areas": {"first": [{"block": "frootbox/theme-base/Steps", "fields": {"title": "So funktioniert das Abo", "items": [{"title": "Sorte wählen", "text": "Hell, mittel oder dunkel, ganz oder gemahlen."}, {"title": "Rhythmus festlegen", "text": "Alle zwei oder vier Wochen."}, {"title": "Genießen", "text": "Wir rösten am Montag und schicken am Dienstag."}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+  as: steps
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Kundenstimmen
+        slug: testimonials
+        content:
+          fields:
+            title: Kundenstimmen
+            intro: 'Mehrere Aussagen mit Name, Rolle und Foto.'
+          areas:
+            main:
+              - {"block": "frootbox/theme-base/Testimonials", "fields": {"title": "Was unsere Gäste sagen", "items": [{"quote": "Der beste Espresso der Stadt, und das sage ich als Italienerin.", "name": "Giulia R.", "role": "Gast seit 2019", "image": {"media": "${img_portrait.id}"}}, {"quote": "Das Abo kommt immer pünktlich, und jede Sorte ist eine kleine Reise.", "name": "Jonas M.", "role": "Abo-Kunde", "image": {"media": "${img_square.id}"}}, {"quote": "Der Röstkurs war ein Geschenk und ist jetzt mein Hobby.", "name": "Aylin K.", "role": ""}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "Two", "areas": {"first": [{"block": "frootbox/theme-base/Testimonials", "fields": {"title": "Was unsere Gäste sagen", "items": [{"quote": "Der beste Espresso der Stadt, und das sage ich als Italienerin.", "name": "Giulia R.", "role": "Gast seit 2019", "image": {"media": "${img_portrait.id}"}}, {"quote": "Das Abo kommt immer pünktlich, und jede Sorte ist eine kleine Reise.", "name": "Jonas M.", "role": "Abo-Kunde", "image": {"media": "${img_square.id}"}}, {"quote": "Der Röstkurs war ein Geschenk und ist jetzt mein Hobby.", "name": "Aylin K.", "role": ""}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "OneTwo", "areas": {"first": [{"block": "frootbox/theme-base/Testimonials", "fields": {"title": "Was unsere Gäste sagen", "items": [{"quote": "Der beste Espresso der Stadt, und das sage ich als Italienerin.", "name": "Giulia R.", "role": "Gast seit 2019", "image": {"media": "${img_portrait.id}"}}, {"quote": "Das Abo kommt immer pünktlich, und jede Sorte ist eine kleine Reise.", "name": "Jonas M.", "role": "Abo-Kunde", "image": {"media": "${img_square.id}"}}, {"quote": "Der Röstkurs war ein Geschenk und ist jetzt mein Hobby.", "name": "Aylin K.", "role": ""}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+  as: testimonials
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Preise
+        slug: prices
+        content:
+          fields:
+            title: Preise
+            intro: 'Tarife nebeneinander, einer hervorgehoben.'
+          areas:
+            main:
+              - {"block": "frootbox/theme-base/Pricing", "fields": {"title": "Unsere Abos", "items": [{"name": "Klein", "price": "14 €", "period": "pro Lieferung", "text": "Für eine Person.", "features": "250 g Kaffee\nVersand frei\nJederzeit pausieren", "link": {"url": "https://example.org/", "text": "Klein wählen"}, "badge": ""}, {"name": "Mittel", "price": "24 €", "period": "pro Lieferung", "text": "Für Paare und kleine Büros.", "features": "500 g Kaffee\nVersand frei\nJederzeit pausieren\nNeue Sorte jeden Monat", "link": {"url": "https://example.org/", "text": "Mittel wählen"}, "badge": "Beliebt"}, {"name": "Groß", "price": "42 €", "period": "pro Lieferung", "text": "Für Teams.", "features": "1 kg Kaffee\nVersand frei\nRechnung für die Firma", "link": {"url": "https://example.org/", "text": "Groß wählen"}, "badge": ""}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "Two", "areas": {"first": [{"block": "frootbox/theme-base/Pricing", "fields": {"title": "Unsere Abos", "items": [{"name": "Klein", "price": "14 €", "period": "pro Lieferung", "text": "Für eine Person.", "features": "250 g Kaffee\nVersand frei\nJederzeit pausieren", "link": {"url": "https://example.org/", "text": "Klein wählen"}, "badge": ""}, {"name": "Mittel", "price": "24 €", "period": "pro Lieferung", "text": "Für Paare und kleine Büros.", "features": "500 g Kaffee\nVersand frei\nJederzeit pausieren\nNeue Sorte jeden Monat", "link": {"url": "https://example.org/", "text": "Mittel wählen"}, "badge": "Beliebt"}, {"name": "Groß", "price": "42 €", "period": "pro Lieferung", "text": "Für Teams.", "features": "1 kg Kaffee\nVersand frei\nRechnung für die Firma", "link": {"url": "https://example.org/", "text": "Groß wählen"}, "badge": ""}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "OneTwo", "areas": {"first": [{"block": "frootbox/theme-base/Pricing", "fields": {"title": "Unsere Abos", "items": [{"name": "Klein", "price": "14 €", "period": "pro Lieferung", "text": "Für eine Person.", "features": "250 g Kaffee\nVersand frei\nJederzeit pausieren", "link": {"url": "https://example.org/", "text": "Klein wählen"}, "badge": ""}, {"name": "Mittel", "price": "24 €", "period": "pro Lieferung", "text": "Für Paare und kleine Büros.", "features": "500 g Kaffee\nVersand frei\nJederzeit pausieren\nNeue Sorte jeden Monat", "link": {"url": "https://example.org/", "text": "Mittel wählen"}, "badge": "Beliebt"}, {"name": "Groß", "price": "42 €", "period": "pro Lieferung", "text": "Für Teams.", "features": "1 kg Kaffee\nVersand frei\nRechnung für die Firma", "link": {"url": "https://example.org/", "text": "Groß wählen"}, "badge": ""}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+  as: prices
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Kontakt
+        slug: contact
+        content:
+          fields:
+            title: Kontakt
+            intro: 'Adresse, Telefon, E-Mail und Öffnungszeiten.'
+          areas:
+            main:
+              - {"block": "frootbox/theme-base/Contact", "fields": {"title": "So erreichst Du uns", "address": "Rösterei am Hafen\nKaistraße 12\n20457 Hamburg", "phone": "+49 40 123 456 78", "email": "hallo@example.org", "hoursTitle": "Öffnungszeiten", "hours": [{"days": "Mo bis Fr", "time": "8 bis 18 Uhr"}, {"days": "Sa", "time": "9 bis 14 Uhr"}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "Two", "areas": {"first": [{"block": "frootbox/theme-base/Contact", "fields": {"title": "So erreichst Du uns", "address": "Rösterei am Hafen\nKaistraße 12\n20457 Hamburg", "phone": "+49 40 123 456 78", "email": "hallo@example.org", "hoursTitle": "Öffnungszeiten", "hours": [{"days": "Mo bis Fr", "time": "8 bis 18 Uhr"}, {"days": "Sa", "time": "9 bis 14 Uhr"}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+              - {"block": "frootbox/theme-base/Section", "variant": "OneTwo", "areas": {"first": [{"block": "frootbox/theme-base/Contact", "fields": {"title": "So erreichst Du uns", "address": "Rösterei am Hafen\nKaistraße 12\n20457 Hamburg", "phone": "+49 40 123 456 78", "email": "hallo@example.org", "hoursTitle": "Öffnungszeiten", "hours": [{"days": "Mo bis Fr", "time": "8 bis 18 Uhr"}, {"days": "Sa", "time": "9 bis 14 Uhr"}]}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+  as: contact
+- page.create:
     layout: frootbox/theme-base/Start
     parentId: '${start.id}'
     translations:
@@ -420,6 +557,14 @@
       - '${gallery.id}'
       - '${slider.id}'
       - '${video.id}'
+      - '${cards.id}'
+      - '${logos.id}'
+      - '${link_list.id}'
+      - '${accordion.id}'
+      - '${steps.id}'
+      - '${testimonials.id}'
+      - '${prices.id}'
+      - '${contact.id}'
       - '${page_header.id}'
       - '${landing.id}'
       - '${imprint.id}'
@@ -483,6 +628,30 @@
             -
               type: target
               target: 'page:${video.id}'
+            -
+              type: target
+              target: 'page:${cards.id}'
+            -
+              type: target
+              target: 'page:${logos.id}'
+            -
+              type: target
+              target: 'page:${link_list.id}'
+            -
+              type: target
+              target: 'page:${accordion.id}'
+            -
+              type: target
+              target: 'page:${steps.id}'
+            -
+              type: target
+              target: 'page:${testimonials.id}'
+            -
+              type: target
+              target: 'page:${prices.id}'
+            -
+              type: target
+              target: 'page:${contact.id}'
         -
           type: target
           target: 'page:${landing.id}'

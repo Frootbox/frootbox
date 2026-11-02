@@ -1,0 +1,15 @@
+.base-voices { display: flex; flex-direction: column; gap: var(--space-m); }
+.base-voices__title { margin: 0; font-size: var(--size-2xl); }
+.base-voices__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: var(--space-m); margin: 0; padding: 0; list-style: none; }
+.base-voices__figure { display: flex; flex-direction: column; justify-content: space-between; gap: var(--space-s); block-size: 100%; margin: 0; padding: var(--space-m); border-radius: var(--radius); background: var(--color-surface); }
+.base-voices__quote { margin: 0; }
+/* The quotation marks of the language, as in the quote. */
+.base-voices__quote p { margin: 0; quotes: auto; }
+.base-voices__quote p::before { content: open-quote; }
+.base-voices__quote p::after { content: close-quote; }
+.base-voices__source { display: flex; align-items: center; gap: var(--space-xs); font-size: var(--size-s); }
+.base-voices__photo :is(picture, img) { display: block; }
+.base-voices__photo img { inline-size: 3rem; block-size: 3rem; border-radius: 50%; }
+.base-voices__who { display: flex; flex-direction: column; }
+.base-voices__name { font-weight: 600; }
+.base-voices__role { color: var(--color-muted); }

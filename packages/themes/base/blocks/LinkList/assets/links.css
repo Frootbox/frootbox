@@ -1,0 +1,9 @@
+.base-links { display: flex; flex-direction: column; gap: var(--space-s); }
+.base-links__title { margin: 0; font-size: var(--size-2xl); }
+.base-links__list { margin: 0; padding: 0; list-style: none; border-block-start: var(--border); }
+.base-links__item { display: flex; flex-direction: column; gap: var(--space-3xs); padding-block: var(--space-xs); border-block-end: var(--border); }
+.base-links__link { display: flex; align-items: baseline; gap: var(--space-2xs); font-weight: 600; }
+/* An arrow of two borders, turned to the end of the line in both directions. */
+.base-links__link::before { content: ""; flex: none; inline-size: 0.45em; block-size: 0.45em; border-block-start: 2px solid var(--color-accent); border-inline-end: 2px solid var(--color-accent); rotate: 45deg; translate: 0 -0.1em; }
+.base-links__link:dir(rtl)::before { rotate: -45deg; }
+.base-links__text { padding-inline-start: calc(0.45em + var(--space-2xs)); color: var(--color-muted); font-size: var(--size-s); }

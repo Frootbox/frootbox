@@ -1,0 +1,11 @@
+.base-contact { display: flex; flex-direction: column; gap: var(--space-s); }
+.base-contact__title { margin: 0; font-size: var(--size-2xl); }
+.base-contact__address { margin: 0; font-style: normal; }
+.base-contact__ways { display: flex; flex-direction: column; gap: var(--space-3xs); margin: 0; padding: 0; list-style: none; }
+.base-contact__way a { overflow-wrap: anywhere; }
+.base-contact__hours { display: flex; flex-direction: column; gap: var(--space-2xs); }
+.base-contact__heading { margin: 0; font-size: var(--size-m); }
+.base-contact__times { display: grid; grid-template-columns: auto 1fr; gap: var(--space-3xs) var(--space-s); margin: 0; }
+.base-contact__time { display: contents; }
+.base-contact__time dt { color: var(--color-muted); }
+.base-contact__time dd { margin: 0; font-variant-numeric: tabular-nums; }

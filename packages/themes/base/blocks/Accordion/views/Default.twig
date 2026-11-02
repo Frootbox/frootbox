@@ -1,0 +1,17 @@
+{# frootbox
+title: Lines
+description: Entries separated by lines, e.g. details of a service.
+options:
+  open: { type: boolean, label: First entry open }
+#}
+<div class="base-accordion">
+  {{ heading('title', 0, {class: 'base-accordion__title'}) }}
+  <div class="base-accordion__list">
+    {% for item in field('items') %}
+      <details class="base-accordion__item"{{ options.open and loop.first ? ' open' }}>
+        <summary class="base-accordion__summary">{{ item.heading('title', 1, {class: 'base-accordion__heading'}) }}</summary>
+        <div class="base-accordion__body">{{ item.field('body') }}</div>
+      </details>
+    {% endfor %}
+  </div>
+</div>

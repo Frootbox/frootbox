@@ -1,0 +1,25 @@
+{# frootbox
+title: Link list
+description: Links one below the other, each with a short description, e.g. to further pages, partners or offers elsewhere. For a single link use the button; not for the main navigation.
+group: teaser
+keywords: [Links, Further reading, Resources, Overview, Directory]
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "Further links" }
+  items:
+    type: list
+    label: Links
+    min: 1
+    max: 20
+    start: 3
+    fields:
+      link: { type: link, label: Link }
+      text: { type: text, label: Description, optional: true, maxLength: 200, placeholder: "What visitors find there" }
+#}
+<div class="base-links">
+  {{ heading('title', 0, {class: 'base-links__title'}) }}
+  <ul class="base-links__list">
+    {% for item in field('items') %}
+      <li class="base-links__item"><span class="base-links__link">{{ item.field('link') }}</span><span class="base-links__text">{{ item.field('text') }}</span></li>
+    {% endfor %}
+  </ul>
+</div>

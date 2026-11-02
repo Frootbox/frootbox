@@ -1,0 +1,39 @@
+{# frootbox
+title: Cards
+description: Several teasers side by side, each with an image, a heading, a short text and a link, e.g. offers, rooms or articles. At most the chosen number of columns, fewer where there is less room. For a single teaser use image with text.
+group: teaser
+keywords: [Teasers, Tiles, Boxes, Overview, Grid, Offers]
+options:
+  columns:
+    type: choice
+    label: Columns at most
+    choices: { three: Three, two: Two, four: Four }
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "Our offers" }
+  items:
+    type: list
+    label: Cards
+    min: 2
+    max: 12
+    start: 3
+    fields:
+      image: { type: image, label: Image, optional: true, ratio: "3:2", sizes: "(min-width: 72rem) 24rem, (min-width: 40rem) 50vw, 100vw" }
+      title: { type: headline, label: Heading, maxLength: 80, placeholder: "What the card is about" }
+      text: { type: text, label: Text, optional: true, multiline: true, maxLength: 300, placeholder: "A sentence or two about it" }
+      link: { type: link, label: Link, optional: true }
+#}
+<div class="base-cards base-cards--{{ options.columns }}">
+  {{ heading('title', 0, {class: 'base-cards__title'}) }}
+  <ul class="base-cards__list">
+    {% for item in field('items') %}
+      <li class="base-cards__item">
+        <div class="base-cards__media">{{ item.field('image') }}</div>
+        <div class="base-cards__body">
+          {{ item.heading('title', 1, {class: 'base-cards__heading'}) }}
+          <p class="base-cards__text">{{ item.field('text') }}</p>
+          <p class="base-cards__link">{{ item.field('link') }}</p>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
