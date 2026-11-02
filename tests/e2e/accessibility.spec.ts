@@ -29,6 +29,8 @@ async function violations(page: import('@playwright/test').Page): Promise<string
 for (const [width, viewport] of Object.entries(widths)) {
     for (const prefix of ['', '/ar']) {
         test(`has no violations, ${width}, ${prefix ? 'ar' : 'de'}`, async ({ page }) => {
+            // axe takes about a second per page on CI; the library keeps growing.
+            test.setTimeout(Object.keys(PAGES).length * 2_500);
             await page.setViewportSize(viewport);
             const found: string[] = [];
 
