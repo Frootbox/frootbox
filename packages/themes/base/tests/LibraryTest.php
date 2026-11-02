@@ -97,7 +97,9 @@ final class LibraryTest extends NotesTestCase
 
             if ('/hero' === $path) {
                 self::assertMatchesRegularExpression('#<p class="base-hero__eyebrow">Rösterei am Hafen</p>\s*<h2 class="base-hero__title"#', (string) $response->getBody(), 'The eyebrow stands above the heading (decision 0188).');
-                self::assertSame(1, substr_count((string) $response->getBody(), 'base-hero__eyebrow'), 'An empty eyebrow leaves nothing behind.');
+                self::assertSame(2, substr_count((string) $response->getBody(), 'base-hero__eyebrow'), 'An empty eyebrow leaves nothing behind.');
+                self::assertSame(2, substr_count((string) $response->getBody(), 'base-hero--centred'), 'Without image the hero is centred unless told otherwise (decision 0199).');
+                self::assertStringContainsString('<div class="base-hero base-full base-hero--start base-hero--none">', (string) $response->getBody());
             }
 
             if ('/code' === $path) {

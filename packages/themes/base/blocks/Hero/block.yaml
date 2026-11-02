@@ -1,5 +1,5 @@
 title: Hero
-description: The big opening at the top of a page with a heading, a sentence and up to two buttons, mostly on the start page or a landing page. Centred without an image, with the image beside the text, or with the image behind it. Once per page, as the first block; not for teasers further down, use image with text for that.
+description: The big opening at the top of a page with a heading, a sentence and up to two buttons, mostly on the start page or a landing page. Without an image, with the image beside the text, or with the image behind it. Once per page, as the first block; not for teasers further down, use image with text for that.
 group: header
 keywords: [Header, Intro, Banner, Stage, Opening, Teaser]
 fields:

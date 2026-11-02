@@ -31,7 +31,7 @@
 .base-hero :is(picture, img) { display: block; inline-size: 100%; }
 .base-hero img { block-size: auto; }
 
-/* Centred, on a calm or a coloured background. */
+/* Without image: centred or at the start of the text (decision 0199), on a calm or a coloured background. */
 .base-hero--centred .base-hero__text { align-items: center; margin-inline: auto; text-align: center; }
 .base-hero--centred .base-hero__actions { justify-content: center; }
 .base-hero--surface { background: var(--color-surface); }
