@@ -4,37 +4,26 @@ A demo theme for [Frootbox](https://github.com/Frootbox/frootbox): the website
 of Bohnenglück, a small (made-up) coffee roastery at the harbour of Hamburg,
 in German and English.
 
-It is the first theme of Frootbox. It shows blocks with variants, options,
-lists, nested areas and rich text, two layouts, partials, navigations, a
-language switcher and a page without translation, and it will grow into a
-complete theme.
+It is a child of the base theme `frootbox/theme-base`: the blocks, layouts, partials,
+fields and navigations all come from there. Bohnenglück only changes how
+they look, which makes it a template for your own child theme.
 
 ## Contents
 
 | Path | What it is |
 |---|---|
-| `frootbox.yaml` | Theme manifest with the navigations `main` (option `button`) and `footer` and the design tokens (colours, fonts, radius, spacing, width) |
-| `layouts/OnePage` | Start page: header, the area `main` and footer |
-| `layouts/Page` | Subpage: header, breadcrumb, fields `title` and `intro`, the area `main` and footer |
-| `partials/header.twig`, `partials/footer.twig` | Header with main navigation and language switcher, footer with the footer navigation, included as `@theme/header.twig` |
-| `partials/labels.twig` | The texts of the theme in German and English |
-| `blocks/Hero` | Opening section, variants `Default` (option `tone`) and `Split` |
-| `blocks/Features` | Cards with icon, title and text, option `columns` |
-| `blocks/Text` | Rich text, option `width` |
-| `blocks/Columns` | Two areas `left` and `right` for `Text` and `Quote`, option `ratio` |
-| `blocks/Quote` | Testimonial |
-| `blocks/Faq` | Questions with rich text answers, option `open` |
-| `blocks/Cta` | Call to action |
-| `assets/reset.css`, `assets/base.css`, `assets/site.css` | Reset, base styles and header, footer and buttons for every page |
+| `frootbox.yaml` | Theme manifest: parent `frootbox/theme-base` and the design tokens (colours, fonts, radius, spacing, width) |
+| `assets/site.css` | The look of the roastery on the classes of the base theme: sticky head, warm page head, benefits and quote as cards, call to action with a gradient, dark footer, circles in the hero without an image |
+| `icons/` | Symbols for the field type `icon` next to those of the base theme |
 | `demo/site.yaml` | The demo website for `bin/frootbox seed` |
-
-Every block has an `anchor` option for links within the page.
 
 ## Try it
 
 ```bash
 composer require frootbox/theme-bohnenglueck
 ```
+
+This brings the base theme along.
 
 Make it the active theme in `config/app.yaml`, with German and English:
 

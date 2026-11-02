@@ -1,55 +1,91 @@
-.site-header {
-  position: sticky; inset-block-start: 0; z-index: 10;
+/*
+ * Bohnenglück over the base theme (decision 0188): only the look of the
+ * roastery, on the classes of the base theme. Colours, fonts, rounding
+ * and spacing come from the tokens in frootbox.yaml.
+ */
+
+/* Head: stays at the top, the page shines through. */
+.base-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 10;
   background: color-mix(in srgb, var(--color-bg) 85%, transparent);
   backdrop-filter: blur(10px);
-  border-block-end: 1px solid var(--color-line);
+  border-block-end-color: var(--color-line);
 }
-.site-header__inner {
-  inline-size: min(100% - 2.5rem, var(--width)); margin-inline: auto;
-  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-  padding-block: .9rem;
+.base-header__brand { font-size: var(--size-l); }
+.base-nav--main a:not(.base-nav__button) { color: var(--color-muted); font-weight: 500; }
+.base-nav--main a:not(.base-nav__button):is([aria-current="page"], .is-active) { color: var(--color-primary); }
+
+/* Head of a subpage: a warm glow across the full width. */
+.base-page-head {
+  border-image: linear-gradient(180deg, color-mix(in srgb, var(--color-accent) 18%, var(--color-bg)), var(--color-bg)) fill 0 / / 0 100vmax;
 }
-.site-brand { font-family: var(--font-heading); font-size: 1.35rem; font-weight: 700; color: var(--color-text); text-decoration: none; }
-.site-header nav ul { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; list-style: none; padding: 0; }
-.site-header nav a { color: var(--color-muted); text-decoration: none; font-weight: 500; }
-.site-header nav a:hover { color: var(--color-primary); }
-.site-header nav a.button { color: var(--color-primary-contrast); padding: .5rem 1.1rem; }
+.base-breadcrumb li + li::before { content: "›"; opacity: 1; }
+.base-breadcrumb li + li:dir(rtl)::before { content: "‹"; }
 
-.site-footer { background: var(--color-dark); color: color-mix(in srgb, var(--color-bg) 75%, transparent); padding-block: 2.5rem; text-align: center; font-size: .9rem; }
-.site-footer nav ul { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem 1.5rem; list-style: none; padding: 0; margin-block-end: 1rem; }
-.site-footer nav a { color: var(--color-bg); text-decoration: none; }
-.site-footer nav a:hover { color: var(--color-accent); }
-
-/* .button-field wraps {{ field() }} of a link, so it can be edited on the website. */
-.button, .button-field > a {
-  display: inline-flex; align-items: center; gap: .5rem;
-  padding: .85rem 1.5rem; border-radius: 999px;
-  background: var(--color-primary); color: var(--color-primary-contrast);
-  font-weight: 600; text-decoration: none;
-  transition: transform .15s ease, box-shadow .15s ease;
+/* Opening without an image: circles in the colours of the roastery. */
+.base-hero--split .base-hero__inner:not(:has(.base-hero__media))::after {
+  content: "";
+  inline-size: min(100%, 26rem);
+  aspect-ratio: 1;
+  justify-self: center;
+  background:
+    radial-gradient(circle at 42% 42%, var(--color-bg) 0 15%, transparent 15.5%),
+    radial-gradient(circle at 42% 42%, var(--color-primary) 0 41.5%, transparent 42%),
+    radial-gradient(circle at 67% 67%, var(--color-accent) 0 32.5%, transparent 33%);
 }
-:is(.button, .button-field > a):hover { transform: translateY(-2px); box-shadow: 0 .5rem 1.5rem color-mix(in srgb, var(--color-primary) 35%, transparent); }
-.button--ghost, .button-field--ghost > a { background: transparent; color: inherit; box-shadow: inset 0 0 0 2px currentColor; }
-.eyebrow { font-size: .8rem; font-weight: 700; color: var(--color-primary); }
-/* Arabic and Hebrew have no capitals, and spacing tears Arabic letters apart (decision 0133). */
-.eyebrow:dir(ltr) { text-transform: uppercase; letter-spacing: .12em; }
-.section { padding-block: var(--space); }
-.section__head { max-inline-size: 42rem; margin-block-end: 2.5rem; }
-.section__title { font-size: clamp(1.8rem, 4vw, 2.6rem); }
-.section__head p { color: var(--color-muted); margin-block-start: .75rem; font-size: 1.1rem; }
+.base-hero--split .base-hero__title { font-size: var(--size-4xl); }
+.base-hero:is(.base-hero--split, .base-hero--none, .base-hero--surface) .base-hero__lead { color: var(--color-muted); }
 
-/* Language switcher */
-.languages { display: flex; gap: .25rem; list-style: none; padding: 0; font-size: .85rem; }
-.languages a, .languages span { display: inline-block; padding: .2rem .45rem; border-radius: 6px; text-decoration: none; color: var(--color-muted); text-transform: uppercase; font-weight: 600; }
-.languages a:hover { color: var(--color-primary); }
-.languages [aria-current] { background: var(--color-line); color: var(--color-text); }
-
-.site-header nav a:not(.button):is([aria-current], .is-active) { color: var(--color-primary); }
-.site-header__end { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
-@media (max-width: 40rem) {
-  .site-header__inner { flex-wrap: wrap; }
-  .site-header__end { inline-size: 100%; justify-content: space-between; }
+/* Benefits as cards with the symbol on a light accent. */
+.base-features__item {
+  padding: var(--space-m);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  transition: translate 0.2s ease;
+}
+.base-features__item:hover { translate: 0 -4px; }
+.base-features__icon { background: color-mix(in srgb, var(--color-accent) 25%, var(--color-surface)); }
+@media (prefers-reduced-motion: reduce) {
+  .base-features__item { transition: none; }
 }
 
-.skip-link { position: absolute; inset-inline-start: 1rem; inset-block-start: -3rem; z-index: 20; padding: .5rem 1rem; border-radius: 6px; background: var(--color-primary); color: var(--color-primary-contrast); }
-.skip-link:focus { inset-block-start: 1rem; }
+/* A quote as a card with a large quotation mark. */
+.base-quote {
+  position: relative;
+  padding: var(--space-l) var(--space-m) var(--space-m);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+.base-quote::before {
+  content: "“";
+  position: absolute;
+  inset-block-start: -0.5rem;
+  inset-inline-start: var(--space-m);
+  font: 700 5rem/1 var(--font-heading);
+  color: var(--color-accent);
+}
+
+/* Questions and answers as lines, the sign in the main colour. */
+.base-accordion--faq .base-accordion__list { gap: 0; }
+.base-accordion--faq .base-accordion__item { padding-inline: 0; border-radius: 0; background: none; border-block-end: 1px solid var(--color-line); }
+
+/* Call to action: a rounded band with a gradient, also in the main area. */
+.base-cta:not(.base-cta--surface) { background: linear-gradient(135deg, var(--color-primary), color-mix(in srgb, var(--color-primary) 60%, var(--color-accent))); }
+.base-cta { border-radius: calc(var(--radius) * 1.5); }
+.base-page > .base-cta { inline-size: min(100% - 2 * var(--gutter), var(--width)); margin-inline: auto; border-radius: calc(var(--radius) * 1.5); }
+.base-page > .base-cta .base-cta__inner { inline-size: auto; padding: var(--space-l); }
+.base-cta--surface { border: 1px solid var(--color-line); }
+
+/* Foot: dark, everything centred. */
+.base-footer { border: 0; background: var(--color-dark); color: color-mix(in srgb, var(--color-bg) 75%, transparent); }
+.base-footer__inner { flex-direction: column; align-items: center; text-align: center; }
+.base-footer__site { align-items: center; }
+.base-footer__brand { color: var(--color-bg); }
+.base-footer .base-nav__list { justify-content: center; }
+.base-footer .base-nav a { color: var(--color-bg); }
+.base-footer .base-nav a:hover { background: none; color: var(--color-accent); }
+.base-footer :focus-visible { outline-color: var(--color-accent); }
