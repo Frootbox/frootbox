@@ -52,6 +52,8 @@ export class DesignPanel {
         this.state = null;
         this.pending = {};
         this.timer = null;
+        // The save on its way, so publishing and discarding wait for it.
+        this.saving = Promise.resolve();
     }
 
     get labels() {
@@ -129,15 +131,21 @@ export class DesignPanel {
         this.update({ design: { ...design, draft: true, tokens: design.tokens.map((token) => token.name === name ? { ...token, ...changes } : token) } });
     }
 
+    /** Saves what waits, one save after the other; resolves when the last one is done. */
     async flush() {
         clearTimeout(this.timer);
         const tokens = this.pending;
         this.pending = {};
 
-        if (Object.keys(tokens).length === 0) {
-            return;
+        if (Object.keys(tokens).length > 0) {
+            // A failed save does not hold up the next one.
+            this.saving = this.saving.then(() => this.save(tokens), () => this.save(tokens));
         }
 
+        await this.saving;
+    }
+
+    async save(tokens) {
         const result = await this.bar.run('design.update', { tokens });
 
         // A newer change waits to be saved, its values win.
@@ -172,6 +180,7 @@ export class DesignPanel {
         clearTimeout(this.timer);
         this.pending = {};
         this.update({ busy: true });
+        await this.saving;
         const result = await this.bar.run('design.discard', {});
 
         if (result.ok) {

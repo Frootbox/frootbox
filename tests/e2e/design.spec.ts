@@ -44,7 +44,6 @@ test('changes the colours on the website and publishes them', async ({ page, bro
     await expect(panel.getByText(/zu „Text auf der Hauptfarbe“/)).toHaveCount(0);
 
     await panel.getByRole('combobox', { name: 'Schrift für Überschriften' }).selectOption('rounded');
-    await panel.getByRole('slider', { name: 'Rundung der Ecken' }).fill('4');
     await expect(bar.getByRole('region', { name: 'Redaktionsleiste' }).getByRole('status')).toHaveText('Gespeichert');
 
     // Visitors still see the published design.
@@ -52,8 +51,21 @@ test('changes the colours on the website and publishes them', async ({ page, bro
     await guest.goto('/');
     expect(await primary(guest)).toBe('#8a4b2a');
 
+    // Publishing waits for a save on its way, which would otherwise come
+    // after it and make the design a draft again.
+    let release = () => {};
+    const held = new Promise<void>((resolve) => (release = resolve));
+    await page.route('**/design.update', async (route) => {
+        await held;
+        await route.continue();
+    });
+    const saving = page.waitForRequest('**/design.update');
+    await panel.getByRole('slider', { name: 'Rundung der Ecken' }).fill('4');
+    await saving;
     await panel.getByRole('button', { name: 'Design veröffentlichen' }).click();
+    release();
     await expect(panel.getByText('Besucher sehen dieses Design.')).toBeVisible();
+    await page.unroute('**/design.update');
     await guest.reload();
     expect(await primary(guest)).toBe('#225588');
     expect(await guest.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--radius').trim())).toBe('4px');
