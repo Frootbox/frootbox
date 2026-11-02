@@ -32,7 +32,7 @@
 .base-section--primary .base-steps__item::before { background: var(--color-primary-contrast); color: var(--color-primary); }
 /* The main colour as text or mark is too weak on both. */
 :is(.base-section--primary, .base-section--dark) .base-head__eyebrow,
-:is(.base-section--primary, .base-section--dark) .base-accordion__summary::after { color: inherit; }
+:is(.base-section--primary, .base-section--dark) .base-accordion:not(.base-accordion--faq) .base-accordion__summary::after { color: inherit; }
 /* Prices and tables have no surface of their own: they get the page background. */
 :is(.base-section--primary, .base-section--dark) :is(.base-prices__item, .base-table__scroll) { background: var(--color-bg); }
 /* The focus ring would have the colour of the background. */
