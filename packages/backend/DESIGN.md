@@ -809,6 +809,12 @@ the library with search and upload, the alternative text for the place
 and "Remove the image". For a video field it has two tabs, "Video" and
 "Poster image", each with only the media of its kind.
 
+For an icon field (decision 0179) the bar has a dialog of the same build
+(`icon-picker.js`): a search by label and a grid of the symbols of the
+theme from `icon.list`, the chosen one with `aria-pressed="true"`, a
+double click applies. The settings panel offers the symbols as a
+`<select>` with "No symbol" first.
+
 ### Swatch
 
 ```html

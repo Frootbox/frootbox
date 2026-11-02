@@ -6,6 +6,7 @@ import { Editing } from './editing.js';
 import { follow, registerFieldTools, toolsOf } from './field-tools.js';
 import { fromStart } from './edges.js';
 import { icon } from './icons.js';
+import { IconPicker, iconPickerStyles } from './icon-picker.js';
 import { MediaPicker, mediaStyles } from './media.js';
 import { OutlinePanel, outlineStyles } from './outline.js';
 import { placesOf } from './problems.js';
@@ -639,7 +640,7 @@ export class EditorBar extends LitElement {
         @media (prefers-reduced-motion: reduce) {
             * { transition: none !important; animation: none !important; }
         }
-    `, arrangingStyles, mediaStyles, designStyles, shareStyles, commentStyles, outlineStyles];
+    `, arrangingStyles, mediaStyles, iconPickerStyles, designStyles, shareStyles, commentStyles, outlineStyles];
 
     constructor() {
         super();
@@ -677,6 +678,7 @@ export class EditorBar extends LitElement {
         this.editing = null;
         this.arranging = null;
         this.media = new MediaPicker(this);
+        this.icons = new IconPicker(this);
         this.design = new DesignPanel(this);
         this.share = new SharePreview(this);
         this.comments = new CommentsPanel(this);
@@ -811,7 +813,7 @@ export class EditorBar extends LitElement {
 
         const arranging = this.arranging;
 
-        return html`${this.outlines()}${this.config.editing ? this.comments.pins() : nothing}${this.comments.pickHint()}${arranging?.tools() ?? nothing}${arranging?.entryTools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.design.view()}${this.comments.view()}${this.outline.view()}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}${this.media.dialog()}${this.share.dialog()}`;
+        return html`${this.outlines()}${this.config.editing ? this.comments.pins() : nothing}${this.comments.pickHint()}${arranging?.tools() ?? nothing}${arranging?.entryTools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.design.view()}${this.comments.view()}${this.outline.view()}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}${this.media.dialog()}${this.icons.dialog()}${this.share.dialog()}`;
     }
 
     round() {

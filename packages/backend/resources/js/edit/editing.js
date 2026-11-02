@@ -161,6 +161,9 @@ export class Editing {
         } else if ((type === 'image' || type === 'video') && (event.key === 'Enter' || event.key === ' ')) {
             event.preventDefault();
             this.editImage(element);
+        } else if (type === 'icon' && (event.key === 'Enter' || event.key === ' ')) {
+            event.preventDefault();
+            this.editIcon(element);
         } else if (type === 'richtext' && event.key === 'F10' && event.altKey) {
             // Alt+F10 reaches the toolbar from the keyboard.
             event.preventDefault();
@@ -197,6 +200,9 @@ export class Editing {
         } else if (element?.dataset.fbType === 'image' || element?.dataset.fbType === 'video') {
             event.preventDefault();
             this.editImage(element);
+        } else if (element?.dataset.fbType === 'icon') {
+            event.preventDefault();
+            this.editIcon(element);
         }
     }
 
@@ -287,7 +293,7 @@ export class Editing {
             element.dataset.fbValue = JSON.stringify(data.value);
         }
 
-        if (['link', 'image', 'video'].includes(element.dataset.fbType)) {
+        if (['link', 'image', 'video', 'icon'].includes(element.dataset.fbType)) {
             element.innerHTML = data.html;
         }
 
@@ -334,6 +340,16 @@ export class Editing {
             kind: element.dataset.fbType === 'video' ? 'video' : 'image',
             value: this.savedValue(element),
             apply: (value) => this.save(element, value),
+            remove: () => this.save(element, null),
+            done: () => element.focus(),
+        });
+    }
+
+    /** A symbol of the theme (decision 0179). */
+    editIcon(element) {
+        this.bar.icons.open({
+            value: this.savedValue(element),
+            apply: (name) => this.save(element, name),
             remove: () => this.save(element, null),
             done: () => element.focus(),
         });

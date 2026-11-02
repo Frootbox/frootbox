@@ -13,7 +13,7 @@ import { icon } from './icons.js';
 
 const RESTORE = 'fb-edit-restore:';
 const BLOCK = '[data-fb-block]';
-const PANEL_FIELDS = ['headline', 'text', 'link', 'image', 'video'];
+const PANEL_FIELDS = ['headline', 'text', 'link', 'image', 'video', 'icon'];
 
 /** Up to this many blocks the picker shows them without groups (decision 0148). */
 const FEW_BLOCKS = 8;
@@ -1098,6 +1098,19 @@ export class Arranging {
             return html`<div><span class="hint">${field.label}</span>
                 <button type="button" class="link-field" @click=${() => this.editImage(data, path, value, 'video')}>
                     <span>${value?.media ? this.labels.videoChosen : this.labels.noVideo}</span>${icon('video')}</button></div>`;
+        }
+
+        if (field.type === 'icon') {
+            // A list to choose from (decision 0179); the symbols load on first use.
+            const icons = this.bar.icons.icons;
+            this.bar.icons.list();
+
+            return html`<label>${field.label}
+                <select @change=${(event) => this.setField(data, path, value, event.target.value === '' ? null : event.target.value)}>
+                    <option value="" ?selected=${!value}>${this.labels.noIcon}</option>
+                    ${(icons ?? []).map((item) => html`<option .value=${item.name} ?selected=${item.name === value}>${item.label}</option>`)}
+                    ${value && icons && !icons.some((item) => item.name === value) ? html`<option .value=${value} selected>${value}</option>` : nothing}
+                </select></label>`;
         }
 
         const save = (event) => {

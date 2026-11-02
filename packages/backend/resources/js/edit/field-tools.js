@@ -75,3 +75,12 @@ registerFieldTools('video', (field, bar) => {
         ...(removable(field) ? [{ icon: 'trash', label: labels.removeVideo, run: () => bar.editing?.save(field, null), tone: 'danger' }] : []),
     ];
 });
+
+registerFieldTools('icon', (field, bar) => {
+    const labels = bar.labels;
+
+    return [
+        { icon: 'symbol', label: labels.chooseIcon, run: () => bar.editing?.editIcon(field) },
+        ...(removable(field) ? [{ icon: 'trash', label: labels.removeIcon, run: () => bar.editing?.save(field, null), tone: 'danger' }] : []),
+    ];
+});
