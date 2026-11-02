@@ -817,11 +817,15 @@ and "Remove the image". For a video field it has two tabs, "Video" and
 (decision 0179) it lists the documents as `.file-tile` (file icon and
 format) and asks for a link text instead of the alternative text.
 
-For an icon field (decision 0179) the bar has a dialog of the same build
-(`icon-picker.js`): a search by label and a grid of the symbols of the
-theme from `icon.list`, the chosen one with `aria-pressed="true"`, a
-double click applies. The settings panel offers the symbols as a
-`<select>` with "No symbol" first.
+For an icon field (decisions 0179, 0182) the bar has a dialog of the
+same build (`icon-picker.js`): a "Set" select (all sets, the theme, sets
+of extensions, own symbols, each with its count; only shown with more
+than one set), a search and "Upload an SVG" in `.media-tools`, then a
+grid of the symbols from `icon.list`, page by page with "Show more". The
+chosen one has `aria-pressed="true"`, a double click applies. An SVG
+uploaded here goes into the media library and is chosen at once. The
+settings panel shows the chosen symbol on a `.link-field` button
+(`.icon-choice`) that opens the same dialog.
 
 ### Swatch
 

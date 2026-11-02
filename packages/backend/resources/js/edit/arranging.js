@@ -1,4 +1,5 @@
 import { css, html, nothing } from 'lit';
+import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
 import { endFromEnd } from './edges.js';
 import { entryAt, fieldsOf, markEntries, ownerOf, sideBySide } from './entries.js';
 import { icon } from './icons.js';
@@ -324,6 +325,12 @@ export const arrangingStyles = css`
         min-block-size: var(--fb-size-control);
         border-color: var(--fb-border-strong);
         font-weight: var(--fb-weight-regular);
+    }
+
+    .panel .icon-choice svg {
+        flex: none;
+        inline-size: var(--fb-space-6);
+        block-size: var(--fb-space-6);
     }
 
     .entries {
@@ -1107,16 +1114,12 @@ export class Arranging {
         }
 
         if (field.type === 'icon') {
-            // A list to choose from (decision 0179); the symbols load on first use.
-            const icons = this.bar.icons.icons;
-            this.bar.icons.list();
+            // The dialog of the symbols (decision 0182); the chosen one shows here.
+            const chosen = this.bar.icons.describe(value);
 
-            return html`<label>${field.label}
-                <select @change=${(event) => this.setField(data, path, value, event.target.value === '' ? null : event.target.value)}>
-                    <option value="" ?selected=${!value}>${this.labels.noIcon}</option>
-                    ${(icons ?? []).map((item) => html`<option .value=${item.name} ?selected=${item.name === value}>${item.label}</option>`)}
-                    ${value && icons && !icons.some((item) => item.name === value) ? html`<option .value=${value} selected>${value}</option>` : nothing}
-                </select></label>`;
+            return html`<div><span class="hint">${field.label}</span>
+                <button type="button" class="link-field icon-choice" @click=${() => this.editIcon(data, path, value)}>
+                    <span>${value ? (chosen?.label ?? value) : this.labels.noIcon}</span>${chosen ? unsafeSVG(chosen.svg) : icon('symbol')}</button></div>`;
         }
 
         const save = (event) => {
@@ -1211,6 +1214,17 @@ export class Arranging {
 
         this.bar.media.open({
             kind,
+            value,
+            apply: (chosen) => this.panelChange('page.update-field', { block: data.id, path, value: chosen, previous: value }),
+            remove: () => this.panelChange('page.update-field', { block: data.id, path, value: null, previous: value }),
+            done: () => button?.focus(),
+        });
+    }
+
+    editIcon(data, path, value) {
+        const button = this.bar.renderRoot.activeElement;
+
+        this.bar.icons.open({
             value,
             apply: (chosen) => this.panelChange('page.update-field', { block: data.id, path, value: chosen, previous: value }),
             remove: () => this.panelChange('page.update-field', { block: data.id, path, value: null, previous: value }),

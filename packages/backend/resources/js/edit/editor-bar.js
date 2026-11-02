@@ -552,7 +552,7 @@ export class EditorBar extends LitElement {
 
         dialog label { display: grid; gap: var(--fb-space-1); font-weight: var(--fb-weight-semibold); }
 
-        dialog input:not([type]), dialog input[type="text"] {
+        dialog input:not([type]), dialog input[type="text"], dialog select {
             min-block-size: var(--fb-size-control);
             padding-inline: var(--fb-space-3);
             border: var(--fb-size-border) solid var(--fb-border-strong);
@@ -563,7 +563,7 @@ export class EditorBar extends LitElement {
             font-weight: var(--fb-weight-regular);
         }
 
-        dialog input:focus-visible {
+        dialog :is(input, select):focus-visible {
             outline: var(--fb-size-focus) solid var(--fb-focus);
             outline-offset: var(--fb-size-focus-offset);
         }
