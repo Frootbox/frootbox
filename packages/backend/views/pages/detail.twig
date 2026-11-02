@@ -69,11 +69,11 @@
         <fb-form action="page.update" refresh="{{ refresh }}" done="{{ t('Saved') }}">
             <form class="fb-stack" novalidate>
                 <input type="hidden" name="id" value="{{ page.id }}">
-                {{ ui.field({label: t('Title'), name: 'translations.' ~ page.language.code ~ '.title', id: 'page-title', value: translation.title, required: true, disabled: not editable}) }}
+                {{ ui.field({label: t('Title'), name: 'translations.' ~ page.language.code ~ '.title', id: 'page-title', value: translation.title, required: true, disabled: not editable, attrs: {lang: page.language.code, dir: page.language.direction.value}}) }}
                 {% if row.start %}
                     {{ ui.field({label: t('Address'), name: '', id: 'page-slug', value: page.prefix, disabled: true, hint: t('The start page has no address of its own.')}) }}
                 {% else %}
-                    {{ ui.field({label: t('Address'), name: 'translations.' ~ page.language.code ~ '.slug', id: 'page-slug', value: translation.slug, prefix: page.prefix, required: true, disabled: not editable, hint: t('If the address changes, the old one redirects to the new one.')}) }}
+                    {{ ui.field({label: t('Address'), name: 'translations.' ~ page.language.code ~ '.slug', id: 'page-slug', value: translation.slug, prefix: page.prefix, required: true, disabled: not editable, attrs: {dir: 'ltr'}, hint: t('If the address changes, the old one redirects to the new one.')}) }}
                 {% endif %}
                 {% if editable %}
                 <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}<p class="fb-form__note">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p></div>

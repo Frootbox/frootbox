@@ -60,8 +60,8 @@
             <fieldset class="fb-fieldset">
                 {% if languages|length > 1 %}<legend class="fb-fieldset__legend">{{ language.title }}</legend>{% endif %}
                 <div class="fb-stack fb-stack--sm">
-                    {{ ui.field({label: t('Alternative text'), name: 'texts.' ~ language.code ~ '.alt', id: 'media-alt-' ~ language.code, value: text.alt, hint: t('Describes the image for people who cannot see it. Leave it empty for pure decoration.'), disabled: not editable, attrs: {maxlength: 500}}) }}
-                    {{ ui.field({label: t('Title'), name: 'texts.' ~ language.code ~ '.title', id: 'media-title-' ~ language.code, value: text.title, optional: true, disabled: not editable, attrs: {maxlength: 200}}) }}
+                    {{ ui.field({label: t('Alternative text'), name: 'texts.' ~ language.code ~ '.alt', id: 'media-alt-' ~ language.code, value: text.alt, hint: t('Describes the image for people who cannot see it. Leave it empty for pure decoration.'), disabled: not editable, attrs: {maxlength: 500, lang: language.code, dir: language.direction.value}}) }}
+                    {{ ui.field({label: t('Title'), name: 'texts.' ~ language.code ~ '.title', id: 'media-title-' ~ language.code, value: text.title, optional: true, disabled: not editable, attrs: {maxlength: 200, lang: language.code, dir: language.direction.value}}) }}
                 </div>
             </fieldset>
             {% endfor %}

@@ -16,14 +16,14 @@
             {% if row.outside %}
             {#- Only the way to a branch of the user (decision 0118). -#}
             <span class="fb-tree__link" title="{{ row.title }} · {{ row.path }}">
-                <span class="fb-tree__title">{{ row.title }}</span>
+                <span class="fb-tree__title" lang="{{ row.lang }}" dir="{{ row.dir }}">{{ row.title }}</span>
                 <span class="fb-tree__meta">{{ t('Outside your pages') }}</span>
             </span>
             {% else %}
             <span class="fb-tree__dot" data-status="{{ row.status }}" aria-hidden="true"></span>
             <a class="fb-tree__link" href="{{ path('backend.pages.show', {id: row.id}) }}" title="{{ row.title }} · {{ row.path }} · {{ row.languages|join(', ') }} · {{ status }}" hx-get="{{ path('backend.pages.show', {id: row.id}) }}" hx-target="#page-detail" hx-select="#page-detail" hx-swap="outerHTML" hx-push-url="true"{% if row.id == current %} aria-current="page"{% endif %}{% if movable and not row.fixed %} aria-describedby="page-tree-hint"{% endif %}>
-                <span class="fb-tree__title">{{ row.title }}</span>
-                <span class="fb-tree__path">{{ row.path }}</span>
+                <span class="fb-tree__title" lang="{{ row.lang }}" dir="{{ row.dir }}">{{ row.title }}</span>
+                <span class="fb-tree__path" dir="ltr">{{ row.path }}</span>
                 <span class="fb-visually-hidden">, {{ status }}{% if row.locked %}, {{ t('Locked') }}{% endif %}</span>
             </a>
             {% if row.locked %}<span class="fb-tree__flag" data-status="danger" aria-hidden="true">{{ icon('lock', 'fb-icon fb-icon--small') }}{{ t('Locked') }}</span>{% endif %}

@@ -7,6 +7,15 @@ const fold = (text) => text.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase(
 
 const ALERT = '<svg class="fb-icon fb-icon--small" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6"/><path d="M12 16.5v.5"/></svg>';
 
+/** Left and right swapped where the text runs from right to left (decision 0133). */
+function inlineKey(key, element) {
+    if (getComputedStyle(element).direction !== 'rtl') {
+        return key;
+    }
+
+    return { ArrowLeft: 'ArrowRight', ArrowRight: 'ArrowLeft' }[key] ?? key;
+}
+
 /**
  * <fb-tree>: a tree of links that can be rearranged (decision 0116). The
  * server renders it, the component adds moving with the mouse and the
@@ -44,7 +53,8 @@ const ALERT = '<svg class="fb-icon fb-icon--small" aria-hidden="true" focusable=
  *
  * Keys on a link: arrow up and down go to the next link, Home and End to
  * the first and last. Arrow right opens a branch or goes into it, arrow
- * left closes it or goes to the parent. With Alt, up and down move the item among its
+ * left closes it or goes to the parent; from right to left the other way
+ * round. With Alt, up and down move the item among its
  * siblings, right makes it the last child of the item above, left moves
  * it one level up, after its parent. A click on a link marks it with
  * aria-current, htmx loads what it points to.
@@ -361,6 +371,8 @@ export class Tree extends LitElement {
         }
 
         const item = link.closest('.fb-tree__item');
+        // In and out by the direction of the backend, not of a title in another language.
+        const key = inlineKey(event.key, this);
         const links = this.links();
         const index = links.indexOf(link);
 
@@ -368,7 +380,7 @@ export class Tree extends LitElement {
             const branch = item.querySelector(':scope > .fb-tree__row > button.fb-tree__toggle') !== null;
             const closed = item.hasAttribute('data-collapsed');
 
-            if (event.key === 'ArrowRight' && branch) {
+            if (key === 'ArrowRight' && branch) {
                 event.preventDefault();
 
                 if (closed) {
@@ -380,7 +392,7 @@ export class Tree extends LitElement {
                 return;
             }
 
-            if (event.key === 'ArrowLeft') {
+            if (key === 'ArrowLeft') {
                 event.preventDefault();
 
                 if (branch && !closed) {
@@ -414,7 +426,7 @@ export class Tree extends LitElement {
             return;
         }
 
-        if (!this.canMove() || item.hasAttribute('data-fixed') || !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+        if (!this.canMove() || item.hasAttribute('data-fixed') || !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
             return;
         }
 
@@ -429,9 +441,9 @@ export class Tree extends LitElement {
             target = { parent, position: place - 1 };
         } else if (event.key === 'ArrowDown' && place < siblings.length - 1) {
             target = { parent, position: place + 1 };
-        } else if (event.key === 'ArrowRight' && place > 0) {
+        } else if (key === 'ArrowRight' && place > 0) {
             target = { parent: siblings[place - 1], position: null };
-        } else if (event.key === 'ArrowLeft' && parent && (this.roots || Tree.parentItem(parent))) {
+        } else if (key === 'ArrowLeft' && parent && (this.roots || Tree.parentItem(parent))) {
             target = { parent: Tree.parentItem(parent), position: Tree.children(parent.parentElement).indexOf(parent) + 1 };
         }
 

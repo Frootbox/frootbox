@@ -20,7 +20,7 @@ use Frootbox\Core\Page\PageTreeNode;
  * the pages above them are "outside": shown, but not opened or moved
  * (decision 0118).
  *
- * @phpstan-type Row array{id: string, title: string, path: string, terms: string, languages: list<string>, status: string, layout: string, depth: int, start: bool, fixed: bool, online: bool, locked: bool, outside: bool, children: list<mixed>}
+ * @phpstan-type Row array{id: string, title: string, lang: string, dir: string, path: string, terms: string, languages: list<string>, status: string, layout: string, depth: int, start: bool, fixed: bool, online: bool, locked: bool, outside: bool, children: list<mixed>}
  */
 final readonly class PageTree
 {
@@ -200,6 +200,9 @@ final readonly class PageTree
         foreach ($nodes as $node) {
             $paths = [];
 
+            $titleCode = isset($node->titles[$default->code]) ? $default->code : array_key_first($node->titles);
+            $titleLanguage = null !== $titleCode && $languages->has($titleCode) ? $languages->get($titleCode) : $default;
+
             foreach ($languages->all() as $language) {
                 $slug = $node->slugs[$language->code] ?? $node->slugs[$default->code] ?? array_first($node->slugs) ?? '';
                 $paths[$language->code] = null === $parentId ? '' : ltrim(($parentPaths[$language->code] ?? '') . '/' . $slug, '/');
@@ -208,6 +211,9 @@ final readonly class PageTree
             $row = [
                 'id' => $node->id,
                 'title' => $node->titles[$default->code] ?? array_first($node->titles) ?? $node->id,
+                // Language and direction of the title, for lang and dir (decision 0133).
+                'lang' => $titleLanguage->code,
+                'dir' => $titleLanguage->direction->value,
                 'path' => $default->path($paths[$default->code]),
                 // What the search in the sitemap finds (decision 0136): titles and addresses in every language.
                 'terms' => implode(' ', array_unique([...array_values($node->titles), ...array_map(

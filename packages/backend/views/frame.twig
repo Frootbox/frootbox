@@ -1,6 +1,6 @@
 {#- The HTML document of every backend page. Screens extend layout.twig. -#}
 <!doctype html>
-<html lang="{{ fb.language }}">
+<html lang="{{ fb.language }}" dir="{{ fb.direction }}">
 <head>
 {{ fb.head|raw }}
 <title>{% block title %}{% endblock %} · {{ fb.brand }}</title>
