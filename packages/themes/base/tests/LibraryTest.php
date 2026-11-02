@@ -71,7 +71,7 @@ final class LibraryTest extends NotesTestCase
 
         self::assertSame(0, $console->run(new ArrayInput(['command' => 'seed', 'file' => self::THEME . ':demo/library.yaml']), $output), $output->fetch());
 
-        foreach (['/', '/heading', '/text', '/button', '/section', '/text-with-heading', '/quote', '/notice', '/divider', '/call-to-action', '/key-figures', '/hero', '/page-header', '/image-with-text', '/gallery', '/slider', '/video', '/cards', '/logos', '/link-list', '/accordion', '/steps', '/testimonials', '/prices', '/contact', '/features', '/downloads', '/table', '/aktion', '/impressum'] as $path) {
+        foreach (['/', '/heading', '/text', '/button', '/section', '/text-with-heading', '/quote', '/notice', '/divider', '/call-to-action', '/key-figures', '/hero', '/page-header', '/image-with-text', '/gallery', '/slider', '/video', '/cards', '/logos', '/link-list', '/accordion', '/steps', '/testimonials', '/prices', '/contact', '/features', '/downloads', '/table', '/code', '/on-primary', '/aktion', '/impressum'] as $path) {
             $this->get(Urls::class)->clear();
             $this->get(PageOutline::class)->clear();
             $response = $this->get(PageHandler::class)->handle(new ServerRequest('GET', 'https://example.org' . $path));
@@ -90,6 +90,14 @@ final class LibraryTest extends NotesTestCase
             if ('/hero' === $path) {
                 self::assertMatchesRegularExpression('#<p class="base-hero__eyebrow">Rösterei am Hafen</p>\s*<h2 class="base-hero__title"#', (string) $response->getBody(), 'The eyebrow stands above the heading (decision 0188).');
                 self::assertSame(1, substr_count((string) $response->getBody(), 'base-hero__eyebrow'), 'An empty eyebrow leaves nothing behind.');
+            }
+
+            if ('/code' === $path) {
+                self::assertStringContainsString('<p>Die Mühle stellst Du mit <code>mahlgrad --fein</code> auf Espresso ein.</p><pre><code class="language-shell">mahlgrad --sorte=hafenmorgen', (string) $response->getBody(), 'Code inline and as a block, styled by base.css.');
+            }
+
+            if ('/on-primary' === $path) {
+                self::assertSame(3, substr_count((string) $response->getBody(), 'base-section--primary'), 'The blocks stand on the main colour.');
             }
 
             if ('/downloads' === $path) {

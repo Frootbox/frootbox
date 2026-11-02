@@ -38,6 +38,8 @@ export const PAGES = {
     features: '/features',
     downloads: '/downloads',
     table: '/table',
+    code: '/code',
+    onPrimary: '/on-primary',
     landing: '/aktion',
 };
 

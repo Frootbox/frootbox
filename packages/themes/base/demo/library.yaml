@@ -4,6 +4,9 @@
 #
 # Each subpage shows one block at the three places of decision 0163: in
 # the main area, in one of two columns and in a narrow column of a third.
+# Two pages check what holds for all blocks: "Code im Text" (code wraps
+# instead of scrolling) and "Auf der Hauptfarbe" (blocks on a section with
+# the background primary stay readable).
 # The browser tests take screenshots of them and check them with axe.
 # Needs the language de. The images in media/ are abstract colour
 # gradients made for this file, the clip roasting.webm comes from
@@ -567,6 +570,41 @@
               - {"block": "frootbox/theme-base/Section", "variant": "OneTwo", "areas": {"first": [{"block": "frootbox/theme-base/Table", "fields": {"title": "Öffnungszeiten", "table": {"rows": [["Tag", "Laden", "Café"], ["Montag bis Freitag", "8–18 Uhr", "8–17 Uhr"], ["Samstag", "9–14 Uhr", "9–16 Uhr"], ["Sonntag", "geschlossen", "10–16 Uhr\nnur bei Sonne"]], "headerRow": true, "headerColumn": true}, "note": "An Feiertagen bleibt alles zu."}}], "second": [{"block": "frootbox/theme-base/Text", "fields": {"body": {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
   as: table
 - page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Code im Text
+        slug: code
+        content:
+          fields:
+            title: Code im Text
+            intro: 'Code im Fließtext und als Block: umbrechen statt seitlich scrollen.'
+          areas:
+            main:
+              - {"block":"frootbox/theme-base/Section","areas":{"first":[{"block":"frootbox/theme-base/Text","fields":{"body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Die Mühle stellst Du mit "},{"type":"text","text":"mahlgrad --fein","marks":[{"type":"code"}]},{"type":"text","text":" auf Espresso ein."}]},{"type":"codeBlock","attrs":{"language":"shell"},"content":[{"type":"text","text":"mahlgrad --sorte=hafenmorgen --fein --menge=18g --notiz=\"Für den Siebträger, Brühzeit 25 bis 30 Sekunden, Wasser 93 Grad\""}]},{"type":"paragraph","content":[{"type":"text","text":"Das Rezept für den Hafenmorgen:"}]},{"type":"codeBlock","attrs":{"language":"text"},"content":[{"type":"text","text":"Bohnen:  18 g, fein gemahlen\nWasser:  36 g bei 93 °C\nZeit:    25–30 Sekunden"}]}]}}}]}}
+              - {"block":"frootbox/theme-base/Section","variant":"Two","areas":{"first":[{"block":"frootbox/theme-base/Text","fields":{"body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Die Mühle stellst Du mit "},{"type":"text","text":"mahlgrad --fein","marks":[{"type":"code"}]},{"type":"text","text":" auf Espresso ein."}]},{"type":"codeBlock","attrs":{"language":"shell"},"content":[{"type":"text","text":"mahlgrad --sorte=hafenmorgen --fein --menge=18g --notiz=\"Für den Siebträger, Brühzeit 25 bis 30 Sekunden, Wasser 93 Grad\""}]},{"type":"paragraph","content":[{"type":"text","text":"Das Rezept für den Hafenmorgen:"}]},{"type":"codeBlock","attrs":{"language":"text"},"content":[{"type":"text","text":"Bohnen:  18 g, fein gemahlen\nWasser:  36 g bei 93 °C\nZeit:    25–30 Sekunden"}]}]}}}],"second":[{"block":"frootbox/theme-base/Text","fields":{"body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+              - {"block":"frootbox/theme-base/Section","variant":"OneTwo","areas":{"first":[{"block":"frootbox/theme-base/Text","fields":{"body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Die Mühle stellst Du mit "},{"type":"text","text":"mahlgrad --fein","marks":[{"type":"code"}]},{"type":"text","text":" auf Espresso ein."}]},{"type":"codeBlock","attrs":{"language":"shell"},"content":[{"type":"text","text":"mahlgrad --sorte=hafenmorgen --fein --menge=18g --notiz=\"Für den Siebträger, Brühzeit 25 bis 30 Sekunden, Wasser 93 Grad\""}]},{"type":"paragraph","content":[{"type":"text","text":"Das Rezept für den Hafenmorgen:"}]},{"type":"codeBlock","attrs":{"language":"text"},"content":[{"type":"text","text":"Bohnen:  18 g, fein gemahlen\nWasser:  36 g bei 93 °C\nZeit:    25–30 Sekunden"}]}]}}}],"second":[{"block":"frootbox/theme-base/Text","fields":{"body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+              - {"block":"frootbox/theme-base/Section","variant":"Two","options":{"background":"primary"},"areas":{"first":[{"block":"frootbox/theme-base/Text","fields":{"body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Die Mühle stellst Du mit "},{"type":"text","text":"mahlgrad --fein","marks":[{"type":"code"}]},{"type":"text","text":" auf Espresso ein."}]},{"type":"codeBlock","attrs":{"language":"shell"},"content":[{"type":"text","text":"mahlgrad --sorte=hafenmorgen --fein --menge=18g --notiz=\"Für den Siebträger, Brühzeit 25 bis 30 Sekunden, Wasser 93 Grad\""}]},{"type":"paragraph","content":[{"type":"text","text":"Das Rezept für den Hafenmorgen:"}]},{"type":"codeBlock","attrs":{"language":"text"},"content":[{"type":"text","text":"Bohnen:  18 g, fein gemahlen\nWasser:  36 g bei 93 °C\nZeit:    25–30 Sekunden"}]}]}}}],"second":[{"block":"frootbox/theme-base/Text","fields":{"body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Eine Spalte daneben, damit die Breite stimmt."}]}]}}}]}}
+  as: code
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations:
+      de:
+        title: Auf der Hauptfarbe
+        slug: on-primary
+        content:
+          fields:
+            title: Auf der Hauptfarbe
+            intro: 'Blöcke in einem Abschnitt mit dem Hintergrund Akzent: Text in der Kontrastfarbe, eigene Flächen in den Farben der Seite.'
+          areas:
+            main:
+              - {"block":"frootbox/theme-base/Section","variant":"Two","options":{"background":"primary"},"areas":{"first":[{"block":"frootbox/theme-base/TextWithHeading","fields":{"title":"Frisch geröstet in Hamburg","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Text, Listen und Links stehen in der Kontrastfarbe, auch gedämpfter Text."}]},{"type":"bulletList","content":[{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Ganze Bohnen oder gemahlen"}]}]},{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"Versand jeden Dienstag"}]}]}]}]}}},{"block":"frootbox/theme-base/Button","options":{"style":"secondary"},"fields":{"link":{"url":"https://example.org/","text":"Zu den Sorten"}}}],"second":[{"block":"frootbox/theme-base/KeyFigures","fields":{"title":"In Zahlen","items":[{"value":"12","label":"Jahre Röstererfahrung"},{"value":"9","label":"Sorten im Regal"}]}},{"block":"frootbox/theme-base/Notice","options":{"tone":"info"},"fields":{"title":"Neue Öffnungszeiten","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Ab März auch samstags von 9 bis 14 Uhr."}]}]}}}]}}
+              - {"block":"frootbox/theme-base/Section","variant":"Two","options":{"background":"primary"},"areas":{"first":[{"block":"frootbox/theme-base/Features","fields":{"title":"Warum Bohnenglück","items":[{"icon":"truck","title":"Versand am Dienstag","text":"Montags geröstet, am Tag darauf unterwegs."},{"icon":"leaf","title":"Von Höfen, die wir kennen","text":"Wir kaufen direkt."}]}},{"block":"frootbox/theme-base/Steps","fields":{"title":"So funktioniert das Abo","items":[{"title":"Sorte wählen","text":"Hell, mittel oder dunkel."},{"title":"Genießen","text":"Wir rösten am Montag."}]}}],"second":[{"block":"frootbox/theme-base/Cards","options":{"columns":"two"},"fields":{"title":"Unsere Angebote","items":[{"title":"Röstkurs","text":"Zwei Stunden an der Trommel.","link":{"url":"https://example.org/","text":"Zum Kurs"}},{"title":"Verkostung","text":"Freitags ab 17 Uhr.","link":{"url":"https://example.org/","text":"Mehr erfahren"}}]}},{"block":"frootbox/theme-base/Accordion","variant":"Faq","fields":{"title":"Gut zu wissen","items":[{"title":"Wie lange ist Kaffee haltbar?","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Offen am besten in vier Wochen trinken."}]}]}},{"title":"Versendet ihr ins Ausland?","body":{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Innerhalb der EU."}]}]}}]}}]}}
+              - {"block":"frootbox/theme-base/Section","variant":"Two","options":{"background":"primary"},"areas":{"first":[{"block":"frootbox/theme-base/Pricing","fields":{"title":"Unsere Abos","items":[{"name":"Klein","price":"14 €","period":"pro Lieferung","text":"Für eine Person.","features":"250 g Kaffee\nVersand frei","link":{"url":"https://example.org/","text":"Klein wählen"},"badge":""},{"name":"Mittel","price":"24 €","period":"pro Lieferung","text":"Für Paare.","features":"500 g Kaffee\nVersand frei","link":{"url":"https://example.org/","text":"Mittel wählen"},"badge":"Beliebt"}]}}],"second":[{"block":"frootbox/theme-base/Table","fields":{"title":"Öffnungszeiten","table":{"rows":[["Tag","Laden"],["Montag bis Freitag","8–18 Uhr"],["Samstag","9–14 Uhr"]],"headerRow":true,"headerColumn":true},"note":"An Feiertagen bleibt alles zu."}},{"block":"frootbox/theme-base/CallToAction","options":{"background":"surface"},"fields":{"title":"Lust auf eine Verkostung?","text":"Jeden ersten Freitag im Monat.","link":{"url":"https://example.org/","text":"Platz reservieren"}}}]}}
+  as: on_primary
+- page.create:
     layout: frootbox/theme-base/Start
     parentId: '${start.id}'
     translations:
@@ -636,6 +674,8 @@
       - '${features.id}'
       - '${downloads.id}'
       - '${table.id}'
+      - '${code.id}'
+      - '${on_primary.id}'
       - '${page_header.id}'
       - '${landing.id}'
       - '${imprint.id}'

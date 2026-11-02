@@ -3,8 +3,28 @@
 .base-section--small { padding-block: calc(var(--space) / 2); }
 .base-section--large { padding-block: calc(var(--space) * 1.5); }
 .base-section--surface { background: var(--color-surface); }
-.base-section--primary { background: var(--color-primary); color: var(--color-primary-contrast); }
+/*
+ * On the main colour all text takes its contrast colour, muted text too,
+ * so every block stays readable (WCAG AA). Blocks with a surface of their
+ * own keep the colours of the page, kept on :root for them.
+ */
+:root { --base-page-text: var(--color-text); --base-page-muted: var(--color-muted); }
+.base-section--primary {
+  --color-text: var(--color-primary-contrast);
+  --color-muted: var(--color-primary-contrast);
+  background: var(--color-primary);
+  color: var(--color-text);
+}
 .base-section--primary a { color: inherit; }
+.base-section--primary :is(.base-cards__item, .base-notice, .base-accordion--faq .base-accordion__item, .base-voices__figure, .base-prices__item, .base-table__scroll, .base-cta--surface, .base-slider__button) {
+  --color-text: var(--base-page-text);
+  --color-muted: var(--base-page-muted);
+  color: var(--color-text);
+}
+/* Marks in the main colour swap their colours, so they stay visible. */
+.base-section--primary .base-steps__item::before { background: var(--color-primary-contrast); color: var(--color-primary); }
+/* Prices and tables have no surface of their own: they get the page background. */
+.base-section--primary :is(.base-prices__item, .base-table__scroll) { background: var(--color-bg); }
 /* The focus ring would have the colour of the background. */
 .base-section--primary :focus-visible { outline-color: currentColor; }
 
