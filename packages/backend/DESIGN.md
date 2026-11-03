@@ -1313,7 +1313,7 @@ an icon has a label (`icon_only`). New icons come from
 one file per icon as needed, drawn by hand only if Lucide has none: 24×24
 viewBox, stroke 1.8, round caps and joins, no fill, `stroke="currentColor"`.
 
-Available: alert, arrow-down, arrow-up, calendar, chart, check,
+Available: alert, arrow-down, arrow-up, briefcase, calendar, chart, check,
 chevron-down, clock, close, comment, copy, dashboard, external, file,
 grip, image, inbox, info, lock, menu, navigation, news, pages, palette,
 parent, pencil, plus, redirect, restore, search, settings, shield,
