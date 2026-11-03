@@ -64,6 +64,8 @@ final readonly class UpdatePerson implements Action
         public ?array $tags = null,
         #[Description('Further fields the views of the theme add, by name; a text one per language, e.g. {"subtitle": {"de": "…"}}, null removes one, the others stay; left out keeps them; see object.fields')]
         public ?array $fields = null,
+        #[Description('The space to move the person to; with publishing the profile moves below the page of that space and the old address redirects')]
+        public ?string $space = null,
     ) {}
 
     /**
@@ -71,6 +73,6 @@ final readonly class UpdatePerson implements Action
      */
     public function handle(PersonEditor $editor, PersonStore $store): Details
     {
-        return $store->save($this->id, $editor->change('frootbox/people/person.update', $store->current($this->id), $this->givenName, $this->familyName, $this->prefix, $this->translations, $this->email, $this->phone, $this->image, $this->locations, $this->order, null, $this->slug, $this->categories, $this->tags, $this->fields, $this->id));
+        return $store->save($this->id, $editor->change('frootbox/people/person.update', $store->current($this->id), $this->givenName, $this->familyName, $this->prefix, $this->translations, $this->email, $this->phone, $this->image, $this->locations, $this->order, $this->space, $this->slug, $this->categories, $this->tags, $this->fields, $this->id));
     }
 }

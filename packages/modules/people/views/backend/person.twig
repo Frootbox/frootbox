@@ -53,6 +53,7 @@
                 {{ ui.field({label: t('Address of the profile'), name: 'slug', id: 'person-slug', value: data.slug, optional: true, disabled: not editable, hint: t('The last part of the address, if the page of the team shows profiles. Empty takes it from the name.'), attrs: {dir: 'ltr', maxlength: 100, autocomplete: 'off', spellcheck: 'false'}}) }}
                 {% include '@backend/categories/choices.twig' with {type: 'frootbox/people/person', chosen: data.categories, disabled: not editable, prefix: 'person'} only %}
                 {% include '@backend/tags/choices.twig' with {type: 'frootbox/people/person', space: data.space, chosen: data.tags, disabled: not editable, prefix: 'person'} only %}
+                {% include '@backend/fields/space.twig' with {type: 'frootbox/people/person', value: data.space, disabled: not editable, prefix: 'person'} only %}
                 {% if editable %}
                 <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}<p class="fb-form__note">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p></div>
                 {% endif %}

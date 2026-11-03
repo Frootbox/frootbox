@@ -45,6 +45,8 @@ final readonly class UpdateArticle implements Action
         public ?array $tags = null,
         #[Description('Further fields the views of the theme add, by name; a text one per language, e.g. {"subtitle": {"de": "…"}}, null removes one, the others stay; see object.fields; left out keeps them')]
         public ?array $fields = null,
+        #[Description('The space to move it to; with publishing its address moves below the page of that space and the old one redirects')]
+        public ?string $space = null,
     ) {}
 
     public function handle(ArticleEditor $editor, ArticleStore $store): ArticleDetails
@@ -60,10 +62,10 @@ final readonly class UpdateArticle implements Action
             },
             null === $this->categories ? null : $editor->categories('frootbox/news/article.update', $this->categories),
             null === $this->translations ? null : $editor->translations('frootbox/news/article.update', $this->translations, $current->translations),
-            null === $this->tags ? null : $editor->tags('frootbox/news/article.update', $current->space, $this->tags),
+            null === $this->tags ? null : $editor->tags('frootbox/news/article.update', $this->space ?? $current->space, $this->tags),
             null === $this->fields ? null : $editor->fields('frootbox/news/article.update', $current->fields, $this->fields),
         );
 
-        return $editor->saveDraft('frootbox/news/article.update', $this->id, $data);
+        return $editor->saveDraft('frootbox/news/article.update', $this->id, null === $this->space ? $data : $data->withSpace($this->space));
     }
 }

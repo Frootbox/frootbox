@@ -63,6 +63,7 @@
                 <form class="fb-stack" novalidate>
                     <input type="hidden" name="id" value="{{ article.id }}">
                     {% include '@frootbox/news/backend/fields.twig' with {language: language, translation: translation, slug: true, date: data.date, image: image, image_value: data.image, chosen: data.categories, space: data.space, tags: data.tags, fields: data.fields, editable: editable} only %}
+                    {% include '@backend/fields/space.twig' with {type: 'frootbox/news/article', value: data.space, disabled: not editable, prefix: 'article'} only %}
                     {% if editable %}
                     <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}<p class="fb-form__note">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p></div>
                     {% endif %}

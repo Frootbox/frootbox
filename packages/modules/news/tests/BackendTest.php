@@ -14,6 +14,7 @@ use Frootbox\Core\Extension\ExtensionPackage;
 use Frootbox\Core\Extension\Extensions;
 use Frootbox\Core\Extension\Registry;
 use Frootbox\Core\ObjectField\ObjectFieldSet;
+use Frootbox\Core\Plugin\CreateSpace;
 use Frootbox\Core\User\CreateRole;
 use Frootbox\News\Article\Articles;
 use Frootbox\News\Article\ArticleStore;
@@ -127,6 +128,23 @@ final class BackendTest extends BackendTestCase
         $show = $this->html($this->request('GET', '/cms/news/' . $id, session: $session));
         self::assertStringContainsString('value="" id="article-fields-subtitle" name="fields.subtitle.de"', $show, 'Null removed it.');
         self::assertDoesNotMatchRegularExpression('~name="fields.featured" value="1" checked~', $show);
+    }
+
+    public function testAnArticleMovesToAnotherSpaceInTheForm(): void
+    {
+        $this->createUser('editor@example.org', ['editor']);
+        $session = $this->signIn('editor@example.org');
+        $id = $this->id($this->action('frootbox/news/article.create', ['translations' => ['de' => ['title' => 'Interview']]], $session));
+        self::assertStringNotContainsString('name="space"', $this->html($this->request('GET', '/cms/news/' . $id, session: $session)), 'With one space nothing to choose.');
+
+        $press = $this->runner()->run(new CreateSpace(ArticleStore::TYPE, 'Presse'), Context::system())->id;
+        $show = $this->html($this->request('GET', '/cms/news/' . $id, session: $session));
+        self::assertMatchesRegularExpression('~<select[^>]*id="article-space" name="space"~', $show, 'The space to move it to (decision 0244).');
+        self::assertStringContainsString('<option value="default" selected>News</option><option value="' . $press . '">Presse</option>', $show);
+        self::assertStringContainsString('Verschiebt es mit dem Veröffentlichen.', $show);
+
+        $this->action('frootbox/news/article.update', ['id' => $id, 'space' => $press], $session);
+        self::assertStringContainsString('<option value="' . $press . '" selected>Presse</option>', $this->html($this->request('GET', '/cms/news/' . $id, session: $session)));
     }
 
     public function testAnEmptyLanguageOfACategoryIsNone(): void

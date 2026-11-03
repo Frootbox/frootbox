@@ -14,6 +14,7 @@ use Frootbox\Core\Media\CreateMedium;
 use Frootbox\Core\Media\ShowMedium;
 use Frootbox\Core\Media\Uploads;
 use Frootbox\Core\Page\CreatePage;
+use Frootbox\Core\Page\PageHandler;
 use Frootbox\Core\Page\PublishPages;
 use Frootbox\Core\Plugin\AssignPlugin;
 use Frootbox\Core\Plugin\CreateSpace;
@@ -35,6 +36,7 @@ use Frootbox\People\Person\UnpublishPerson;
 use Frootbox\People\Person\UpdatePerson;
 use Frootbox\People\PersonPlugin;
 use Frootbox\People\Website\Cards;
+use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(PersonPlugin::class)]
@@ -198,6 +200,24 @@ final class PluginTest extends PeopleTestCase
         self::assertStringNotContainsString('Anna Albers', $html);
         self::assertSame('/en/team/care', $this->get(Urls::class)->path(Target::category($team, $care), 'en'));
         self::assertNull($this->get(Urls::class)->path(Target::category($team, $intensive), 'en'), 'No slug in English, no address there.');
+    }
+
+    public function testAPersonMovesToAnotherSpaceWithPublishing(): void
+    {
+        $start = $this->tree();
+        $doctors = $this->runner()->run(new CreateSpace('frootbox/people/person', 'Ärzte'))->id;
+        $this->teamPage($start, 'Team');
+        $this->teamPage($start, 'Ärzte', $doctors);
+        $clara = $this->runner()->run(new CreatePerson(givenName: 'Clara', familyName: 'Conrad', prefix: 'Dr.'))->id;
+        $this->runner()->run(new PublishPeople([$clara]));
+
+        $this->runner()->run(new UpdatePerson($clara, space: $doctors));
+        self::assertStringContainsString('Clara Conrad', $this->html('/team'), 'In the draft first (decision 0244).');
+        $this->runner()->run(new PublishPeople([$clara]));
+        $moved = $this->get(PageHandler::class)->handle(new ServerRequest('GET', 'https://example.org/team/dr-clara-conrad'));
+        self::assertSame([301, '/aerzte/dr-clara-conrad'], [$moved->getStatusCode(), $moved->getHeaderLine('Location')]);
+        self::assertStringContainsString('Clara Conrad', $this->html('/aerzte'));
+        self::assertStringNotContainsString('Clara Conrad', $this->html('/team'));
     }
 
     public function testPhotosAndImagesBecomePublicWithThePersonOrTheLocation(): void

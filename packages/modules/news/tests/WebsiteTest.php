@@ -246,4 +246,24 @@ final class WebsiteTest extends NewsTestCase
         self::assertStringContainsString('<a href="/aktuelles">Alle News</a>', $teaser, 'All of them: the page of the default space.');
         self::assertSame([['', 'Alle'], ['default', 'News'], [$press, 'Presse']], array_map(static fn(array $choice): array => [$choice['value'], $choice['label']], $this->runner()->ask(new SpaceChoices())));
     }
+
+    public function testAnArticleMovesToAnotherSpaceWithPublishing(): void
+    {
+        $press = $this->runner()->run(new CreateSpace(ArticleStore::TYPE, 'Presse'))->id;
+        $page = $this->newsPage($this->start, 'Presse', space: $press);
+        $this->runner()->run(new PublishPages([$page]));
+        $id = $this->article(['de' => ['title' => 'Interview']]);
+
+        // In the draft first, like a page that moves (decision 0244).
+        $this->runner()->run(new UpdateArticle($id, space: $press));
+        self::assertSame(200, $this->statusOf('/aktuelles/interview'));
+        $this->runner()->run(new PublishArticles([$id]));
+        self::assertSame(200, $this->statusOf('/presse/interview'));
+        self::assertSame(['/presse/interview', 301], $this->redirect('/aktuelles/interview'), 'The old address leads to the new one.');
+        self::assertStringContainsString('Interview', $this->html('/presse'));
+        self::assertStringNotContainsString('Interview', $this->html('/aktuelles'));
+
+        $this->expectException(\Frootbox\Core\Action\InvalidInputException::class);
+        $this->runner()->run(new UpdateArticle($id, space: 'nirgends'));
+    }
 }
