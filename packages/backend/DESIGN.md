@@ -600,6 +600,11 @@ answer:
 - `data-type="datetime"` on a `datetime-local` field sends the time with
   the offset of the browser; `data-value="<ISO time>"` fills it in the
   time zone of the browser.
+- Fields that depend on another one: an element with
+  `data-fb-when="type=frootbox/jobs/job"` is shown only while the field
+  named `type` has that value (`type!=` for any value but empty); while
+  it is hidden, the fields in it are disabled and left out. Use it only
+  for fields the user may change anyway, it enables them again.
 - Events: `fb-form-input` (`detail.input` can be replaced before
   sending), `fb-form-success` (cancelable) and `fb-form-error`.
 - Hide controls the user may not use: `{% if can('user.create') %}`.

@@ -11,13 +11,16 @@ namespace Frootbox\Backend\Http\Pages;
 use Frootbox\Backend\View\BackendView;
 use Frootbox\Core\Action\AccessDeniedException;
 use Frootbox\Core\Action\Runner;
+use Frootbox\Core\Component\LayoutSummary;
 use Frootbox\Core\Component\ListLayouts;
 use Frootbox\Core\Language\Language;
 use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Page\ListPageVersions;
+use Frootbox\Core\Page\PageData;
 use Frootbox\Core\Page\PageVersion;
 use Frootbox\Core\Page\ShowPage;
 use Frootbox\Core\Page\ShowPageTree;
+use Frootbox\Core\Plugin\ListPlugins;
 use Frootbox\Core\User\ListUsers;
 use Frootbox\Database\EntityNotFoundException;
 use Psr\Http\Message\ResponseInterface;
@@ -82,6 +85,7 @@ final readonly class PagesHandler implements RequestHandlerInterface
         $data = $details->draft ?? $details->published;
         \assert(null !== $data);
         $row = $tree->row($id);
+        $layout = $this->layout($data->layout);
 
         $chosen = $request->getQueryParams()['language'] ?? null;
         $language = \is_string($chosen) && $this->languages->has($chosen) ? $this->languages->get($chosen) : $this->languages->default();
@@ -98,7 +102,7 @@ final readonly class PagesHandler implements RequestHandlerInterface
             'id' => $id,
             'row' => $row,
             'details' => $details,
-            'layout' => $this->layoutTitle($data->layout),
+            'layout' => $layout->title ?? $data->layout,
             'language' => $language,
             'languages' => $this->languages->all(),
             'default' => $this->languages->default(),
@@ -117,24 +121,60 @@ final readonly class PagesHandler implements RequestHandlerInterface
                 'siteSearch' => $above($visibility->excludedFromSiteSearchBy),
             ],
             'versions' => $this->versions($id),
+            'plugin' => $this->plugins($tree, $id, $data, $layout->plugin ?? false),
         ];
     }
 
-    private function layoutTitle(string $name): string
+    /**
+     * What the page can show (decision 0232), null without the right to
+     * choose it or without plugins: each plugin with its spaces and the
+     * title of the page that shows a space already.
+     *
+     * @return array{slot: bool, current: ?array{type: string, space: string, details: bool}, plugins: list<array{type: string, label: string, several: bool, details: string, spaces: list<array{id: string, title: string, other: ?string}>}>}|null
+     */
+    private function plugins(PageTree $tree, string $id, PageData $data, bool $slot): ?array
+    {
+        try {
+            $lists = $this->runner->ask(new ListPlugins());
+        } catch (AccessDeniedException) {
+            return null;
+        }
+
+        if ([] === $lists) {
+            return null;
+        }
+
+        $plugins = [];
+
+        foreach ($lists as $list) {
+            $spaces = [];
+
+            foreach ($list->items as $space) {
+                $other = null !== $space->pageId && $space->pageId !== $id && $tree->has($space->pageId) ? $tree->row($space->pageId)['title'] : null;
+                $spaces[] = ['id' => $space->id, 'title' => $space->title, 'other' => $other];
+            }
+
+            $plugins[] = ['type' => $list->type, 'label' => $list->label, 'several' => $list->several, 'details' => $list->details->value, 'spaces' => $spaces];
+        }
+
+        return ['slot' => $slot, 'current' => $data->plugin?->toArray(), 'plugins' => $plugins];
+    }
+
+    private function layout(string $name): ?LayoutSummary
     {
         try {
             $layouts = $this->runner->ask(new ListLayouts());
         } catch (AccessDeniedException) {
-            return $name;
+            return null;
         }
 
         foreach ($layouts as $layout) {
             if ($layout->name === $name) {
-                return $layout->title;
+                return $layout;
             }
         }
 
-        return $name;
+        return null;
     }
 
     /**

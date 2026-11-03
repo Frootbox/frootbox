@@ -119,6 +119,38 @@
     </section>
     {% endif %}
 
+    {% set shows = page.plugin %}
+    {% if shows is not null %}
+    {% set current = shows.current %}
+    <section class="fb-section" aria-labelledby="page-plugin-title">
+        <h3 class="fb-heading-4" id="page-plugin-title">{{ t('This page shows') }}</h3>
+        {% if not shows.slot and current is null %}
+        <p class="fb-muted">{{ t('The layout {layout} has no place for a module. Choose another layout to show news, events or jobs here.', {layout: page.layout}) }}</p>
+        {% else %}
+        <fb-form action="plugin.assign" refresh="{{ refresh }}" done="{{ t('Saved') }}">
+            <form class="fb-stack" novalidate>
+                <input type="hidden" name="id" value="{{ page.id }}">
+                {{ ui.select({label: t('Content from a module'), name: 'type', id: 'page-plugin-type', value: current.type ?? '', options: [{value: '', label: t('Nothing')}]|merge(shows.plugins|map(plugin => {value: plugin.type, label: plugin.label})), hint: t('The page lists the entries of the module, each entry gets its own address below it.'), attrs: {'data-empty': 'null'}}) }}
+                {% for plugin in shows.plugins %}
+                {% set mine = current is not null and current.type == plugin.type %}
+                <div class="fb-stack" data-fb-when="type={{ plugin.type }}"{% if not mine %} hidden{% endif %}>
+                    {% if plugin.several %}
+                    {% set options = plugin.spaces|map(space => {value: space.id, label: space.other ? t('{space} (shown on {page})', {space: space.title, page: space.other}) : space.title, attrs: {disabled: space.other is not null}}) %}
+                    {{ ui.select({label: t('Space'), name: 'space', id: 'page-plugin-space-' ~ loop.index, value: mine ? current.space : (plugin.spaces|filter(space => space.other is null)|first).id ?? 'default', options: options, disabled: not mine, hint: t('Each space has its own entries and at most one page.')}) }}
+                    {{ ui.field({label: t('Or a new space'), name: 'newSpace', id: 'page-plugin-new-' ~ loop.index, optional: true, disabled: not mine, hint: t('The name of a new space for this page, e.g. Ausbildung. Editors see it instead of the name of the module.'), attrs: {'data-empty': 'null', maxlength: 100}}) }}
+                    {% endif %}
+                    {% if plugin.details == 'optional' %}
+                    {{ ui.check({label: t('Pages of their own for the entries'), name: 'details', id: 'page-plugin-details-' ~ loop.index, checked: mine ? current.details : true, disabled: not mine, hint: t('Without them, lists show the entries without links.')}) }}
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}<p class="fb-form__note">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p></div>
+            </form>
+        </fb-form>
+        {% endif %}
+    </section>
+    {% endif %}
+
     {% set locked = details.locked.value %}
     {% set can_lock = published and locked == 'none' and not page.inherited.locked and can('page.lock', {id: page.id}) %}
     <section class="fb-section" aria-labelledby="page-visibility-title">

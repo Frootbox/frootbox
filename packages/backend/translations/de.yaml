@@ -1139,3 +1139,31 @@ Page views: Seitenaufrufe
 Day {n}: Tag {n}
 Visits per day: Besuche je Tag
 Most visited pages: Meistbesuchte Seiten
+
+# Plugins and spaces (decision 0232)
+"This page shows": "Diese Seite zeigt"
+"The layout {layout} has no place for a module. Choose another layout to show news, events or jobs here.": "Das Layout {layout} hat keinen Platz für ein Modul. Wähle ein anderes Layout, um hier News, Termine oder Stellen zu zeigen."
+"Content from a module": "Inhalt aus einem Modul"
+Nothing: Nichts
+"The page lists the entries of the module, each entry gets its own address below it.": "Die Seite listet die Einträge des Moduls, jeder Eintrag bekommt darunter eine eigene Adresse."
+"{space} (shown on {page})": "{space} (auf {page})"
+Space: Verwaltung
+Spaces: Verwaltungen
+"Each space has its own entries and at most one page.": "Jede Verwaltung hat eigene Einträge und höchstens eine Seite."
+"Or a new space": "Oder eine neue Verwaltung"
+"The name of a new space for this page, e.g. Ausbildung. Editors see it instead of the name of the module.": "Der Name einer neuen Verwaltung für diese Seite, z. B. Ausbildung. Redakteure sehen ihn statt des Namens des Moduls."
+"Pages of their own for the entries": "Eigene Seiten für die Einträge"
+"Without them, lists show the entries without links.": "Ohne sie zeigen Listen die Einträge ohne Link."
+"There is no plugin \"{type}\".": "Es gibt kein Modul „{type}“."
+"The layout of the page has no place for a plugin. Choose another layout first.": "Das Layout der Seite hat keinen Platz für ein Modul. Wähle zuerst ein anderes Layout."
+"There is no such space of the plugin.": "Diese Verwaltung gibt es im Modul nicht."
+"Another page shows this space already. A space has one page.": "Eine andere Seite zeigt diese Verwaltung schon. Eine Verwaltung hat eine Seite."
+"The plugin has only its default space.": "Das Modul hat nur seine Standardverwaltung."
+"The space still holds {count} entries. Move or delete them first.": "In der Verwaltung liegen noch {count} Einträge. Verschiebe oder lösche sie zuerst."
+"A page shows the space. Take it away from the page first.": "Eine Seite zeigt die Verwaltung. Nimm sie zuerst von der Seite."
+"The default space stays.": "Die Standardverwaltung bleibt."
+"There is no space with this id.": "Eine Verwaltung mit dieser ID gibt es nicht."
+"The space needs a name.": "Die Verwaltung braucht einen Namen."
+"Another space has this name.": "Eine andere Verwaltung hat diesen Namen."
+"The layout has no place for the plugin of the page. Choose a layout with one or take the plugin away first.": "Das Layout hat keinen Platz für das Modul der Seite. Wähle ein Layout mit Platz oder nimm das Modul zuerst von der Seite."
+"The view of the plugin stays at its place. It goes with the plugin of the page.": "Die Ansicht des Moduls bleibt an ihrem Platz. Sie geht mit dem Modul der Seite."

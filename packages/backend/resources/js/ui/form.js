@@ -180,6 +180,11 @@ export function formInput(form) {
  * - base: a JSON pointer whose errors belong to the fields of this form,
  *   e.g. "/items/de/2" when the form edits one item of a list
  *
+ * Fields that depend on another one: an element with
+ * data-fb-when="type=frootbox/jobs/job" is shown only while the field
+ * named type has that value, and the fields in it are disabled (left
+ * out) while it is hidden. "type!=" stands for any value but empty.
+ *
  * Unsaved changes (decision 0130): the form remembers its input when it
  * loads and after success. While the input differs, it has the attribute
  * dirty, its save buttons (data-fb-saves, decisions 0130 and 0131) turn
@@ -241,6 +246,7 @@ export class Form extends LitElement {
             field.value = localTime(field.dataset.value);
         }
 
+        this.switchFields();
         this.remember();
 
         // Building blocks inside may set their fields after their first render.
@@ -271,7 +277,34 @@ export class Form extends LitElement {
         }
     }
 
+    /** Shows the fields with data-fb-when whose condition holds, see above. */
+    switchFields() {
+        const form = this.form;
+
+        if (!form) {
+            return;
+        }
+
+        for (const element of form.querySelectorAll('[data-fb-when]')) {
+            const condition = element.dataset.fbWhen;
+            const negated = condition.includes('!=');
+            const [name, expected] = condition.split(negated ? '!=' : '=', 2);
+            const field = form.elements.namedItem(name);
+            const value = field && 'value' in field ? field.value : '';
+            const shown = negated ? value !== (expected ?? '') : value === (expected ?? '');
+            element.hidden = !shown;
+
+            for (const input of element.matches('input, select, textarea') ? [element] : element.querySelectorAll('input, select, textarea')) {
+                input.disabled = !shown;
+            }
+        }
+    }
+
     onChange(event) {
+        if (event.type === 'change' && event.target instanceof Element && event.target.closest('fb-form') === this) {
+            this.switchFields();
+        }
+
         if (event.target instanceof Element && event.target.closest('fb-form') === this) {
             // After the other listeners, e.g. the one that fills in a slug.
             queueMicrotask(() => this.check());
