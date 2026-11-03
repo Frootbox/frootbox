@@ -4,7 +4,8 @@
 {% if has_draft and can('frootbox/people/' ~ kind ~ '.publish') %}
 <fb-form action="frootbox/people/{{ kind }}.publish" refresh="{{ refresh }}" done="{{ texts.published }}">
     <form novalidate>
-        <input type="hidden" name="id" value="{{ details.id }}">
+        {#- People are published together, e.g. from the editor bar (decision 0242). -#}
+        <input type="hidden" name="{{ kind == 'person' ? 'ids[]' : 'id' }}" value="{{ details.id }}">
         {{ ui.button({label: t('Publish'), type: 'submit'}) }}
     </form>
 </fb-form>

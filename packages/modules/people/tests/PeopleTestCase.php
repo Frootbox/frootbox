@@ -18,7 +18,7 @@ use Frootbox\Core\Tests\Support\NotesTestCase;
 use Frootbox\People\Location\CreateLocation;
 use Frootbox\People\Location\PublishLocation;
 use Frootbox\People\Person\CreatePerson;
-use Frootbox\People\Person\PublishPerson;
+use Frootbox\People\Person\PublishPeople;
 use Nyholm\Psr7\ServerRequest;
 
 /**
@@ -80,7 +80,7 @@ abstract class PeopleTestCase extends NotesTestCase
         $id = $this->runner()->run(new CreatePerson(givenName: $given, familyName: $family, phone: '+49 (40) 123 45-6', email: strtolower($given) . '@example.org', locations: $locations, order: $order, translations: '' === $role ? [] : ['de' => ['role' => $role]]))->id;
 
         if ($publish) {
-            $this->runner()->run(new PublishPerson($id));
+            $this->runner()->run(new PublishPeople([$id]));
         }
 
         return $id;

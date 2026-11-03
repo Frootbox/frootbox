@@ -1,4 +1,4 @@
-{#- The screen "People": the team in its order (decision 0226). -#}
+{#- The screen "People": the team in its order (decision 0226), with more than one space a tab for each (decision 0242). -#}
 {% extends '@backend/layout.twig' %}
 {% import '@backend/ui.twig' as ui %}
 
@@ -13,9 +13,14 @@
         </div>
         <div class="fb-cluster">
             {% if can('frootbox/people/location.list') %}{{ ui.button({label: t('Locations'), href: path('frootbox.people.locations'), variant: 'outline'}) }}{% endif %}
-            {% if can('frootbox/people/person.create') %}{{ ui.button({label: t('New person'), href: path('frootbox.people.people.new'), icon: 'plus'}) }}{% endif %}
+            {% if can('category.update') %}{{ ui.button({label: t('Categories'), href: path('backend.categories') ~ '?group=frootbox/people/categories', variant: 'outline'}) }}{% endif %}
+            {% if can('frootbox/people/person.create') %}{{ ui.button({label: t('New person'), href: path('frootbox.people.people.new') ~ (space ? '?space=' ~ space|url_encode : ''), icon: 'plus'}) }}{% endif %}
         </div>
     </header>
+
+    {% if spaces %}
+    {{ ui.tabs(t('Spaces'), spaces|map(item => {label: item.title, href: path('frootbox.people.people') ~ '?space=' ~ item.id|url_encode, current: item.id == space})) }}
+    {% endif %}
 
     <section class="fb-card" aria-labelledby="people-title">
         <div class="fb-card__header">
@@ -24,7 +29,7 @@
         </div>
         {% if people is empty %}
         <div class="fb-card__body">
-            {{ ui.empty({icon: 'users', title: t('No people yet'), text: t('Add the first person. It stays a draft until you publish it.'), action: can('frootbox/people/person.create') ? {label: t('New person'), href: path('frootbox.people.people.new'), icon: 'plus'} : null}) }}
+            {{ ui.empty({icon: 'users', title: t('No people yet'), text: t('Add the first person. It stays a draft until you publish it.'), action: can('frootbox/people/person.create') ? {label: t('New person'), href: path('frootbox.people.people.new') ~ (space ? '?space=' ~ space|url_encode : ''), icon: 'plus'} : null}) }}
         </div>
         {% else %}
         <ul>

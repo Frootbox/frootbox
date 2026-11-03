@@ -39,8 +39,11 @@ final readonly class PersonHandler implements RequestHandlerInterface
         $id = $request->getAttribute('id');
 
         if (!\is_string($id)) {
+            $space = $request->getQueryParams()['space'] ?? null;
+
             return $this->view->render($request, '@frootbox/people/backend/person-new.twig', [
                 'language' => $this->languages->default(),
+                'space' => \is_string($space) && '' !== $space ? $space : null,
             ]);
         }
 

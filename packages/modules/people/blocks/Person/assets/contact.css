@@ -14,3 +14,4 @@
 .people-card__ways { display: flex; flex-direction: column; gap: var(--space-3xs, 0.25rem); margin: var(--space-2xs, 0.5rem) 0 0; padding: 0; list-style: none; }
 .people-card__ways a { overflow-wrap: anywhere; }
 .people__empty { margin: 0; padding: var(--space-s, 1rem); border: 1px dashed var(--color-line, #e7e5e4); border-radius: var(--radius, 0.5rem); color: var(--color-muted, #57534e); }
+.people-card__name a { color: inherit; }

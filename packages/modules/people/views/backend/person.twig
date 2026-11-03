@@ -1,4 +1,4 @@
-{#- A person: name, ways to reach and locations, texts by language; publishing and deleting (decision 0226). -#}
+{#- A person: name, ways to reach and locations, address of the profile, categories, tags and further fields, texts by language; publishing, taking offline and deleting (decisions 0226, 0242). -#}
 {% extends '@backend/layout.twig' %}
 {% import '@backend/ui.twig' as ui %}
 {% set refresh = 'person-detail' %}
@@ -21,6 +21,8 @@
     </header>
 
     <div class="fb-cluster">
+        {% set url = person.urls[language.code] ?? null %}
+        {% if url %}{{ ui.button({label: t('View the profile'), href: url, variant: 'outline', icon: 'external', attrs: {target: '_blank', rel: 'noopener'}}) }}{% endif %}
         {% include '@frootbox/people/backend/draft.twig' with {kind: 'person', details: person, refresh: refresh, back: path('frootbox.people.people'), texts: {
             published: t('The person is published.'),
             discardChanges: t('Your changes to this person are lost. The published version stays.'),
@@ -48,6 +50,9 @@
                 </fieldset>
                 {% endif %}
                 {{ ui.field({label: t('Order in the team'), name: 'order', id: 'person-order', type: 'number', value: data.order, disabled: not editable, hint: t('Smaller numbers come first, the same ones by family name.'), attrs: {'data-type': 'number', min: 0, max: 999}}) }}
+                {{ ui.field({label: t('Address of the profile'), name: 'slug', id: 'person-slug', value: data.slug, optional: true, disabled: not editable, hint: t('The last part of the address, if the page of the team shows profiles. Empty takes it from the name.'), attrs: {dir: 'ltr', maxlength: 100, autocomplete: 'off', spellcheck: 'false'}}) }}
+                {% include '@backend/categories/choices.twig' with {type: 'frootbox/people/person', chosen: data.categories, disabled: not editable, prefix: 'person'} only %}
+                {% include '@backend/tags/choices.twig' with {type: 'frootbox/people/person', space: data.space, chosen: data.tags, disabled: not editable, prefix: 'person'} only %}
                 {% if editable %}
                 <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}<p class="fb-form__note">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p></div>
                 {% endif %}
@@ -72,6 +77,7 @@
                     <input type="hidden" name="id" value="{{ person.id }}">
                     {{ ui.field({label: t('Role'), name: 'translations.' ~ code ~ '.role', id: 'person-role', value: translation.role ?? '', optional: true, disabled: not editable, hint: t('What the person does, e.g. "Head roaster".'), attrs: {lang: code, dir: dir, maxlength: 200}}) }}
                     {{ ui.field({label: t('About the person'), name: 'translations.' ~ code ~ '.text', id: 'person-text', value: translation.text ?? '', optional: true, multiline: true, disabled: not editable, hint: t('A few sentences, shown with the contact person.'), attrs: {lang: code, dir: dir, rows: 4, maxlength: 1000}}) }}
+                    {% include '@backend/fields/object.twig' with {type: 'frootbox/people/person', values: data.fields, language: language, disabled: not editable, prefix: 'person'} only %}
                     {% if editable %}
                     <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}</div>
                     {% endif %}
@@ -94,6 +100,19 @@
             {% endif %}
         </div>
     </section>
+
+    {% if person.published and can('frootbox/people/person.unpublish') %}
+    <section class="fb-card fb-card--padded fb-stack" aria-labelledby="person-offline-title">
+        <h2 class="fb-heading-4" id="person-offline-title">{{ t('Offline') }}</h2>
+        <p class="fb-muted">{{ t('Blocks no longer show the person, the profile is gone. The person stays as a draft and can be published again.') }}</p>
+        <fb-form action="frootbox/people/person.unpublish" refresh="{{ refresh }}" done="{{ t('The person is offline.') }}">
+            <form novalidate>
+                <input type="hidden" name="id" value="{{ person.id }}">
+                {{ ui.button({label: t('Take offline'), type: 'submit', variant: 'outline'}) }}
+            </form>
+        </fb-form>
+    </section>
+    {% endif %}
 
     {% include '@frootbox/people/backend/delete.twig' with {kind: 'person', details: person, title: heading, back: path('frootbox.people.people'), texts: {
         delete: t('Delete the person'),

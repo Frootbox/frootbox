@@ -13,7 +13,8 @@ use Frootbox\Core\Component\BlockController;
 use Frootbox\People\Website\Cards;
 
 /**
- * One published person to contact (decision 0226).
+ * One published person to contact (decision 0226), linked to the profile
+ * where the space has a page with profiles (decision 0242).
  */
 final readonly class Person implements BlockController
 {
@@ -21,6 +22,6 @@ final readonly class Person implements BlockController
 
     public function data(BlockContext $context): array
     {
-        return ['person' => $this->cards->contact(\is_string($context->options['person'] ?? null) ? $context->options['person'] : '', $context->contentLanguage)];
+        return ['person' => $this->cards->contact(\is_string($context->options['person'] ?? null) ? $context->options['person'] : '', $context->contentLanguage, $context->language)];
     }
 }

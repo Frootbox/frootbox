@@ -13,6 +13,7 @@ use Frootbox\Core\Action\AsAction;
 use Frootbox\Core\Action\Schema\Description;
 use Frootbox\Core\Action\Schema\ListOf;
 use Frootbox\Core\Action\Schema\Range;
+use Frootbox\Core\Plugin\Space;
 use Frootbox\Database\Ulid;
 use Frootbox\People\Details;
 
@@ -26,6 +27,9 @@ final readonly class CreatePerson implements Action
      * @param array<mixed>      $translations
      * @param array<mixed>|null $image
      * @param list<string>|null $locations
+     * @param list<string>      $categories
+     * @param list<string>      $tags
+     * @param array<mixed>      $fields
      */
     public function __construct(
         #[Description('Given name, e.g. "Maria"')]
@@ -48,6 +52,18 @@ final readonly class CreatePerson implements Action
         public ?int $order = null,
         #[Description('Texts by language: {"de": {"role": "Röstmeisterin", "text": "…"}}')]
         public array $translations = [],
+        #[Description('The space of the people, "default" for the default one; see space.list')]
+        public string $space = Space::DEFAULT,
+        #[Description('The last part of the address of the profile, e.g. "maria-rossi"; left out it comes from the name and follows it, "" takes it from the name again')]
+        public ?string $slug = null,
+        #[ListOf('string')]
+        #[Description('Ids of categories, see category-group.list and category.list')]
+        public array $categories = [],
+        #[ListOf('string')]
+        #[Description('Ids, keys or labels of tags; a new word becomes a tag unless only presets count, see tag.choices')]
+        public array $tags = [],
+        #[Description('Further fields the views of the theme add, by name; a text one per language, e.g. {"subtitle": {"de": "…"}}, null removes one; see object.fields')]
+        public array $fields = [],
     ) {}
 
     /**
@@ -55,6 +71,6 @@ final readonly class CreatePerson implements Action
      */
     public function handle(PersonEditor $editor, PersonStore $store): Details
     {
-        return $store->save(Ulid::generate(), $editor->change('frootbox/people/person.create', new PersonData(), $this->givenName, $this->familyName, $this->prefix, $this->translations, $this->email, $this->phone, $this->image, $this->locations, $this->order));
+        return $store->save(Ulid::generate(), $editor->change('frootbox/people/person.create', new PersonData(), $this->givenName, $this->familyName, $this->prefix, $this->translations, $this->email, $this->phone, $this->image, $this->locations, $this->order, $this->space, $this->slug, $this->categories, $this->tags, $this->fields));
     }
 }

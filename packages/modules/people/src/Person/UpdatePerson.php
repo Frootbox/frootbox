@@ -27,6 +27,9 @@ final readonly class UpdatePerson implements Action
      * @param array<mixed>|null $translations
      * @param array<mixed>|null $image
      * @param list<string>|null $locations
+     * @param list<string>|null $categories
+     * @param list<string>|null $tags
+     * @param array<mixed>|null $fields
      */
     public function __construct(
         #[Pattern(Ulid::PATTERN)]
@@ -51,6 +54,16 @@ final readonly class UpdatePerson implements Action
         public ?int $order = null,
         #[Description('Changes by language, e.g. {"de": {"role": "…"}, "en": null}: texts left out stay, null removes a language')]
         public ?array $translations = null,
+        #[Description('The last part of the address of the profile, e.g. "maria-rossi"; left out it comes from the name and follows it, "" takes it from the name again')]
+        public ?string $slug = null,
+        #[ListOf('string')]
+        #[Description('Ids of categories, replacing the ones before, see category-group.list and category.list')]
+        public ?array $categories = null,
+        #[ListOf('string')]
+        #[Description('Ids, keys or labels of tags, replacing the ones before; a new word becomes a tag unless only presets count, see tag.choices')]
+        public ?array $tags = null,
+        #[Description('Further fields the views of the theme add, by name; a text one per language, e.g. {"subtitle": {"de": "…"}}, null removes one, the others stay; left out keeps them; see object.fields')]
+        public ?array $fields = null,
     ) {}
 
     /**
@@ -58,6 +71,6 @@ final readonly class UpdatePerson implements Action
      */
     public function handle(PersonEditor $editor, PersonStore $store): Details
     {
-        return $store->save($this->id, $editor->change('frootbox/people/person.update', $store->current($this->id), $this->givenName, $this->familyName, $this->prefix, $this->translations, $this->email, $this->phone, $this->image, $this->locations, $this->order));
+        return $store->save($this->id, $editor->change('frootbox/people/person.update', $store->current($this->id), $this->givenName, $this->familyName, $this->prefix, $this->translations, $this->email, $this->phone, $this->image, $this->locations, $this->order, null, $this->slug, $this->categories, $this->tags, $this->fields, $this->id));
     }
 }

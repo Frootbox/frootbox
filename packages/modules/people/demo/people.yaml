@@ -4,8 +4,8 @@
 #
 #     php bin/frootbox seed frootbox/people:demo/people.yaml
 #
-# A page "Team" below the start page shows the people and both
-# locations; the maps wait for consent.
+# A page "Team" below the start page shows the people, each with a
+# profile, and both locations; the maps wait for consent.
 
 - page.tree: {}
   as: tree
@@ -46,7 +46,7 @@
       de: { role: Gründerin und Röstmeisterin, text: 'Maria röstet seit über zwanzig Jahren und sucht die Bohnen selbst bei den Farmen aus.' }
       en: { role: Founder and head roaster, text: 'Maria has been roasting for over twenty years and chooses the beans herself at the farms.' }
   as: maria
-- frootbox/people/person.publish: { id: '${maria.id}' }
+- frootbox/people/person.publish: { ids: ['${maria.id}'] }
 - frootbox/people/person.create:
     givenName: Jonas
     order: 1
@@ -57,7 +57,7 @@
       de: { role: Röster und Kursleiter }
       en: { role: Roaster and course leader }
   as: jonas
-- frootbox/people/person.publish: { id: '${jonas.id}' }
+- frootbox/people/person.publish: { ids: ['${jonas.id}'] }
 - frootbox/people/person.create:
     givenName: Aylin
     order: 1
@@ -68,7 +68,7 @@
       de: { role: Leitung Café }
       en: { role: Head of the café }
   as: aylin
-- frootbox/people/person.publish: { id: '${aylin.id}' }
+- frootbox/people/person.publish: { ids: ['${aylin.id}'] }
 - frootbox/people/person.create:
     givenName: Lukas
     order: 1
@@ -78,7 +78,7 @@
       de: { role: Barista }
       en: { role: Barista }
   as: lukas
-- frootbox/people/person.publish: { id: '${lukas.id}' }
+- frootbox/people/person.publish: { ids: ['${lukas.id}'] }
 
 - page.create:
     layout: frootbox/theme-base/Page
@@ -89,9 +89,8 @@
         content:
           fields: { title: Unser Team, intro: 'Die Menschen hinter Bohnenglück und wo Du sie findest.' }
           areas:
-            main:
-              - block: frootbox/people/People
-                fields: { title: Wer wir sind }
+            main: []
+            after:
               - block: frootbox/people/Location
                 options: { location: '${harbour.id}' }
               - block: frootbox/people/Location
@@ -101,12 +100,16 @@
         content:
           fields: { title: Our team, intro: 'The people behind Bohnenglück and where to find them.' }
           areas:
-            main:
-              - block: frootbox/people/People
-                fields: { title: Who we are }
+            main: []
+            after:
               - block: frootbox/people/Location
                 options: { location: '${harbour.id}' }
               - block: frootbox/people/Location
                 options: { location: '${roastery.id}' }
   as: page
+# The page shows the people with a profile for each (decision 0242).
+- plugin.assign: { id: '${page.id}', type: frootbox/people/person, details: true }
+  as: assigned
+- page.update-field: { id: '${page.id}', language: de, block: '${assigned.draft.translations.de.content.plugin.id}', path: title, value: Wer wir sind }
+- page.update-field: { id: '${page.id}', language: en, block: '${assigned.draft.translations.en.content.plugin.id}', path: title, value: Who we are }
 - page.publish: { ids: ['${page.id}'] }

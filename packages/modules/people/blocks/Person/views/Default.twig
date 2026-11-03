@@ -14,7 +14,7 @@ fields:
     <div class="people-card people-card--contact"{{ {lang: person.lang, dir: person.dir}|attributes }}>
       {% if person.image %}<div class="people-card__photo">{{ person.image }}</div>{% endif %}
       <div class="people-card__body">
-        {{ heading_text(person.name, 1, {class: 'people-card__name'}) }}
+        {{ heading_text(person.name, 1, {class: 'people-card__name'}, person.href) }}
         {% if person.role %}<p class="people-card__role">{{ person.role }}</p>{% endif %}
         {% if person.text %}<p class="people-card__text">{{ person.text|nl2br }}</p>{% endif %}
         {% if person.phone or person.email %}

@@ -11,6 +11,7 @@ namespace Frootbox\People;
 use Frootbox\Backend\Screen;
 use Frootbox\Backend\SearchCommand;
 use Frootbox\Backend\SearchLink;
+use Frootbox\Core\Category\CategoryGroup;
 use Frootbox\Core\Extension\Extension;
 use Frootbox\Core\Extension\Registry;
 use Frootbox\People\Backend\LocationHandler;
@@ -32,14 +33,16 @@ use Frootbox\People\Person\DiscardPerson;
 use Frootbox\People\Person\ListPeople;
 use Frootbox\People\Person\PersonChoices;
 use Frootbox\People\Person\PersonStore;
-use Frootbox\People\Person\PublishPerson;
+use Frootbox\People\Person\PublishPeople;
 use Frootbox\People\Person\ShowPerson;
+use Frootbox\People\Person\UnpublishPerson;
 use Frootbox\People\Person\UpdatePerson;
 
 /**
  * People and locations (decision 0226): drafts in revisions, the blocks
  * Team, Contact person and Location, the search and the screens of the
- * backend, these only with the backend.
+ * backend, these only with the backend. The people are a plugin with
+ * spaces, profiles as a choice, categories and tags (decision 0242).
  */
 final class PeopleExtension implements Extension
 {
@@ -47,7 +50,8 @@ final class PeopleExtension implements Extension
     {
         $registry->action(CreatePerson::class);
         $registry->action(UpdatePerson::class);
-        $registry->action(PublishPerson::class);
+        $registry->action(PublishPeople::class);
+        $registry->action(UnpublishPerson::class);
         $registry->action(DiscardPerson::class);
         $registry->action(DeletePerson::class);
         $registry->query(ListPeople::class);
@@ -62,6 +66,11 @@ final class PeopleExtension implements Extension
         $registry->query(ShowLocation::class);
         $registry->query(LocationChoices::class);
 
+        $registry->query(SpaceChoices::class);
+        $registry->query(CategoryChoices::class);
+
+        $registry->plugin(PersonPlugin::class);
+        $registry->add(CategoryGroup::class, new CategoryGroup(PersonStore::CATEGORIES, 'Categories of the people', [PersonStore::TYPE]));
         $registry->searchSource(PersonSource::class);
         $registry->searchSource(LocationSource::class);
 

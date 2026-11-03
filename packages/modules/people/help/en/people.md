@@ -35,12 +35,25 @@ blocks.
 ## On the website
 
 - **Team** shows the people with photo, role and how to reach them, of
-  all locations or of one.
+  all or of one location, space, category or tag.
 - **Contact person** shows one person, e.g. beside a contact form.
 - **Location** shows one location with address, opening hours and a
   map of OpenStreetMap or Google Maps. The map loads only once the
   visitor agrees, because it comes from another provider. Search
   engines get the address as structured data.
+
+## Profiles
+
+An admin can let a page show the people, in the settings of the page
+under "This page shows". The page then lists the team, filtered by
+category and tag, and with **Pages of their own for the entries**
+every published person gets a profile below it, e.g. `/team/maria-rossi`.
+**Address of the profile** is that last part; it comes from the name
+unless you set one. Wherever the blocks **Team** and **Contact person**
+show the person, the name links to the profile. With more than one
+space, e.g. doctors and nursing, the list has a tab for each and every
+space can have its own page. **Take offline** removes a person from the
+website and keeps the draft.
 
 Texts in another language are added with the tabs at the top; without
 them visitors see the texts in the first language.

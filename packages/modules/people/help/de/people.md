@@ -1,7 +1,7 @@
 ---
 title: Personen und Standorte
 ---
-Unter **Personen** pflegst Du Dein Team und Eure Standorte an einer
+Unter **Personen** pflegst Du Dein Team und Deine Standorte an einer
 Stelle. Die Website zeigt sie mit drei Blöcken: **Team**,
 **Ansprechperson** und **Standort**. Eine Änderung hier erscheint auf
 jeder Seite, die die Person oder den Standort zeigt.
@@ -32,13 +32,28 @@ wählen kannst Du nur veröffentlichte Personen und Standorte.
 ## Auf der Website
 
 - **Team** zeigt die Personen mit Foto, Aufgabe und Kontakt, von allen
-  Standorten oder von einem.
+  oder von einem Standort, einer Verwaltung, einer Kategorie oder einem
+  Schlagwort.
 - **Ansprechperson** zeigt eine Person, z. B. neben einem
   Kontaktformular.
 - **Standort** zeigt einen Standort mit Adresse, Öffnungszeiten und
   einer Karte von OpenStreetMap oder Google Maps. Die Karte lädt erst,
   wenn Besucher zustimmen, weil sie von einem anderen Anbieter kommt.
   Suchmaschinen bekommen die Adresse als strukturierte Daten.
+
+## Profile
+
+Ein Admin kann eine Seite die Personen zeigen lassen, in den
+Einstellungen der Seite unter „Diese Seite zeigt“. Die Seite listet
+dann das Team, filterbar nach Kategorie und Schlagwort, und mit
+**Eigene Seiten für die Einträge** bekommt jede veröffentlichte Person
+ein Profil darunter, z. B. `/team/maria-rossi`. **Adresse des
+Profils** ist dieser letzte Teil; er kommt aus dem Namen, wenn Du
+keinen festlegst. Wo die Blöcke **Team** und **Ansprechperson** die
+Person zeigen, verlinkt der Name auf das Profil. Mit mehr als einer
+Verwaltung, z. B. Ärzte und Pflege, hat die Liste einen Reiter je
+Verwaltung, und jede kann eine eigene Seite haben. **Offline nehmen**
+nimmt eine Person von der Website und behält den Entwurf.
 
 Texte in einer anderen Sprache ergänzt Du über die Reiter oben; ohne
 sie sehen Besucher die Texte in der ersten Sprache.

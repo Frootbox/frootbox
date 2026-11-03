@@ -22,6 +22,8 @@ final readonly class ListPeople implements Query
     public function __construct(
         #[Description('Language of the roles; left out for the first language of the website')]
         public ?string $language = null,
+        #[Description('Only the people of this space, see space.list; left out all')]
+        public ?string $space = null,
     ) {}
 
     /**
@@ -34,6 +36,10 @@ final readonly class ListPeople implements Query
 
         foreach ($store->ids() as $id) {
             $details = $store->details($id);
+
+            if (null !== $this->space && $this->space !== $details->current()->space) {
+                continue;
+            }
             $people[] = [$details->current(), new PersonSummary($id, $details->status, $details->current()->name(), $details->current()->text($language)->role, array_keys($details->current()->translations))];
         }
 

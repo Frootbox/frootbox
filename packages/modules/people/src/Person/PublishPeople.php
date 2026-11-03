@@ -10,26 +10,30 @@ namespace Frootbox\People\Person;
 
 use Frootbox\Core\Action\Action;
 use Frootbox\Core\Action\AsAction;
-use Frootbox\Core\Action\Schema\Pattern;
-use Frootbox\Database\Ulid;
+use Frootbox\Core\Action\Schema\Description;
+use Frootbox\Core\Action\Schema\ListOf;
 use Frootbox\People\Details;
 
 /**
- * @implements Action<Details<PersonData>>
+ * @implements Action<list<Details<PersonData>>>
  */
-#[AsAction('frootbox/people/person.publish', 'Puts the draft of a person online, wherever a block shows it')]
-final readonly class PublishPerson implements Action
+#[AsAction('frootbox/people/person.publish', 'Puts the drafts of people online, wherever a block shows them, with their profiles below the page of their space')]
+final readonly class PublishPeople implements Action
 {
+    /**
+     * @param list<string> $ids
+     */
     public function __construct(
-        #[Pattern(Ulid::PATTERN)]
-        public string $id,
+        #[ListOf('string')]
+        #[Description('Ids of the people, published together')]
+        public array $ids,
     ) {}
 
     /**
-     * @return Details<PersonData>
+     * @return list<Details<PersonData>>
      */
-    public function handle(PersonStore $store): Details
+    public function handle(PersonEditor $editor): array
     {
-        return $store->publish('frootbox/people/person.publish', $this->id);
+        return $editor->publish('frootbox/people/person.publish', $this->ids);
     }
 }

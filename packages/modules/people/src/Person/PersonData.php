@@ -8,12 +8,17 @@ declare(strict_types=1);
 
 namespace Frootbox\People\Person;
 
+use Frootbox\Core\Page\Slug;
+use Frootbox\Core\Plugin\Space;
 use Frootbox\Core\Support\Message;
 use Frootbox\People\Data;
 
 /**
  * A person as the draft or published version holds it (decision 0226):
  * name, ways to reach the person, the locations and texts by language.
+ * As a plugin (decision 0242) the person belongs to a space, has one slug
+ * for the address of the profile in every language, categories, tags and
+ * the further fields of the theme.
  */
 final readonly class PersonData implements Data
 {
@@ -23,6 +28,9 @@ final readonly class PersonData implements Data
      * @param array<mixed>|null          $image        The value of an image field: {"media": "01J…", "alt": "…"}
      * @param list<string>               $locations    Ids of the locations
      * @param array<string, PersonText>  $translations By language
+     * @param list<string>               $categories   Ids of categories
+     * @param list<string>               $tags         Ids of tags
+     * @param array<string, mixed>       $fields       Further fields by name (decision 0240)
      */
     public function __construct(
         public string $givenName = '',
@@ -36,6 +44,12 @@ final readonly class PersonData implements Data
         /** Smaller first, then by family name */
         public int $order = 0,
         public array $translations = [],
+        public string $space = Space::DEFAULT,
+        /** The last part of the address of the profile, e.g. "maria-rossi" */
+        public string $slug = '',
+        public array $categories = [],
+        public array $tags = [],
+        public array $fields = [],
     ) {}
 
     public static function fromArray(array $data): static
@@ -49,6 +63,8 @@ final readonly class PersonData implements Data
         }
 
         $text = static fn(string $key): string => \is_string($data[$key] ?? null) ? $data[$key] : '';
+        $ids = static fn(string $key): array => array_values(array_filter(\is_array($data[$key] ?? null) ? $data[$key] : [], \is_string(...)));
+        $fields = \is_array($data['fields'] ?? null) ? $data['fields'] : [];
 
         return new self(
             $text('givenName'),
@@ -57,9 +73,14 @@ final readonly class PersonData implements Data
             $text('email'),
             $text('phone'),
             \is_array($data['image'] ?? null) ? $data['image'] : null,
-            array_values(array_filter(\is_array($data['locations'] ?? null) ? $data['locations'] : [], \is_string(...))),
+            $ids('locations'),
             \is_int($data['order'] ?? null) ? $data['order'] : 0,
             $translations,
+            '' === $text('space') ? Space::DEFAULT : $text('space'),
+            $text('slug'),
+            $ids('categories'),
+            $ids('tags'),
+            array_filter($fields, static fn(int|string $name): bool => \is_string($name), \ARRAY_FILTER_USE_KEY),
         );
     }
 
@@ -75,12 +96,43 @@ final readonly class PersonData implements Data
             'locations' => $this->locations,
             'order' => $this->order,
             'translations' => array_map(static fn(PersonText $text): array => $text->toArray(), $this->translations),
+            'space' => $this->space,
+            'slug' => $this->slug,
+            'categories' => $this->categories,
+            'tags' => $this->tags,
+            'fields' => $this->fields,
         ];
     }
 
     public function incomplete(): array
     {
-        return '' === $this->name() ? ['/familyName' => new Message('A person needs a name.')] : [];
+        return array_filter([
+            '/familyName' => '' === $this->name() ? new Message('A person needs a name.') : null,
+            '/slug' => '' === $this->slug ? new Message('is required.') : null,
+        ]);
+    }
+
+    public function withSlug(string $slug): self
+    {
+        return new self($this->givenName, $this->familyName, $this->prefix, $this->email, $this->phone, $this->image, $this->locations, $this->order, $this->translations, $this->space, $slug, $this->categories, $this->tags, $this->fields);
+    }
+
+    /**
+     * The slug that comes from the name, e.g. "dr-maria-rossi".
+     */
+    public function nameSlug(): string
+    {
+        return Slug::fromTitle($this->name());
+    }
+
+    /**
+     * The id of the photo in the media library, null without one.
+     */
+    public function media(): ?string
+    {
+        $media = $this->image['media'] ?? null;
+
+        return \is_string($media) && '' !== $media ? $media : null;
     }
 
     /**

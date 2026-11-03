@@ -1,0 +1,69 @@
+{# frootbox
+title: Team
+description: The people of the space the page shows, in the order of the team, filtered by category and tag. With profiles on, each person gets an address below the page; there it shows the profile with photo, role, text and how to reach the person.
+plugin: true
+query: [category, tag]
+options:
+  texts: { type: boolean, label: Texts about the people, default: false }
+  filters: { type: boolean, label: Filter the list, default: true }
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "Our team" }
+#}
+{% if person is defined %}
+  <article class="people-profile"{{ {lang: person.lang, dir: person.dir}|attributes }}>
+    {% if person.image %}<div class="people-profile__photo">{{ person.image }}</div>{% endif %}
+    <div class="people-profile__body">
+      <header class="people-profile__head">
+        {{ heading_text(person.name, 0, {class: 'people-profile__name'}) }}
+        {% if person.role %}<p class="people-profile__role">{{ person.role }}</p>{% endif %}
+      </header>
+      {% if person.text %}<p class="people-profile__text">{{ person.text|nl2br }}</p>{% endif %}
+      {% if person.phone or person.email or person.locations %}
+      <dl class="people-profile__facts">
+        {% if person.phone %}<dt>{{ t('Phone') }}</dt><dd><a href="{{ person.phoneHref }}" dir="ltr">{{ person.phone }}</a></dd>{% endif %}
+        {% if person.email %}<dt>{{ t('Email') }}</dt><dd><a href="mailto:{{ person.email }}" dir="ltr">{{ person.email }}</a></dd>{% endif %}
+        {% if person.locations %}<dt>{{ person.locations|length > 1 ? t('Locations') : t('Location') }}</dt><dd>{{ person.locations|join(', ') }}</dd>{% endif %}
+      </dl>
+      {% endif %}
+      {% if back %}<p class="people-profile__back"><a href="{{ back }}">{{ t('The whole team') }}</a></p>{% endif %}
+    </div>
+    <script type="application/ld+json">{{ person.data }}</script>
+  </article>
+{% else %}
+  <div class="people">
+    {{ heading('title', 0, {class: 'people__title'}) }}
+    {% for filter in filters %}
+      <nav class="people-filter" aria-label="{{ t(filter.label) }}">
+        <ul class="people-filter__list">
+          {% for link in filter.links %}
+            <li><a class="people-filter__link" href="{{ link.href }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title ?: t('All') }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+    {% endfor %}
+    {% if people %}
+      <ul class="people__items">
+        {% for person in people %}
+          <li class="people-card"{{ {lang: person.lang, dir: person.dir}|attributes }}>
+            {% if person.image %}<div class="people-card__photo">{{ person.image }}</div>{% endif %}
+            <div class="people-card__body">
+              {{ heading_text(person.name, 1, {class: 'people-card__name'}, person.href) }}
+              {% if person.role %}<p class="people-card__role">{{ person.role }}</p>{% endif %}
+              {% if options.texts and person.text %}<p class="people-card__text">{{ person.text|nl2br }}</p>{% endif %}
+              {% if person.phone or person.email %}
+              <ul class="people-card__ways">
+                {% if person.phone %}<li><a href="{{ person.phoneHref }}" dir="ltr">{{ person.phone }}</a></li>{% endif %}
+                {% if person.email %}<li><a href="mailto:{{ person.email }}" dir="ltr">{{ person.email }}</a></li>{% endif %}
+              </ul>
+              {% endif %}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% elseif filtered %}
+      <p class="people__empty">{{ t('Nobody matches this choice.') }}</p>
+    {% elseif editing() %}
+      <p class="people__empty">{{ t('No people in this space yet. Add them in the backend under "People" and publish them.') }}</p>
+    {% endif %}
+  </div>
+{% endif %}

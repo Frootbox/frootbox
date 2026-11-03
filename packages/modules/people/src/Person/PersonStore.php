@@ -17,6 +17,9 @@ final readonly class PersonStore extends Store
 {
     public const string TYPE = 'frootbox/people/person';
 
+    /** The group of categories of the people (decisions 0233, 0242) */
+    public const string CATEGORIES = 'frootbox/people/categories';
+
     public function type(): string
     {
         return self::TYPE;

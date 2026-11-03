@@ -1,10 +1,13 @@
 {# frootbox
 title: Team
-description: The people of the team with photo, role and how to reach them, of all locations or of one. The people come from the backend.
+description: The people of the team with photo, role and how to reach them, of all or of one location, space, category or tag. The people come from the backend; each links to the profile if there is one.
 group: list
 keywords: [Team, People, Staff, Employees, Contact, About us]
 options:
   location: { type: choice, label: Location, source: frootbox/people/location.choices, default: '', description: 'Without a choice the people of all locations.' }
+  space: { type: choice, label: Space, source: frootbox/people/space.choices, default: '' }
+  category: { type: choice, label: Category, source: frootbox/people/category.choices, default: '', description: 'With the ones below it.' }
+  tag: { type: choice, label: Only with the tag, source: tag.options, default: '' }
   texts: { type: boolean, label: Texts about the people, default: false }
 fields:
   title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "Our team" }
@@ -17,7 +20,7 @@ fields:
         <li class="people-card"{{ {lang: person.lang, dir: person.dir}|attributes }}>
           {% if person.image %}<div class="people-card__photo">{{ person.image }}</div>{% endif %}
           <div class="people-card__body">
-            {{ heading_text(person.name, 1, {class: 'people-card__name'}) }}
+            {{ heading_text(person.name, 1, {class: 'people-card__name'}, person.href) }}
             {% if person.role %}<p class="people-card__role">{{ person.role }}</p>{% endif %}
             {% if options.texts and person.text %}<p class="people-card__text">{{ person.text|nl2br }}</p>{% endif %}
             {% if person.phone or person.email %}

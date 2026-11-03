@@ -15,6 +15,7 @@
 
     <fb-form action="frootbox/people/person.create" next="{{ path('frootbox.people.people') }}/{id}" done="{{ t('The person is saved as a draft.') }}">
         <form class="fb-card fb-card--padded fb-stack" novalidate>
+            {% if space %}<input type="hidden" name="space" value="{{ space }}">{% endif %}
             {{ ui.field({label: t('Given name'), name: 'givenName', id: 'person-given-name', attrs: {maxlength: 100, autocomplete: 'off'}}) }}
             {{ ui.field({label: t('Family name'), name: 'familyName', id: 'person-family-name', required: true, attrs: {maxlength: 100, autocomplete: 'off'}}) }}
             {{ ui.field({label: t('Role'), name: 'translations.' ~ language.code ~ '.role', id: 'person-role', optional: true, hint: t('What the person does, e.g. "Head roaster".'), attrs: {lang: language.code, dir: language.direction.value, maxlength: 200}}) }}

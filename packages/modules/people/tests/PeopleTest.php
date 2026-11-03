@@ -28,7 +28,7 @@ use Frootbox\People\Person\PersonData;
 use Frootbox\People\Person\PersonEditor;
 use Frootbox\People\Person\PersonStore;
 use Frootbox\People\Person\PersonSummary;
-use Frootbox\People\Person\PublishPerson;
+use Frootbox\People\Person\PublishPeople;
 use Frootbox\People\Person\ShowPerson;
 use Frootbox\People\Person\UpdatePerson;
 use Frootbox\People\Status;
@@ -55,14 +55,14 @@ final class PeopleTest extends PeopleTestCase
         self::assertSame(Status::Draft, $this->runner()->ask(new ShowPerson($id))->status);
 
         try {
-            $this->runner()->run(new PublishPerson($id));
+            $this->runner()->run(new PublishPeople([$id]));
             self::fail('A person without a name is not published.');
         } catch (InvalidInputException $exception) {
-            self::assertArrayHasKey('/familyName', $exception->errors);
+            self::assertArrayHasKey('/ids/0/familyName', $exception->errors);
         }
 
         $this->runner()->run(new UpdatePerson($id, givenName: '  Maria ', familyName: 'Rossi', prefix: 'Dr.'));
-        $details = $this->runner()->run(new PublishPerson($id));
+        $details = $this->runner()->run(new PublishPeople([$id]))[0];
         self::assertSame(Status::Published, $details->status);
         self::assertSame('Dr. Maria Rossi', $details->current()->name());
         self::assertSame('Röstmeisterin', $details->current()->text('en')->role, 'Other languages fall back to the first.');

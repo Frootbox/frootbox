@@ -11,6 +11,7 @@ namespace Frootbox\People\Location;
 use Frootbox\Core\Action\Action;
 use Frootbox\Core\Action\AsAction;
 use Frootbox\Core\Action\Schema\Pattern;
+use Frootbox\Core\Media\MediaEditor;
 use Frootbox\Database\Ulid;
 use Frootbox\People\Details;
 
@@ -28,8 +29,16 @@ final readonly class PublishLocation implements Action
     /**
      * @return Details<LocationData>
      */
-    public function handle(LocationStore $store): Details
+    public function handle(LocationStore $store, MediaEditor $media): Details
     {
-        return $store->publish('frootbox/people/location.publish', $this->id);
+        $details = $store->publish('frootbox/people/location.publish', $this->id);
+        $image = $details->published?->image['media'] ?? null;
+
+        // The image becomes public with the location that shows it.
+        if (\is_string($image)) {
+            $media->makePublic([$image]);
+        }
+
+        return $details;
     }
 }

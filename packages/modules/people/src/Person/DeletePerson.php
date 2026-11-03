@@ -24,9 +24,9 @@ final readonly class DeletePerson implements Action
         public string $id,
     ) {}
 
-    public function handle(PersonStore $store): null
+    public function handle(PersonEditor $editor): null
     {
-        $store->delete($this->id);
+        $editor->delete($this->id);
 
         return null;
     }

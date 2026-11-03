@@ -9,13 +9,16 @@ declare(strict_types=1);
 namespace Frootbox\People\Tests;
 
 use Frootbox\Backend\Tests\Support\BackendTestCase;
+use Frootbox\Core\Action\Context;
 use Frootbox\Core\Extension\Extensions;
+use Frootbox\Core\Plugin\CreateSpace;
 use Frootbox\People\Backend\ImagePreview;
 use Frootbox\People\Backend\LocationHandler;
 use Frootbox\People\Backend\LocationsHandler;
 use Frootbox\People\Backend\PeopleHandler;
 use Frootbox\People\Backend\PersonHandler;
 use Frootbox\People\PeopleExtension;
+use Frootbox\People\Person\PersonStore;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(PeopleHandler::class)]
@@ -58,13 +61,26 @@ final class BackendTest extends BackendTestCase
         self::assertMatchesRegularExpression('#name="locations\[\]"[^>]*value="' . $location . '"[^>]*checked#', $show);
         self::assertStringContainsString('<fb-form action="frootbox/people/person.publish"', $show);
 
-        $this->action('frootbox/people/person.publish', ['id' => $person], $session);
+        self::assertStringContainsString('value="maria-rossi" id="person-slug" name="slug"', $show, 'The address of the profile from the name.');
+        self::assertStringNotContainsString('person.unpublish', $show, 'Only published people go offline.');
+
+        $this->action('frootbox/people/person.publish', ['ids' => [$person]], $session);
+        self::assertStringContainsString('<fb-form action="frootbox/people/person.unpublish"', $this->html($this->request('GET', '/cms/people/' . $person, session: $session)));
         $list = $this->html($this->request('GET', '/cms/people', session: $session));
+        self::assertStringNotContainsString('aria-label="Verwaltungen"', $list, 'One space, no tabs.');
         self::assertStringContainsString('href="/cms/people/' . $person . '">Maria Rossi</a>', $list);
         self::assertStringContainsString('Röstmeisterin', $list);
 
         $locations = $this->html($this->request('GET', '/cms/people/locations', session: $session));
         self::assertStringContainsString('href="/cms/people/locations/' . $location . '">Café am Hafen</a>', $locations);
+
+        // With a second space a tab for each, new people go into the chosen one (decision 0242).
+        $doctors = $this->runner()->run(new CreateSpace(PersonStore::TYPE, 'Ärzte'), Context::system())->id;
+        $list = $this->html($this->request('GET', '/cms/people?space=' . $doctors, session: $session));
+        self::assertStringContainsString('aria-label="Verwaltungen"', $list);
+        self::assertStringContainsString('href="/cms/people/new?space=' . $doctors . '"', $list);
+        self::assertStringNotContainsString('Maria Rossi', $list);
+        self::assertStringContainsString('<input type="hidden" name="space" value="' . $doctors . '">', $this->html($this->request('GET', '/cms/people/new?space=' . $doctors, session: $session)));
 
         $english = $this->html($this->request('GET', '/cms/people/locations/' . $location . '?language=en', session: $session));
         self::assertStringContainsString('name="translations.en.name" value="Café am Hafen"', $english, 'The English version starts from the first.');

@@ -17,7 +17,8 @@ final readonly class Details
 {
     /**
      * @param T|null $draft
-     * @param T|null $published
+     * @param T|null                $published
+     * @param array<string, string> $urls      The addresses of the profile by language (decision 0242)
      */
     public function __construct(
         public string $id,
@@ -25,7 +26,18 @@ final readonly class Details
         public ?int $version,
         public ?Data $draft,
         public ?Data $published,
+        public array $urls = [],
     ) {}
+
+    /**
+     * @param array<string, string> $urls
+     *
+     * @return self<T>
+     */
+    public function withUrls(array $urls): self
+    {
+        return new self($this->id, $this->status, $this->version, $this->draft, $this->published, $urls);
+    }
 
     /**
      * The draft, else the published version.
