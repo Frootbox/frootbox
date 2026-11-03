@@ -51,7 +51,7 @@
 /* Image behind: a dark layer keeps the text readable on any image. */
 .base-hero--background { display: grid; align-items: end; background: var(--color-dark); color: var(--color-bg); }
 .base-hero--background .base-hero__media { position: absolute; inset: 0; }
-.base-hero--background .base-hero__media :is(picture, img) { block-size: 100%; }
+.base-hero--background .base-hero__media :is(picture, img, .ai-image) { block-size: 100%; }
 .base-hero--background .base-hero__media img { object-fit: cover; }
 .base-hero--background .base-hero__media::after {
   content: "";
