@@ -27,6 +27,7 @@ final readonly class UpdateArticle implements Action
      * @param array<mixed>|null $image
      * @param list<string>|null $categories
      * @param list<string>|null $tags
+     * @param array<mixed>|null $fields
      */
     public function __construct(
         #[Pattern(Ulid::PATTERN)]
@@ -42,6 +43,8 @@ final readonly class UpdateArticle implements Action
         #[ListOf('string')]
         #[Description('Ids, keys or labels of tags, replacing the ones before; a new word becomes a tag unless only presets count')]
         public ?array $tags = null,
+        #[Description('Further fields the views of the theme add, by name; a text one per language, e.g. {"subtitle": {"de": "…"}}, null removes one, the others stay; see object.fields; left out keeps them')]
+        public ?array $fields = null,
     ) {}
 
     public function handle(ArticleEditor $editor, ArticleStore $store): ArticleDetails
@@ -58,6 +61,7 @@ final readonly class UpdateArticle implements Action
             null === $this->categories ? null : $editor->categories('frootbox/news/article.update', $this->categories),
             null === $this->translations ? null : $editor->translations('frootbox/news/article.update', $this->translations, $current->translations),
             null === $this->tags ? null : $editor->tags('frootbox/news/article.update', $current->space, $this->tags),
+            null === $this->fields ? null : $editor->fields('frootbox/news/article.update', $current->fields, $this->fields),
         );
 
         return $editor->saveDraft('frootbox/news/article.update', $this->id, $data);

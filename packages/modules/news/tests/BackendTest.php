@@ -12,8 +12,11 @@ use Frootbox\Backend\Tests\Support\BackendTestCase;
 use Frootbox\Core\Action\Context;
 use Frootbox\Core\Extension\ExtensionPackage;
 use Frootbox\Core\Extension\Extensions;
+use Frootbox\Core\Extension\Registry;
+use Frootbox\Core\ObjectField\ObjectFieldSet;
 use Frootbox\Core\User\CreateRole;
 use Frootbox\News\Article\Articles;
+use Frootbox\News\Article\ArticleStore;
 use Frootbox\News\Article\ArticleTranslations;
 use Frootbox\News\Backend\ArticleHandler;
 use Frootbox\News\Backend\ArticlesHandler;
@@ -97,6 +100,33 @@ final class BackendTest extends BackendTestCase
         $categories = $this->html($this->request('GET', '/cms/categories?group=frootbox/news/categories', session: $session));
         self::assertStringContainsString('data-fb-focus>Kategorien der News</h2>', $categories);
         self::assertStringContainsString('?category=presse', $categories);
+    }
+
+    public function testTheFormHasTheFurtherFieldsOfTheTheme(): void
+    {
+        $this->get(Registry::class)->add(ObjectFieldSet::class, new ObjectFieldSet(ArticleStore::TYPE, [
+            'subtitle' => ['type' => 'text', 'label' => 'Subtitle', 'maxLength' => 40],
+            'featured' => ['type' => 'boolean', 'label' => 'Featured', 'description' => 'Shown first.'],
+            'code' => ['type' => 'text', 'translatable' => false],
+            'downloads' => ['type' => 'list', 'fields' => ['file' => ['type' => 'file']]],
+        ]));
+        $this->createUser('editor@example.org', ['editor']);
+        $session = $this->signIn('editor@example.org');
+        self::assertStringContainsString('name="fields.subtitle.de"', $this->html($this->request('GET', '/cms/news/new', session: $session)));
+
+        $id = $this->id($this->action('frootbox/news/article.create', ['translations' => ['de' => ['title' => 'Neue Sorten']], 'fields' => ['subtitle' => ['de' => 'Aus Peru'], 'featured' => true, 'code' => 'A1']], $session));
+        $show = $this->html($this->request('GET', '/cms/news/' . $id, session: $session));
+        self::assertStringContainsString('<legend class="fb-fieldset__legend">Weitere Felder</legend>', $show);
+        self::assertMatchesRegularExpression('~name="fields.subtitle.de"[^>]*lang="de"[^>]*data-empty="null"[^>]*maxlength="40"~', $show, 'A text per language, empty removes it.');
+        self::assertStringContainsString('value="Aus Peru"', $show);
+        self::assertMatchesRegularExpression('~name="fields.featured" value="1" checked>\s*<span class="fb-check__text"><span>Featured</span><span class="fb-hint">Shown first.</span>~', $show);
+        self::assertStringContainsString('name="fields.code"', $show, 'One value for all languages.');
+        self::assertStringContainsString('Diese Art Feld lässt sich hier noch nicht bearbeiten', $show, 'A list waits for its editor.');
+
+        $this->action('frootbox/news/article.update', ['id' => $id, 'fields' => ['subtitle' => ['de' => null], 'featured' => false]], $session);
+        $show = $this->html($this->request('GET', '/cms/news/' . $id, session: $session));
+        self::assertStringContainsString('value="" id="article-fields-subtitle" name="fields.subtitle.de"', $show, 'Null removed it.');
+        self::assertDoesNotMatchRegularExpression('~name="fields.featured" value="1" checked~', $show);
     }
 
     public function testAnEmptyLanguageOfACategoryIsNone(): void

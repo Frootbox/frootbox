@@ -13,6 +13,9 @@ use Frootbox\Core\Action\InvalidInputException;
 use Frootbox\Core\Category\CreateCategory;
 use Frootbox\Core\Category\DeleteCategory;
 use Frootbox\Core\Category\ListCategories;
+use Frootbox\Core\Extension\Registry;
+use Frootbox\Core\ObjectField\ObjectFields;
+use Frootbox\Core\ObjectField\ObjectFieldSet;
 use Frootbox\Core\Page\PublishPages;
 use Frootbox\Core\Schedule\Scheduler;
 use Frootbox\Core\Search\Search;
@@ -178,6 +181,31 @@ final class ArticlesTest extends NewsTestCase
         $editor = $this->get(Roles::class)->fetchOne(['where' => ['name' => 'editor']]);
         self::assertNotNull($editor);
         self::assertContains('frootbox/news/*', $editor->permissions);
+    }
+
+    public function testKeepsTheFurtherFieldsOfTheTheme(): void
+    {
+        $this->get(Registry::class)->add(ObjectFieldSet::class, new ObjectFieldSet(ArticleStore::TYPE, ['subtitle' => ['type' => 'text', 'maxLength' => 40], 'featured' => ['type' => 'boolean']]));
+        $id = $this->runner()->run(new CreateArticle(['de' => ['title' => 'Neue Sorten']], fields: ['subtitle' => ['de' => 'Aus Peru'], 'featured' => true]))->id;
+        self::assertSame(['subtitle' => ['de' => 'Aus Peru'], 'featured' => true], $this->runner()->ask(new ShowArticle($id))->draft?->fields);
+
+        $this->runner()->run(new UpdateArticle($id, ['de' => ['teaser' => 'Fruchtig.']]));
+        self::assertSame(['subtitle' => ['de' => 'Aus Peru'], 'featured' => true], $this->runner()->ask(new ShowArticle($id))->draft->fields, 'Left out, they stay.');
+        $this->runner()->run(new UpdateArticle($id, fields: ['subtitle' => ['en' => 'From Peru'], 'featured' => null]));
+
+        $this->runner()->run(new PublishArticles([$id]));
+        $fields = $this->get(ObjectFields::class);
+        self::assertSame([$id => ['subtitle' => ['de' => 'Aus Peru', 'en' => 'From Peru']]], $fields->of(ArticleStore::TYPE, [$id]));
+
+        try {
+            $this->runner()->run(new UpdateArticle($id, fields: ['subtitle' => ['de' => str_repeat('x', 41)], 'price' => 3]));
+            self::fail('The fields are checked.');
+        } catch (InvalidInputException $exception) {
+            self::assertSame(['/fields/subtitle/de', '/fields/price'], array_keys($exception->errors));
+        }
+
+        $this->runner()->run(new UnpublishArticle($id));
+        self::assertSame([$id => []], $this->get(ObjectFields::class)->of(ArticleStore::TYPE, [$id]));
     }
 
     /**

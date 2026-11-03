@@ -23,6 +23,7 @@ final readonly class ArticleData
      * @param list<string>                $categories   Ids of the categories
      * @param array<string, ArticleText>  $translations By language
      * @param list<string>                $tags         Ids of the tags (decision 0239)
+     * @param array<mixed>                $fields       Further fields of the views by name (decision 0240)
      */
     public function __construct(
         public DateTimeImmutable $date,
@@ -32,6 +33,7 @@ final readonly class ArticleData
         /** The space of the news it belongs to (decision 0232) */
         public string $space = Space::DEFAULT,
         public array $tags = [],
+        public array $fields = [],
     ) {}
 
     /**
@@ -60,6 +62,7 @@ final readonly class ArticleData
             $translations,
             \is_string($data['space'] ?? null) && '' !== $data['space'] ? $data['space'] : Space::DEFAULT,
             array_values(array_filter(\is_array($data['tags'] ?? null) ? $data['tags'] : [], \is_string(...))),
+            \is_array($data['fields'] ?? null) ? $data['fields'] : [],
         );
     }
 
@@ -75,6 +78,7 @@ final readonly class ArticleData
             'translations' => array_map(static fn(ArticleText $text): array => $text->toArray(), $this->translations),
             'space' => $this->space,
             'tags' => $this->tags,
+            'fields' => $this->fields,
         ];
     }
 
@@ -83,10 +87,11 @@ final readonly class ArticleData
      * @param list<string>|null                $categories
      * @param array<string, ArticleText>|null  $translations
      * @param list<string>|null                $tags
+     * @param array<mixed>|null                $fields
      */
-    public function with(?DateTimeImmutable $date = null, array|false|null $image = false, ?array $categories = null, ?array $translations = null, ?array $tags = null): self
+    public function with(?DateTimeImmutable $date = null, array|false|null $image = false, ?array $categories = null, ?array $translations = null, ?array $tags = null, ?array $fields = null): self
     {
-        return new self($date ?? $this->date, false === $image ? $this->image : $image, $categories ?? $this->categories, $translations ?? $this->translations, $this->space, $tags ?? $this->tags);
+        return new self($date ?? $this->date, false === $image ? $this->image : $image, $categories ?? $this->categories, $translations ?? $this->translations, $this->space, $tags ?? $this->tags, $fields ?? $this->fields);
     }
 
     /**

@@ -16,7 +16,7 @@
     <fb-form action="frootbox/news/article.create" next="{{ path('frootbox.news.articles') }}/{id}" done="{{ t('The article is saved as a draft.') }}">
         <form class="fb-card fb-card--padded fb-stack" novalidate>
             {% if space %}<input type="hidden" name="space" value="{{ space }}">{% endif %}
-            {% include '@frootbox/news/backend/fields.twig' with {language: language, translation: null, slug: false, date: null, image: null, image_value: null, chosen: [], space: space ?? null, tags: [], editable: true} only %}
+            {% include '@frootbox/news/backend/fields.twig' with {language: language, translation: null, slug: false, date: null, image: null, image_value: null, chosen: [], space: space ?? null, tags: [], fields: {}, editable: true} only %}
             <div class="fb-form__actions">
                 {{ ui.button({label: t('Save as a draft'), type: 'submit'}) }}
                 {{ ui.button({label: t('Cancel'), variant: 'ghost', href: path('frootbox.news.articles')}) }}

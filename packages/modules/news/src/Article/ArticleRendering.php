@@ -36,12 +36,14 @@ final readonly class ArticleRendering
     ) {}
 
     /**
-     * @return array{id: string, title: string, teaser: string, url: string|null, date: string, dateText: string, image: Markup|string, categories: list<array{id: string, title: string, slug: string}>, tags: list<array{key: string, label: string, slug: string}>}
+     * @return array{id: string, target: string, title: string, teaser: string, url: string|null, date: string, dateText: string, image: Markup|string, categories: list<array{id: string, title: string, slug: string}>, tags: list<array{key: string, label: string, slug: string}>}
      */
     public function teaser(ArticleView $article, string $language, bool $image = true): array
     {
         return [
             'id' => $article->id,
+            // For object_field() and object_value() (decision 0240).
+            'target' => ArticleStore::target($article->id),
             'title' => $article->title,
             'teaser' => $article->teaser,
             'url' => $this->url($article, $language),

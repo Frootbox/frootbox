@@ -13,6 +13,7 @@ use Frootbox\Core\Action\InvalidInputException;
 use Frootbox\Core\Category\ObjectCategories;
 use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Media\MediaEditor;
+use Frootbox\Core\ObjectField\ObjectFields;
 use Frootbox\Core\Page\Slug;
 use Frootbox\Core\Plugin\PluginSpaces;
 use Frootbox\Core\Revision\RevisionStore;
@@ -42,6 +43,7 @@ final readonly class ArticleEditor
         private ArticleTranslations $translations,
         private ObjectCategories $categories,
         private ObjectTags $tags,
+        private ObjectFields $fields,
         private MediaEditor $media,
         private RichText $richText,
         private AddressSync $addresses,
@@ -336,6 +338,22 @@ final readonly class ArticleEditor
     }
 
     /**
+     * The further fields of an action's input after those of the draft
+     * (decision 0240), checked against the views of the theme.
+     *
+     * @param array<mixed> $current
+     * @param array<mixed> $input
+     *
+     * @return array<string, mixed>
+     *
+     * @throws InvalidInputException
+     */
+    public function fields(string $action, array $current, array $input): array
+    {
+        return $this->fields->check($action, ArticleStore::TYPE, $current, $input);
+    }
+
+    /**
      * The errors of an article by JSON pointer.
      *
      * @param list<string> $batch Articles published together, their slugs are checked among themselves
@@ -452,6 +470,7 @@ final readonly class ArticleEditor
 
         $this->categories->sync(ArticleStore::TYPE, $id, $data->categories);
         $this->tags->sync(ArticleStore::TYPE, $id, $data->tags);
+        $this->fields->sync(ArticleStore::TYPE, $id, $data->fields);
     }
 
     private function removeRows(string $id): void
@@ -462,6 +481,7 @@ final readonly class ArticleEditor
 
         $this->categories->clear(ArticleStore::TYPE, $id);
         $this->tags->clear(ArticleStore::TYPE, $id);
+        $this->fields->clear(ArticleStore::TYPE, $id);
         $this->articles->delete($id);
     }
 }

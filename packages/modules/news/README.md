@@ -30,10 +30,17 @@ become tags unless `config/tags.yaml` closes the list for
 `frootbox/news/article` or the space. The role "editor" gets `frootbox/news/*` on
 installation.
 
+Further fields (decision 0240): a view of the theme declares them under
+`object: fields:` in its header, e.g. an override of `ArticleList`, and
+the actions take them as `fields`; `object.fields` with the type
+`frootbox/news/article` lists them. The form in the backend shows them under
+"More fields".
+
 ## In a template
 
 ```twig
 <a href="{{ url('frootbox/news/article:' ~ id) }}">…</a>
+{{ object_field(article, 'subtitle') }}  {# a further field, article as the view gets it #}
 ```
 
 ## Backend
