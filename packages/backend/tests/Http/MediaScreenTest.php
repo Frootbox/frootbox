@@ -102,6 +102,31 @@ final class MediaScreenTest extends BackendTestCase
         self::assertStringNotContainsString('id="media-discard"', $detail);
     }
 
+    public function testLabelsAnImageMadeWithAiAndFiltersByIt(): void
+    {
+        $id = $this->upload('kunst.jpg');
+        $this->upload('foto.jpg');
+
+        $detail = $this->html($this->request('GET', '/cms/media/' . $id, session: $this->session));
+        self::assertStringContainsString('<option value="none" selected>Nicht mit KI</option>', $detail);
+        self::assertStringContainsString('Plakette „KI“', $detail);
+
+        $updated = $this->action('media.update', ['id' => $id, 'ai' => 'generated'], $this->session)['data'];
+        self::assertIsArray($updated);
+        self::assertSame('generated', $updated['ai']);
+
+        $detail = $this->html($this->request('GET', '/cms/media/' . $id, session: $this->session));
+        self::assertStringContainsString('<option value="generated" selected>Mit KI erzeugt</option>', $detail);
+
+        $only = $this->html($this->request('GET', '/cms/media?ai=1', session: $this->session));
+        self::assertStringContainsString('kunst.jpg', $only);
+        self::assertStringNotContainsString('foto.jpg', $only);
+        self::assertStringContainsString('name="ai" value="1" checked', $only);
+        self::assertStringContainsString('<span class="fb-media-grid__ai">KI<span class="fb-visually-hidden">: Mit KI erzeugt</span></span>', $only);
+
+        $this->action('media.update', ['id' => $id, 'ai' => 'maybe'], $this->session, 422);
+    }
+
     public function testReplacesTheFileOfAPublicImageInTheDraft(): void
     {
         $id = $this->upload('hafen.jpg');

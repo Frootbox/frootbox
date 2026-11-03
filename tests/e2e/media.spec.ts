@@ -3,6 +3,7 @@
  */
 
 import { readFileSync } from 'node:fs';
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { action, signIn } from './admin';
 
@@ -177,4 +178,65 @@ test('uploads an image, sets its focus and shows it on a published page', async 
     // Clean up: the page goes, the image stays in the library.
     expect((await action(page, 'page.unpublish', { id })).status).toBe(200);
     expect((await action(page, 'page.delete', { id })).status).toBe(200);
+});
+
+test('labels an image made with AI and shows a badge to visitors', async ({ page, browser }) => {
+    const name = `kunst-${unique()}`;
+    await signIn(page, '/cms/media');
+    await page.waitForFunction(() => customElements.get('fb-upload') !== undefined);
+    const chooser = page.waitForEvent('filechooser');
+    await page.getByRole('button', { name: 'Hochladen' }).click();
+    await (await chooser).setFiles(await photo(page, `${name}.jpg`));
+    await expect(page.getByText('Die Dateien sind hochgeladen.')).toBeVisible();
+
+    // The label in the details of the medium (decision 0251).
+    await page.getByRole('link', { name: `${name}.jpg` }).click();
+    await expect(page.getByRole('heading', { name: `${name}.jpg` })).toBeVisible();
+    const id = page.url().match(/\/cms\/media\/([0-9A-Z]{26})/)![1];
+    await page.getByLabel('KI', { exact: true }).selectOption({ label: 'Mit KI erzeugt' });
+    await page.getByRole('button', { name: 'Speichern' }).click();
+    await expect(page.getByText('Das Bild ist gespeichert.')).toBeVisible();
+
+    await page.goto('/cms/media?ai=1');
+    await expect(page.getByRole('link', { name: `${name}.jpg` })).toContainText('KI');
+
+    // On a published page, visitors see the badge on the image.
+    await page.goto('/cms/pages');
+    const start = await page.locator('#page-tree .fb-tree__item').first().getAttribute('data-id');
+    const slug = `ki-${unique()}`;
+    const created = await action(page, 'page.create', {
+        layout: 'frootbox/theme-base/Page',
+        parentId: start,
+        translations: { de: { title: 'KI-Bild', slug, content: { fields: { title: 'KI-Bild' }, areas: { main: [
+            { block: 'frootbox/theme-base/Section', areas: { first: [{ block: 'frootbox/theme-base/Image', fields: { image: { media: id, alt: 'Ein Bild aus der KI' } } }] } },
+        ] } } } },
+    });
+    expect(created.status).toBe(200);
+    const pageId: string = created.body.data.id;
+    expect((await action(page, 'page.publish', { ids: [pageId] })).status).toBe(200);
+
+    // axe needs a page of its own context.
+    const context = await browser.newContext();
+    const guest = await context.newPage();
+    await guest.goto(`/${slug}`);
+    const badge = guest.locator('.base-image .ai-image__badge');
+    await expect(badge).toBeVisible();
+    await expect(badge).toHaveText('KIMit KI erzeugt');
+    await expect(guest.locator('.ai-image__label')).toHaveCSS('clip-path', 'inset(50%)');
+    const results = await new AxeBuilder({ page: guest }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).include('.base-image').analyze();
+    expect(results.violations).toEqual([]);
+    await context.close();
+
+    // The dialog "Choose an image" shows the label of the medium.
+    await page.goto(`/cms/pages/${pageId}`);
+    await page.getByRole('button', { name: 'Auf der Website bearbeiten' }).click();
+    await expect(page.locator('h1[data-fb-field="title"]')).toHaveAttribute('contenteditable', 'plaintext-only');
+    await page.locator('main [data-fb-type="image"]:not([data-fb-part])').click();
+    const dialog = page.locator('fb-editor-bar').getByRole('dialog', { name: 'Bild auswählen' });
+    await expect(dialog.getByRole('combobox', { name: 'KI', exact: true })).toHaveValue('generated');
+    await dialog.getByRole('button', { name: 'Abbrechen' }).click();
+
+    await page.goto(`/cms/pages/${pageId}`);
+    expect((await action(page, 'page.unpublish', { id: pageId })).status).toBe(200);
+    expect((await action(page, 'page.delete', { id: pageId })).status).toBe(200);
 });

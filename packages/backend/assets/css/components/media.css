@@ -83,6 +83,19 @@
     color: var(--fb-text);
 }
 
+/* Marks a medium made or changed with AI (decision 0251). */
+.fb-media-grid__ai {
+    position: absolute;
+    inset-block-start: var(--fb-space-2);
+    inset-inline-end: var(--fb-space-2);
+    padding: 0 var(--fb-space-1);
+    border-radius: var(--fb-radius-sm);
+    background: var(--fb-surface);
+    color: var(--fb-text);
+    font-size: var(--fb-text-xs);
+    font-weight: var(--fb-weight-semibold);
+}
+
 .fb-media-grid__name {
     overflow: hidden;
     font-size: var(--fb-text-xs);

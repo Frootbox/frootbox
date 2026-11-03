@@ -1,4 +1,4 @@
-{#- The details of one medium: focus point, texts per language, copyright (0203), tags, folder (decision 0126), where it is used and its file replaced (0146), its draft (0147), the files of a video (0177), documents (0179). -#}
+{#- The details of one medium: focus point, texts per language, copyright (0203), AI label (0251), tags, folder (decision 0126), where it is used and its file replaced (0146), its draft (0147), the files of a video (0177), documents (0179). -#}
 {% import '@backend/ui.twig' as ui %}
 {% set editable = can('media.update') %}
 {% set video = medium.kind == 'video' %}
@@ -123,6 +123,7 @@
 
             {{ ui.field({label: t('Copyright'), name: 'copyright', id: 'media-copyright', value: medium.copyright, optional: true, hint: t('Photographer or image agency, e.g. “Anna Muster / image agency”. The website shows it with the image where the theme provides for it.'), disabled: not editable, attrs: {maxlength: 300}}) }}
 
+            {{ ui.select({label: t('AI'), name: 'ai', id: 'media-ai', options: [{value: 'none', label: t('Not made with AI')}, {value: 'generated', label: t('Generated with AI')}, {value: 'edited', label: t('Edited with AI')}], value: medium.ai, hint: not video and not document ? t('Images made or changed with AI show a small badge “AI” on the website. A file that says so sets it when uploaded.') : t('A file that says so sets it when uploaded.'), disabled: not editable}) }}
             {{ ui.field({label: t('Tags'), name: 'tags', id: 'media-tags', value: medium.tags|join("\n"), multiline: true, optional: true, hint: t('One per line, e.g. team or summer.'), disabled: not editable, attrs: {'data-type': 'lines', rows: 3}}) }}
 
             {% set options = [{value: '', label: t('Outside of folders')}] %}

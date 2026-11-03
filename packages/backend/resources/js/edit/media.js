@@ -63,6 +63,8 @@ export class MediaPicker {
             withCaption: kind === 'image' && caption,
             caption: value?.caption ?? '',
             copyright: value?.copyright ?? '',
+            // The AI label of the chosen medium, null while untouched (decision 0251).
+            ai: null,
             query: '',
             items: [],
             total: 0,
@@ -135,7 +137,7 @@ export class MediaPicker {
     pick(id) {
         const item = this.state.items.find((entry) => entry.id === id);
         const seen = item ? { ...this.state.seen, [id]: item } : this.state.seen;
-        this.update(this.state.tab === 'poster' ? { poster: id, seen } : { chosen: id, seen });
+        this.update(this.state.tab === 'poster' ? { poster: id, seen } : { chosen: id, seen, ai: null });
     }
 
     tab(name) {
@@ -339,6 +341,11 @@ export class MediaPicker {
                 }
             }
 
+            // The label belongs to the medium and counts everywhere (decision 0251).
+            if (state.ai !== null && medium && state.ai !== (medium.ai ?? 'none') && this.bar.config.mayUpdateMedia) {
+                await this.saveMedium(medium, { ai: state.ai });
+            }
+
             // Closed meanwhile.
             if (!this.state || this.opened !== opened) {
                 return;
@@ -354,8 +361,13 @@ export class MediaPicker {
     }
 
     async saveCopyright(medium, copyright) {
+        return this.saveMedium(medium, { copyright });
+    }
+
+    /** Saves values of the medium itself, in its draft when it is public. */
+    async saveMedium(medium, values) {
         this.update({ applying: true });
-        const updated = await this.bar.run('media.update', { id: medium.id, copyright });
+        const updated = await this.bar.run('media.update', { id: medium.id, ...values });
 
         if (this.state) {
             this.update({ applying: false });
@@ -442,7 +454,13 @@ export class MediaPicker {
             <label>${labels.copyrightHere}
                 <input type="text" name="copyright" .value=${state.copyright} maxlength="300" placeholder=${own !== '' ? own : labels.copyrightExample} aria-describedby="fb-media-copyright-hint"
                     @input=${(event) => this.update({ copyright: event.target.value })}></label>
-            <p class="hint" id="fb-media-copyright-hint">${copyrightHint}</p>`;
+            <p class="hint" id="fb-media-copyright-hint">${copyrightHint}</p>
+            <label>${labels.ai}
+                <select name="ai" .value=${state.ai ?? item?.ai ?? 'none'} ?disabled=${!this.bar.config.mayUpdateMedia} aria-describedby="fb-media-ai-hint"
+                    @change=${(event) => this.update({ ai: event.target.value })}>
+                    ${['none', 'generated', 'edited'].map((value) => html`<option value=${value} ?selected=${(state.ai ?? item?.ai ?? 'none') === value}>${labels[{ none: 'aiNone', generated: 'aiGenerated', edited: 'aiEdited' }[value]]}</option>`)}
+                </select></label>
+            <p class="hint" id="fb-media-ai-hint">${labels.aiHint}</p>`;
     }
 
     dialog() {

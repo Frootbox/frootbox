@@ -59,12 +59,13 @@
                     {{ ui.field({label: t('Tag'), name: 'tag', value: tag, optional: true}) }}
                     {{ ui.check({label: t('Only unused'), name: 'unused', id: 'media-unused', checked: unused, hint: t('Used on no page and in no field of the website, not even in a draft.')}) }}
                     {{ ui.check({label: t('Only with changes'), name: 'changed', id: 'media-changed', checked: changed, hint: t('Changes visitors do not see yet.')}) }}
+                    {{ ui.check({label: t('Only made with AI'), name: 'ai', id: 'media-ai-only', checked: ai, hint: t('Generated or edited with AI.')}) }}
                     {{ ui.button({label: t('Search'), variant: 'outline', type: 'submit', icon: 'search'}) }}
                 </form>
                 <p class="fb-visually-hidden" role="status" data-fb-upload-status></p>
                 {% if list.items is empty %}
                 <div class="fb-card__body">
-                    {{ ui.empty({icon: 'image', title: search or tag or unused or changed ? t('Nothing found') : t('No media yet'), text: search or tag or unused or changed ? t('Try another search.') : t('Upload images, videos or documents with the button or drop them here.')}) }}
+                    {{ ui.empty({icon: 'image', title: search or tag or unused or changed or ai ? t('Nothing found') : t('No media yet'), text: search or tag or unused or changed or ai ? t('Try another search.') : t('Upload images, videos or documents with the button or drop them here.')}) }}
                 </div>
                 {% else %}
                 <ul class="fb-media-grid">
@@ -79,6 +80,7 @@
                             {% else %}
                             <img src="{{ item.preview }}" alt="" width="{{ item.width }}" height="{{ item.height }}" loading="lazy" decoding="async">
                             {% endif %}
+                            {% if item.ai != 'none' %}<span class="fb-media-grid__ai">{{ t('AI') }}<span class="fb-visually-hidden">: {{ item.ai == 'edited' ? t('Edited with AI') : t('Generated with AI') }}</span></span>{% endif %}
                             <span class="fb-media-grid__name">{{ item.fileName }}</span>
                             {% if item.draft %}{{ ui.status('changed') }}{% endif %}
                         </a>

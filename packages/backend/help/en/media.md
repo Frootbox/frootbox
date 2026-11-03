@@ -17,6 +17,14 @@ Describe what an image shows in its **alternative text**, for people
 who cannot see it and for search engines. The **focus point** keeps the
 important part in view when an image is cut, e.g. on a phone.
 
+## Made with AI
+
+Choose under **AI** whether an AI generated or edited an image. The
+website then shows a small badge “AI” on it, wherever it is used. Many
+tools write this into the file; it is set when you upload such a file.
+On a page already published, the badge comes once you publish the
+change.
+
 ## Folders and tags
 
 Folders and tags help to find files again. A file can be used on many

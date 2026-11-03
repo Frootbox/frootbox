@@ -14,6 +14,14 @@ Beschreib im **Alternativtext**, was ein Bild zeigt, für Menschen, die es
 nicht sehen, und für Suchmaschinen. Der **Fokuspunkt** hält das Wichtige
 im Blick, wenn ein Bild beschnitten wird, etwa auf dem Handy.
 
+## Mit KI erstellt
+
+Wähl unter **KI**, ob eine KI ein Bild erzeugt oder bearbeitet hat. Die
+Website zeigt dann überall, wo es steht, eine kleine Plakette „KI“
+darauf. Viele Werkzeuge schreiben das in die Datei; beim Hochladen einer
+solchen Datei ist es schon gesetzt. Auf einer veröffentlichten Seite
+erscheint die Plakette, sobald Du die Änderung veröffentlichst.
+
 ## Ordner und Schlagwörter
 
 Ordner und Schlagwörter helfen, Dateien wiederzufinden. Eine Datei kann
