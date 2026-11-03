@@ -1,17 +1,19 @@
 {# frootbox
 title: Subpage
-description: A page with breadcrumbs, heading, introduction and content.
+description: A page with breadcrumbs, heading, introduction and content, and a place for a module such as news or jobs.
+plugin: true
 fields:
   title: { type: headline, label: Heading, maxLength: 120 }
   intro: { type: text, label: Introduction, multiline: true, optional: true, maxLength: 400 }
 areas:
   main: {}
+  after: { label: Below the module }
 #}
 {% include '@theme/header.twig' %}
 <main id="content" class="base-page">
   <div class="base-page-head">
     {% include '@theme/breadcrumb.twig' %}
-    {# Below a page, e.g. a news article, the block shows its own heading (decision 0220). #}
+    {# Below a page, e.g. a news article, only the module shows it (decisions 0220 and 0232). #}
     {% if not subpage() %}
       {# A page without translation shows the text of another language. #}
       {% set content = content_attributes() %}
@@ -19,6 +21,8 @@ areas:
       <p class="base-page-head__intro"{{ content|attributes }}>{{ field('intro') }}</p>
     {% endif %}
   </div>
-  {{ area('main') }}
+  {% if not subpage() %}{{ area('main') }}{% endif %}
+  {{ plugin() }}
+  {% if not subpage() %}{{ area('after') }}{% endif %}
 </main>
 {% include '@theme/footer.twig' %}
