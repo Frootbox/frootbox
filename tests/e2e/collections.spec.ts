@@ -12,7 +12,8 @@ import { action, signIn } from './admin';
 // editor adds a farm in the backend in the tab of the collection.
 
 const violations = async (page: Page) => {
-    // Under load the logo may still be loading; without its size axe sees a target too small.
+    // Under load styles and the logo may still be loading; without their sizes axe sees targets too small.
+    await page.waitForLoadState('load');
     await page.waitForFunction(() => [...document.images].every((image) => image.complete));
     const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
 
