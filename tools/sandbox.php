@@ -122,8 +122,26 @@ $composer['repositories'] = [
     // Themes only for tests, never shipped (decision 0212).
     ...(($theme['fixtures'] ?? false) ? [['type' => 'path', 'url' => $up . 'tests/Fixtures/Themes/*', 'options' => ['symlink' => true]]] : []),
 ];
-// The official modules are installed in every sandbox.
-$composer['require'] = [...(is_array($composer['require'] ?? null) ? $composer['require'] : []), $theme['package'] => '^0.1@dev', 'frootbox/news' => '^0.1@dev', 'frootbox/forms' => '^0.1@dev', 'frootbox/seo' => '^0.1@dev', 'frootbox/people' => '^0.1@dev', 'frootbox/events' => '^0.1@dev', 'frootbox/jobs' => '^0.1@dev', 'frootbox/collections' => '^0.1@dev', 'frootbox/search' => '^0.1@dev', 'frootbox/statistics' => '^0.1@dev'];
+
+// The official modules come from the skeleton like in every new website
+// (decision 0165), the sandbox only adds its theme. A module missing there
+// stops the build, so the sandbox and the browser tests notice it.
+$require = is_array($composer['require'] ?? null) ? $composer['require'] : [];
+
+$moduleFiles = glob(dirname(__DIR__) . '/packages/modules/*/composer.json');
+
+foreach (false === $moduleFiles ? [] : $moduleFiles as $moduleFile) {
+    $module = json_decode((string) file_get_contents($moduleFile), true, flags: JSON_THROW_ON_ERROR);
+    $moduleName = is_array($module) && is_string($module['name'] ?? null) ? $module['name'] : null;
+
+    if (null !== $moduleName && !isset($require[$moduleName])) {
+        fwrite(STDERR, "skeleton/composer.json does not require the official module {$moduleName}.\n");
+
+        exit(1);
+    }
+}
+
+$composer['require'] = [...$require, $theme['package'] => '^0.1@dev'];
 
 file_put_contents(
     $composerFile,
