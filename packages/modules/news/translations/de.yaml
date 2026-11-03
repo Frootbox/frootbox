@@ -15,8 +15,11 @@
 "Page {page} of {pages}": "Seite {page} von {pages}"
 "Pages": "Seiten"
 "Subscribe via RSS": "Per RSS abonnieren"
+"Tags": "Schlagwörter"
+"Articles with the tag “{tag}”": "Artikel mit dem Schlagwort „{tag}“"
+"Only with the tag": "Nur mit dem Schlagwort"
 "The newest news articles as teasers, e.g. on the start page, with a link to all of them.": "Die neuesten Artikel als Teaser, z. B. auf der Startseite, mit einem Link auf alle."
-"The news articles of the space the page shows, newest first, page by page and by category. Each article gets its own address below the page; there it shows the article.": "Die Artikel der Verwaltung, die die Seite zeigt, die neuesten zuerst, Seite für Seite und nach Kategorie. Jeder Artikel bekommt eine eigene Adresse unter der Seite; dort steht der Artikel."
+"The news articles of the space the page shows, newest first, page by page, by category and by tag. Each article gets its own address below the page; there it shows the article.": "Die Artikel der Verwaltung, die die Seite zeigt, die neuesten zuerst, Seite für Seite, nach Kategorie und nach Schlagwort. Jeder Artikel bekommt eine eigene Adresse unter der Seite; dort steht der Artikel."
 # Backend (decision 0220)
 "News": "News"
 "New article": "Neuer Artikel"

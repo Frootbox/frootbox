@@ -12,6 +12,7 @@ use DateTimeInterface;
 use Frootbox\Core\Category\Category;
 use Frootbox\Core\Field\Field;
 use Frootbox\Core\Field\FieldTypes;
+use Frootbox\Core\Tag\ObjectTags;
 use Frootbox\Core\Url\Urls;
 use IntlDateFormatter;
 use Twig\Markup;
@@ -31,10 +32,11 @@ final readonly class ArticleRendering
     public function __construct(
         private FieldTypes $types,
         private Urls $urls,
+        private ObjectTags $tags,
     ) {}
 
     /**
-     * @return array{id: string, title: string, teaser: string, url: string|null, date: string, dateText: string, image: Markup|string, categories: list<array{id: string, title: string, slug: string}>}
+     * @return array{id: string, title: string, teaser: string, url: string|null, date: string, dateText: string, image: Markup|string, categories: list<array{id: string, title: string, slug: string}>, tags: list<array{key: string, label: string, slug: string}>}
      */
     public function teaser(ArticleView $article, string $language, bool $image = true): array
     {
@@ -51,6 +53,8 @@ final readonly class ArticleRendering
                 'title' => $category->title($article->language) ?? '',
                 'slug' => $category->slug($article->language) ?? '',
             ], $article->categories),
+            // Internal ones never (decision 0239).
+            'tags' => $this->tags->visible($article->tags, $article->language),
         ];
     }
 

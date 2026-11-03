@@ -22,6 +22,7 @@ final readonly class ArticleData
      * @param array<mixed>|null           $image        The value of an image field: {"media": "01J…", "alt": "…"}
      * @param list<string>                $categories   Ids of the categories
      * @param array<string, ArticleText>  $translations By language
+     * @param list<string>                $tags         Ids of the tags (decision 0239)
      */
     public function __construct(
         public DateTimeImmutable $date,
@@ -30,6 +31,7 @@ final readonly class ArticleData
         public array $translations = [],
         /** The space of the news it belongs to (decision 0232) */
         public string $space = Space::DEFAULT,
+        public array $tags = [],
     ) {}
 
     /**
@@ -57,6 +59,7 @@ final readonly class ArticleData
             array_values(array_filter(\is_array($data['categories'] ?? null) ? $data['categories'] : [], \is_string(...))),
             $translations,
             \is_string($data['space'] ?? null) && '' !== $data['space'] ? $data['space'] : Space::DEFAULT,
+            array_values(array_filter(\is_array($data['tags'] ?? null) ? $data['tags'] : [], \is_string(...))),
         );
     }
 
@@ -71,6 +74,7 @@ final readonly class ArticleData
             'categories' => $this->categories,
             'translations' => array_map(static fn(ArticleText $text): array => $text->toArray(), $this->translations),
             'space' => $this->space,
+            'tags' => $this->tags,
         ];
     }
 
@@ -78,10 +82,11 @@ final readonly class ArticleData
      * @param array<mixed>|null|false          $image        false keeps it
      * @param list<string>|null                $categories
      * @param array<string, ArticleText>|null  $translations
+     * @param list<string>|null                $tags
      */
-    public function with(?DateTimeImmutable $date = null, array|false|null $image = false, ?array $categories = null, ?array $translations = null): self
+    public function with(?DateTimeImmutable $date = null, array|false|null $image = false, ?array $categories = null, ?array $translations = null, ?array $tags = null): self
     {
-        return new self($date ?? $this->date, false === $image ? $this->image : $image, $categories ?? $this->categories, $translations ?? $this->translations, $this->space);
+        return new self($date ?? $this->date, false === $image ? $this->image : $image, $categories ?? $this->categories, $translations ?? $this->translations, $this->space, $tags ?? $this->tags);
     }
 
     /**

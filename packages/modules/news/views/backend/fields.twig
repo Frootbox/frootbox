@@ -1,4 +1,4 @@
-{#- The fields of an article in one language plus date, image and categories (decision 0220). -#}
+{#- The fields of an article in one language plus date, image, categories and tags (decisions 0220, 0239). -#}
 {% import '@backend/ui.twig' as ui %}
 {% set code = language.code %}
 {% set dir = language.direction.value %}
@@ -12,3 +12,4 @@
 {{ ui.field({label: t('Date'), name: 'date', id: 'article-date', type: 'datetime-local', value: date ? date|date('Y-m-d\\TH:i') : '', optional: date is null, disabled: not editable, hint: t('Shown with the article and orders the list. Without a date it is now.'), attrs: {'data-type': 'datetime', 'data-value': date ? date|date('c') : null}}) }}
 {{ ui.image({label: t('Image'), name: 'image', id: 'article-image', value: image_value, preview: image.preview ?? null, file: image.file ?? null, optional: true, disabled: not editable}) }}
 {% include '@backend/categories/choices.twig' with {type: 'frootbox/news/article', chosen: chosen, disabled: not editable, prefix: 'article'} only %}
+{% include '@backend/tags/choices.twig' with {type: 'frootbox/news/article', space: space ?? null, chosen: tags ?? [], disabled: not editable, prefix: 'article'} only %}

@@ -12,6 +12,7 @@ use Frootbox\Core\Category\ObjectCategories;
 use Frootbox\Core\Component\BlockContext;
 use Frootbox\Core\Component\BlockController;
 use Frootbox\Core\Plugin\Space;
+use Frootbox\Core\Tag\ObjectTags;
 use Frootbox\Core\Url\Urls;
 use Frootbox\News\Article\ArticleRendering;
 use Frootbox\News\Article\ArticleStore;
@@ -21,7 +22,8 @@ use Frootbox\News\Feed\Feed;
 
 /**
  * The view of the news at plugin() (decision 0232): the articles of the
- * space of the page, page by page, by category and year. Below the page
+ * space of the page, page by page, by category, tag (decision 0239) and
+ * year. Below the page
  * each article has its address, there the view shows the article.
  */
 final readonly class ArticleList implements BlockController
@@ -29,6 +31,7 @@ final readonly class ArticleList implements BlockController
     public function __construct(
         private PublishedArticles $articles,
         private ObjectCategories $categories,
+        private ObjectTags $tags,
         private ArticleRendering $rendering,
         private Urls $urls,
         private Feed $feed,
@@ -52,13 +55,17 @@ final readonly class ArticleList implements BlockController
         // A category counts with all below it (decision 0233).
         $slug = self::text($context->query('category'));
         [$category, $chosen] = (null === $slug ? null : $this->categories->bySlug(ArticleStore::TYPE, $language, $slug)) ?? [null, null];
+        // Like a category, an unknown tag filters nothing.
+        $tagSlug = self::text($context->query('tag'));
+        $tag = null === $tagSlug ? null : $this->tags->bySlug($language, $tagSlug);
+        $shown = null === $tag ? null : $this->tags->visible([$tag], $language)[0] ?? null;
         $year = $context->query('year');
         $year = null !== $year && 1 === preg_match('/^[12][0-9]{3}$/', $year) ? (int) $year : null;
         $perPage = max(1, min(50, is_numeric($context->options['perPage'] ?? null) ? (int) $context->options['perPage'] : 10));
-        $total = $this->articles->count($language, $chosen, $year, $spaces);
+        $total = $this->articles->count($language, $chosen, $year, $spaces, $tag?->id);
         $pages = max(1, (int) ceil($total / $perPage));
         $page = min($pages, max(1, (int) ($context->query('page') ?? 1)));
-        $filter = array_filter(['category' => $category?->slug($language), 'year' => null === $year ? null : (string) $year], static fn(?string $value): bool => null !== $value);
+        $filter = array_filter(['category' => $category?->slug($language), 'tag' => $shown['slug'] ?? null, 'year' => null === $year ? null : (string) $year], static fn(?string $value): bool => null !== $value);
         $link = static fn(array $query): string => $base . ([] === $query ? '' : '?' . http_build_query($query));
         $images = false !== ($context->options['images'] ?? true);
 
@@ -76,9 +83,10 @@ final readonly class ArticleList implements BlockController
         }
 
         return [
-            'articles' => array_map(fn(ArticleView $article): array => $this->withLinks($this->rendering->teaser($article, $context->language, $images), $base), $this->articles->list($language, $chosen, $year, $perPage, ($page - 1) * $perPage, $spaces)),
+            'articles' => array_map(fn(ArticleView $article): array => $this->withLinks($this->rendering->teaser($article, $context->language, $images), $base), $this->articles->list($language, $chosen, $year, $perPage, ($page - 1) * $perPage, $spaces, $tag?->id)),
             'filters' => [] === $filters ? [] : [['title' => null, 'href' => $link([]), 'current' => null === $category], ...$filters],
             'filtered' => [] !== $filter,
+            'tag' => null === $shown ? null : ['label' => $shown['label'], 'all' => $link(array_diff_key($filter, ['tag' => true]))],
             'pagination' => [
                 'page' => $page,
                 'pages' => $pages,
@@ -90,7 +98,8 @@ final readonly class ArticleList implements BlockController
     }
 
     /**
-     * The categories of an article link to the list filtered by them.
+     * The categories and tags of an article link to the list filtered by
+     * them.
      *
      * @param array<string, mixed> $article
      *
@@ -106,7 +115,15 @@ final readonly class ArticleList implements BlockController
             }
         }
 
-        return ['categories' => $categories] + $article;
+        $tags = [];
+
+        foreach (\is_array($article['tags'] ?? null) ? $article['tags'] : [] as $tag) {
+            if (\is_array($tag) && \is_string($tag['slug'] ?? null)) {
+                $tags[] = [...$tag, 'href' => $base . '?' . http_build_query(['tag' => $tag['slug']])];
+            }
+        }
+
+        return ['categories' => $categories, 'tags' => $tags] + $article;
     }
 
     private static function text(?string $value): ?string

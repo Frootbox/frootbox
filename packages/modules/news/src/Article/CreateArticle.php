@@ -27,6 +27,7 @@ final readonly class CreateArticle implements Action
      * @param array<mixed>      $translations
      * @param array<mixed>|null $image
      * @param list<string>      $categories
+     * @param list<string>      $tags
      */
     public function __construct(
         #[Description('Title, slug, teaser and text by language: {"de": {"title": "Neue Sorten", "teaser": "…", "text": {"type": "doc", "content": []}}}. The slug is made from the title if left out.')]
@@ -41,6 +42,9 @@ final readonly class CreateArticle implements Action
         #[Length(1, 64)]
         #[Description('The space of the news, "default" for the default one; see space.list')]
         public string $space = Space::DEFAULT,
+        #[ListOf('string')]
+        #[Description('Ids, keys or labels of tags; a new word becomes a tag unless only presets count, see tag.choices')]
+        public array $tags = [],
     ) {}
 
     public function handle(ArticleEditor $editor): ArticleDetails
@@ -51,6 +55,7 @@ final readonly class CreateArticle implements Action
             $editor->categories('frootbox/news/article.create', $this->categories),
             $editor->translations('frootbox/news/article.create', $this->translations),
             $this->space,
+            $editor->tags('frootbox/news/article.create', $this->space, $this->tags),
         );
 
         return $editor->saveDraft('frootbox/news/article.create', Ulid::generate(), $data);

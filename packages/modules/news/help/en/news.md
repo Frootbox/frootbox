@@ -39,6 +39,13 @@ Under **Categories** you create topics such as "Events" or "Press",
 also below each other. Visitors can filter the list by them. Deleting a
 category keeps its articles.
 
+## Tags
+
+Tick the tags that fit or type new words, separated by commas. The
+article shows its tags at the end, and each leads to the list of all
+articles with that tag. A teaser of the newest articles can show only
+those with one tag.
+
 ## Feed
 
 The page with the list offers an RSS feed of the newest articles, so

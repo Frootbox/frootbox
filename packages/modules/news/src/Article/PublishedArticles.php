@@ -14,13 +14,16 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Frootbox\Core\Category\CategoryLinks;
 use Frootbox\Core\Category\ObjectCategories;
+use Frootbox\Core\Tag\ObjectTags;
+use Frootbox\Core\Tag\TagLinks;
 use Frootbox\Database\Values;
 
 /**
  * The published articles for visitors: lists by language, categories and
  * year, newest first, read from the tables. With spaces only the articles
  * of these spaces (decision 0232), null for all; with categories only
- * articles in one of them (decision 0233), e.g. a category and all below.
+ * articles in one of them (decision 0233), e.g. a category and all below;
+ * with a tag only the articles that have it (decision 0239).
  */
 final readonly class PublishedArticles
 {
@@ -29,6 +32,7 @@ final readonly class PublishedArticles
         private Articles $articles,
         private ArticleTranslations $translations,
         private ObjectCategories $categories,
+        private ObjectTags $tags,
     ) {}
 
     /**
@@ -37,9 +41,9 @@ final readonly class PublishedArticles
      *
      * @return list<ArticleView>
      */
-    public function list(string $language, ?array $categories = null, ?int $year = null, int $limit = 10, int $offset = 0, ?array $spaces = null): array
+    public function list(string $language, ?array $categories = null, ?int $year = null, int $limit = 10, int $offset = 0, ?array $spaces = null, ?string $tag = null): array
     {
-        $query = $this->query($language, $categories, $year, $spaces)
+        $query = $this->query($language, $categories, $year, $spaces, $tag)
             ->select('a.id')
             ->orderBy('a.date', 'DESC')
             ->addOrderBy('a.id', 'DESC')
@@ -54,9 +58,9 @@ final readonly class PublishedArticles
      * @param list<string>|null $categories
      * @param list<string>|null $spaces
      */
-    public function count(string $language, ?array $categories = null, ?int $year = null, ?array $spaces = null): int
+    public function count(string $language, ?array $categories = null, ?int $year = null, ?array $spaces = null, ?string $tag = null): int
     {
-        $count = $this->query($language, $categories, $year, $spaces)->select('COUNT(*)')->executeQuery()->fetchOne();
+        $count = $this->query($language, $categories, $year, $spaces, $tag)->select('COUNT(*)')->executeQuery()->fetchOne();
 
         return is_numeric($count) ? (int) $count : 0;
     }
@@ -69,11 +73,11 @@ final readonly class PublishedArticles
      *
      * @return list<int>
      */
-    public function years(string $language, ?array $categories = null, ?array $spaces = null): array
+    public function years(string $language, ?array $categories = null, ?array $spaces = null, ?string $tag = null): array
     {
         $years = [];
 
-        foreach ($this->query($language, $categories, null, $spaces)->select('a.date')->executeQuery()->fetchFirstColumn() as $date) {
+        foreach ($this->query($language, $categories, null, $spaces, $tag)->select('a.date')->executeQuery()->fetchFirstColumn() as $date) {
             if (\is_string($date)) {
                 $years[(int) substr($date, 0, 4)] = true;
             }
@@ -94,7 +98,7 @@ final readonly class PublishedArticles
      * @param list<string>|null $categories
      * @param list<string>|null $spaces
      */
-    private function query(string $language, ?array $categories, ?int $year, ?array $spaces): QueryBuilder
+    private function query(string $language, ?array $categories, ?int $year, ?array $spaces, ?string $tag = null): QueryBuilder
     {
         $query = $this->connection->createQueryBuilder()
             ->from(Articles::TABLE, 'a')
@@ -110,6 +114,17 @@ final readonly class PublishedArticles
             $query->andWhere($query->expr()->in('a.id', $linked->getSQL()))
                 ->setParameter('type', ArticleStore::TYPE)
                 ->setParameter('categories', [] === $categories ? [''] : $categories, ArrayParameterType::STRING);
+        }
+
+        if (null !== $tag) {
+            $tagged = $this->connection->createQueryBuilder()
+                ->select('g.target_id')
+                ->from(TagLinks::TABLE, 'g')
+                ->where('g.target_type = :tagType')
+                ->andWhere('g.tag_id = :tag');
+            $query->andWhere($query->expr()->in('a.id', $tagged->getSQL()))
+                ->setParameter('tagType', ArticleStore::TYPE)
+                ->setParameter('tag', $tag);
         }
 
         if (null !== $spaces) {
@@ -151,6 +166,7 @@ final readonly class PublishedArticles
         }
 
         $assigned = $this->categories->of(ArticleStore::TYPE, $ids);
+        $tags = $this->tags->of(ArticleStore::TYPE, $ids);
 
         $views = [];
 
@@ -162,7 +178,7 @@ final readonly class PublishedArticles
                 continue;
             }
 
-            $views[] = new ArticleView($id, $language, $article->date, $text->title, $text->slug, $text->teaser, $text->text, $article->image, $assigned[$id] ?? []);
+            $views[] = new ArticleView($id, $language, $article->date, $text->title, $text->slug, $text->teaser, $text->text, $article->image, $assigned[$id] ?? [], $tags[$id] ?? []);
         }
 
         return $views;

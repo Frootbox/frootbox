@@ -64,6 +64,7 @@ final class BackendTest extends BackendTestCase
             'date' => null,
             'image' => [],
             'categories' => [$category],
+            'tags' => ['Röstung, frisch'],
         ], $session);
         $id = $this->id($created);
 
@@ -73,6 +74,8 @@ final class BackendTest extends BackendTestCase
         self::assertStringContainsString('value="neue-sorten"', $show);
         self::assertStringContainsString('&quot;text&quot;:&quot;Fruchtig.&quot;', $show, 'The text goes to <fb-rich-text> as JSON.');
         self::assertMatchesRegularExpression('/name="categories\[\]"[^>]*value="' . $category . '"[^>]*checked/', $show);
+        self::assertMatchesRegularExpression('~name="tags\[\]" value="[0-9A-Z]{26}" checked>\s*<span class="fb-check__text"><span>Röstung, frisch</span>~', $show, 'A typed word became a tag.');
+        self::assertStringContainsString('data-type="comma"', $show, 'More can be typed.');
         self::assertStringContainsString('<fb-form action="frootbox/news/article.publish"', $show);
         self::assertStringContainsString('commandfor="article-discard"', $show);
         self::assertStringNotContainsString('commandfor="article-unpublish"', $show, 'A draft cannot go offline.');

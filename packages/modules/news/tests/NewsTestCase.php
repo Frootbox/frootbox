@@ -97,10 +97,11 @@ abstract class NewsTestCase extends NotesTestCase
      *
      * @param array<string, mixed> $translations
      * @param list<string>         $categories
+     * @param list<string>         $tags
      */
-    protected function article(array $translations, string $date = '2026-11-02 09:00', array $categories = [], bool $publish = true, string $space = Space::DEFAULT): string
+    protected function article(array $translations, string $date = '2026-11-02 09:00', array $categories = [], bool $publish = true, string $space = Space::DEFAULT, array $tags = []): string
     {
-        $details = $this->runner()->run(new CreateArticle($translations, new \DateTimeImmutable($date), categories: $categories, space: $space));
+        $details = $this->runner()->run(new CreateArticle($translations, new \DateTimeImmutable($date), categories: $categories, space: $space, tags: $tags));
 
         if ($publish) {
             $this->runner()->run(new PublishArticles([$details->id]));

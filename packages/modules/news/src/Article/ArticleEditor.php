@@ -17,6 +17,7 @@ use Frootbox\Core\Page\Slug;
 use Frootbox\Core\Plugin\PluginSpaces;
 use Frootbox\Core\Revision\RevisionStore;
 use Frootbox\Core\Support\Message;
+use Frootbox\Core\Tag\ObjectTags;
 use Frootbox\Core\Url\AddressSync;
 use Frootbox\Database\EntityNotFoundException;
 use Frootbox\RichText\RichText;
@@ -40,6 +41,7 @@ final readonly class ArticleEditor
         private Articles $articles,
         private ArticleTranslations $translations,
         private ObjectCategories $categories,
+        private ObjectTags $tags,
         private MediaEditor $media,
         private RichText $richText,
         private AddressSync $addresses,
@@ -318,6 +320,22 @@ final readonly class ArticleEditor
     }
 
     /**
+     * The tags of an action's input (decision 0239): ids, keys or labels;
+     * presets of the space and new words become tags here, unless only
+     * the presets count.
+     *
+     * @param list<string> $entries
+     *
+     * @return list<string>
+     *
+     * @throws InvalidInputException
+     */
+    public function tags(string $action, string $space, array $entries): array
+    {
+        return $this->tags->check($action, ArticleStore::TYPE, $space, $entries);
+    }
+
+    /**
      * The errors of an article by JSON pointer.
      *
      * @param list<string> $batch Articles published together, their slugs are checked among themselves
@@ -433,6 +451,7 @@ final readonly class ArticleEditor
         }
 
         $this->categories->sync(ArticleStore::TYPE, $id, $data->categories);
+        $this->tags->sync(ArticleStore::TYPE, $id, $data->tags);
     }
 
     private function removeRows(string $id): void
@@ -442,6 +461,7 @@ final readonly class ArticleEditor
         }
 
         $this->categories->clear(ArticleStore::TYPE, $id);
+        $this->tags->clear(ArticleStore::TYPE, $id);
         $this->articles->delete($id);
     }
 }

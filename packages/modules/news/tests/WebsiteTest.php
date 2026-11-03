@@ -15,6 +15,7 @@ use Frootbox\Core\Page\PublishPages;
 use Frootbox\Core\Page\UpdatePage;
 use Frootbox\Core\Plugin\CreateSpace;
 use Frootbox\Core\Settings\UpdateSettings;
+use Frootbox\Core\Tag\CreateTag;
 use Frootbox\News\Article\ArticleStore;
 use Frootbox\News\Article\PublishArticles;
 use Frootbox\News\Article\UnpublishArticle;
@@ -88,6 +89,31 @@ final class WebsiteTest extends NewsTestCase
         self::assertStringContainsString('<a class="news-filter__link" href="/aktuelles?category=kaffee" aria-current="page">Kaffee</a>', $html);
         self::assertStringContainsString('<a class="news-filter__link" href="/aktuelles">Alle</a>', $html);
         self::assertStringContainsString('Interview', $this->html('/aktuelles?category=unbekannt'), 'An unknown category shows all.');
+    }
+
+    public function testFiltersByTag(): void
+    {
+        $this->runner()->run(new CreateTag([], 'featured', true));
+        $this->article(['de' => ['title' => 'Bohnen']], '2026-01-10', tags: ['Nachhaltigkeit', 'Barista', 'featured']);
+        $this->article(['de' => ['title' => 'Crema']], '2026-02-10', tags: ['barista']);
+        $this->article(['de' => ['title' => 'Interview']], '2026-03-10');
+
+        $html = $this->html('/aktuelles?tag=nachhaltigkeit');
+        self::assertStringContainsString('Bohnen', $html);
+        self::assertStringNotContainsString('Crema', $html);
+        self::assertStringContainsString('Artikel mit dem Schlagwort „Nachhaltigkeit“ · <a href="/aktuelles">Alle News</a>', $html);
+        self::assertStringContainsString('Crema', $this->html('/aktuelles?tag=barista'), 'Typed in another case, the same tag.');
+        self::assertStringContainsString('Interview', $this->html('/aktuelles?tag=featured'), 'Never by an internal tag.');
+
+        $article = $this->html('/aktuelles/bohnen');
+        self::assertStringContainsString('<li><a class="news-tags__link" href="/aktuelles?tag=nachhaltigkeit">Nachhaltigkeit</a></li><li><a class="news-tags__link" href="/aktuelles?tag=barista">Barista</a></li>', $article);
+        self::assertStringNotContainsString('featured', $article, 'Visitors never see an internal tag.');
+
+        $featured = $this->page($this->start, 'Empfohlen', [['block' => 'frootbox/news/ArticleTeaser', 'options' => ['tag' => 'featured']]]);
+        $this->runner()->run(new PublishPages([$featured]));
+        $teaser = $this->html('/empfohlen');
+        self::assertStringContainsString('Bohnen', $teaser, 'A teaser chooses by a tag, internal ones too.');
+        self::assertStringNotContainsString('Interview', $teaser);
     }
 
     public function testShowsAnArticleAtItsAddress(): void

@@ -37,6 +37,13 @@ Unter **Kategorien** legst Du Themen an, z. B. „Veranstaltungen“ oder
 „Presse“, auch untereinander. Besucher können die Liste danach filtern.
 Wenn Du eine Kategorie löschst, bleiben ihre Artikel erhalten.
 
+## Schlagwörter
+
+Hak die passenden Schlagwörter an oder tipp neue Wörter ein, getrennt
+durch Kommas. Der Artikel zeigt seine Schlagwörter am Ende, jedes führt
+zur Liste aller Artikel damit. Ein Teaser der neuesten Artikel kann nur
+die mit einem Schlagwort zeigen.
+
 ## Feed
 
 Die Seite mit der Liste bietet einen RSS-Feed der neuesten Artikel, so
