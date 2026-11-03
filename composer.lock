@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2062cac91ee54b1d64952ec0cc68ac56",
+    "content-hash": "3a6db0fb9a8569ff58d208a75c32ec4c",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -403,6 +403,59 @@
             }
         },
         {
+            "name": "frootbox/collections",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/modules/collections",
+                "reference": "9d8ae19daac35dc7b4eb5ac77eb89b03c5e03110"
+            },
+            "require": {
+                "frootbox/core": "^0.1",
+                "frootbox/database": "^0.1",
+                "frootbox/rich-text": "^0.1",
+                "php": ">=8.5",
+                "psr/http-message": "^2.0",
+                "psr/http-server-handler": "^1.0"
+            },
+            "suggest": {
+                "frootbox/backend": "The screen for the collections",
+                "frootbox/forms": "Requests through a form on each entry"
+            },
+            "type": "frootbox-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\Collections\\": "src/",
+                    "Frootbox\\Collections\\Migrations\\": "migrations/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Frootbox\\Collections\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Collections for the Frootbox CMS: entries of the same kind such as references, projects or show homes, each collection a space, with drafts, cards filtered by category and tag, an address for each entry and a form for requests",
+            "keywords": [
+                "cms",
+                "collections",
+                "frootbox",
+                "portfolio",
+                "references"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "frootbox/core",
             "version": "dev-main",
             "dist": {
@@ -619,7 +672,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/modules/jobs",
-                "reference": "61de3213bdfe8fbc4fb8f331c8a0e746dc719e96"
+                "reference": "5dde5cc1a678a1294c842645f8b0c59c676fec04"
             },
             "require": {
                 "frootbox/core": "^0.1",
@@ -654,7 +707,7 @@
             "license": [
                 "MIT"
             ],
-            "description": "Jobs for the Frootbox CMS: open positions with kind, start, salary and drafts, a list filtered by kind and location, an address for each job, structured data and the application through a form",
+            "description": "Jobs for the Frootbox CMS: open positions with kind, start, salary and drafts, a list filtered by category, kind and location, an address for each job, structured data and the application through a form",
             "keywords": [
                 "careers",
                 "cms",
@@ -7375,6 +7428,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "frootbox/backend": 20,
+        "frootbox/collections": 20,
         "frootbox/core": 20,
         "frootbox/database": 20,
         "frootbox/events": 20,

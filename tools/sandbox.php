@@ -45,8 +45,8 @@ $directory = is_string($options['dir'] ?? null) ? trim($options['dir'], '/') : '
 $environment = is_string($options['env'] ?? null) ? $options['env'] : 'dev';
 $url = is_string($options['url'] ?? null) ? $options['url'] : null;
 $themes = [
-    // The news, the contact form, the team, the events, the jobs and the search follow the demo of Bohnenglück (decisions 0219, 0222, 0226, 0227, 0228, 0231).
-    'bohnenglueck' => ['name' => 'Bohnenglück', 'package' => 'frootbox/theme-bohnenglueck', 'seed' => 'demo/site.yaml', 'more' => ['frootbox/news:demo/news.yaml', 'frootbox/forms:demo/contact.yaml', 'frootbox/people:demo/people.yaml', 'frootbox/events:demo/events.yaml', 'frootbox/jobs:demo/jobs.yaml', 'frootbox/search:demo/search.yaml']],
+    // The news, the contact form, the team, the events, the jobs, the collections and the search follow the demo of Bohnenglück (decisions 0219, 0222, 0226, 0227, 0228, 0231, 0246).
+    'bohnenglueck' => ['name' => 'Bohnenglück', 'package' => 'frootbox/theme-bohnenglueck', 'seed' => 'demo/site.yaml', 'more' => ['frootbox/news:demo/news.yaml', 'frootbox/forms:demo/contact.yaml', 'frootbox/people:demo/people.yaml', 'frootbox/events:demo/events.yaml', 'frootbox/jobs:demo/jobs.yaml', 'frootbox/collections:demo/collections.yaml', 'frootbox/search:demo/search.yaml']],
     'base' => ['name' => 'Basis', 'package' => 'frootbox/theme-base', 'seed' => 'demo/site.yaml'],
     'agency' => ['name' => 'Atelier Nordlicht', 'package' => 'frootbox-test/theme-agency', 'seed' => 'demo/site.yaml', 'fixtures' => true],
 ];
@@ -123,7 +123,7 @@ $composer['repositories'] = [
     ...(($theme['fixtures'] ?? false) ? [['type' => 'path', 'url' => $up . 'tests/Fixtures/Themes/*', 'options' => ['symlink' => true]]] : []),
 ];
 // The official modules are installed in every sandbox.
-$composer['require'] = [...(is_array($composer['require'] ?? null) ? $composer['require'] : []), $theme['package'] => '^0.1@dev', 'frootbox/news' => '^0.1@dev', 'frootbox/forms' => '^0.1@dev', 'frootbox/seo' => '^0.1@dev', 'frootbox/people' => '^0.1@dev', 'frootbox/events' => '^0.1@dev', 'frootbox/jobs' => '^0.1@dev', 'frootbox/search' => '^0.1@dev', 'frootbox/statistics' => '^0.1@dev'];
+$composer['require'] = [...(is_array($composer['require'] ?? null) ? $composer['require'] : []), $theme['package'] => '^0.1@dev', 'frootbox/news' => '^0.1@dev', 'frootbox/forms' => '^0.1@dev', 'frootbox/seo' => '^0.1@dev', 'frootbox/people' => '^0.1@dev', 'frootbox/events' => '^0.1@dev', 'frootbox/jobs' => '^0.1@dev', 'frootbox/collections' => '^0.1@dev', 'frootbox/search' => '^0.1@dev', 'frootbox/statistics' => '^0.1@dev'];
 
 file_put_contents(
     $composerFile,
