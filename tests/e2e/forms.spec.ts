@@ -112,3 +112,40 @@ test('an editor builds and publishes a form, an admin reads its entries', async 
 
     expect((await action(page, 'frootbox/forms/form.delete', { id })).status).toBe(200);
 });
+
+test('a visitor sends files with a form, only the backend hands them out', async ({ page }) => {
+    await signIn(page, '/cms/forms');
+    const created = await action(page, 'frootbox/forms/form.create', { translations: { de: { title: `Bewerbung ${unique()}` } }, recipients: ['team@example.org'] });
+    expect(created.status).toBe(200);
+    const id = created.body.data.id;
+    for (const [type, label] of [['text', 'Name'], ['files', 'Lebenslauf']]) {
+        expect((await action(page, 'frootbox/forms/form.field-add', { id, type, translations: { de: { label } }, required: true })).status).toBe(200);
+    }
+    expect((await action(page, 'frootbox/forms/form.publish', { id })).status).toBe(200);
+
+    // A visitor sends it, as the website would without JavaScript.
+    const token = (await (await page.request.get(`/_forms/token/${id}`)).json()).data.token;
+    await page.waitForTimeout(human);
+    const data = new FormData();
+    for (const [key, value] of Object.entries({ _form: id, _language: 'de', _token: token, 'values[name]': 'Ada' })) {
+        data.append(key, value);
+    }
+    data.append('files[lebenslauf][]', new Blob(['%PDF-1.4\n%Lebenslauf\n'], { type: 'application/pdf' }), 'Lebenslauf Ada.pdf');
+    const sent = await page.request.post('/_forms/submit', { headers: { Accept: 'application/json' }, multipart: data });
+    expect(sent.status()).toBe(200);
+
+    await page.goto(`/cms/forms/${id}/entries`);
+    const link = page.getByRole('link', { name: 'Lebenslauf Ada.pdf' });
+    await expect(link).toBeVisible();
+    const file = await page.request.get((await link.getAttribute('href'))!);
+    expect(file.status()).toBe(200);
+    expect(file.headers()['content-disposition']).toContain('attachment');
+    expect(await file.text()).toContain('%Lebenslauf');
+
+    // Without a session the file stays private.
+    const guest = await page.context().browser()!.newContext();
+    expect((await guest.request.get(`${new URL(page.url()).origin}${await link.getAttribute('href')}`, { maxRedirects: 0 })).status()).not.toBe(200);
+    await guest.close();
+
+    expect((await action(page, 'frootbox/forms/form.delete', { id })).status).toBe(200);
+});
