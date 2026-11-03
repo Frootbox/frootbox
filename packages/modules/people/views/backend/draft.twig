@@ -1,0 +1,29 @@
+{#- Publishing and discarding the draft of a person or a location (decision 0226). -#}
+{% import '@backend/ui.twig' as ui %}
+{% set has_draft = details.draft is not null %}
+{% if has_draft and can('frootbox/people/' ~ kind ~ '.publish') %}
+<fb-form action="frootbox/people/{{ kind }}.publish" refresh="{{ refresh }}" done="{{ texts.published }}">
+    <form novalidate>
+        <input type="hidden" name="id" value="{{ details.id }}">
+        {{ ui.button({label: t('Publish'), type: 'submit'}) }}
+    </form>
+</fb-form>
+{% endif %}
+{% if has_draft and can('frootbox/people/' ~ kind ~ '.discard') %}
+{{ ui.button({label: t('Discard the draft'), variant: 'danger', attrs: {commandfor: kind ~ '-discard', command: 'show-modal'}}) }}
+<dialog class="fb-dialog" id="{{ kind }}-discard" aria-labelledby="{{ kind }}-discard-title">
+    <fb-form action="frootbox/people/{{ kind }}.discard" {% if details.published %}refresh="{{ refresh }}"{% else %}next="{{ back }}"{% endif %} done="{{ t('The draft is discarded.') }}">
+        <form novalidate>
+            <input type="hidden" name="id" value="{{ details.id }}">
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="{{ kind }}-discard-title">{{ t('Discard the draft?') }}</h2>
+                <p>{{ details.published ? texts.discardChanges : texts.discardAll }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Keep the draft'), variant: 'outline', attrs: {commandfor: kind ~ '-discard', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Discard'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}

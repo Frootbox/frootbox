@@ -1,0 +1,14 @@
+/* SPDX-License-Identifier: MIT */
+/* A location with its map. Values come from the tokens of the theme, with fallbacks. */
+.people-location { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: var(--space-m, 1.5rem); align-items: start; }
+.people-location__details { display: flex; flex-direction: column; gap: var(--space-s, 1rem); }
+.people-location__title { margin: 0; font-size: var(--size-2xl, 2rem); }
+.people-location__name { margin: 0; font-size: var(--size-xl, 1.5rem); }
+.people-location__address, .people-location__text, .people-location__hours p { margin: 0; }
+.people-location__ways { display: flex; flex-direction: column; gap: var(--space-3xs, 0.25rem); margin: 0; padding: 0; list-style: none; }
+.people-location__ways a { overflow-wrap: anywhere; }
+.people-location__hours { display: flex; flex-direction: column; gap: var(--space-3xs, 0.25rem); }
+.people-location__heading { margin: 0; font-size: var(--size-m, 1rem); }
+.people-location__image :is(picture, img) { display: block; inline-size: 100%; block-size: auto; border-radius: var(--radius, 0.5rem); }
+.people-location .external__notice, .people-location fb-external > iframe { border-radius: var(--radius, 0.5rem); }
+.people__empty { margin: 0; padding: var(--space-s, 1rem); border: 1px dashed var(--color-line, #e7e5e4); border-radius: var(--radius, 0.5rem); color: var(--color-muted, #57534e); }

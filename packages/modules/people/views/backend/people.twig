@@ -1,0 +1,44 @@
+{#- The screen "People": the team in its order (decision 0226). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('People') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('People') }}</h1>
+            <p class="fb-muted">{{ t('The team and contact persons. The blocks "Team" and "Contact person" show them on the website.') }}</p>
+        </div>
+        <div class="fb-cluster">
+            {% if can('frootbox/people/location.list') %}{{ ui.button({label: t('Locations'), href: path('frootbox.people.locations'), variant: 'outline'}) }}{% endif %}
+            {% if can('frootbox/people/person.create') %}{{ ui.button({label: t('New person'), href: path('frootbox.people.people.new'), icon: 'plus'}) }}{% endif %}
+        </div>
+    </header>
+
+    <section class="fb-card" aria-labelledby="people-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="people-title">{{ t('Team') }}</h2>
+            {{ ui.badge('neutral', people|length) }}
+        </div>
+        {% if people is empty %}
+        <div class="fb-card__body">
+            {{ ui.empty({icon: 'users', title: t('No people yet'), text: t('Add the first person. It stays a draft until you publish it.'), action: can('frootbox/people/person.create') ? {label: t('New person'), href: path('frootbox.people.people.new'), icon: 'plus'} : null}) }}
+        </div>
+        {% else %}
+        <ul>
+            {%- for person in people %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <a class="fb-list__title fb-list__link" href="{{ path('frootbox.people.people.show', {id: person.id}) }}">{{ person.name ?: t('Without a name') }}</a>
+                    {% if person.role %}<span class="fb-list__meta">{{ person.role }}</span>{% endif %}
+                </span>
+                {{ ui.status(person.status.value) }}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

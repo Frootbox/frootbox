@@ -1,0 +1,31 @@
+{# frootbox
+title: Contact person
+description: One person to contact, with photo, role, a few sentences and how to reach the person, e.g. beside a form. The person comes from the backend.
+group: list
+keywords: [Contact, Person, Contact person, Team, Phone, Email]
+options:
+  person: { type: choice, label: Person, source: frootbox/people/person.choices, default: '' }
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "Your contact" }
+#}
+<div class="people-contact">
+  {{ heading('title', 0, {class: 'people-contact__title'}) }}
+  {% if person %}
+    <div class="people-card people-card--contact"{{ {lang: person.lang, dir: person.dir}|attributes }}>
+      {% if person.image %}<div class="people-card__photo">{{ person.image }}</div>{% endif %}
+      <div class="people-card__body">
+        {{ heading_text(person.name, 1, {class: 'people-card__name'}) }}
+        {% if person.role %}<p class="people-card__role">{{ person.role }}</p>{% endif %}
+        {% if person.text %}<p class="people-card__text">{{ person.text|nl2br }}</p>{% endif %}
+        {% if person.phone or person.email %}
+        <ul class="people-card__ways">
+          {% if person.phone %}<li><a href="{{ person.phoneHref }}" dir="ltr">{{ person.phone }}</a></li>{% endif %}
+          {% if person.email %}<li><a href="mailto:{{ person.email }}" dir="ltr">{{ person.email }}</a></li>{% endif %}
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+  {% elseif editing() %}
+    <p class="people__empty">{{ t('Choose a person in the settings of the block. Only published people can be chosen.') }}</p>
+  {% endif %}
+</div>

@@ -1,0 +1,112 @@
+# Demo people and locations in German and English, for a website of the
+# base theme or a child theme with a start page, e.g. after the demo of
+# Bohnenglück:
+#
+#     php bin/frootbox seed frootbox/people:demo/people.yaml
+#
+# A page "Team" below the start page shows the people and both
+# locations; the maps wait for consent.
+
+- page.tree: {}
+  as: tree
+
+- frootbox/people/location.create:
+    translations:
+      de: { name: Café am Hafen, hours: "Mo bis Fr 8 bis 18 Uhr\nSa und So 9 bis 17 Uhr", text: 'Direkt an den Landungsbrücken, mit Blick auf die Schiffe.' }
+      en: { name: Café by the harbour, hours: "Mon to Fri 8:00 to 18:00\nSat and Sun 9:00 to 17:00", text: 'Right at the piers, with a view of the ships.' }
+    street: Hafenstraße 12
+    postalCode: '20457'
+    city: Hamburg
+    phone: +49 40 123456
+    email: hafen@bohnenglueck.example
+    coordinates: '53.5444, 9.9663'
+  as: harbour
+- frootbox/people/location.publish: { id: '${harbour.id}' }
+
+- frootbox/people/location.create:
+    translations:
+      de: { name: Rösterei, hours: "Di bis Fr 10 bis 16 Uhr", text: 'Hier rösten wir jeden Morgen. Röstkurse finden donnerstags statt.' }
+      en: { name: Roastery, hours: "Tue to Fri 10:00 to 16:00", text: 'This is where we roast every morning. Roasting courses take place on Thursdays.' }
+    street: Bahrenfelder Straße 80
+    postalCode: '22765'
+    city: Hamburg
+    phone: +49 40 654321
+    email: roesterei@bohnenglueck.example
+    coordinates: '53.5562, 9.9285'
+  as: roastery
+- frootbox/people/location.publish: { id: '${roastery.id}' }
+
+- frootbox/people/person.create:
+    givenName: Maria
+    familyName: Rossi
+    email: maria@bohnenglueck.example
+    phone: +49 40 123456-10
+    locations: ['${roastery.id}', '${harbour.id}']
+    translations:
+      de: { role: Gründerin und Röstmeisterin, text: 'Maria röstet seit über zwanzig Jahren und sucht die Bohnen selbst bei den Farmen aus.' }
+      en: { role: Founder and head roaster, text: 'Maria has been roasting for over twenty years and chooses the beans herself at the farms.' }
+  as: maria
+- frootbox/people/person.publish: { id: '${maria.id}' }
+- frootbox/people/person.create:
+    givenName: Jonas
+    order: 1
+    familyName: Berger
+    email: jonas@bohnenglueck.example
+    locations: ['${roastery.id}']
+    translations:
+      de: { role: Röster und Kursleiter }
+      en: { role: Roaster and course leader }
+  as: jonas
+- frootbox/people/person.publish: { id: '${jonas.id}' }
+- frootbox/people/person.create:
+    givenName: Aylin
+    order: 1
+    familyName: Demir
+    email: aylin@bohnenglueck.example
+    locations: ['${harbour.id}']
+    translations:
+      de: { role: Leitung Café }
+      en: { role: Head of the café }
+  as: aylin
+- frootbox/people/person.publish: { id: '${aylin.id}' }
+- frootbox/people/person.create:
+    givenName: Lukas
+    order: 1
+    familyName: Hansen
+    locations: ['${harbour.id}']
+    translations:
+      de: { role: Barista }
+      en: { role: Barista }
+  as: lukas
+- frootbox/people/person.publish: { id: '${lukas.id}' }
+
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${tree.0.id}'
+    translations:
+      de:
+        title: Team
+        content:
+          fields: { title: Unser Team, intro: 'Die Menschen hinter Bohnenglück und wo Du sie findest.' }
+          areas:
+            main:
+              - block: frootbox/people/People
+                fields: { title: Wer wir sind }
+              - block: frootbox/people/Location
+                options: { location: '${harbour.id}' }
+              - block: frootbox/people/Location
+                options: { location: '${roastery.id}' }
+      en:
+        title: Team
+        content:
+          fields: { title: Our team, intro: 'The people behind Bohnenglück and where to find them.' }
+          areas:
+            main:
+              - block: frootbox/people/People
+                fields: { title: Who we are }
+              - block: frootbox/people/Location
+                options: { location: '${harbour.id}' }
+              - block: frootbox/people/Location
+                options: { location: '${roastery.id}' }
+  as: page
+- page.publish: { ids: ['${page.id}'] }

@@ -1,0 +1,96 @@
+{#- A location: address, ways to reach and coordinates, texts by language; publishing and deleting (decision 0226). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+{% set refresh = 'location-detail' %}
+{% set self = path('frootbox.people.locations.show', {id: location.id}) %}
+{% set heading = name ?: t('Without a name') %}
+{% set code = language.code %}
+{% set dir = language.direction.value %}
+{% set editable = can('frootbox/people/location.update') %}
+
+{% block title %}{{ heading }} · {{ t('Locations') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg" id="location-detail">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <p class="fb-muted"><a href="{{ path('frootbox.people.locations') }}">{{ t('Locations') }}</a></p>
+            <h1 class="fb-heading-1" tabindex="-1" data-fb-focus>{{ heading }}</h1>
+        </div>
+        <div class="fb-cluster">{{ ui.status(location.status.value) }}</div>
+    </header>
+
+    <div class="fb-cluster">
+        {% include '@frootbox/people/backend/draft.twig' with {kind: 'location', details: location, refresh: refresh, back: path('frootbox.people.locations'), texts: {
+            published: t('The location is published.'),
+            discardChanges: t('Your changes to this location are lost. The published version stays.'),
+            discardAll: t('The location was never published and is gone afterwards.'),
+        }} only %}
+    </div>
+
+    <section class="fb-card" aria-labelledby="location-texts-title">
+        <h2 class="fb-visually-hidden" id="location-texts-title">{{ t('Texts') }}</h2>
+        {% if languages|length > 1 %}
+        {{ ui.tabs(t('Languages'), languages|map(item => {
+            label: item.title,
+            href: self ~ '?language=' ~ item.code,
+            current: item.code == code,
+            attrs: {lang: item.code},
+        })) }}
+        {% endif %}
+        <div class="fb-card__body fb-stack">
+            {% if translation %}
+            <fb-form action="frootbox/people/location.update" refresh="{{ refresh }}" done="{{ t('Saved') }}">
+                <form class="fb-stack" novalidate>
+                    <input type="hidden" name="id" value="{{ location.id }}">
+                    {{ ui.field({label: t('Name'), name: 'translations.' ~ code ~ '.name', id: 'location-name', value: translation.name, required: true, disabled: not editable, attrs: {lang: code, dir: dir, maxlength: 200}}) }}
+                    {{ ui.field({label: t('Opening hours'), name: 'translations.' ~ code ~ '.hours', id: 'location-hours', value: translation.hours, optional: true, multiline: true, disabled: not editable, hint: t('One line each, e.g. "Mon to Fri 8:00 to 18:00".'), attrs: {lang: code, dir: dir, rows: 4, maxlength: 1000}}) }}
+                    {{ ui.field({label: t('About the location'), name: 'translations.' ~ code ~ '.text', id: 'location-text', value: translation.text, optional: true, multiline: true, disabled: not editable, hint: t('A few sentences, e.g. how to get there.'), attrs: {lang: code, dir: dir, rows: 3, maxlength: 1000}}) }}
+                    {% if editable %}
+                    <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}<p class="fb-form__note">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p></div>
+                    {% endif %}
+                </form>
+            </fb-form>
+            {% else %}
+            <div class="fb-missing">
+                <p class="fb-missing__title">{{ t('No version in {language} yet', {language: language.title}) }}</p>
+                <p class="fb-muted">{{ t('Visitors in this language see the texts in the first language.') }}</p>
+                {% if editable %}
+                <fb-form action="frootbox/people/location.update" refresh="{{ refresh }}" done="{{ t('Saved') }}">
+                    <form novalidate>
+                        <input type="hidden" name="id" value="{{ location.id }}">
+                        <input type="hidden" name="translations.{{ code }}.name" value="{{ name }}">
+                        {{ ui.button({label: t('Add the version in {language}', {language: language.title}), type: 'submit', variant: 'tonal', icon: 'plus'}) }}
+                    </form>
+                </fb-form>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="fb-card fb-card--padded fb-stack" aria-labelledby="location-address-title">
+        <h2 class="fb-heading-4" id="location-address-title">{{ t('Address and contact') }}</h2>
+        <fb-form action="frootbox/people/location.update" refresh="{{ refresh }}" done="{{ t('Saved') }}">
+            <form class="fb-stack" novalidate>
+                <input type="hidden" name="id" value="{{ location.id }}">
+                {{ ui.field({label: t('Street'), name: 'street', id: 'location-street', value: data.street, optional: true, disabled: not editable, attrs: {maxlength: 200}}) }}
+                {{ ui.field({label: t('Postcode'), name: 'postalCode', id: 'location-postal-code', value: data.postalCode, optional: true, disabled: not editable, attrs: {maxlength: 20}}) }}
+                {{ ui.field({label: t('Town'), name: 'city', id: 'location-city', value: data.city, optional: true, disabled: not editable, attrs: {maxlength: 100}}) }}
+                {{ ui.field({label: t('Country'), name: 'country', id: 'location-country', value: data.country, optional: true, disabled: not editable, hint: t('Only for locations abroad.'), attrs: {maxlength: 100}}) }}
+                {{ ui.field({label: t('Phone'), name: 'phone', id: 'location-phone', type: 'tel', value: data.phone, optional: true, disabled: not editable, attrs: {dir: 'ltr', maxlength: 40}}) }}
+                {{ ui.field({label: t('Email'), name: 'email', id: 'location-email', type: 'email', value: data.email, optional: true, disabled: not editable, attrs: {dir: 'ltr', maxlength: 200}}) }}
+                {{ ui.field({label: t('Coordinates'), name: 'coordinates', id: 'location-coordinates', value: data.coordinates, optional: true, disabled: not editable, hint: t('Latitude and longitude for the map, e.g. "53.5444, 9.9663". Right-click the place in a map to copy them.'), attrs: {dir: 'ltr', maxlength: 50}}) }}
+                {{ ui.image({label: t('Image'), name: 'image', id: 'location-image', value: data.image, preview: image.preview ?? null, file: image.file ?? null, optional: true, disabled: not editable}) }}
+                {% if editable %}<div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}</div>{% endif %}
+            </form>
+        </fb-form>
+    </section>
+
+    {% include '@frootbox/people/backend/delete.twig' with {kind: 'location', details: location, title: heading, back: path('frootbox.people.locations'), texts: {
+        delete: t('Delete the location'),
+        deleted: t('The location is deleted.'),
+        deleteText: t('Pages that show the location show nothing in its place. People keep their other locations.'),
+    }} only %}
+</div>
+{% endblock %}

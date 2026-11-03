@@ -1,0 +1,38 @@
+{# frootbox
+title: Location
+description: One location with address, phone, email, opening hours and a map, e.g. on the contact page. The map loads only once the visitor agrees. The location comes from the backend.
+group: list
+keywords: [Location, Address, Opening hours, Map, Directions, Branch, Contact]
+options:
+  location: { type: choice, label: Location, source: frootbox/people/location.choices, default: '' }
+  map: { type: choice, label: Map, choices: { openstreetmap: OpenStreetMap, google-maps: Google Maps, none: Without a map }, default: openstreetmap }
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "Visit us" }
+#}
+{% if location %}
+{% set map = options.map == 'none' ? '' : map_embed({provider: options.map, coordinates: location.coordinates, address: location.address|join(', '), title: t('Map') ~ ': ' ~ location.name}) %}
+<div class="people-location{{ map ? ' people-location--map' }}"{{ {lang: location.lang, dir: location.dir}|attributes }}>
+  <div class="people-location__details">
+    {{ heading('title', 0, {class: 'people-location__title'}) }}
+    {{ heading_text(location.name, value('title') ? 1 : 0, {class: 'people-location__name'}) }}
+    {% if location.address %}<p class="people-location__address">{{ location.address|join("\n")|nl2br }}</p>{% endif %}
+    {% if location.phone or location.email %}
+    <ul class="people-location__ways">
+      {% if location.phone %}<li><a href="{{ location.phoneHref }}" dir="ltr">{{ location.phone }}</a></li>{% endif %}
+      {% if location.email %}<li><a href="mailto:{{ location.email }}" dir="ltr">{{ location.email }}</a></li>{% endif %}
+    </ul>
+    {% endif %}
+    {% if location.hours %}
+    <div class="people-location__hours">
+      {{ heading_text(t('Opening hours'), value('title') ? 2 : 1, {class: 'people-location__heading'}) }}
+      <p>{{ location.hours|join("\n")|nl2br }}</p>
+    </div>
+    {% endif %}
+    {% if location.text %}<p class="people-location__text">{{ location.text|nl2br }}</p>{% endif %}
+  </div>
+  {% if map %}<div class="people-location__map">{{ map }}</div>{% elseif location.image %}<div class="people-location__image">{{ location.image }}</div>{% endif %}
+  <script type="application/ld+json">{{ location.data }}</script>
+</div>
+{% elseif editing() %}
+<p class="people__empty">{{ t('Choose a location in the settings of the block. Only published locations can be chosen.') }}</p>
+{% endif %}

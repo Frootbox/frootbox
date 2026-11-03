@@ -1,0 +1,42 @@
+{#- The locations by name (decision 0226). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Locations') }} · {{ t('People') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <p class="fb-muted"><a href="{{ path('frootbox.people.people') }}">{{ t('People') }}</a></p>
+            <h1 class="fb-heading-1">{{ t('Locations') }}</h1>
+            <p class="fb-muted">{{ t('Where the team works, with address, opening hours and a map. The block "Location" shows one on the website.') }}</p>
+        </div>
+        {% if can('frootbox/people/location.create') %}<div class="fb-cluster">{{ ui.button({label: t('New location'), href: path('frootbox.people.locations.new'), icon: 'plus'}) }}</div>{% endif %}
+    </header>
+
+    <section class="fb-card" aria-labelledby="locations-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="locations-title">{{ t('Locations') }}</h2>
+            {{ ui.badge('neutral', locations|length) }}
+        </div>
+        {% if locations is empty %}
+        <div class="fb-card__body">
+            {{ ui.empty({icon: 'users', title: t('No locations yet'), text: t('Add the first location. It stays a draft until you publish it.'), action: can('frootbox/people/location.create') ? {label: t('New location'), href: path('frootbox.people.locations.new'), icon: 'plus'} : null}) }}
+        </div>
+        {% else %}
+        <ul>
+            {%- for location in locations %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <a class="fb-list__title fb-list__link" href="{{ path('frootbox.people.locations.show', {id: location.id}) }}">{{ location.name ?: t('Without a name') }}</a>
+                    {% if location.city %}<span class="fb-list__meta">{{ location.city }}</span>{% endif %}
+                </span>
+                {{ ui.status(location.status.value) }}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

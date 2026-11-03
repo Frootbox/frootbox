@@ -1,0 +1,40 @@
+{
+    "name": "frootbox/people",
+    "description": "People and locations for the Frootbox CMS: a team, a contact person and a location with its address, opening hours and a map",
+    "type": "frootbox-extension",
+    "license": "MIT",
+    "keywords": [
+        "cms",
+        "frootbox",
+        "team",
+        "contact",
+        "locations"
+    ],
+    "require": {
+        "php": ">=8.5",
+        "frootbox/core": "^0.1",
+        "frootbox/database": "^0.1",
+        "frootbox/rich-text": "^0.1",
+        "psr/http-message": "^2.0",
+        "psr/http-server-handler": "^1.0"
+    },
+    "suggest": {
+        "frootbox/backend": "Screens for the people and locations"
+    },
+    "autoload": {
+        "psr-4": {
+            "Frootbox\\People\\": "src/",
+            "Frootbox\\People\\Migrations\\": "migrations/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Frootbox\\People\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    }
+}

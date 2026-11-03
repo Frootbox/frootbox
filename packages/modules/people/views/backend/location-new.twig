@@ -1,0 +1,29 @@
+{#- A new location as a draft (decision 0226). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('New location') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <p class="fb-muted"><a href="{{ path('frootbox.people.locations') }}">{{ t('Locations') }}</a></p>
+            <h1 class="fb-heading-1">{{ t('New location') }}</h1>
+        </div>
+    </header>
+
+    <fb-form action="frootbox/people/location.create" next="{{ path('frootbox.people.locations') }}/{id}" done="{{ t('The location is saved as a draft.') }}">
+        <form class="fb-card fb-card--padded fb-stack" novalidate>
+            {{ ui.field({label: t('Name'), name: 'translations.' ~ language.code ~ '.name', id: 'location-name', required: true, hint: t('As visitors know it, e.g. "Café by the harbour".'), attrs: {lang: language.code, dir: language.direction.value, maxlength: 200}}) }}
+            {{ ui.field({label: t('Street'), name: 'street', id: 'location-street', optional: true, attrs: {maxlength: 200}}) }}
+            {{ ui.field({label: t('Postcode'), name: 'postalCode', id: 'location-postal-code', optional: true, attrs: {maxlength: 20}}) }}
+            {{ ui.field({label: t('Town'), name: 'city', id: 'location-city', optional: true, attrs: {maxlength: 100}}) }}
+            <div class="fb-form__actions">
+                {{ ui.button({label: t('Save as a draft'), type: 'submit'}) }}
+                {{ ui.button({label: t('Cancel'), variant: 'ghost', href: path('frootbox.people.locations')}) }}
+            </div>
+        </form>
+    </fb-form>
+</div>
+{% endblock %}

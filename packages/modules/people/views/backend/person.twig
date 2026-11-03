@@ -1,0 +1,104 @@
+{#- A person: name, ways to reach and locations, texts by language; publishing and deleting (decision 0226). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+{% set refresh = 'person-detail' %}
+{% set self = path('frootbox.people.people.show', {id: person.id}) %}
+{% set heading = data.name() ?: t('Without a name') %}
+{% set code = language.code %}
+{% set dir = language.direction.value %}
+{% set editable = can('frootbox/people/person.update') %}
+
+{% block title %}{{ heading }} · {{ t('People') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg" id="person-detail">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <p class="fb-muted"><a href="{{ path('frootbox.people.people') }}">{{ t('People') }}</a></p>
+            <h1 class="fb-heading-1" tabindex="-1" data-fb-focus>{{ heading }}</h1>
+        </div>
+        <div class="fb-cluster">{{ ui.status(person.status.value) }}</div>
+    </header>
+
+    <div class="fb-cluster">
+        {% include '@frootbox/people/backend/draft.twig' with {kind: 'person', details: person, refresh: refresh, back: path('frootbox.people.people'), texts: {
+            published: t('The person is published.'),
+            discardChanges: t('Your changes to this person are lost. The published version stays.'),
+            discardAll: t('The person was never published and is gone afterwards.'),
+        }} only %}
+    </div>
+
+    <section class="fb-card fb-card--padded fb-stack" aria-labelledby="person-name-title">
+        <h2 class="fb-heading-4" id="person-name-title">{{ t('Name and contact') }}</h2>
+        <fb-form action="frootbox/people/person.update" refresh="{{ refresh }}" done="{{ t('Saved') }}">
+            <form class="fb-stack" novalidate>
+                <input type="hidden" name="id" value="{{ person.id }}">
+                {{ ui.field({label: t('Before the name'), name: 'prefix', id: 'person-prefix', value: data.prefix, optional: true, disabled: not editable, hint: t('A title such as "Dr.".'), attrs: {maxlength: 40}}) }}
+                {{ ui.field({label: t('Given name'), name: 'givenName', id: 'person-given-name', value: data.givenName, optional: true, disabled: not editable, attrs: {maxlength: 100, autocomplete: 'off'}}) }}
+                {{ ui.field({label: t('Family name'), name: 'familyName', id: 'person-family-name', value: data.familyName, disabled: not editable, attrs: {maxlength: 100, autocomplete: 'off'}}) }}
+                {{ ui.field({label: t('Email'), name: 'email', id: 'person-email', type: 'email', value: data.email, optional: true, disabled: not editable, attrs: {dir: 'ltr', maxlength: 200, autocomplete: 'off'}}) }}
+                {{ ui.field({label: t('Phone'), name: 'phone', id: 'person-phone', type: 'tel', value: data.phone, optional: true, disabled: not editable, attrs: {dir: 'ltr', maxlength: 40, autocomplete: 'off'}}) }}
+                {{ ui.image({label: t('Photo'), name: 'image', id: 'person-image', value: data.image, preview: image.preview ?? null, file: image.file ?? null, optional: true, disabled: not editable}) }}
+                {% if locations is not empty %}
+                <fieldset class="fb-fieldset">
+                    <legend class="fb-fieldset__legend">{{ t('Locations') }} <span class="fb-label__optional">({{ t('optional') }})</span></legend>
+                    {% for location in locations %}
+                        {{ ui.check({label: location.name ?: location.id, name: 'locations[]', id: 'person-location-' ~ location.id, value: location.id, checked: location.id in data.locations, disabled: not editable}) }}
+                    {% endfor %}
+                </fieldset>
+                {% endif %}
+                {{ ui.field({label: t('Order in the team'), name: 'order', id: 'person-order', type: 'number', value: data.order, disabled: not editable, hint: t('Smaller numbers come first, the same ones by family name.'), attrs: {'data-type': 'number', min: 0, max: 999}}) }}
+                {% if editable %}
+                <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}<p class="fb-form__note">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p></div>
+                {% endif %}
+            </form>
+        </fb-form>
+    </section>
+
+    <section class="fb-card" aria-labelledby="person-texts-title">
+        <h2 class="fb-visually-hidden" id="person-texts-title">{{ t('Texts') }}</h2>
+        {% if languages|length > 1 %}
+        {{ ui.tabs(t('Languages'), languages|map(item => {
+            label: item.title,
+            href: self ~ '?language=' ~ item.code,
+            current: item.code == code,
+            attrs: {lang: item.code},
+        })) }}
+        {% endif %}
+        <div class="fb-card__body fb-stack">
+            {% if translation or data.translations is empty %}
+            <fb-form action="frootbox/people/person.update" refresh="{{ refresh }}" done="{{ t('Saved') }}">
+                <form class="fb-stack" novalidate>
+                    <input type="hidden" name="id" value="{{ person.id }}">
+                    {{ ui.field({label: t('Role'), name: 'translations.' ~ code ~ '.role', id: 'person-role', value: translation.role ?? '', optional: true, disabled: not editable, hint: t('What the person does, e.g. "Head roaster".'), attrs: {lang: code, dir: dir, maxlength: 200}}) }}
+                    {{ ui.field({label: t('About the person'), name: 'translations.' ~ code ~ '.text', id: 'person-text', value: translation.text ?? '', optional: true, multiline: true, disabled: not editable, hint: t('A few sentences, shown with the contact person.'), attrs: {lang: code, dir: dir, rows: 4, maxlength: 1000}}) }}
+                    {% if editable %}
+                    <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}</div>
+                    {% endif %}
+                </form>
+            </fb-form>
+            {% else %}
+            <div class="fb-missing">
+                <p class="fb-missing__title">{{ t('No version in {language} yet', {language: language.title}) }}</p>
+                <p class="fb-muted">{{ t('Visitors in this language see the texts in the first language.') }}</p>
+                {% if editable %}
+                <fb-form action="frootbox/people/person.update" refresh="{{ refresh }}" done="{{ t('Saved') }}">
+                    <form novalidate>
+                        <input type="hidden" name="id" value="{{ person.id }}">
+                        <input type="hidden" name="translations.{{ code }}.role" value="">
+                        {{ ui.button({label: t('Add the version in {language}', {language: language.title}), type: 'submit', variant: 'tonal', icon: 'plus'}) }}
+                    </form>
+                </fb-form>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    {% include '@frootbox/people/backend/delete.twig' with {kind: 'person', details: person, title: heading, back: path('frootbox.people.people'), texts: {
+        delete: t('Delete the person'),
+        deleted: t('The person is deleted.'),
+        deleteText: t('Pages that show the person show nothing in its place.'),
+    }} only %}
+</div>
+{% endblock %}

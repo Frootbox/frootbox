@@ -1,0 +1,23 @@
+{#- Deleting a person or a location (decision 0226). -#}
+{% import '@backend/ui.twig' as ui %}
+{% if can('frootbox/people/' ~ kind ~ '.delete') %}
+<section class="fb-card fb-card--padded fb-stack" aria-labelledby="{{ kind }}-more-title">
+    <h2 class="fb-heading-4" id="{{ kind }}-more-title">{{ t('Delete') }}</h2>
+    <div class="fb-cluster">{{ ui.button({label: texts.delete, variant: 'danger', attrs: {commandfor: kind ~ '-delete', command: 'show-modal'}}) }}</div>
+</section>
+<dialog class="fb-dialog" id="{{ kind }}-delete" aria-labelledby="{{ kind }}-delete-title">
+    <fb-form action="frootbox/people/{{ kind }}.delete" next="{{ back }}" done="{{ texts.deleted }}">
+        <form novalidate>
+            <input type="hidden" name="id" value="{{ details.id }}">
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="{{ kind }}-delete-title">{{ t('Delete {title}?', {title: title}) }}</h2>
+                <p>{{ texts.deleteText }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: kind ~ '-delete', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Delete for good'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}

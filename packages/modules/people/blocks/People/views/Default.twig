@@ -1,0 +1,36 @@
+{# frootbox
+title: Team
+description: The people of the team with photo, role and how to reach them, of all locations or of one. The people come from the backend.
+group: list
+keywords: [Team, People, Staff, Employees, Contact, About us]
+options:
+  location: { type: choice, label: Location, source: frootbox/people/location.choices, default: '', description: 'Without a choice the people of all locations.' }
+  texts: { type: boolean, label: Texts about the people, default: false }
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "Our team" }
+#}
+<div class="people">
+  {{ heading('title', 0, {class: 'people__title'}) }}
+  {% if people %}
+    <ul class="people__items">
+      {% for person in people %}
+        <li class="people-card"{{ {lang: person.lang, dir: person.dir}|attributes }}>
+          {% if person.image %}<div class="people-card__photo">{{ person.image }}</div>{% endif %}
+          <div class="people-card__body">
+            {{ heading_text(person.name, 1, {class: 'people-card__name'}) }}
+            {% if person.role %}<p class="people-card__role">{{ person.role }}</p>{% endif %}
+            {% if options.texts and person.text %}<p class="people-card__text">{{ person.text|nl2br }}</p>{% endif %}
+            {% if person.phone or person.email %}
+            <ul class="people-card__ways">
+              {% if person.phone %}<li><a href="{{ person.phoneHref }}" dir="ltr">{{ person.phone }}</a></li>{% endif %}
+              {% if person.email %}<li><a href="mailto:{{ person.email }}" dir="ltr">{{ person.email }}</a></li>{% endif %}
+            </ul>
+            {% endif %}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% elseif editing() %}
+    <p class="people__empty">{{ t('No people yet. Add them in the backend under "People" and publish them.') }}</p>
+  {% endif %}
+</div>
