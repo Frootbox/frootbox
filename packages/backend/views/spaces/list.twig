@@ -34,8 +34,9 @@
                     </span>
                 </span>
                 {% if space.default %}{{ ui.badge('neutral', t('Default')) }}{% endif %}
-                {% if not space.default and can('space.update') %}
-                {{ ui.button({label: t('Rename'), variant: 'outline', small: true, attrs: {commandfor: 'space-rename', command: 'show-modal', 'aria-label': t('Rename {space}', {space: space.title}), 'data-fb-fill': {id: space.id, title: space.title}|json_encode}}) }}
+                {% if can('space.update') %}
+                {#- The default space too, with the type of its plugin (decision 0246). -#}
+                {{ ui.button({label: t('Rename'), variant: 'outline', small: true, attrs: {commandfor: 'space-rename', command: 'show-modal', 'aria-label': t('Rename {space}', {space: space.title}), 'data-fb-fill': {id: space.id, type: plugin.type, title: space.title}|json_encode}}) }}
                 {% endif %}
                 {% if not space.default and not space.pageId and (space.count ?? 0) == 0 and can('space.delete') %}
                 {{ ui.button({label: t('Delete'), variant: 'ghost', small: true, icon: 'close', icon_only: true, attrs: {commandfor: 'space-delete', command: 'show-modal', 'aria-label': t('Delete {space}', {space: space.title}), 'data-fb-fill': {id: space.id}|json_encode}}) }}
@@ -74,6 +75,7 @@
     <fb-form action="space.update" refresh="{{ refresh }}" done="{{ t('The space is saved.') }}">
         <form novalidate>
             <input type="hidden" name="id">
+            <input type="hidden" name="type">
             <div class="fb-dialog__body fb-stack">
                 <h2 class="fb-dialog__title" id="space-rename-title">{{ t('Rename the space') }}</h2>
                 {{ ui.field({label: t('Name'), name: 'title', id: 'space-rename-title-field', required: true, attrs: {maxlength: 100, autocomplete: 'off'}}) }}

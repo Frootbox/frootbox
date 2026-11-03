@@ -1420,9 +1420,10 @@ viewBox, stroke 1.8, round caps and joins, no fill, `stroke="currentColor"`.
 
 Available: alert, arrow-down, arrow-up, briefcase, calendar, chart, check,
 chevron-down, clock, close, comment, copy, dashboard, external, file,
-grip, hash, image, inbox, info, list, lock, mail, menu, navigation, news,
-pages, palette, parent, pencil, plus, redirect, restore, search, settings,
-shield, sign-out, square, tag, trash, type, users, video, warning.
+grip, hash, image, inbox, info, layout-grid, list, lock, mail, menu,
+navigation, news, pages, palette, parent, pencil, plus, redirect, restore,
+search, settings, shield, sign-out, square, tag, trash, type, users, video,
+warning.
 
 The bar of the editing mode runs on the website without Twig and keeps
 the paths of its icons in `resources/js/edit/icons.js`. An icon used in

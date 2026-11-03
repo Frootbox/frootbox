@@ -65,6 +65,12 @@ final class SpacesTest extends BackendTestCase
         self::assertStringContainsString('>Früher</span>', $html);
         self::assertStringNotContainsString('Leer', $html);
 
+        // The default space gets a name of its own (decision 0246).
+        self::assertStringContainsString('aria-label="Punkte umbenennen"', $html);
+        $this->action('space.update', ['id' => 'default', 'type' => 'acme/plugin/item', 'title' => 'Neuigkeiten'], $session);
+        self::assertStringContainsString('>Neuigkeiten</span>', $this->html($this->request('GET', '/cms/spaces', session: $session)));
+        self::assertSame('Punkte · Neuigkeiten', $this->runner()->ask(new ShowPageTree(), Context::system())[0]->children[0]->plugin ?? null);
+
         // Editors may not assign pages, so the screen is not theirs.
         $this->createUser('editor@example.org', ['editor']);
         self::assertSame(403, $this->request('GET', '/cms/spaces', session: $this->signIn('editor@example.org'))->getStatusCode());
