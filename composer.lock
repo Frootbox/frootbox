@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8d20180f7e73bb83369897421700cdea",
+    "content-hash": "a4a2e887a84aae46f0ed6708ad92ea54",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -506,6 +506,56 @@
                 "frootbox",
                 "migrations",
                 "repository"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "frootbox/forms",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/modules/forms",
+                "reference": "f6418872a554f2c64fe809380a2914e692b1b2fe"
+            },
+            "require": {
+                "frootbox/core": "^0.1",
+                "frootbox/database": "^0.1",
+                "php": ">=8.5",
+                "psr/http-message": "^2.0",
+                "psr/http-server-handler": "^1.0"
+            },
+            "suggest": {
+                "frootbox/backend": "Screens for the forms and their entries"
+            },
+            "type": "frootbox-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\Forms\\": "src/",
+                    "Frootbox\\Forms\\Migrations\\": "migrations/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Frootbox\\Forms\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Forms for the Frootbox CMS: build forms from field types, send entries by mail through the queue, keep them in the backend, spam protection without a captcha",
+            "keywords": [
+                "cms",
+                "contact",
+                "forms",
+                "frootbox"
             ],
             "transport-options": {
                 "symlink": true,
@@ -7019,6 +7069,7 @@
         "frootbox/backend": 20,
         "frootbox/core": 20,
         "frootbox/database": 20,
+        "frootbox/forms": 20,
         "frootbox/news": 20,
         "frootbox/rich-text": 20,
         "frootbox/theme-base": 20,

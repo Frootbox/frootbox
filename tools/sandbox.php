@@ -45,8 +45,8 @@ $directory = is_string($options['dir'] ?? null) ? trim($options['dir'], '/') : '
 $environment = is_string($options['env'] ?? null) ? $options['env'] : 'dev';
 $url = is_string($options['url'] ?? null) ? $options['url'] : null;
 $themes = [
-    // The news follow the demo of Bohnenglück (decision 0219).
-    'bohnenglueck' => ['name' => 'Bohnenglück', 'package' => 'frootbox/theme-bohnenglueck', 'seed' => 'demo/site.yaml', 'more' => ['frootbox/news:demo/news.yaml']],
+    // The news and the contact form follow the demo of Bohnenglück (decisions 0219, 0222).
+    'bohnenglueck' => ['name' => 'Bohnenglück', 'package' => 'frootbox/theme-bohnenglueck', 'seed' => 'demo/site.yaml', 'more' => ['frootbox/news:demo/news.yaml', 'frootbox/forms:demo/contact.yaml']],
     'base' => ['name' => 'Basis', 'package' => 'frootbox/theme-base', 'seed' => 'demo/site.yaml'],
     'agency' => ['name' => 'Atelier Nordlicht', 'package' => 'frootbox-test/theme-agency', 'seed' => 'demo/site.yaml', 'fixtures' => true],
 ];
@@ -123,7 +123,7 @@ $composer['repositories'] = [
     ...(($theme['fixtures'] ?? false) ? [['type' => 'path', 'url' => $up . 'tests/Fixtures/Themes/*', 'options' => ['symlink' => true]]] : []),
 ];
 // The official modules are installed in every sandbox.
-$composer['require'] = [...(is_array($composer['require'] ?? null) ? $composer['require'] : []), $theme['package'] => '^0.1@dev', 'frootbox/news' => '^0.1@dev'];
+$composer['require'] = [...(is_array($composer['require'] ?? null) ? $composer['require'] : []), $theme['package'] => '^0.1@dev', 'frootbox/news' => '^0.1@dev', 'frootbox/forms' => '^0.1@dev'];
 
 file_put_contents(
     $composerFile,

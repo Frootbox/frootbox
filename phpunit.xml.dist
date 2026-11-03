@@ -28,6 +28,9 @@
         <testsuite name="database">
             <directory>packages/database/tests</directory>
         </testsuite>
+        <testsuite name="forms">
+            <directory>packages/modules/forms/tests</directory>
+        </testsuite>
         <testsuite name="news">
             <directory>packages/modules/news/tests</directory>
         </testsuite>
@@ -48,6 +51,7 @@
             <directory>packages/backend/src</directory>
             <directory>packages/core/src</directory>
             <directory>packages/database/src</directory>
+            <directory>packages/modules/forms/src</directory>
             <directory>packages/modules/news/src</directory>
             <directory>packages/rich-text/src</directory>
         </include>
