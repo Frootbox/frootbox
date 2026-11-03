@@ -4,7 +4,8 @@
  * - <button commandfor="redirect-edit" command="show-modal"
  *   data-fb-fill='{"id": 3, "path": "/old"}'> fills the fields with these
  *   names in the dialog before it opens and clears old errors; a
- *   checkbox takes true or false, a radio button checks the one with
+ *   checkbox takes true or false, or a list for names ending in [] that
+ *   checks those with a value in it; a radio button checks the one with
  *   that value
  * - <input type="radio" data-fb-enables="redirect-location"> enables
  *   that field while it is checked and disables the fields of the other
@@ -37,7 +38,7 @@ export function bindFills(root = document) {
             for (const [name, value] of Object.entries(values)) {
                 for (const field of form.querySelectorAll(`[name="${CSS.escape(name)}"]`)) {
                     if (field.type === 'checkbox') {
-                        field.checked = Boolean(value);
+                        field.checked = Array.isArray(value) ? value.includes(field.value) : Boolean(value);
                     } else if (field.type === 'radio') {
                         field.checked = field.value === String(value);
                     } else {

@@ -334,6 +334,12 @@ an optional hint below it. At least 44 px high, the whole row is clickable.
 `type: 'radio'` for a radio button; group radios in a `<fieldset>` with a
 `<legend>`.
 
+Checkboxes of a tree, e.g. categories with subcategories, stand in
+`<ul class="fb-checks">`; a list in a list is indented by 24 px. The
+categories of a type in a form of a module come from
+`{% include '@backend/categories/choices.twig' with {type, chosen, disabled, prefix} %}`:
+a fieldset for each group, `categories[]` with the ids (decision 0233).
+
 ### Choice
 
 `ui.choice({title, text, name, id, value, checked, attrs})`
@@ -865,7 +871,8 @@ Each row is at least 56 px high and indents 24 px per level
 (`data-depth`, at most 6). The link covers the row; the current one has
 `aria-current="page"`, `--fb-accent-soft` and a 3 px line on the left. A
 `<button class="fb-tree__link">` works the same, e.g. to edit an item in
-a dialog.
+a dialog. Small ghost buttons after it, e.g. to add below or delete a
+category, stay clickable above the link.
 
 - Keys: arrow up and down, Home and End go through the rows. With Alt,
   up and down move the row among its siblings, right makes it the last
@@ -1406,7 +1413,7 @@ Available: alert, arrow-down, arrow-up, briefcase, calendar, chart, check,
 chevron-down, clock, close, comment, copy, dashboard, external, file,
 grip, image, inbox, info, list, lock, mail, menu, navigation, news, pages,
 palette, parent, pencil, plus, redirect, restore, search, settings,
-shield, sign-out, square, trash, type, users, video, warning.
+shield, sign-out, square, tag, trash, type, users, video, warning.
 
 The bar of the editing mode runs on the website without Twig and keeps
 the paths of its icons in `resources/js/edit/icons.js`. An icon used in

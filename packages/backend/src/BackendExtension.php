@@ -12,6 +12,7 @@ use Frootbox\Backend\Http\Access\AccessHandler;
 use Frootbox\Backend\Http\AccountHandler;
 use Frootbox\Backend\Http\ActionHandler;
 use Frootbox\Backend\Http\BackendErrorPage;
+use Frootbox\Backend\Http\Categories\CategoriesHandler;
 use Frootbox\Backend\Http\Comments\CommentsHandler;
 use Frootbox\Backend\Http\DashboardHandler;
 use Frootbox\Backend\Http\DesignHandler;
@@ -83,6 +84,7 @@ final class BackendExtension implements Extension
             ->get('/media/{id:' . self::ULID . '}', MediaHandler::class, 'backend.media.show')
             ->post('/uploads', UploadHandler::class, 'backend.uploads')
             ->get('/redirects', RedirectsHandler::class, 'backend.redirects')
+            ->get('/categories', CategoriesHandler::class, 'backend.categories')
             ->get('/access', AccessHandler::class, 'backend.access')
             ->get('/comments', CommentsHandler::class, 'backend.comments')
             ->get('/theme', ThemeHandler::class, 'backend.theme')
@@ -106,6 +108,7 @@ final class BackendExtension implements Extension
         $registry->add(Screen::class, new Screen('Pages', 'backend.pages', Screen::CONTENT, 'pages', PagesHandler::PERMISSION, order: 10));
         $registry->add(Screen::class, new Screen('Media', 'backend.media', Screen::CONTENT, 'image', MediaHandler::PERMISSION, order: 20));
         $registry->add(Screen::class, new Screen('Comments', 'backend.comments', Screen::CONTENT, 'comment', CommentsHandler::PERMISSION, order: 30, count: 'comment.count'));
+        $registry->add(Screen::class, new Screen('Categories', 'backend.categories', Screen::CONTENT, 'tag', CategoriesHandler::PERMISSION, order: 40));
         $registry->add(Screen::class, new Screen('Design', 'backend.theme', Screen::WEBSITE, 'palette', ThemeHandler::PERMISSION, order: 10));
         $registry->add(Screen::class, new Screen('Navigations', 'backend.navigations', Screen::WEBSITE, 'navigation', NavigationsHandler::PERMISSION, order: 20));
         $registry->add(Screen::class, new Screen('Redirects', 'backend.redirects', Screen::WEBSITE, 'redirect', RedirectsHandler::PERMISSION, order: 30));

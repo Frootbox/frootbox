@@ -75,6 +75,13 @@
     content: "";
 }
 
+/* Buttons of a row, e.g. to add below or delete, stay clickable above
+   the link. */
+.fb-tree__row > .fb-button {
+    position: relative;
+    z-index: 1;
+}
+
 .fb-tree__link:focus-visible {
     outline: none;
 }

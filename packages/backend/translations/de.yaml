@@ -1172,3 +1172,53 @@ Spaces: Verwaltungen
 "Another space has this name.": "Eine andere Verwaltung hat diesen Namen."
 "The layout has no place for the plugin of the page. Choose a layout with one or take the plugin away first.": "Das Layout hat keinen Platz für das Modul der Seite. Wähle ein Layout mit Platz oder nimm das Modul zuerst von der Seite."
 "The view of the plugin stays at its place. It goes with the plugin of the page.": "Die Ansicht des Moduls bleibt an ihrem Platz. Sie geht mit dem Modul der Seite."
+
+# Categories (decision 0233)
+Categories: Kategorien
+"Topics in groups, as deep as needed. Lists filter by them, teasers choose by them, and a group can serve several kinds of content at once.": "Themen in Gruppen, so tief wie nötig. Listen filtern danach, Teaser wählen danach aus, und eine Gruppe kann für mehrere Arten von Inhalten zugleich gelten."
+New group: Neue Gruppe
+No groups yet: Noch keine Gruppen
+"Modules bring their own groups. Create one if topics should apply to several kinds of content.": "Module bringen eigene Gruppen mit. Leg eine an, wenn Themen für mehrere Arten von Inhalten gelten sollen."
+"For {types}": "Für {types}"
+From a module: Aus einem Modul
+From the configuration: Aus der Konfiguration
+Edit the group: Gruppe bearbeiten
+Delete the group: Gruppe löschen
+No categories yet: Noch keine Kategorien
+"Content does not need one. Create categories if visitors should filter by topic.": "Inhalte brauchen keine. Leg Kategorien an, wenn Besucher nach Themen filtern sollen."
+New category: Neue Kategorie
+"Without {languages}": "Ohne {languages}"
+"Add a category below {category}": "Kategorie unter „{category}“ anlegen"
+"Delete {category}": "„{category}“ löschen"
+"The category is created.": "Die Kategorie ist angelegt."
+"New category in {group}": "Neue Kategorie in {group}"
+Below: Unter
+"Nothing, at the top": "Keiner, ganz oben"
+Edit the category: Kategorie bearbeiten
+"Used in the filter of a list, e.g. ?category=courses. Made from the title if left empty.": "Steht im Filter einer Liste, z. B. ?category=kurse. Leer entsteht sie aus dem Titel."
+"The category is deleted.": "Die Kategorie ist gelöscht."
+"Delete the category?": "Kategorie löschen?"
+"The categories below it go, too. The content stays, it just loses them.": "Die Kategorien darunter gehen mit. Die Inhalte bleiben, sie verlieren nur diese Kategorien."
+"The group is created.": "Die Gruppe ist angelegt."
+"E.g. Department or Region.": "Zum Beispiel Abteilung oder Region."
+For: Für
+"The kinds of content the categories of the group are for.": "Die Arten von Inhalten, für die die Kategorien der Gruppe gelten."
+"The group is deleted.": "Die Gruppe ist gelöscht."
+"Delete {group}?": "„{group}“ löschen?"
+"Only a group without categories can go.": "Nur eine Gruppe ohne Kategorien lässt sich löschen."
+"There is no group of categories \"{group}\".": "Es gibt keine Gruppe von Kategorien „{group}“."
+"There is no category with this id.": "Eine Kategorie mit dieser ID gibt es nicht."
+"There is no such category in the group.": "Diese Kategorie gibt es in der Gruppe nicht."
+"A category cannot go below itself.": "Eine Kategorie kann nicht unter sich selbst stehen."
+"Another category of the group has the slug \"{slug}\" already.": "Eine andere Kategorie der Gruppe hat schon die Adresse „{slug}“."
+"There is no category {id}.": "Es gibt keine Kategorie {id}."
+"The category {id} is in a group that does not apply here.": "Die Kategorie {id} gehört zu einer Gruppe, die hier nicht gilt."
+"The group still has {count} categories. Delete them first.": "Die Gruppe hat noch {count} Kategorien. Lösche sie zuerst."
+"There is no group with this id.": "Eine Gruppe mit dieser ID gibt es nicht."
+"Only groups created in the backend can be changed here.": "Hier lassen sich nur Gruppen ändern, die im Backend angelegt wurden."
+"The group needs a name.": "Die Gruppe braucht einen Namen."
+"Another group has this name.": "Eine andere Gruppe hat diesen Namen."
+"There is no type \"{type}\".": "Es gibt keine Art von Inhalten „{type}“."
+"Choose at least one kind of content.": "Wähl mindestens eine Art von Inhalten."
+No categories yet.: Noch keine Kategorien.
+Create some: Leg welche an

@@ -9,6 +9,17 @@
     cursor: pointer;
 }
 
+/* Checkboxes of a tree, e.g. categories: a list in a list is indented. */
+.fb-checks {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fb-checks .fb-checks {
+    padding-inline-start: var(--fb-space-6);
+}
+
 .fb-check input,
 .fb-choice input {
     flex: none;

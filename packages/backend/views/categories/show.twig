@@ -1,0 +1,228 @@
+{#- The categories of all groups: a tab for each group, its categories as a tree, editing in dialogs (decision 0233). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% macro rows(rows, languages, editable, creatable, deletable) %}
+    {% import '@backend/ui.twig' as ui %}
+    {%- for row in rows %}
+    {% set missing = languages|length > 1 ? languages|filter(language => language.code in row.missing)|map(language => language.title) : [] %}
+    <li class="fb-tree__item" data-id="{{ row.id }}" data-title="{{ row.title }}">
+        <div class="fb-tree__row" data-depth="{{ min(row.depth, 6) }}">
+            {% if editable %}<span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>{% endif %}
+            {% set inner %}<span class="fb-tree__title">{{ row.title }}</span>{% if row.slug %}<span class="fb-tree__meta" dir="ltr">?category={{ row.slug }}</span>{% endif %}{% endset %}
+            {% if editable %}
+            <button class="fb-tree__link" type="button" commandfor="category-edit" command="show-modal" data-fb-fill="{{ row.fill|json_encode }}" aria-describedby="category-tree-hint">{{ inner }}</button>
+            {% else %}
+            <span class="fb-tree__link">{{ inner }}</span>
+            {% endif %}
+            {% if missing is not empty %}{{ ui.badge('draft', t('Without {languages}', {languages: missing|join(', ')})) }}{% endif %}
+            {% if creatable %}{{ ui.button({label: t('Add a category below {category}', {category: row.title}), variant: 'ghost', small: true, icon: 'plus', icon_only: true, attrs: {commandfor: 'category-new', command: 'show-modal', 'data-fb-fill': {parentId: row.id}|json_encode}}) }}{% endif %}
+            {% if deletable %}{{ ui.button({label: t('Delete {category}', {category: row.title}), variant: 'ghost', small: true, icon: 'trash', icon_only: true, attrs: {commandfor: 'category-delete', command: 'show-modal', 'data-fb-fill': {id: row.id}|json_encode}}) }}{% endif %}
+        </div>
+        {%- if row.children is not empty %}
+        <ul class="fb-tree__group">{{ _self.rows(row.children, languages, editable, creatable, deletable) }}</ul>
+        {%- endif %}
+    </li>
+    {%- endfor %}
+{% endmacro %}
+
+{% macro texts(prefix, languages) %}
+    {% import '@backend/ui.twig' as ui %}
+    {% set several = languages|length > 1 %}
+    {% for language in languages %}
+        {% set code = language.code %}
+        {% set attrs = {lang: code, dir: language.direction.value} %}
+        {% set fields %}
+            {{ ui.field({label: t('Title'), name: 'translations.' ~ code ~ '.title', id: prefix ~ '-' ~ code ~ '-title', required: not several or loop.first, optional: several and not loop.first, attrs: attrs|merge({maxlength: 100})}) }}
+            {{ ui.field({label: t('Address'), name: 'translations.' ~ code ~ '.slug', id: prefix ~ '-' ~ code ~ '-slug', optional: true, attrs: {dir: 'ltr', maxlength: 100}, hint: t('Used in the filter of a list, e.g. ?category=courses. Made from the title if left empty.')}) }}
+            {{ ui.field({label: t('Description'), name: 'translations.' ~ code ~ '.description', id: prefix ~ '-' ~ code ~ '-description', optional: true, multiline: true, attrs: attrs|merge({maxlength: 1000, rows: 3})}) }}
+        {% endset %}
+        {% if several %}
+        <fieldset class="fb-fieldset">
+            <legend class="fb-fieldset__legend" lang="{{ code }}">{{ language.title }}</legend>
+            {{ fields }}
+        </fieldset>
+        {% else %}
+            {{ fields }}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro types(prefix, types) %}
+    {% import '@backend/ui.twig' as ui %}
+    <fieldset class="fb-fieldset" aria-describedby="{{ prefix }}-types-hint">
+        <legend class="fb-fieldset__legend">{{ t('For') }}</legend>
+        <p class="fb-hint" id="{{ prefix }}-types-hint">{{ t('The kinds of content the categories of the group are for.') }}</p>
+        {% for type in types %}
+            {{ ui.check({label: type.label, name: 'types[]', id: prefix ~ '-type-' ~ loop.index, value: type.type}) }}
+        {% endfor %}
+    </fieldset>
+{% endmacro %}
+
+{% block title %}{{ group ? group.title ~ ' · ' : '' }}{{ t('Categories') }}{% endblock %}
+
+{% block content %}
+{#- The choice of the place in the new dialog changes with the tree. -#}
+{% set refresh = 'categories category-parents' %}
+{% set editable = can('category.update') %}
+{% set creatable = can('category.create') %}
+{% set sources = {module: t('From a module'), config: t('From the configuration')} %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Categories') }}</h1>
+            <p class="fb-muted">{{ t('Topics in groups, as deep as needed. Lists filter by them, teasers choose by them, and a group can serve several kinds of content at once.') }}</p>
+        </div>
+        {% if can('category-group.create') and types is not empty %}{{ ui.button({label: t('New group'), variant: 'outline', icon: 'plus', attrs: {commandfor: 'group-new', command: 'show-modal', 'data-fb-fill': '{}'}}) }}{% endif %}
+    </header>
+
+    {% if group is null %}
+        {{ ui.empty({icon: 'tag', title: t('No groups yet'), text: t('Modules bring their own groups. Create one if topics should apply to several kinds of content.')}) }}
+    {% else %}
+    <section class="fb-card" id="categories" aria-labelledby="categories-title">
+        {% if groups|length > 1 %}
+        {{ ui.tabs(t('Groups'), groups|map(other => {
+            label: other.title,
+            href: path('backend.categories') ~ '?group=' ~ other.key|url_encode,
+            current: other.key == group.key,
+        })) }}
+        {% endif %}
+        <div class="fb-card__header">
+            <div class="fb-stack fb-stack--sm">
+                <h2 class="fb-heading-2" id="categories-title" tabindex="-1" data-fb-focus>{{ group.title }}</h2>
+                <p class="fb-muted">{{ t('For {types}', {types: group.types|map(type => type.label)|join(', ')}) }}</p>
+            </div>
+            <div class="fb-cluster">
+                {% if sources[group.source.value] is defined %}{{ ui.badge('neutral', sources[group.source.value]) }}{% endif %}
+                {% if group.source.value == 'admin' and can('category-group.update') %}{{ ui.button({label: t('Edit the group'), variant: 'outline', small: true, attrs: {commandfor: 'group-edit', command: 'show-modal', 'data-fb-fill': {id: group.key, title: group.title, 'types[]': group.types|map(type => type.type)}|json_encode}}) }}{% endif %}
+                {% if group.source.value == 'admin' and can('category-group.delete') %}{{ ui.button({label: t('Delete the group'), variant: 'ghost', small: true, icon: 'trash', icon_only: true, attrs: {commandfor: 'group-delete', command: 'show-modal'}}) }}{% endif %}
+            </div>
+        </div>
+
+        <div class="fb-card__body fb-stack">
+            {% if rows is empty %}
+                {{ ui.empty({icon: 'tag', title: t('No categories yet'), text: t('Content does not need one. Create categories if visitors should filter by topic.')}) }}
+            {% else %}
+                {% if editable %}<p class="fb-muted" id="category-tree-hint">{{ t('Click to edit. Drag to move, or Alt and the arrow keys.') }}</p>{% endif %}
+                <fb-tree id="category-tree"{% if editable %} action="category.move" roots refresh="{{ refresh }}" moved="{{ t('{title} is at place {position} of {count} now.') }}"{% endif %}>
+                    <ul class="fb-tree" aria-labelledby="categories-title">{{ _self.rows(rows, languages, editable, creatable, can('category.delete')) }}</ul>
+                </fb-tree>
+            {% endif %}
+            {% if creatable %}
+            <div>{{ ui.button({label: t('New category'), variant: 'tonal', icon: 'plus', attrs: {commandfor: 'category-new', command: 'show-modal', 'data-fb-fill': {parentId: ''}|json_encode}}) }}</div>
+            {% endif %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+
+{% if group and creatable %}
+<dialog class="fb-dialog" id="category-new" aria-labelledby="category-new-title">
+    <fb-form action="category.create" refresh="{{ refresh }}" done="{{ t('The category is created.') }}">
+        <form novalidate>
+            <input type="hidden" name="group" value="{{ group.key }}">
+            <div class="fb-dialog__body fb-stack">
+                <h2 class="fb-dialog__title" id="category-new-title">{{ t('New category in {group}', {group: group.title}) }}</h2>
+                <div id="category-parents">{{ ui.select({label: t('Below'), name: 'parentId', id: 'category-new-parent', options: [{value: '', label: t('Nothing, at the top')}]|merge(parents), attrs: {'data-empty': 'null'}}) }}</div>
+                {{ _self.texts('category-new', languages) }}
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'category-new', command: 'close'}}) }}
+                {{ ui.button({label: t('Create'), type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if group and editable %}
+<dialog class="fb-dialog" id="category-edit" aria-labelledby="category-edit-title">
+    <fb-form action="category.update" refresh="{{ refresh }}" done="{{ t('Saved') }}">
+        <form novalidate>
+            <input type="hidden" name="id">
+            <div class="fb-dialog__body fb-stack">
+                <h2 class="fb-dialog__title" id="category-edit-title">{{ t('Edit the category') }}</h2>
+                {{ _self.texts('category-edit', languages) }}
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'category-edit', command: 'close'}}) }}
+                {{ ui.button({label: t('Save'), type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if group and can('category.delete') %}
+<dialog class="fb-dialog" id="category-delete" aria-labelledby="category-delete-title">
+    <fb-form action="category.delete" refresh="{{ refresh }}" done="{{ t('The category is deleted.') }}">
+        <form novalidate>
+            <input type="hidden" name="id">
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="category-delete-title">{{ t('Delete the category?') }}</h2>
+                <p>{{ t('The categories below it go, too. The content stays, it just loses them.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'category-delete', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Delete for good'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if can('category-group.create') and types is not empty %}
+<dialog class="fb-dialog" id="group-new" aria-labelledby="group-new-title">
+    <fb-form action="category-group.create" next="{{ path('backend.categories') }}?group={id}" done="{{ t('The group is created.') }}">
+        <form novalidate>
+            <div class="fb-dialog__body fb-stack">
+                <h2 class="fb-dialog__title" id="group-new-title">{{ t('New group') }}</h2>
+                {{ ui.field({label: t('Name'), name: 'title', id: 'group-new-title-field', required: true, attrs: {maxlength: 100}, hint: t('E.g. Department or Region.')}) }}
+                {{ _self.types('group-new', types) }}
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'group-new', command: 'close'}}) }}
+                {{ ui.button({label: t('Create'), type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if group and group.source.value == 'admin' and can('category-group.update') %}
+<dialog class="fb-dialog" id="group-edit" aria-labelledby="group-edit-title">
+    <fb-form action="category-group.update" refresh="{{ refresh }}" done="{{ t('Saved') }}">
+        <form novalidate>
+            <input type="hidden" name="id">
+            <div class="fb-dialog__body fb-stack">
+                <h2 class="fb-dialog__title" id="group-edit-title">{{ t('Edit the group') }}</h2>
+                {{ ui.field({label: t('Name'), name: 'title', id: 'group-edit-title-field', required: true, attrs: {maxlength: 100}}) }}
+                {{ _self.types('group-edit', types) }}
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'group-edit', command: 'close'}}) }}
+                {{ ui.button({label: t('Save'), type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if group and group.source.value == 'admin' and can('category-group.delete') %}
+<dialog class="fb-dialog" id="group-delete" aria-labelledby="group-delete-title">
+    <fb-form action="category-group.delete" next="{{ path('backend.categories') }}" done="{{ t('The group is deleted.') }}">
+        <form novalidate>
+            <input type="hidden" name="id" value="{{ group.key }}">
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="group-delete-title">{{ t('Delete {group}?', {group: group.title}) }}</h2>
+                <p>{{ t('Only a group without categories can go.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'group-delete', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Delete for good'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+{% endblock %}

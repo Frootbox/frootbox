@@ -9,11 +9,17 @@ declare(strict_types=1);
 namespace Frootbox\Backend\View;
 
 use Frootbox\Backend\BackendExtension;
+use Frootbox\Core\Action\AccessDeniedException;
 use Frootbox\Core\Action\Catalog;
 use Frootbox\Core\Action\CurrentContext;
+use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Action\Schema\InputMapper;
 use Frootbox\Core\Auth\Gate;
+use Frootbox\Core\Category\CategoryItem;
+use Frootbox\Core\Category\ListCategories;
+use Frootbox\Core\Category\ListGroups;
 use Frootbox\Core\I18n\Translator;
+use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Routing\Router;
 use Frootbox\RichText\Html;
 use Throwable;
@@ -27,6 +33,7 @@ use Twig\TwigFunction;
  *     {{ path('backend.dashboard') }}
  *     {{ icon('pages') }}
  *     {% if can('user.create') %}…{% endif %}
+ *     {% for group in category_choices('frootbox/news/article') %}…{% endfor %}
  */
 final class TwigExtension extends AbstractExtension
 {
@@ -41,6 +48,8 @@ final class TwigExtension extends AbstractExtension
         private readonly Catalog $catalog,
         private readonly Gate $gate,
         private readonly CurrentContext $context,
+        private readonly Runner $runner,
+        private readonly Languages $languages,
     ) {}
 
     public function getFunctions(): array
@@ -51,6 +60,7 @@ final class TwigExtension extends AbstractExtension
             new TwigFunction('path', $this->router->path(...)),
             new TwigFunction('icon', $this->icon(...), ['is_safe' => ['html']]),
             new TwigFunction('can', $this->can(...)),
+            new TwigFunction('category_choices', $this->categoryChoices(...)),
         ];
     }
 
@@ -101,5 +111,48 @@ final class TwigExtension extends AbstractExtension
         }
 
         return str_replace('<svg ', \sprintf('<svg class="%s" aria-hidden="true" focusable="false" ', Html::escape($class)), trim($svg));
+    }
+
+    /**
+     * The groups of categories of a type with their categories as a tree,
+     * for @backend/categories/choices.twig (decision 0233). Titles in the
+     * first language that has one.
+     *
+     * @return list<array{key: string, title: string, items: list<array<string, mixed>>}>
+     */
+    public function categoryChoices(string $type): array
+    {
+        $codes = array_map(static fn($language): string => $language->code, $this->languages->all());
+        $groups = [];
+
+        try {
+            foreach ($this->runner->ask(new ListGroups($type)) as $group) {
+                $groups[] = ['key' => $group->key, 'title' => $group->title, 'items' => self::branch($this->runner->ask(new ListCategories($group->key)), null, $codes)];
+            }
+        } catch (AccessDeniedException) {
+            return [];
+        }
+
+        return $groups;
+    }
+
+    /**
+     * @param list<CategoryItem> $items
+     * @param list<string>       $codes
+     *
+     * @return list<array<string, mixed>>
+     */
+    private static function branch(array $items, ?string $parentId, array $codes): array
+    {
+        $branch = [];
+
+        foreach ($items as $item) {
+            if ($item->parentId === $parentId) {
+                $titles = array_values(array_filter(array_map($item->title(...), $codes), static fn(?string $title): bool => null !== $title));
+                $branch[] = ['id' => $item->id, 'title' => $titles[0] ?? $item->id, 'children' => self::branch($items, $item->id, $codes)];
+            }
+        }
+
+        return $branch;
     }
 }

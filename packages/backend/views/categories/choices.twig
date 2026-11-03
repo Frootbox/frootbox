@@ -1,0 +1,22 @@
+{#- The categories of a type to choose in a form of a module (decision 0233): a fieldset for each group, categories below others indented. With type, chosen (ids), disabled and prefix (for ids). -#}
+{% macro level(items, chosen, disabled, prefix) %}
+    {% import '@backend/ui.twig' as ui %}
+    <ul class="fb-checks">
+    {%- for item in items %}
+        <li>
+            {{ ui.check({label: item.title, name: 'categories[]', id: prefix ~ '-' ~ item.id, value: item.id, checked: item.id in chosen, disabled: disabled}) }}
+            {%- if item.children is not empty %}{{ _self.level(item.children, chosen, disabled, prefix) }}{% endif %}
+        </li>
+    {%- endfor %}
+    </ul>
+{% endmacro %}
+{% for group in category_choices(type) %}
+<fieldset class="fb-fieldset">
+    <legend class="fb-fieldset__legend">{{ group.title }} <span class="fb-label__optional">({{ t('optional') }})</span></legend>
+    {% if group.items is empty %}
+    <p class="fb-hint">{{ t('No categories yet.') }}{% if can('category.create') %} <a href="{{ path('backend.categories') }}?group={{ group.key|url_encode }}">{{ t('Create some') }}</a>{% endif %}</p>
+    {% else %}
+    {{ _self.level(group.items, chosen ?? [], disabled ?? false, (prefix ?? 'categories') ~ '-category') }}
+    {% endif %}
+</fieldset>
+{% endfor %}
