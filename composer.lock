@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "89b0df7308ea1d65340ac372f09fa0ae",
+    "content-hash": "2062cac91ee54b1d64952ec0cc68ac56",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -607,6 +607,59 @@
                 "contact",
                 "forms",
                 "frootbox"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "frootbox/jobs",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/modules/jobs",
+                "reference": "61de3213bdfe8fbc4fb8f331c8a0e746dc719e96"
+            },
+            "require": {
+                "frootbox/core": "^0.1",
+                "frootbox/database": "^0.1",
+                "frootbox/people": "^0.1",
+                "frootbox/rich-text": "^0.1",
+                "php": ">=8.5",
+                "psr/http-message": "^2.0",
+                "psr/http-server-handler": "^1.0"
+            },
+            "suggest": {
+                "frootbox/backend": "The screen for the jobs",
+                "frootbox/forms": "Applications with files through a form on each job"
+            },
+            "type": "frootbox-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\Jobs\\": "src/",
+                    "Frootbox\\Jobs\\Migrations\\": "migrations/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Frootbox\\Jobs\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Jobs for the Frootbox CMS: open positions with kind, start, salary and drafts, a list filtered by kind and location, an address for each job, structured data and the application through a form",
+            "keywords": [
+                "careers",
+                "cms",
+                "frootbox",
+                "jobs"
             ],
             "transport-options": {
                 "symlink": true,
@@ -7326,6 +7379,7 @@
         "frootbox/database": 20,
         "frootbox/events": 20,
         "frootbox/forms": 20,
+        "frootbox/jobs": 20,
         "frootbox/news": 20,
         "frootbox/people": 20,
         "frootbox/rich-text": 20,
