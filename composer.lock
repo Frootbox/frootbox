@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0b52d865c8758e874803f4cbfd711822",
+    "content-hash": "fd4c427dad7e454c1780d40a92c2323b",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -4407,6 +4407,59 @@
             "time": "2026-09-22T09:54:55+00:00"
         },
         {
+            "name": "frootbox/workbench",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/tools/workbench",
+                "reference": "0447f9ddd12885884d8aa9b7caa70564d879a37c"
+            },
+            "require": {
+                "doctrine/dbal": "^4.5",
+                "frootbox/core": "^0.1",
+                "nyholm/psr7": "^1.8",
+                "nyholm/psr7-server": "^1.1",
+                "php": ">=8.5",
+                "psr/http-message": "^2.0",
+                "symfony/console": "^8.1",
+                "symfony/dotenv": "^8.1",
+                "symfony/yaml": "^8.1"
+            },
+            "bin": [
+                "bin/workbench"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\Workbench\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Frootbox\\Workbench\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Workbench for the Frootbox CMS: runs many local websites from one host and one vendor/ with the current packages",
+            "keywords": [
+                "cms",
+                "development",
+                "frootbox",
+                "workbench"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "myclabs/deep-copy",
             "version": "1.14.0",
             "source": {
@@ -7726,7 +7779,8 @@
         "frootbox/statistics": 20,
         "frootbox/theme-base": 20,
         "frootbox/theme-bohnenglueck": 20,
-        "frootbox/webhooks": 20
+        "frootbox/webhooks": 20,
+        "frootbox/workbench": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
