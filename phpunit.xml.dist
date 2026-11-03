@@ -40,6 +40,9 @@
         <testsuite name="search">
             <directory>packages/modules/search/tests</directory>
         </testsuite>
+        <testsuite name="statistics">
+            <directory>packages/modules/statistics/tests</directory>
+        </testsuite>
         <testsuite name="seo">
             <directory>packages/modules/seo/tests</directory>
         </testsuite>
@@ -67,6 +70,7 @@
             <directory>packages/modules/people/src</directory>
             <directory>packages/modules/events/src</directory>
             <directory>packages/modules/search/src</directory>
+            <directory>packages/modules/statistics/src</directory>
             <directory>packages/modules/seo/src</directory>
             <directory>packages/modules/news/src</directory>
             <directory>packages/rich-text/src</directory>

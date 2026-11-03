@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d5c3733f368d7d457ac6ee1b14417f2b",
+    "content-hash": "89b0df7308ea1d65340ac372f09fa0ae",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -852,6 +852,60 @@
                 "open-graph",
                 "seo",
                 "sitemap"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "frootbox/statistics",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/modules/statistics",
+                "reference": "8abfd6e0e5018d0aa992b53a94775b7aeeeb7b93"
+            },
+            "require": {
+                "doctrine/dbal": "^4.5",
+                "frootbox/core": "^0.1",
+                "frootbox/database": "^0.1",
+                "frootbox/rich-text": "^0.1",
+                "php": ">=8.5",
+                "psr/http-message": "^2.0",
+                "psr/http-server-handler": "^1.0",
+                "psr/log": "^3.0"
+            },
+            "suggest": {
+                "frootbox/backend": "The screen with the statistics"
+            },
+            "type": "frootbox-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\Statistics\\": "src/",
+                    "Frootbox\\Statistics\\Migrations\\": "migrations/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Frootbox\\Statistics\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Statistics for the Frootbox CMS: visits and page views without cookies or personal data, the most visited pages, sources and devices",
+            "keywords": [
+                "analytics",
+                "cms",
+                "frootbox",
+                "privacy",
+                "statistics"
             ],
             "transport-options": {
                 "symlink": true,
@@ -7277,6 +7331,7 @@
         "frootbox/rich-text": 20,
         "frootbox/search": 20,
         "frootbox/seo": 20,
+        "frootbox/statistics": 20,
         "frootbox/theme-base": 20,
         "frootbox/theme-bohnenglueck": 20
     },

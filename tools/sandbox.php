@@ -123,7 +123,7 @@ $composer['repositories'] = [
     ...(($theme['fixtures'] ?? false) ? [['type' => 'path', 'url' => $up . 'tests/Fixtures/Themes/*', 'options' => ['symlink' => true]]] : []),
 ];
 // The official modules are installed in every sandbox.
-$composer['require'] = [...(is_array($composer['require'] ?? null) ? $composer['require'] : []), $theme['package'] => '^0.1@dev', 'frootbox/news' => '^0.1@dev', 'frootbox/forms' => '^0.1@dev', 'frootbox/seo' => '^0.1@dev', 'frootbox/people' => '^0.1@dev', 'frootbox/events' => '^0.1@dev', 'frootbox/search' => '^0.1@dev'];
+$composer['require'] = [...(is_array($composer['require'] ?? null) ? $composer['require'] : []), $theme['package'] => '^0.1@dev', 'frootbox/news' => '^0.1@dev', 'frootbox/forms' => '^0.1@dev', 'frootbox/seo' => '^0.1@dev', 'frootbox/people' => '^0.1@dev', 'frootbox/events' => '^0.1@dev', 'frootbox/search' => '^0.1@dev', 'frootbox/statistics' => '^0.1@dev'];
 
 file_put_contents(
     $composerFile,
