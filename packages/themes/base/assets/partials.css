@@ -3,11 +3,15 @@
  * theme. A child theme replaces this file or overrides single classes.
  */
 
-/* Head: brand at the start, menu at the end. Below 48rem the menu opens as a popover. */
+/* Head: brand at the start, menu and search at the end. Below 48rem the menu opens as a popover. */
 .base-header { border-block-end: var(--border); background: var(--color-bg); }
 .base-header__inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-s); min-block-size: 4rem; padding-block: var(--space-2xs); }
 .base-header__brand { display: inline-flex; align-items: center; gap: var(--space-2xs); color: var(--color-text); font-family: var(--font-heading); font-size: var(--size-l); font-weight: 700; text-decoration: none; }
 .base-header__brand img { max-block-size: 2.75rem; inline-size: auto; }
+
+.base-header__end { display: flex; align-items: center; gap: var(--space-2xs); }
+.base-header__search { display: inline-grid; place-items: center; min-inline-size: 2.75rem; min-block-size: 2.75rem; border-radius: var(--radius); color: var(--color-text); }
+.base-header__search:hover { background: var(--color-surface); }
 
 .base-header :is(.base-header__toggle, .base-header__close) {
   display: inline-grid;
@@ -43,7 +47,11 @@
 .base-header__close { align-self: flex-end; }
 
 @media (min-width: 48rem) {
-  .base-header :is(.base-header__toggle, .base-header__close) { display: none; }
+  .base-header__end { display: flex; align-items: center; gap: var(--space-2xs); }
+.base-header__search { display: inline-grid; place-items: center; min-inline-size: 2.75rem; min-block-size: 2.75rem; border-radius: var(--radius); color: var(--color-text); }
+.base-header__search:hover { background: var(--color-surface); }
+
+.base-header :is(.base-header__toggle, .base-header__close) { display: none; }
   .base-header__menu,
   .base-header__menu:popover-open {
     position: static;
