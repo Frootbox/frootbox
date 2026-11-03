@@ -1,0 +1,50 @@
+<?php
+
+/*
+ * SPDX-License-Identifier: MIT
+ */
+
+declare(strict_types=1);
+
+namespace Frootbox\Collections\Entry;
+
+use DateTimeImmutable;
+use Frootbox\Core\Action\Action;
+use Frootbox\Core\Action\AsAction;
+use Frootbox\Core\Action\Schema\Description;
+use Frootbox\Core\Action\Schema\Pattern;
+use Frootbox\Core\Auth\Scope;
+use Frootbox\Core\Auth\Scoped;
+use Frootbox\Core\Plugin\SpaceScopes;
+use Frootbox\Database\Ulid;
+
+/**
+ * @implements Action<EntryDetails>
+ */
+#[AsAction('frootbox/collections/entry.schedule', 'Plans when the draft of an entry is published and when it goes offline')]
+final readonly class ScheduleEntry implements Action, Scoped
+{
+    public function __construct(
+        #[Pattern(Ulid::PATTERN)]
+        public string $id,
+        #[Description('When the draft is published; left out or null for no time')]
+        public ?DateTimeImmutable $publishAt = null,
+        #[Description('When the entry goes offline, e.g. at the end of applications; left out or null for no time')]
+        public ?DateTimeImmutable $unpublishAt = null,
+    ) {}
+
+    /**
+     * The object within its space (decision 0245).
+     *
+     * @return list<Scope>
+     */
+    public function scopes(): array
+    {
+        return [SpaceScopes::object(EntryStore::TYPE, $this->id)];
+    }
+
+    public function handle(EntryEditor $editor): EntryDetails
+    {
+        return $editor->schedule('frootbox/collections/entry.schedule', $this->id, $this->publishAt, $this->unpublishAt);
+    }
+}

@@ -1,0 +1,33 @@
+{# frootbox
+title: Entries of a collection
+description: Some entries of a collection as cards, e.g. the references on the start page, with a link to all of them.
+group: teaser
+keywords: [Collections, References, Projects, Portfolio, Teasers]
+options:
+  space: { type: choice, label: Collection, source: frootbox/collections/space.choices, default: '' }
+  category: { type: choice, label: Only of the category, source: frootbox/collections/category.choices, default: '' }
+  tag: { type: choice, label: Only with the tag, source: tag.options, default: '' }
+  count: { type: number, label: Number of entries, default: 3, min: 1, max: 12 }
+  images: { type: boolean, label: Images, default: true }
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "References" }
+#}
+<div class="collection-teaser">
+  {{ heading('title', 0, {class: 'collection-teaser__title'}) }}
+  {% if entries %}
+    <ul class="collection-teaser__items">
+      {% for item in entries %}
+        <li class="collection-teaser__item">
+          {% if item.image %}<div class="collection-teaser__media">{{ item.image }}</div>{% endif %}
+          <div class="collection-teaser__body">
+            {{ heading_text(item.title, 1, {class: 'collection-teaser__name'}, item.url) }}
+            {% if item.teaser %}<p class="collection-teaser__text">{{ item.teaser }}</p>{% endif %}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+    {% if all %}<p class="collection-teaser__all"><a href="{{ all }}">{{ t('All entries') }}</a></p>{% endif %}
+  {% else %}
+    <p class="collection-teaser__empty">{{ t('There are no entries yet.') }}</p>
+  {% endif %}
+</div>

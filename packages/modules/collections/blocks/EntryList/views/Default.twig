@@ -1,0 +1,57 @@
+{# frootbox
+title: Collection
+description: The entries of the collection the page shows as cards with image, title and teaser, filtered by category and tag. Each entry gets its own address below the page with image and text, optionally with a form for requests.
+plugin: true
+query: [category, tag]
+options:
+  form: { type: choice, label: Form for requests, source: frootbox/forms/form.choices, default: '' }
+  images: { type: boolean, label: Images in the list, default: true }
+  filters: { type: boolean, label: Filter the list, default: true }
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "References" }
+#}
+{% if entry is defined %}
+  <article class="collection-entry">
+    <header class="collection-entry__head">
+      {{ heading_text(entry.title, 0, {class: 'collection-entry__title'}) }}
+      {% if entry.teaser %}<p class="collection-entry__teaser">{{ entry.teaser }}</p>{% endif %}
+    </header>
+    {% if entry.image %}<div class="collection-entry__media">{{ entry.image }}</div>{% endif %}
+    <div class="collection-entry__text">{{ entry.text }}</div>
+    {% if form %}<div class="collection-entry__form">{{ render_block('frootbox/forms/Form', {form: form}) }}</div>{% endif %}
+    {% if back %}<p class="collection-entry__back"><a href="{{ back }}">{{ t('All entries') }}</a></p>{% endif %}
+  </article>
+{% else %}
+  <div class="collection">
+    {% if category %}
+      {{ heading_text(category.title, 0, {class: 'collection__title'}) }}
+      {% if category.description %}<p class="collection__intro">{{ category.description }}</p>{% endif %}
+    {% else %}
+      {{ heading('title', 0, {class: 'collection__title'}) }}
+    {% endif %}
+    {% for filter in filters %}
+      <nav class="collection-filter" aria-label="{{ t(filter.label) }}">
+        <ul class="collection-filter__list">
+          {% for link in filter.links %}
+            <li><a class="collection-filter__link" href="{{ link.href }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title ? link.title : t('All') }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+    {% endfor %}
+    {% if entries %}
+      <ul class="collection__items">
+        {% for item in entries %}
+          <li class="collection-card">
+            {% if item.image %}<div class="collection-card__media">{{ item.image }}</div>{% endif %}
+            <div class="collection-card__body">
+              {{ heading_text(item.title, 1, {class: 'collection-card__title'}, item.url) }}
+              {% if item.teaser %}<p class="collection-card__text">{{ item.teaser }}</p>{% endif %}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="collection__empty">{{ filtered ? t('No entries match this choice.') : t('There are no entries yet.') }}</p>
+    {% endif %}
+  </div>
+{% endif %}

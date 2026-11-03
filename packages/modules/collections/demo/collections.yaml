@@ -1,0 +1,97 @@
+# Demo collection in German and English, for a website of the base theme
+# or a child theme with a start page:
+#
+#     php bin/frootbox seed frootbox/collections:demo/collections.yaml
+#
+# The first collection is named "Farmen" ("Farms"); a page "Unsere Farmen"
+# below the start page shows its three farms as cards, filtered by the
+# categories "Südamerika" and "Afrika". Each farm gets its address below
+# it, e.g. /unsere-farmen/finca-la-esperanza. The position puts them in
+# the order of the harvest.
+
+- page.tree: {}
+  as: tree
+
+- space.update: { id: default, type: frootbox/collections/entry, title: Farmen }
+
+- category.create:
+    group: frootbox/collections/categories
+    translations:
+      de: { title: Südamerika }
+      en: { title: South America }
+  as: america
+- category.create:
+    group: frootbox/collections/categories
+    translations:
+      de: { title: Afrika }
+      en: { title: Africa }
+  as: africa
+
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${tree.0.id}'
+    translations:
+      de:
+        title: Unsere Farmen
+        content:
+          fields:
+            title: Unsere Farmen
+            intro: Wir kaufen direkt bei Farmen, die wir kennen. Hier stellen wir sie Dir vor.
+          areas:
+            main: []
+      en:
+        title: Our farms
+        content:
+          fields:
+            title: Our farms
+            intro: We buy directly from farms we know. Here we introduce them to you.
+          areas:
+            main: []
+  as: page
+- plugin.assign: { id: '${page.id}', type: frootbox/collections/entry }
+- page.publish: { ids: ['${page.id}'] }
+
+- frootbox/collections/entry.create:
+    order: 1
+    categories: ['${america.id}']
+    tags: [Bio]
+    translations:
+      de:
+        title: Finca La Esperanza
+        teaser: Eine kleine Familienfarm in den Bergen von Huila, Kolumbien, auf 1.700 Metern.
+        text:
+          type: doc
+          content:
+            - { type: paragraph, content: [{ type: text, text: 'Familie Rojas baut seit drei Generationen Kaffee an. Die Kirschen werden von Hand gepflückt und in der Sonne getrocknet.' }] }
+      en:
+        title: Finca La Esperanza
+        teaser: A small family farm in the mountains of Huila, Colombia, at 1,700 metres.
+        text:
+          type: doc
+          content:
+            - { type: paragraph, content: [{ type: text, text: 'The Rojas family has grown coffee for three generations. The cherries are picked by hand and dried in the sun.' }] }
+  as: esperanza
+- frootbox/collections/entry.create:
+    order: 2
+    categories: ['${america.id}']
+    translations:
+      de:
+        title: Fazenda Santa Clara
+        teaser: Nussiger Kaffee aus Minas Gerais, Brasilien, die Basis unseres Espressos.
+      en:
+        title: Fazenda Santa Clara
+        teaser: Nutty coffee from Minas Gerais, Brazil, the base of our espresso.
+  as: clara
+- frootbox/collections/entry.create:
+    order: 3
+    categories: ['${africa.id}']
+    tags: [Bio]
+    translations:
+      de:
+        title: Kooperative Sidama
+        teaser: Über 800 Kleinbauern in Äthiopien, blumig und mit einer Note von Beeren.
+      en:
+        title: Sidama cooperative
+        teaser: More than 800 smallholders in Ethiopia, floral with a hint of berries.
+  as: sidama
+- frootbox/collections/entry.publish: { ids: ['${esperanza.id}', '${clara.id}', '${sidama.id}'] }

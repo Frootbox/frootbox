@@ -1,0 +1,16 @@
+{#- The fields of an entry in one language plus position, image, categories, tags and the further fields of the theme (decisions 0220, 0233, 0239, 0240, 0246). -#}
+{% import '@backend/ui.twig' as ui %}
+{% set code = language.code %}
+{% set dir = language.direction.value %}
+{% set prefix = 'translations.' ~ code ~ '.' %}
+{{ ui.field({label: t('Title'), name: prefix ~ 'title', id: 'entry-title', value: translation.title ?? '', required: true, disabled: not editable, hint: t('E.g. the name of the project or the customer.'), attrs: {lang: code, dir: dir, maxlength: 300}}) }}
+{% if slug %}
+{{ ui.field({label: t('Address'), name: prefix ~ 'slug', id: 'entry-slug', value: translation.slug ?? '', disabled: not editable, attrs: {dir: 'ltr', maxlength: 100}, hint: t('The last part of the address of the entry. If it changes, the old one redirects to the new one.')}) }}
+{% endif %}
+{{ ui.field({label: t('Teaser'), name: prefix ~ 'teaser', id: 'entry-teaser', value: translation.teaser ?? '', multiline: true, optional: true, disabled: not editable, hint: t('A few sentences for the cards and for search engines.'), attrs: {lang: code, dir: dir, rows: 3}}) }}
+{{ ui.richtext({label: t('Text'), name: prefix ~ 'text', id: 'entry-text', value: translation.text ?? null, optional: true, disabled: not editable, lang: code, dir: dir}) }}
+{{ ui.image({label: t('Image'), name: 'image', id: 'entry-image', value: image_value, preview: image.preview ?? null, file: image.file ?? null, optional: true, disabled: not editable}) }}
+{{ ui.field({label: t('Position'), name: 'order', id: 'entry-order', type: 'number', value: data.order ?? 0, disabled: not editable, hint: t('Smaller numbers come first. With the same number the newest comes first.'), attrs: {min: -10000, max: 10000, step: 1, inputmode: 'numeric'}}) }}
+{% include '@backend/categories/choices.twig' with {type: 'frootbox/collections/entry', chosen: data.categories ?? [], disabled: not editable, prefix: 'entry'} only %}
+{% include '@backend/tags/choices.twig' with {type: 'frootbox/collections/entry', space: data.space ?? (space ?? null), chosen: data.tags ?? [], disabled: not editable, prefix: 'entry'} only %}
+{% include '@backend/fields/object.twig' with {type: 'frootbox/collections/entry', values: data.fields ?? {}, language: language, disabled: not editable, prefix: 'entry'} only %}

@@ -1,0 +1,41 @@
+{
+    "name": "frootbox/collections",
+    "description": "Collections for the Frootbox CMS: entries of the same kind such as references, projects or show homes, each collection a space, with drafts, cards filtered by category and tag, an address for each entry and a form for requests",
+    "type": "frootbox-extension",
+    "license": "MIT",
+    "keywords": [
+        "cms",
+        "frootbox",
+        "collections",
+        "references",
+        "portfolio"
+    ],
+    "require": {
+        "php": ">=8.5",
+        "frootbox/core": "^0.1",
+        "frootbox/database": "^0.1",
+        "frootbox/rich-text": "^0.1",
+        "psr/http-message": "^2.0",
+        "psr/http-server-handler": "^1.0"
+    },
+    "suggest": {
+        "frootbox/backend": "The screen for the collections",
+        "frootbox/forms": "Requests through a form on each entry"
+    },
+    "autoload": {
+        "psr-4": {
+            "Frootbox\\Collections\\": "src/",
+            "Frootbox\\Collections\\Migrations\\": "migrations/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Frootbox\\Collections\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    }
+}

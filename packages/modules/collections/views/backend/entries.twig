@@ -1,0 +1,70 @@
+{#- The screen "Collections": a tab for each collection, its entries by position and title (decisions 0220, 0246). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Collections') }}{% endblock %}
+
+{% block content %}
+{% set creating = can_within('frootbox/collections/entry.create', 'space:frootbox/collections/entry:' ~ (space ?: 'default')) %}
+{% set new = {label: t('New entry'), href: path('frootbox.collections.entries.new') ~ (space ? '?space=' ~ space|url_encode : ''), icon: 'plus'} %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Collections') }}</h1>
+            <p class="fb-muted">{{ t('References, projects and the like, each collection with entries of the same kind. A page shows a collection as cards, each entry gets its own address.') }}</p>
+        </div>
+        <div class="fb-cluster">
+            {% if can('space.update') %}{{ ui.button({label: t('Spaces'), href: path('backend.spaces'), variant: 'outline'}) }}{% endif %}
+            {% if can('category.update') %}{{ ui.button({label: t('Categories'), href: path('backend.categories') ~ '?group=frootbox/collections/categories', variant: 'outline'}) }}{% endif %}
+            {% if creating %}{{ ui.button(new) }}{% endif %}
+        </div>
+    </header>
+
+    {% if spaces %}
+    {{ ui.tabs(t('Collections'), spaces|map(item => {label: item.title, href: path('frootbox.collections.entries') ~ '?space=' ~ item.id|url_encode, current: item.id == space})) }}
+    {% endif %}
+
+    <section class="fb-card" aria-labelledby="collection-entries-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="collection-entries-title">{{ name ?: t('Entries') }}</h2>
+            {{ ui.badge('neutral', list.total) }}
+        </div>
+        <form class="fb-card__body fb-cluster" method="get" action="{{ path('frootbox.collections.entries') }}" role="search">
+            {% if space %}<input type="hidden" name="space" value="{{ space }}">{% endif %}
+            {{ ui.field({label: t('Search'), name: 'q', id: 'collection-search', type: 'search', value: search, placeholder: t('Title')}) }}
+            {{ ui.button({label: t('Search'), variant: 'outline', type: 'submit', icon: 'search'}) }}
+        </form>
+        {% if list.items is empty %}
+        <div class="fb-card__body">
+            {% if search %}
+                {{ ui.empty({icon: 'layout-grid', title: t('Nothing found'), text: t('Try another search.')}) }}
+            {% else %}
+                {{ ui.empty({icon: 'layout-grid', title: t('No entries yet'), text: t('Create the first one. It stays a draft until you publish it.'), action: creating ? new : null}) }}
+            {% endif %}
+        </div>
+        {% else %}
+        <ul>
+            {%- for entry in list.items %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <a class="fb-list__title fb-list__link" href="{{ path('frootbox.collections.entries.show', {id: entry.id}) }}">{{ entry.title ?: t('Without a title') }}</a>
+                    {% if entry.order != 0 or entry.languages|length > 1 %}
+                    <span class="fb-list__meta">{{ ([entry.order != 0 ? t('Position {order}', {order: entry.order}) : null, entry.languages|length > 1 ? entry.languages|map(code => code|upper)|join(', ') : null]|filter(part => part))|join(' · ') }}</span>
+                    {% endif %}
+                </span>
+                {% if entry.publishAt or entry.unpublishAt %}{{ ui.status('scheduled') }}{% endif %}
+                {{ ui.status(entry.status.value) }}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+    </section>
+    {% if list.pages > 1 %}
+    <nav class="fb-cluster" aria-label="{{ t('Pages of the list') }}">
+        {% if list.page > 1 %}{{ ui.button({label: t('Previous'), href: path('frootbox.collections.entries') ~ '?' ~ {q: search ?: null, space: space, page: list.page - 1}|url_encode, variant: 'outline', small: true}) }}{% endif %}
+        <span class="fb-muted">{{ t('Page {page} of {pages}', {page: list.page, pages: list.pages}) }}</span>
+        {% if list.page < list.pages %}{{ ui.button({label: t('Next'), href: path('frootbox.collections.entries') ~ '?' ~ {q: search ?: null, space: space, page: list.page + 1}|url_encode, variant: 'outline', small: true}) }}{% endif %}
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
