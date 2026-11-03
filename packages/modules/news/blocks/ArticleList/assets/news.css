@@ -2,6 +2,7 @@
 /* The news list and article. Values come from the tokens of the theme, with fallbacks. */
 .news-list, .news-latest { display: flex; flex-direction: column; gap: var(--space-m, 1.5rem); }
 .news-list__title, .news-latest__title { margin: 0; font-size: var(--size-2xl, 2rem); }
+.news-list__intro { margin: 0; max-inline-size: 65ch; font-size: var(--size-l, 1.25rem); color: var(--color-muted, inherit); }
 .news-list__items, .news-latest__items {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));

@@ -12,6 +12,7 @@ use Frootbox\Core\Category\Category;
 use Frootbox\Core\Category\ObjectCategories;
 use Frootbox\Core\Component\BlockContext;
 use Frootbox\Core\Component\BlockController;
+use Frootbox\Core\Plugin\CategoryPages;
 use Frootbox\Core\Plugin\Space;
 use Frootbox\Core\Tag\ObjectTags;
 use Frootbox\Core\Tag\Tag;
@@ -34,6 +35,7 @@ final readonly class PersonList implements BlockController
         private Urls $urls,
         private ObjectCategories $categories,
         private ObjectTags $tags,
+        private CategoryPages $pages,
     ) {}
 
     public function data(BlockContext $context): array
@@ -78,17 +80,20 @@ final readonly class PersonList implements BlockController
         }
 
         uasort($words, static fn(array $a, array $b): int => strcmp(mb_strtolower($a['title']), mb_strtolower($b['title'])));
-        [$topic, $chosen] = ($filtering ? $this->categories->bySlug(PersonStore::TYPE, $language, (string) $context->query('category')) : null) ?? [null, null];
+        // On the page of a category it is that one (decision 0243).
+        $own = $this->pages->current($context);
+        [$topic, $chosen] = $own ?? ($filtering ? $this->categories->bySlug(PersonStore::TYPE, $language, (string) $context->query('category')) : null) ?? [null, null];
+        $here = null === $own || null === $subpage ? $base : $this->urls->href($subpage->target, $context->language) ?? $base;
         $word = (string) $context->query('tag');
         $word = isset($words[$word]) && $filtering ? $word : null;
 
         $shown = array_filter($people, static fn(PersonData $person, string $id): bool => (null === $chosen || [] !== array_intersect($chosen, array_map(static fn(Category $category): string => $category->id, $assigned[$id] ?? [])))
             && (null === $word || \in_array($words[$word]['id'], array_map(static fn(Tag $tag): string => $tag->id, $tagged[$id] ?? []), true)), \ARRAY_FILTER_USE_BOTH);
-        $current = ['category' => $topic?->slug($language), 'tag' => $word];
-        $link = static function (array $change) use ($base, $current): string {
+        $current = ['category' => null === $own ? $topic?->slug($language) : null, 'tag' => $word];
+        $link = static function (array $change, ?string $to = null) use ($here, $current): string {
             $query = array_filter([...$current, ...$change], static fn(mixed $value): bool => null !== $value);
 
-            return $base . ([] === $query ? '' : '?' . http_build_query($query));
+            return ($to ?? $here) . ([] === $query ? '' : '?' . http_build_query($query));
         };
         $filters = [];
 
@@ -96,8 +101,8 @@ final readonly class PersonList implements BlockController
             $filters[] = [
                 'label' => 'Category',
                 'links' => [
-                    ['title' => null, 'href' => $link(['category' => null]), 'current' => null === $topic],
-                    ...array_map(static fn(string $slug, array $item): array => ['title' => $item['title'], 'href' => $link(['category' => $slug]), 'current' => $item['id'] === $topic?->id], array_keys($topics), $topics),
+                    ['title' => null, 'href' => $link(['category' => null], $base), 'current' => null === $topic],
+                    ...array_map(fn(string $slug, array $item): array => ['title' => $item['title'], 'href' => $this->categoryLink($context, $item['id'], $slug, $link), 'current' => $item['id'] === $topic?->id], array_keys($topics), $topics),
                 ],
             ];
         }
@@ -116,6 +121,20 @@ final readonly class PersonList implements BlockController
             'people' => $this->cards->cards($shown, $language, $context->language),
             'filters' => $filters,
             'filtered' => null !== $topic || null !== $word,
+            'category' => null === $own ? null : ['title' => $own[0]->titleIn([$language]), 'description' => $own[0]->description($language)],
         ];
+    }
+
+    /**
+     * A category of the filter: its page if it has one (decision 0243),
+     * else the list with ?category=; the other filters stay.
+     *
+     * @param callable(array<string, string|null>, string|null): string $link
+     */
+    private function categoryLink(BlockContext $context, string $id, string $slug, callable $link): string
+    {
+        $page = $this->pages->href($context, $id);
+
+        return null === $page ? $link(['category' => $slug], null) : $link(['category' => null], $page);
     }
 }

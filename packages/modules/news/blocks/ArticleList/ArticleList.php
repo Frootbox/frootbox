@@ -11,6 +11,7 @@ namespace Frootbox\News\Blocks;
 use Frootbox\Core\Category\ObjectCategories;
 use Frootbox\Core\Component\BlockContext;
 use Frootbox\Core\Component\BlockController;
+use Frootbox\Core\Plugin\CategoryPages;
 use Frootbox\Core\Plugin\Space;
 use Frootbox\Core\Tag\ObjectTags;
 use Frootbox\Core\Url\Urls;
@@ -35,6 +36,7 @@ final readonly class ArticleList implements BlockController
         private ArticleRendering $rendering,
         private Urls $urls,
         private Feed $feed,
+        private CategoryPages $pages,
     ) {}
 
     public function data(BlockContext $context): array
@@ -48,13 +50,15 @@ final readonly class ArticleList implements BlockController
             $article = $this->articles->find($subpage->target->id, $language);
 
             if (null !== $article) {
-                return ['article' => $this->withLinks($this->rendering->detail($article, $context->language), $base), 'back' => $base];
+                return ['article' => $this->withLinks($this->rendering->detail($article, $context->language), $base, $context), 'back' => $base];
             }
         }
 
-        // A category counts with all below it (decision 0233).
-        $slug = self::text($context->query('category'));
-        [$category, $chosen] = (null === $slug ? null : $this->categories->bySlug(ArticleStore::TYPE, $language, $slug)) ?? [null, null];
+        // A category counts with all below it (decision 0233); on the page of a category it is that one (decision 0243).
+        $own = $this->pages->current($context);
+        $slug = null === $own ? self::text($context->query('category')) : null;
+        [$category, $chosen] = $own ?? (null === $slug ? null : $this->categories->bySlug(ArticleStore::TYPE, $language, $slug)) ?? [null, null];
+        $here = null === $own || null === $context->subpage ? $base : $this->urls->href($context->subpage->target, $context->language) ?? $base;
         // Like a category, an unknown tag filters nothing.
         $tagSlug = self::text($context->query('tag'));
         $tag = null === $tagSlug ? null : $this->tags->bySlug($language, $tagSlug);
@@ -65,8 +69,8 @@ final readonly class ArticleList implements BlockController
         $total = $this->articles->count($language, $chosen, $year, $spaces, $tag?->id);
         $pages = max(1, (int) ceil($total / $perPage));
         $page = min($pages, max(1, (int) ($context->query('page') ?? 1)));
-        $filter = array_filter(['category' => $category?->slug($language), 'tag' => $shown['slug'] ?? null, 'year' => null === $year ? null : (string) $year], static fn(?string $value): bool => null !== $value);
-        $link = static fn(array $query): string => $base . ([] === $query ? '' : '?' . http_build_query($query));
+        $filter = array_filter(['category' => null === $own ? $category?->slug($language) : null, 'tag' => $shown['slug'] ?? null, 'year' => null === $year ? null : (string) $year], static fn(?string $value): bool => null !== $value);
+        $link = static fn(array $query): string => $here . ([] === $query ? '' : '?' . http_build_query($query));
         $images = false !== ($context->options['images'] ?? true);
 
         $filters = [];
@@ -77,14 +81,15 @@ final readonly class ArticleList implements BlockController
                 $title = $item->title($language);
 
                 if (null !== $itemSlug && null !== $title) {
-                    $filters[] = ['title' => $title, 'href' => $link(['category' => $itemSlug]), 'current' => $item->id === $category?->id, 'depth' => $item->depth];
+                    $filters[] = ['title' => $title, 'href' => $this->pages->href($context, $item->id) ?? $base . '?' . http_build_query(['category' => $itemSlug]), 'current' => $item->id === $category?->id, 'depth' => $item->depth];
                 }
             }
         }
 
         return [
-            'articles' => array_map(fn(ArticleView $article): array => $this->withLinks($this->rendering->teaser($article, $context->language, $images), $base), $this->articles->list($language, $chosen, $year, $perPage, ($page - 1) * $perPage, $spaces, $tag?->id)),
-            'filters' => [] === $filters ? [] : [['title' => null, 'href' => $link([]), 'current' => null === $category], ...$filters],
+            'articles' => array_map(fn(ArticleView $article): array => $this->withLinks($this->rendering->teaser($article, $context->language, $images), $base, $context), $this->articles->list($language, $chosen, $year, $perPage, ($page - 1) * $perPage, $spaces, $tag?->id)),
+            'filters' => [] === $filters ? [] : [['title' => null, 'href' => $base, 'current' => null === $category], ...$filters],
+            'category' => null === $own ? null : ['title' => $own[0]->titleIn([$language]), 'description' => $own[0]->description($language)],
             'filtered' => [] !== $filter,
             'tag' => null === $shown ? null : ['label' => $shown['label'], 'all' => $link(array_diff_key($filter, ['tag' => true]))],
             'pagination' => [
@@ -99,19 +104,20 @@ final readonly class ArticleList implements BlockController
 
     /**
      * The categories and tags of an article link to the list filtered by
-     * them.
+     * them, a category to its page if it has one (decision 0243).
      *
      * @param array<string, mixed> $article
      *
      * @return array<string, mixed>
      */
-    private function withLinks(array $article, string $base): array
+    private function withLinks(array $article, string $base, BlockContext $context): array
     {
         $categories = [];
 
         foreach (\is_array($article['categories'] ?? null) ? $article['categories'] : [] as $category) {
             if (\is_array($category) && \is_string($category['slug'] ?? null)) {
-                $categories[] = [...$category, 'href' => $base . '?' . http_build_query(['category' => $category['slug']])];
+                $id = \is_string($category['id'] ?? null) ? $category['id'] : null;
+                $categories[] = [...$category, 'href' => (null === $id ? null : $this->pages->href($context, $id)) ?? $base . '?' . http_build_query(['category' => $category['slug']])];
             }
         }
 

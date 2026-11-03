@@ -19,6 +19,7 @@ use Frootbox\Core\Plugin\AssignPlugin;
 use Frootbox\Core\Plugin\CreateSpace;
 use Frootbox\Core\Plugin\Space;
 use Frootbox\Core\ProjectPaths;
+use Frootbox\Core\Url\Target;
 use Frootbox\Core\Url\Urls;
 use Frootbox\People\Blocks\PersonList;
 use Frootbox\People\CategoryChoices;
@@ -169,6 +170,36 @@ final class PluginTest extends PeopleTestCase
         self::assertStringNotContainsString('Bernd Brandt', $html);
     }
 
+    public function testCategoriesHavePagesOfTheirOwnBelowEachPage(): void
+    {
+        $start = $this->tree();
+        $doctors = $this->runner()->run(new CreateSpace('frootbox/people/person', 'Ärzte'))->id;
+        $team = $this->teamPage($start, 'Team', categories: true);
+        $this->teamPage($start, 'Ärzte', $doctors, categories: true);
+        $care = $this->runner()->run(new CreateCategory('frootbox/people/categories', ['de' => ['title' => 'Pflege'], 'en' => ['title' => 'Care']]))->id;
+        $intensive = $this->runner()->run(new CreateCategory('frootbox/people/categories', ['de' => ['title' => 'Intensivpflege', 'description' => 'Rund um die Uhr.']], $care))->id;
+        $anna = $this->runner()->run(new CreatePerson(givenName: 'Anna', familyName: 'Albers', categories: [$intensive]))->id;
+        $bernd = $this->runner()->run(new CreatePerson(givenName: 'Bernd', familyName: 'Brandt', categories: [$care]))->id;
+        $clara = $this->runner()->run(new CreatePerson(givenName: 'Clara', familyName: 'Conrad', space: $doctors, categories: [$intensive]))->id;
+        $this->runner()->run(new PublishPeople([$anna, $bernd, $clara]));
+
+        // The example of decision 0232.
+        $html = $this->html('/team/pflege/intensivpflege');
+        self::assertStringContainsString('<h1 class="people__title">Intensivpflege</h1>', $html, 'The category owns the h1 (decision 0243).');
+        self::assertStringContainsString('<p class="people__intro">Rund um die Uhr.</p>', $html);
+        self::assertStringContainsString('Anna Albers', $html);
+        self::assertStringNotContainsString('Bernd Brandt', $html);
+        self::assertStringNotContainsString('Clara Conrad', $html, 'Only its space.');
+        self::assertStringContainsString('Bernd Brandt', $this->html('/team/pflege'), 'With the ones below it.');
+        self::assertStringContainsString('<a class="people-filter__link" href="/team/pflege/intensivpflege">Intensivpflege</a>', $this->html('/team'));
+
+        $html = $this->html('/aerzte/pflege/intensivpflege');
+        self::assertStringContainsString('Clara Conrad', $html, 'The same category below the page of another space.');
+        self::assertStringNotContainsString('Anna Albers', $html);
+        self::assertSame('/en/team/care', $this->get(Urls::class)->path(Target::category($team, $care), 'en'));
+        self::assertNull($this->get(Urls::class)->path(Target::category($team, $intensive), 'en'), 'No slug in English, no address there.');
+    }
+
     public function testPhotosAndImagesBecomePublicWithThePersonOrTheLocation(): void
     {
         [$photo, $picture] = [$this->medium(), $this->medium()];
@@ -210,11 +241,11 @@ final class PluginTest extends PeopleTestCase
     /**
      * A published page in both languages that shows a space of the people.
      */
-    private function teamPage(string $parentId, string $title, string $space = Space::DEFAULT, ?bool $details = null): string
+    private function teamPage(string $parentId, string $title, string $space = Space::DEFAULT, ?bool $details = null, ?bool $categories = null): string
     {
         $content = ['fields' => ['heading' => $title], 'areas' => ['main' => []]];
         $id = $this->runner()->run(new CreatePage('acme/base/Page', ['de' => ['title' => $title, 'content' => $content], 'en' => ['title' => $title, 'content' => $content]], $parentId))->id;
-        $this->runner()->run(new AssignPlugin($id, 'frootbox/people/person', $space, $details));
+        $this->runner()->run(new AssignPlugin($id, 'frootbox/people/person', $space, $details, $categories));
         $this->runner()->run(new PublishPages([$id]));
 
         return $id;

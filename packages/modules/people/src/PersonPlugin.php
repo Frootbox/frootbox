@@ -49,6 +49,11 @@ final readonly class PersonPlugin implements Plugin
         return Offer::Optional;
     }
 
+    public function categories(): Offer
+    {
+        return Offer::Optional;
+    }
+
     public function spaces(): bool
     {
         return true;

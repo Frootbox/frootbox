@@ -13,6 +13,7 @@ use Frootbox\Core\Category\CreateCategory;
 use Frootbox\Core\Http\Exception\HttpException;
 use Frootbox\Core\Page\PublishPages;
 use Frootbox\Core\Page\UpdatePage;
+use Frootbox\Core\Plugin\AssignPlugin;
 use Frootbox\Core\Plugin\CreateSpace;
 use Frootbox\Core\Settings\UpdateSettings;
 use Frootbox\Core\Tag\CreateTag;
@@ -89,6 +90,31 @@ final class WebsiteTest extends NewsTestCase
         self::assertStringContainsString('<a class="news-filter__link" href="/aktuelles?category=kaffee" aria-current="page">Kaffee</a>', $html);
         self::assertStringContainsString('<a class="news-filter__link" href="/aktuelles">Alle</a>', $html);
         self::assertStringContainsString('Interview', $this->html('/aktuelles?category=unbekannt'), 'An unknown category shows all.');
+    }
+
+    public function testCategoriesHavePagesOfTheirOwnWithTheSwitch(): void
+    {
+        $coffee = $this->runner()->run(new CreateCategory(ArticleStore::CATEGORIES, ['de' => ['title' => 'Kaffee', 'description' => 'Alles über Bohnen und Röstung.']]));
+        $espresso = $this->runner()->run(new CreateCategory(ArticleStore::CATEGORIES, ['de' => ['title' => 'Espresso']], $coffee->id));
+        $this->article(['de' => ['title' => 'Bohnen']], categories: [$coffee->id]);
+        $this->article(['de' => ['title' => 'Crema']], categories: [$espresso->id]);
+        $this->article(['de' => ['title' => 'Interview']]);
+        $this->runner()->run(new AssignPlugin($this->news, ArticleStore::TYPE, categories: true));
+        $this->runner()->run(new PublishPages([$this->news]));
+
+        $html = $this->html('/aktuelles/kaffee');
+        self::assertMatchesRegularExpression('~<h1 class="news-list__title">Kaffee</h1>~', $html, 'The category owns the h1 (decision 0243).');
+        self::assertStringContainsString('<p class="news-list__intro">Alles über Bohnen und Röstung.</p>', $html);
+        self::assertStringContainsString('<title>Kaffee – ', $html);
+        self::assertStringContainsString('Bohnen', $html);
+        self::assertStringContainsString('Crema', $html, 'With the ones below it.');
+        self::assertStringNotContainsString('Interview', $html);
+        self::assertStringContainsString('<a class="news-filter__link" href="/aktuelles/kaffee" aria-current="page">Kaffee</a>', $html, 'The filters lead to the pages of the categories.');
+        self::assertStringContainsString('<a class="news-filter__link" href="/aktuelles/kaffee/espresso">Espresso</a>', $html);
+        self::assertStringContainsString('<a class="news-filter__link" href="/aktuelles">Alle</a>', $html);
+        self::assertStringNotContainsString('Bohnen', $this->html('/aktuelles/kaffee/espresso'));
+        self::assertStringContainsString('href="/aktuelles/kaffee/espresso">Espresso</a>', $this->html('/aktuelles/crema'), 'The categories of an article too.');
+        self::assertStringContainsString('<a class="news-filter__link" href="/aktuelles/kaffee">Kaffee</a>', $this->html('/aktuelles'));
     }
 
     public function testFiltersByTag(): void
