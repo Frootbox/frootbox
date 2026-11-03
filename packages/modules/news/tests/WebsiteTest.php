@@ -87,10 +87,9 @@ final class WebsiteTest extends NewsTestCase
         $id = $this->article(['de' => ['title' => 'Neue Sorten', 'teaser' => 'Aus Peru.', 'text' => self::text('Frisch geröstet.')]]);
 
         $html = $this->html('/aktuelles/neue-sorten');
-        file_put_contents('/private/tmp/claude-501/-Users-habbo-Sites-frootbox2/e248f974-7e5b-4fd0-bcdc-ec6e7c3c818c/scratchpad/detail.html', $html);
-        file_put_contents('/private/tmp/claude-501/-Users-habbo-Sites-frootbox2/e248f974-7e5b-4fd0-bcdc-ec6e7c3c818c/scratchpad/list.html', $this->html('/aktuelles'));
 
         self::assertStringContainsString('<title>Neue Sorten – Testsite</title>', $html);
+        self::assertStringContainsString('<meta name="description" content="Aus Peru.">', $html, 'The teaser describes the article.');
         self::assertStringContainsString('<link rel="canonical" href="https://example.org/aktuelles/neue-sorten">', $html);
         self::assertMatchesRegularExpression('~<h\d class="news-article__title">Neue Sorten</h\d>~', $html);
         self::assertStringContainsString('<p>Frisch geröstet.</p>', $html);
