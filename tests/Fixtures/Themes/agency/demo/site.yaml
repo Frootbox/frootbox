@@ -1,5 +1,5 @@
-# The start page of the design in design/index.html and four pages for
-# the navigations (decision 0212), for
+# The start page of the design in design/index.html, four pages for
+# the navigations (decision 0212) and a journal with one article, for
 #
 #     php bin/frootbox seed frootbox-test/theme-agency:demo/site.yaml
 #
@@ -40,8 +40,25 @@
     parentId: '${start.id}'
     translations: { de: { title: Datenschutz, slug: datenschutz, content: { fields: { title: Datenschutz } } } }
   as: privacy
+- page.create:
+    layout: frootbox/theme-base/Page
+    parentId: '${start.id}'
+    translations: { de: { title: Journal, slug: journal, content: { fields: { title: Journal }, areas: { main: [] } } } }
+  as: journal
+# The journal shows the news with further fields of this theme (decision 0241).
+- plugin.assign: { id: '${journal.id}', type: frootbox/news/article }
 - page.publish:
-    ids: ['${start.id}', '${office.id}', '${contact.id}', '${imprint.id}', '${privacy.id}']
+    ids: ['${start.id}', '${office.id}', '${contact.id}', '${imprint.id}', '${privacy.id}', '${journal.id}']
+- frootbox/news/article.create:
+    date: '2026-10-01T09:00:00+02:00'
+    translations:
+      de:
+        title: Richtfest am Kanal
+        text: { type: doc, content: [{ type: paragraph, content: [{ type: text, text: 'Das Haus am Kanal steht. Im Frühjahr ziehen die Bauherren ein.' }] }] }
+    fields:
+      subtitle: { de: 'Holzbau in Kiel-Holtenau' }
+  as: topping
+- frootbox/news/article.publish: { ids: ['${topping.id}'] }
 - navigation.update:
     name: main
     items:

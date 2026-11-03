@@ -1,0 +1,30 @@
+{# frootbox
+object:
+  fields:
+    subtitle: { type: text, label: Subtitle, maxLength: 120, placeholder: "One line under the title" }
+    plan: { type: image, label: Plan }
+#}
+{# The journal of the agency in its own markup, with two further fields at
+   each article (decisions 0234, 0240, 0241). #}
+{% if article is defined %}
+  <article class="container agency-article">
+    <p class="agency-article__date"><time datetime="{{ article.date }}">{{ article.dateText }}</time></p>
+    {{ heading_text(article.title, 0, {class: 'agency-article__title'}) }}
+    <p class="agency-article__subtitle">{{ object_field(article, 'subtitle') }}</p>
+    <div class="agency-article__text">{{ article.text }}</div>
+    <figure class="agency-article__plan">{{ object_field(article, 'plan') }}</figure>
+    {% if back %}<p><a href="{{ back }}">{{ t('All news') }}</a></p>{% endif %}
+  </article>
+{% else %}
+  <section class="container agency-journal">
+    {{ heading('title', 0, {class: 'agency-journal__title'}) }}
+    <ul class="agency-journal__items">
+      {% for item in articles %}
+        <li>
+          {{ heading_text(item.title, 1, {class: 'agency-journal__item'}, item.url) }}
+          <p class="agency-journal__subtitle">{{ object_field(item, 'subtitle') }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+{% endif %}
