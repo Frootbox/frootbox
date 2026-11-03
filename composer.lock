@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a4a2e887a84aae46f0ed6708ad92ea54",
+    "content-hash": "f2af35cca548e2f27587aeea2a85596f",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -651,6 +651,59 @@
                 "rich-text",
                 "sanitizer",
                 "tiptap"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "frootbox/seo",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/modules/seo",
+                "reference": "b788ac10428855f4472b32695e16169ea23d64b0"
+            },
+            "require": {
+                "frootbox/core": "^0.1",
+                "frootbox/database": "^0.1",
+                "frootbox/rich-text": "^0.1",
+                "php": ">=8.5",
+                "psr/http-factory": "^1.0",
+                "psr/http-message": "^2.0",
+                "psr/http-server-handler": "^1.0"
+            },
+            "suggest": {
+                "frootbox/backend": "The screen \"SEO\" with the check of every page"
+            },
+            "type": "frootbox-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\Seo\\": "src/",
+                    "Frootbox\\Seo\\Migrations\\": "migrations/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Frootbox\\Seo\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "SEO for the Frootbox CMS: sitemap, robots.txt, Open Graph, structured data and a check of every page",
+            "keywords": [
+                "cms",
+                "frootbox",
+                "open-graph",
+                "seo",
+                "sitemap"
             ],
             "transport-options": {
                 "symlink": true,
@@ -7072,6 +7125,7 @@
         "frootbox/forms": 20,
         "frootbox/news": 20,
         "frootbox/rich-text": 20,
+        "frootbox/seo": 20,
         "frootbox/theme-base": 20,
         "frootbox/theme-bohnenglueck": 20
     },

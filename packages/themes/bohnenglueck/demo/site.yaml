@@ -4,7 +4,8 @@
 #
 # Every step is an action or query with its input. "as" names the result,
 # later steps use it as ${name.path}. The website needs the languages de
-# and en, de first.
+# and en, de first. The Impressum has no description, so the screen "SEO"
+# shows a hint.
 #
 # The Impressum has no English translation on purpose: /en/impressum shows
 # the German text. "Über uns" first goes online as /roesterei and then
@@ -14,8 +15,8 @@
 - page.create:
     layout: frootbox/theme-base/Start
     translations:
-      de: { title: Bohnenglück }
-      en: { title: Bohnenglück }
+      de: { title: Bohnenglück, description: "Kleine Kaffeerösterei am Hafen: frisch geröstete Bohnen, ein Café zum Probieren und Kurse für zu Hause." }
+      en: { title: Bohnenglück, description: "A small coffee roastery by the harbour: freshly roasted beans, a café to taste them and courses for home." }
   as: start
 
 - page.create:
@@ -25,6 +26,7 @@
       de:
         title: Unsere Sorten
         slug: sorten
+        description: Vier Sorten immer im Regal, vom Espresso für jeden Tag bis zum entkoffeinierten Kaffee. Mit Preisen und Versand.
         content:
           fields:
             title: Unsere Sorten
@@ -51,6 +53,7 @@
       en:
         title: Our coffees
         slug: coffees
+        description: Four coffees always on the shelf, from the everyday espresso to a decaf. With prices and shipping.
         content:
           fields:
             title: Our coffees
@@ -83,6 +86,7 @@
       de:
         title: Über uns
         slug: roesterei
+        description: Sechs Leute, eine Trommel und viel Geduld. Wie Bohnenglück am Hafen anfing und wie wir heute rösten.
         content:
           fields:
             title: Sechs Leute, eine Trommel
@@ -125,6 +129,7 @@
       en:
         title: About us
         slug: roastery
+        description: Six people, one drum and a lot of patience. How Bohnenglück started by the harbour and how we roast today.
         content:
           fields:
             title: Six people, one drum
@@ -172,6 +177,7 @@
     translations:
       de:
         title: Kontakt
+        description: So findest Du die Rösterei am Hafen, wann wir geöffnet haben und wie Du uns schreibst.
         content:
           fields:
             title: Komm vorbei
@@ -206,6 +212,7 @@
                   link: { url: 'mailto:hallo@bohnenglueck.example', text: Schreib uns }
       en:
         title: Contact
+        description: How to find the roastery by the harbour, when we are open and how to write to us.
         content:
           fields:
             title: Come and see us

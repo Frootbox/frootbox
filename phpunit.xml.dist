@@ -31,6 +31,9 @@
         <testsuite name="forms">
             <directory>packages/modules/forms/tests</directory>
         </testsuite>
+        <testsuite name="seo">
+            <directory>packages/modules/seo/tests</directory>
+        </testsuite>
         <testsuite name="news">
             <directory>packages/modules/news/tests</directory>
         </testsuite>
@@ -52,6 +55,7 @@
             <directory>packages/core/src</directory>
             <directory>packages/database/src</directory>
             <directory>packages/modules/forms/src</directory>
+            <directory>packages/modules/seo/src</directory>
             <directory>packages/modules/news/src</directory>
             <directory>packages/rich-text/src</directory>
         </include>
