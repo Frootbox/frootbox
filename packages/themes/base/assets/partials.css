@@ -147,6 +147,9 @@
 .base-footer .base-languages :is(a, span) { color: inherit; }
 .base-footer .base-languages [aria-current] { color: var(--color-text); }
 .base-footer .base-languages a:hover { background: var(--color-bg); }
+/* The privacy settings (decision 0224) look like the links next to them. */
+.base-footer .privacy-settings__button { padding: 0; border: 0; background: none; color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
+.base-footer .privacy-settings__button:hover { color: var(--color-text); }
 
 /* The error page (decision 0189): like the head of a subpage, with a way back. */
 .base-error__head { display: flex; flex-direction: column; align-items: start; gap: var(--space-s); padding-block: var(--space-2xl) var(--space-xl); }

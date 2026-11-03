@@ -1,6 +1,8 @@
 {#
   The foot of every page: name, address, the footer navigation, profiles,
-  a note and the languages (decision 0128). A value from the first
+  a note, the privacy settings for content of other providers (only if
+  an extension registers one, decision 0224) and the languages (decision
+  0128). A value from the first
   language keeps its lang and dir, e.g. the German address on an Arabic
   page (decision 0170).
 
@@ -53,6 +55,7 @@
     {% endif %}
     <div class="base-footer__bottom">
       <p class="base-footer__note"{{ site_attributes('note')|attributes }}>{{ site_field('note') }}</p>
+      {{ privacy_settings() }}
       {% include '@theme/languages.twig' %}
     </div>
   </div>
