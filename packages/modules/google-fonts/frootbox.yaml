@@ -1,0 +1,3 @@
+title: Google Fonts
+description: Search the catalog of Google Fonts and import fonts once, so visitors load them from the own domain
+extension: Frootbox\GoogleFonts\GoogleFontsExtension

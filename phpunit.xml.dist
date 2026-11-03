@@ -55,6 +55,9 @@
         <testsuite name="news">
             <directory>packages/modules/news/tests</directory>
         </testsuite>
+        <testsuite name="google-fonts">
+            <directory>packages/modules/google-fonts/tests</directory>
+        </testsuite>
         <testsuite name="rich-text">
             <directory>packages/rich-text/tests</directory>
         </testsuite>
@@ -81,6 +84,7 @@
             <directory>packages/modules/statistics/src</directory>
             <directory>packages/modules/seo/src</directory>
             <directory>packages/modules/news/src</directory>
+            <directory>packages/modules/google-fonts/src</directory>
             <directory>packages/rich-text/src</directory>
         </include>
     </source>

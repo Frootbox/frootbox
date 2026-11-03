@@ -10,6 +10,7 @@
         "frootbox/core": "^0.1@dev",
         "frootbox/events": "^0.1@dev",
         "frootbox/forms": "^0.1@dev",
+        "frootbox/google-fonts": "^0.1@dev",
         "frootbox/jobs": "^0.1@dev",
         "frootbox/news": "^0.1@dev",
         "frootbox/people": "^0.1@dev",

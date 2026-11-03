@@ -1,0 +1,116 @@
+{#- The screen "Fonts" (decision 0252): search Google Fonts, import a family once, remove it. Samples come from the files on this website, never from Google. -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+{% set refresh = 'google-fonts' %}
+{% set self = path('frootbox.google-fonts.fonts') %}
+
+{% block title %}{{ t('Fonts') }}{% endblock %}
+
+{% block content %}
+{% if faces %}<style>{{ faces|raw }}</style>{% endif %}
+<div class="fb-stack fb-stack--lg" id="google-fonts">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1" tabindex="-1" data-fb-focus>{{ t('Fonts') }}</h1>
+            <p class="fb-muted">{{ t('Fonts from Google Fonts, copied once to this website. Visitors load them from here, Google does not learn of them. You choose them in the design.') }}</p>
+        </div>
+        {% if can('design.show') %}<div class="fb-cluster">{{ ui.button({label: t('Design'), href: path('backend.theme'), variant: 'outline', icon: 'palette'}) }}</div>{% endif %}
+    </header>
+
+    <section class="fb-card" aria-labelledby="google-fonts-imported-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="google-fonts-imported-title">{{ t('On this website') }}</h2>
+            {{ ui.badge('neutral', fonts|length) }}
+        </div>
+        {% if fonts is empty %}
+        <div class="fb-card__body">{{ ui.empty({icon: 'type', title: t('No fonts yet'), text: t('Search the catalog below and import a font.')}) }}</div>
+        {% else %}
+        <ul>
+            {%- for font in fonts %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title" style="font-family: {{ font.css }}">{{ font.family }}</span>
+                    <span class="fb-list__meta">{{ ([t(font.category), font.subsets|join(', '), font.italic ? t('with italics') : null, t(['{count} file', '{count} files'], {count: font.files})]|filter(part => part))|join(' · ') }}</span>
+                </span>
+                {% if can('frootbox/google-fonts/font.import') %}
+                <fb-form action="frootbox/google-fonts/font.import" refresh="{{ refresh }}" done="{{ t('The font is imported again.') }}">
+                    <form novalidate>
+                        <input type="hidden" name="family" value="{{ font.family }}">
+                        <input type="checkbox" name="italic" value="1" hidden{% if font.italic %} checked{% endif %}>
+                        {{ ui.button({label: t('Import {name} again', {name: font.family}), type: 'submit', variant: 'ghost', small: true, icon: 'restore', icon_only: true}) }}
+                    </form>
+                </fb-form>
+                {% endif %}
+                {% if can('frootbox/google-fonts/font.delete') %}
+                {{ ui.button({label: t('Remove {name}', {name: font.family}), variant: 'ghost', small: true, icon: 'trash', icon_only: true, attrs: {commandfor: 'google-font-delete-' ~ font.key, command: 'show-modal'}}) }}
+                {% endif %}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+    </section>
+
+    {% if can('frootbox/google-fonts/catalog.search') %}
+    <section class="fb-card" aria-labelledby="google-fonts-catalog-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="google-fonts-catalog-title">{{ t('Google Fonts') }}</h2>
+        </div>
+        <form class="fb-card__body fb-cluster" method="get" action="{{ self }}" role="search">
+            <input type="hidden" name="search" value="1">
+            {{ ui.field({label: t('Search'), name: 'q', type: 'search', value: q, placeholder: t('Name of the font'), attrs: {maxlength: 100}}) }}
+            {{ ui.select({label: t('Kind'), name: 'category', id: 'google-fonts-category', value: category, options: [{value: '', label: t('All kinds')}]|merge(categories|map(option => {value: option.value, label: t(option.label)}))}) }}
+            {{ ui.button({label: t('Search'), variant: 'outline', type: 'submit', icon: 'search'}) }}
+        </form>
+        {% if error %}
+        <div class="fb-card__body">{{ ui.alert({tone: 'danger', text: t(error.text, error.parameters)}) }}</div>
+        {% elseif not searched %}
+        <div class="fb-card__body"><p class="fb-muted">{{ t('The server asks Google Fonts only when you search, at most once a day. Search without a name for the most used fonts.') }}</p></div>
+        {% elseif results is empty %}
+        <div class="fb-card__body">{{ ui.empty({icon: 'search', title: t('Nothing found'), text: t('Try another search.')}) }}</div>
+        {% else %}
+        <ul>
+            {%- for result in results %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title">{{ result.family }}</span>
+                    <span class="fb-list__meta">{{ ([t(result.category), result.variable ? t('variable') : t(['{count} style', '{count} styles'], {count: result.styles}), result.subsets|join(', ')]|filter(part => part))|join(' · ') }}</span>
+                </span>
+                {% if result.imported %}{{ ui.badge('published', t('Imported')) }}{% endif %}
+                {% if can('frootbox/google-fonts/font.import') and not result.imported %}
+                <fb-form action="frootbox/google-fonts/font.import" refresh="{{ refresh }}" done="{{ t('The font is imported.') }}">
+                    <form class="fb-cluster" novalidate>
+                        <input type="hidden" name="family" value="{{ result.family }}">
+                        {% if result.italic %}{{ ui.check({label: t('With italics'), name: 'italic', id: 'google-font-italic-' ~ loop.index}) }}{% endif %}
+                        {{ ui.button({label: t('Import'), type: 'submit', variant: 'outline', small: true, icon: 'plus', attrs: {'aria-label': t('Import {name}', {name: result.family})}}) }}
+                    </form>
+                </fb-form>
+                {% endif %}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    {% if can('frootbox/google-fonts/font.delete') %}
+    {% for font in fonts %}
+    {% set dialog = 'google-font-delete-' ~ font.key %}
+    <dialog class="fb-dialog" id="{{ dialog }}" aria-labelledby="{{ dialog }}-title">
+        <fb-form action="frootbox/google-fonts/font.delete" refresh="{{ refresh }}" done="{{ t('The font is removed.') }}">
+            <form novalidate>
+                <input type="hidden" name="key" value="{{ font.key }}">
+                <div class="fb-dialog__body">
+                    <h2 class="fb-dialog__title" id="{{ dialog }}-title">{{ t('Remove {name}?', {name: font.family}) }}</h2>
+                    <p>{{ t('Its files are deleted. While the design uses the font, it cannot go.') }}</p>
+                </div>
+                <div class="fb-dialog__actions">
+                    {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: dialog, command: 'close', autofocus: true}}) }}
+                    {{ ui.button({label: t('Remove'), variant: 'danger-solid', type: 'submit'}) }}
+                </div>
+            </form>
+        </fb-form>
+    </dialog>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}
