@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Frootbox\People;
 
 use Frootbox\Core\Action\InvalidInputException;
+use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Revision\Revisions;
 use Frootbox\Core\Revision\RevisionStatus;
 use Frootbox\Core\Revision\RevisionStore;
@@ -26,6 +27,7 @@ abstract readonly class Store
     public function __construct(
         private Revisions $revisions,
         private RevisionStore $store,
+        private Languages $languages,
     ) {}
 
     /**
@@ -41,13 +43,29 @@ abstract readonly class Store
     abstract protected function data(array $data): Data;
 
     /**
+     * The texts in the order of the languages, the same on every database.
+     *
+     * @param array<mixed> $data
+     *
+     * @return T
+     */
+    private function load(array $data): Data
+    {
+        if (\is_array($data['translations'] ?? null)) {
+            $data['translations'] = $this->languages->sort($data['translations']);
+        }
+
+        return $this->data($data);
+    }
+
+    /**
      * @return T|null
      */
     public function draft(string $id): ?Data
     {
         $revision = $this->revisions->draft($this->type(), $id);
 
-        return null === $revision ? null : $this->data($revision->data);
+        return null === $revision ? null : $this->load($revision->data);
     }
 
     /**
@@ -57,7 +75,7 @@ abstract readonly class Store
     {
         $revision = $this->revisions->published($this->type(), $id);
 
-        return null === $revision ? null : $this->data($revision->data);
+        return null === $revision ? null : $this->load($revision->data);
     }
 
     /**
@@ -94,8 +112,8 @@ abstract readonly class Store
                 default => Status::Changed,
             },
             $published?->version,
-            null === $draft ? null : $this->data($draft->data),
-            null === $published ? null : $this->data($published->data),
+            null === $draft ? null : $this->load($draft->data),
+            null === $published ? null : $this->load($published->data),
         );
     }
 
@@ -125,7 +143,7 @@ abstract readonly class Store
         $all = [];
 
         foreach ($this->revisions->fetch(['where' => ['type' => $this->type(), 'status' => RevisionStatus::Published->value], 'order' => 'id']) as $revision) {
-            $all[$revision->entityId] = $this->data($revision->data);
+            $all[$revision->entityId] = $this->load($revision->data);
         }
 
         return $all;
