@@ -54,6 +54,8 @@ final class PluginAssignmentTest extends BackendTestCase
         self::assertMatchesRegularExpression('~<option value="default" selected>Punkte</option><option value="[0-9A-Z]{26}">Ausbildung</option>~', $assigned);
         self::assertStringContainsString('name="newSpace"', $assigned);
         self::assertStringContainsString('Eigene Seiten für die Einträge', $assigned, 'Details are optional for the items.');
+        self::assertMatchesRegularExpression('~<input type="checkbox" id="page-plugin-categories-1" name="categories" value="1"[^>]*>~', $assigned, 'Pages of the categories are a switch (decision 0243).');
+        self::assertDoesNotMatchRegularExpression('~id="page-plugin-categories-1" name="categories"[^>]* checked~', $assigned, 'Off by default.');
 
         $start = $this->html($this->request('GET', '/cms/pages/' . $this->start, session: $session));
         self::assertMatchesRegularExpression('~<option value="default" disabled>Punkte \(auf Jobs\)</option>~', $start, 'A space has one page.');

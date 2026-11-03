@@ -130,7 +130,7 @@ final readonly class PagesHandler implements RequestHandlerInterface
      * choose it or without plugins: each plugin with its spaces and the
      * title of the page that shows a space already.
      *
-     * @return array{slot: bool, current: ?array{type: string, space: string, details: bool}, plugins: list<array{type: string, label: string, several: bool, details: string, spaces: list<array{id: string, title: string, other: ?string}>}>}|null
+     * @return array{slot: bool, current: ?array{type: string, space: string, details: bool, categories: bool}, plugins: list<array{type: string, label: string, several: bool, details: string, categories: string, spaces: list<array{id: string, title: string, other: ?string}>}>}|null
      */
     private function plugins(PageTree $tree, string $id, PageData $data, bool $slot): ?array
     {
@@ -154,7 +154,7 @@ final readonly class PagesHandler implements RequestHandlerInterface
                 $spaces[] = ['id' => $space->id, 'title' => $space->title, 'other' => $other];
             }
 
-            $plugins[] = ['type' => $list->type, 'label' => $list->label, 'several' => $list->several, 'details' => $list->details->value, 'spaces' => $spaces];
+            $plugins[] = ['type' => $list->type, 'label' => $list->label, 'several' => $list->several, 'details' => $list->details->value, 'categories' => $list->categories->value, 'spaces' => $spaces];
         }
 
         return ['slot' => $slot, 'current' => $data->plugin?->toArray(), 'plugins' => $plugins];

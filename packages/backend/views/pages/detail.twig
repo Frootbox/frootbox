@@ -142,6 +142,9 @@
                     {% if plugin.details == 'optional' %}
                     {{ ui.check({label: t('Pages of their own for the entries'), name: 'details', id: 'page-plugin-details-' ~ loop.index, checked: mine ? current.details : true, disabled: not mine, hint: t('Without them, lists show the entries without links.')}) }}
                     {% endif %}
+                    {% if plugin.categories == 'optional' %}
+                    {{ ui.check({label: t('Pages of their own for the categories'), name: 'categories', id: 'page-plugin-categories-' ~ loop.index, checked: mine ? current.categories : false, disabled: not mine, hint: t('Each category gets an address below this page, e.g. for search engines. Without them, lists filter on the page itself.')}) }}
+                    {% endif %}
                 </div>
                 {% endfor %}
                 <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}<p class="fb-form__note">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p></div>

@@ -26,6 +26,16 @@ Every form of a module shows its groups with their categories. Tick the
 categories that fit. A published entry shows its categories on the
 website as soon as you publish it again.
 
+## Pages of their own
+
+An admin can give the categories pages of their own: in the settings of
+the page that shows the news, the jobs or the team, under **This page
+shows**, tick **Pages of their own for the categories**. Each category
+then has an address below that page, e.g. `/team/care/intensive-care`,
+with its name as the heading and its description as the introduction.
+The filters of the list lead there. If an entry has the same address
+as a category, the entry wins.
+
 ## Presets
 
 A developer can set out categories in `config/categories.yaml`, also

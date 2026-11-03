@@ -1157,6 +1157,8 @@ Spaces: Verwaltungen
 "Or a new space": "Oder eine neue Verwaltung"
 "The name of a new space for this page, e.g. Ausbildung. Editors see it instead of the name of the module.": "Der Name einer neuen Verwaltung für diese Seite, z. B. Ausbildung. Redakteure sehen ihn statt des Namens des Moduls."
 "Pages of their own for the entries": "Eigene Seiten für die Einträge"
+"Pages of their own for the categories": "Eigene Seiten für die Kategorien"
+"Each category gets an address below this page, e.g. for search engines. Without them, lists filter on the page itself.": "Jede Kategorie bekommt eine Adresse unter dieser Seite, z. B. für Suchmaschinen. Ohne sie filtern Listen auf der Seite selbst."
 "Without them, lists show the entries without links.": "Ohne sie zeigen Listen die Einträge ohne Link."
 "There is no plugin \"{type}\".": "Es gibt kein Modul „{type}“."
 "The layout of the page has no place for a plugin. Choose another layout first.": "Das Layout der Seite hat keinen Platz für ein Modul. Wähle zuerst ein anderes Layout."

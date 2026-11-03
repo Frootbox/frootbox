@@ -24,6 +24,16 @@ Jedes Formular eines Moduls zeigt seine Gruppen mit ihren Kategorien.
 Hak die passenden an. Ein veröffentlichter Eintrag zeigt seine
 Kategorien auf der Website, sobald Du ihn wieder veröffentlichst.
 
+## Eigene Seiten
+
+Ein Admin kann den Kategorien eigene Seiten geben: in den Einstellungen
+der Seite, die die News, die Stellen oder das Team zeigt, unter **Diese
+Seite zeigt** mit **Eigene Seiten für die Kategorien**. Jede Kategorie
+hat dann eine Adresse unter dieser Seite, z. B.
+`/team/pflege/intensivpflege`, mit ihrem Namen als Überschrift und ihrer
+Beschreibung als Einleitung. Die Filter der Liste führen dorthin. Hat
+ein Eintrag dieselbe Adresse wie eine Kategorie, gewinnt der Eintrag.
+
 ## Vorgaben
 
 Ein Entwickler kann Kategorien in `config/categories.yaml` vorgeben,
