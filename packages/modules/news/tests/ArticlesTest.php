@@ -187,10 +187,12 @@ final class ArticlesTest extends NewsTestCase
     {
         $this->get(Registry::class)->add(ObjectFieldSet::class, new ObjectFieldSet(ArticleStore::TYPE, ['subtitle' => ['type' => 'text', 'maxLength' => 40], 'featured' => ['type' => 'boolean']]));
         $id = $this->runner()->run(new CreateArticle(['de' => ['title' => 'Neue Sorten']], fields: ['subtitle' => ['de' => 'Aus Peru'], 'featured' => true]))->id;
-        self::assertSame(['subtitle' => ['de' => 'Aus Peru'], 'featured' => true], $this->runner()->ask(new ShowArticle($id))->draft?->fields);
+        // MySQL stores JSON with keys in an order of its own.
+        $draft = fn(): ?array => $this->runner()->ask(new ShowArticle($id))->draft?->fields;
+        self::assertEquals(['subtitle' => ['de' => 'Aus Peru'], 'featured' => true], $draft());
 
         $this->runner()->run(new UpdateArticle($id, ['de' => ['teaser' => 'Fruchtig.']]));
-        self::assertSame(['subtitle' => ['de' => 'Aus Peru'], 'featured' => true], $this->runner()->ask(new ShowArticle($id))->draft->fields, 'Left out, they stay.');
+        self::assertEquals(['subtitle' => ['de' => 'Aus Peru'], 'featured' => true], $draft(), 'Left out, they stay.');
         $this->runner()->run(new UpdateArticle($id, fields: ['subtitle' => ['en' => 'From Peru'], 'featured' => null]));
 
         $this->runner()->run(new PublishArticles([$id]));

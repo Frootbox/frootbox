@@ -30,8 +30,9 @@ test('edits a further field of an article on its page', async ({ page, request }
     const id: string = created.body.data.id;
     expect((await action(page, 'frootbox/news/article.publish', { ids: [id] })).status).toBe(200);
 
-    // Into the mode through the start page, then on to the article.
-    await page.locator('#page-tree .fb-tree__item').first().click();
+    // Into the mode through the start page, then on to the article. By its
+    // path, other tests may move pages before it.
+    await page.locator('#page-tree .fb-tree__item[data-path="/"] a').first().click();
     await page.getByRole('button', { name: 'Auf der Website bearbeiten' }).click();
     await expect(page).toHaveURL('/');
     await page.goto(address);
