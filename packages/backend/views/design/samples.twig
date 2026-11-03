@@ -155,6 +155,36 @@
 </div>
 
 <div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Tab panels') }}</p>
+    <fb-tab-panels label="{{ t('Parts of the form') }}">
+        <a href="#{{ id }}-texts" data-count="12">{{ icon('inbox') }}<span>{{ t('Entries') }}</span></a>
+        <section id="{{ id }}-texts">
+            <h3>{{ icon('type') }}{{ t('Texts') }}</h3>
+            <div class="fb-card fb-card--padded fb-stack">
+                {{ ui.field({label: t('Title'), name: 'title', id: id ~ '-texts-title', value: 'Bewerbung'}) }}
+            </div>
+        </section>
+        <section id="{{ id }}-fields" data-count="5">
+            <h3>{{ icon('list') }}{{ t('Fields') }}</h3>
+            <div class="fb-card fb-card--padded fb-stack">
+                {{ ui.field({label: t('Name'), name: 'name', id: id ~ '-fields-name', error: t('is required.')}) }}
+            </div>
+        </section>
+        <section id="{{ id }}-more">
+            <h3>{{ icon('settings') }}{{ t('More') }}</h3>
+            <div class="fb-card fb-card--padded fb-stack">
+                {{ ui.field({label: t('Description'), name: 'description', id: id ~ '-more-description', value: 'Für Bewerbungen', attrs: {'data-fb-changed': ''}}) }}
+            </div>
+        </section>
+    </fb-tab-panels>
+</div>
+
+<div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Segmented links') }}</p>
+    <div class="fb-cluster">{{ ui.segmented(t('Language'), [{label: 'Deutsch', href: '#', current: true}, {label: 'English', href: '#', attrs: {lang: 'en'}}]) }}{{ ui.status('published') }}</div>
+</div>
+
+<div class="fb-design-sample">
     <p class="fb-design-sample__title">{{ t('Dialog') }}</p>
     <div class="fb-dialog fb-dialog--static" role="dialog" aria-labelledby="{{ id }}-dialog-title" aria-modal="false">
         <div class="fb-dialog__body">

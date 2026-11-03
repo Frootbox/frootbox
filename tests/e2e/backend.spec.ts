@@ -98,3 +98,30 @@ test('reserves /cms in front of the pages', async ({ request }) => {
     expect(response.headers()['cache-control']).toBe('no-store');
     expect(response.headers()['x-frootbox-cache']).toBeUndefined();
 });
+
+test('shows tab panels with their states on the design page', async ({ page }) => {
+    await signIn(page, '/cms/design');
+    const light = page.locator('[data-design-mode="light"]');
+    const bar = light.getByRole('tablist', { name: 'Teile des Formulars' });
+
+    // The bar comes from the headings of the parts (decision 0235).
+    await expect(bar.getByRole('tab')).toHaveCount(4);
+    await expect(bar.getByRole('tab', { name: /^Texte/ })).toHaveAttribute('aria-selected', 'true');
+    // A link is a tab to another screen, icons stand before the names (decision 0237).
+    await expect(bar.getByRole('tab', { name: 'Einsendungen 12' })).toHaveAttribute('aria-selected', 'false');
+    await expect(bar.locator('.fb-tabs__tab > .fb-icon')).toHaveCount(4);
+    await expect(bar.getByRole('tab', { name: /^Felder/ })).toHaveAccessibleName('Felder 5');
+    await expect(bar.getByRole('tab', { name: /^Felder/ })).toHaveAccessibleDescription('Fehler: 1');
+    await expect(bar.getByRole('tab', { name: /^Weiteres/ })).toHaveAccessibleDescription('Nicht gespeichert');
+
+    // fb-reveal on a field opens its part, e.g. from the summary of errors.
+    await page.evaluate(() => document.getElementById('design-light-fields-name')?.dispatchEvent(new CustomEvent('fb-reveal', { bubbles: true })));
+    await expect(bar.getByRole('tab', { name: /^Felder/ })).toHaveAttribute('aria-selected', 'true');
+    await expect(light.getByRole('tabpanel', { name: /^Felder/ })).toBeVisible();
+    await expect(page).toHaveURL(/#design-light-fields$/);
+
+    // Links in the look of a segmented control keep the open tab.
+    const languages = light.getByRole('navigation', { name: 'Sprache', exact: true });
+    await expect(languages.getByRole('link', { name: 'Deutsch' })).toHaveAttribute('aria-current', 'page');
+    await expect(languages.getByRole('link', { name: 'English' })).toHaveAttribute('href', /#design-light-fields$/);
+});

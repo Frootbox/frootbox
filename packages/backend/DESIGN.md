@@ -176,6 +176,7 @@ tables below. A test fails while they are behind.
 | `--fb-size-icon-sm` | `18px` | Small icons |
 | `--fb-size-avatar` | `36px` | Initials of the user |
 | `--fb-size-dot` | `8px` | Dot of a status |
+| `--fb-size-count` | `20px` | Height of a number on a tab |
 | `--fb-size-check` | `18px` | Checkboxes and radio buttons |
 | `--fb-size-sidebar` | `264px` | Width of the sidebar |
 | `--fb-size-content` | `1120px` | Widest content |
@@ -205,6 +206,7 @@ tables below. A test fails while they are behind.
 
 | Token | Value | Use |
 | --- | --- | --- |
+| `--fb-layer-sticky` | `10` | Bars that stay at the top while scrolling, e.g. of tab panels |
 | `--fb-layer-toast` | `20` | Toasts above the page |
 | `--fb-layer-dialog` | `30` | Dialogs above everything |
 | `--fb-layer-edit` | `2147483000` | Bar of the editing mode above every theme |
@@ -432,6 +434,86 @@ text 15 px semibold muted; the current one in `--fb-text` with a 3 px
 line in `--fb-accent` (`aria-current="page"`). The row scrolls sideways on
 narrow screens. `label` names the `<nav>` for screen readers.
 
+### Tab panels
+
+```twig
+<fb-tab-panels label="{{ t('Parts of the form') }}">
+    <a href="{{ entries }}" data-count="12">{{ icon('inbox') }}<span>{{ t('Entries') }}</span></a>
+    <section id="texts">
+        <h2>{{ icon('type') }}{{ t('Texts') }}</h2>
+        <div class="fb-card fb-card--padded fb-stack">…</div>
+    </section>
+    <section id="fields" data-count="{{ fields|length }}">
+        <h2>{{ t('Fields') }}</h2>
+        …
+    </section>
+</fb-tab-panels>
+```
+
+The parts of a long screen, one at a time (decision 0235). The web
+component builds the bar from its parts: every `<section>` has an `id`
+and a heading as its first child (`h2` on a screen), which becomes the
+tab and is then only read out. `data-count` shows a number on the tab.
+
+- The bar looks like the tabs above (48 px, 15 px semibold, 3 px line in
+  `--fb-accent`), stands on `--fb-bg` above the cards, spans the width
+  and stays at the top while scrolling (`--fb-layer-sticky`). On narrow
+  screens it scrolls sideways; the current tab stays in view.
+- A number (`.fb-tabs__count`, 20 px high, `--fb-surface-2`, on the
+  current tab `--fb-accent-soft`) counts e.g. the fields of a form.
+- A dot in `--fb-accent` (`.fb-tabs__dot`) says that a field in the part
+  is changed and not saved, like the status of a form. A number on
+  `--fb-danger` (`.fb-tabs__errors`) counts the fields with an error;
+  such a tab turns `--fb-danger-text`. Screen readers hear both as the
+  description of the tab ("Not saved", "Errors: 1"); its name stays the
+  visible text, e.g. "Fields 5".
+- Keyboard: `tablist`, `tab` and `tabpanel` with automatic selection.
+  Arrow left and right switch (swapped right to left), Home and End jump,
+  Tab goes into the part.
+- The tab is in the address (`#fields`, without an entry in the
+  history), so a reload, a link and `refresh` come back to it. Links with
+  `data-fb-keeps-tab` take it along, e.g. those of `ui.segmented`.
+- Hidden parts stay in the document: changing the tab loses no input,
+  and one `<fb-form>` around all parts sends all fields. Its summary of
+  errors then stands above the bar and names the tab of each field
+  ("Application · Email: …"); a link opens the tab and focuses the field.
+- Until the component runs, only the first part shows.
+- `fb-reveal` on an element inside opens its part. It fires
+  `fb-tab-change` with `detail.id`.
+- An icon in the heading of a part stands before the name on its tab,
+  18 px in the color of the text (decision 0237). The name always stays.
+  Icons are optional and the component takes them as they come; best
+  give all tabs of a bar an icon or none, mixed the tabs look of
+  different weight. They help with many tabs and on narrow screens, two
+  or three tabs need none.
+- A link `<a href>` among the parts is a tab to another screen, with
+  `data-count` and an icon like a part (decision 0237). So two screens
+  share one bar, e.g. a form and its entries: each shows its own parts
+  and links to those of the other (`…#fields`). The link is a `tab` that
+  is never selected; the arrows only move the focus to it, Enter and
+  Space follow it.
+
+Use tabs from about three groups that are edited apart, or when a screen
+gets longer than two screen heights: 2 to 6 tabs with names of one or two
+words, the most used first, deleting and rare things in "More" at the
+end, required fields of something new in the first tab. Each part saves
+itself with its own `<fb-form>`, or one form spans all parts with its
+buttons below them. Not for steps one after another, not for links
+between addresses (`ui.tabs`) and not for a choice (`.fb-segmented`).
+
+On a screen with tab panels, the language holds for all parts, so it is
+`ui.segmented` in the header before the status, not tabs in a card.
+
+### Segmented links
+
+`ui.segmented(label, [{label, href, current, attrs}])`
+
+Links in the look of `.fb-segmented` (`.fb-segmented--links`): 36 px
+high, 14 px semibold, the current one (`aria-current="page"`) on
+`--fb-surface` with `--fb-shadow-sm`. For the languages in the header of a
+screen with tab panels; the links keep the open tab. `label` names the
+`<nav>`.
+
 ### Dialog
 
 ```html
@@ -654,6 +736,8 @@ A form that edits something has three states:
   dialogs do not count. `refresh` keeps the values of other changed
   forms in the parts it loads again.
 - A script that sets a field fires `input` on it, so the form notices.
+- While a form is changed, its changed fields carry `data-fb-changed`,
+  e.g. for the dot on a tab of `<fb-tab-panels>`.
 - More than one changed form shows more than one primary button: each
   of them has to be saved.
 
@@ -1320,9 +1404,9 @@ viewBox, stroke 1.8, round caps and joins, no fill, `stroke="currentColor"`.
 
 Available: alert, arrow-down, arrow-up, briefcase, calendar, chart, check,
 chevron-down, clock, close, comment, copy, dashboard, external, file,
-grip, image, inbox, info, lock, menu, navigation, news, pages, palette,
-parent, pencil, plus, redirect, restore, search, settings, shield,
-sign-out, square, trash, users, video, warning.
+grip, image, inbox, info, list, lock, mail, menu, navigation, news, pages,
+palette, parent, pencil, plus, redirect, restore, search, settings,
+shield, sign-out, square, trash, type, users, video, warning.
 
 The bar of the editing mode runs on the website without Twig and keeps
 the paths of its icons in `resources/js/edit/icons.js`. An icon used in
@@ -1420,7 +1504,7 @@ field.
 `@frootbox/ui` exports `ThemeSwitch` (`<fb-theme-switch>`), `Form`
 (`<fb-form>`) with `formInput(form)`, `Tree` (`<fb-tree>`), `Navigation`
 (`<fb-navigation>`), `RichTextInput` (`<fb-rich-text>`), `ImageInput`
-(`<fb-image-input>`), `showToast(text)`, `runAction(name, input)` and
+(`<fb-image-input>`), `TabPanels` (`<fb-tab-panels>`), `showToast(text)`, `runAction(name, input)` and
 `refresh(ids)` for own components, and the helpers `generatePasswords()`,
 `bindSlugs()`, `bindFills()` and `localTimes()`, which `backend.js`
 starts on every page.

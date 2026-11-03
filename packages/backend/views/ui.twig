@@ -181,6 +181,15 @@
     </nav>
 {%- endmacro %}
 
+{# Links in the look of a segmented control, e.g. the languages in the header of a screen with tab panels (decision 0235). They keep the open tab. #}
+{% macro segmented(label, items) -%}
+    <nav class="fb-segmented fb-segmented--links" aria-label="{{ label }}">
+        {%- for item in items -%}
+            <a class="fb-segmented__item" href="{{ item.href }}" data-fb-keeps-tab{% if item.current ?? false %} aria-current="page"{% endif %}{{ _self.attributes(item.attrs ?? {}) }}>{{ item.label }}</a>
+        {%- endfor -%}
+    </nav>
+{%- endmacro %}
+
 {# What is missing and the way to the first entry. action: options of button(). #}
 {% macro empty(options) -%}
     {%- set o = {icon: 'inbox', title: '', text: null, action: null}|merge(options) -%}

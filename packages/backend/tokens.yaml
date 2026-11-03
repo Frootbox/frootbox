@@ -104,6 +104,7 @@ system:
     icon-sm: { value: 18px, use: "Small icons" }
     avatar: { value: 36px, use: "Initials of the user" }
     dot: { value: 8px, use: "Dot of a status" }
+    count: { value: 20px, use: "Height of a number on a tab" }
     check: { value: 18px, use: "Checkboxes and radio buttons" }
     sidebar: { value: 264px, use: "Width of the sidebar" }
     content: { value: 1120px, use: "Widest content" }
@@ -124,6 +125,7 @@ system:
     normal: { value: 200ms, use: "Dialogs and toasts" }
 
   layer:
+    sticky: { value: '10', use: "Bars that stay at the top while scrolling, e.g. of tab panels" }
     toast: { value: '20', use: "Toasts above the page" }
     dialog: { value: '30', use: "Dialogs above everything" }
     edit: { value: '2147483000', use: "Bar of the editing mode above every theme" }

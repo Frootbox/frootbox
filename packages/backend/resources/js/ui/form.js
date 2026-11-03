@@ -77,6 +77,24 @@ function valueAt(data, path) {
     return path.split('.').reduce((object, key) => object?.[key], data);
 }
 
+/** Whether formInput() sends the element. */
+function sent(element) {
+    return element.name !== '' && !element.name.startsWith('_') && !element.disabled && element.type !== 'submit' && element.type !== 'button';
+}
+
+/** The value of one field as text, to tell whether it changed. */
+function fieldValue(element) {
+    if (element.type === 'checkbox' || element.type === 'radio') {
+        return element.checked ? '1' : '0';
+    }
+
+    if (element.multiple) {
+        return [...element.selectedOptions].map((option) => option.value).join('\n');
+    }
+
+    return element.value ?? '';
+}
+
 /** {user.id} in next="/cms/users/{user.id}" from the result. */
 function fill(template, data) {
     return template.replace(/\{([a-zA-Z0-9_.]+)\}/g, (match, path) => {
@@ -189,10 +207,16 @@ export function formInput(form) {
  * loads and after success. While the input differs, it has the attribute
  * dirty, its save buttons (data-fb-saves, decisions 0130 and 0131) turn
  * from tonal to primary and a status next to them says so. Fields changed by a script count once it fires "input".
+ * While dirty, the changed fields carry data-fb-changed, e.g. for the
+ * dot on a tab of <fb-tab-panels> (decision 0235).
  *
  * A form in a <dialog> closes it after success.
  * Errors appear at their field and as a summary at the top, which gets
- * the focus. Fires "fb-form-input" with detail.input before sending (a
+ * the focus. A link in the summary fires "fb-reveal" on its field before
+ * focusing it, so a hidden tab opens; a field in a tab of the form is
+ * named with that tab ("Application · Email: …").
+ *
+ * Fires "fb-form-input" with detail.input before sending (a
  * listener may replace it), "fb-form-success" with detail.data
  * (cancelable: then nothing else happens) and "fb-form-error" with
  * detail.problem.
@@ -224,6 +248,7 @@ export class Form extends LitElement {
         this.busy = false;
         this.dirty = false;
         this.saved = null;
+        this.values = new Map();
         this.onSubmit = this.onSubmit.bind(this);
         this.onChange = this.onChange.bind(this);
     }
@@ -267,6 +292,7 @@ export class Form extends LitElement {
     /** Takes the current input as the saved state, e.g. after loading or saving. */
     remember() {
         this.saved = this.form ? JSON.stringify(formInput(this.form)) : null;
+        this.values = new Map([...(this.form?.elements ?? [])].map((element) => [element, fieldValue(element)]));
         this.setDirty(false);
     }
 
@@ -322,6 +348,10 @@ export class Form extends LitElement {
         for (const button of buttons) {
             button.classList.toggle('fb-button--primary', dirty);
             button.classList.toggle('fb-button--tonal', !dirty);
+        }
+
+        for (const element of this.form?.elements ?? []) {
+            element.toggleAttribute('data-fb-changed', dirty && sent(element) && this.values.get(element) !== fieldValue(element));
         }
 
         if (buttons.length === 0) {
@@ -487,10 +517,10 @@ export class Form extends LitElement {
                 // Below the pointer, the last name says what is meant, e.g. "level".
                 const text = withName(this.localPointer(pointer ?? '/').slice(element.dataset.fbPointer.length), message);
                 this.markField(element, text);
-                items.push({ text: this.labelOf(element) + ': ' + text, id: element.id });
+                items.push({ text: this.placeOf(element) + this.labelOf(element) + ': ' + text, id: element.id });
             } else if (element.getAttribute('aria-invalid') !== 'true') {
                 this.markField(element, message);
-                items.push({ text: this.labelOf(element) + ': ' + message, id: element.id });
+                items.push({ text: this.placeOf(element) + this.labelOf(element) + ': ' + message, id: element.id });
             }
         }
 
@@ -524,7 +554,9 @@ export class Form extends LitElement {
                     link.textContent = item.text;
                     link.addEventListener('click', (event) => {
                         event.preventDefault();
-                        document.getElementById(item.id)?.focus();
+                        const target = document.getElementById(item.id);
+                        target?.dispatchEvent(new CustomEvent('fb-reveal', { bubbles: true }));
+                        target?.focus();
                     });
                     entry.append(link);
                 } else {
@@ -586,6 +618,13 @@ export class Form extends LitElement {
         // A group of checkboxes shows the error once, below the group.
         const container = element.closest('.fb-fieldset') ?? element.closest('.fb-field, .fb-check') ?? element.parentElement;
         container.append(error);
+    }
+
+    /** "Application · " for a field in a tab of this form (decision 0235), else nothing. */
+    placeOf(element) {
+        const panel = element.closest('[data-fb-panel]');
+
+        return panel && this.form.contains(panel) ? panel.dataset.fbPanel + ' · ' : '';
     }
 
     labelOf(element) {

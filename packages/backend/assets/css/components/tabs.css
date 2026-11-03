@@ -1,4 +1,5 @@
-/* Tabs, e.g. for the languages of a page. */
+/* Tabs, e.g. for the languages of a page, and the bar of <fb-tab-panels>
+   (decision 0235). */
 
 .fb-tabs {
     display: flex;
@@ -10,6 +11,7 @@
 .fb-tabs__tab {
     display: inline-flex;
     align-items: center;
+    gap: var(--fb-space-2);
     min-height: var(--fb-size-tab);
     padding: 0 var(--fb-space-1);
     border: 0;
@@ -37,4 +39,92 @@
 .fb-card > .fb-tabs {
     padding-inline: var(--fb-space-5);
     margin-bottom: var(--fb-space-5);
+}
+
+/* An icon before the name (decision 0237), optional: best on all tabs
+   of a bar or on none. */
+.fb-tabs__tab .fb-icon {
+    width: var(--fb-size-icon-sm);
+    height: var(--fb-size-icon-sm);
+}
+
+/* A number on a tab, e.g. the fields of a form. */
+.fb-tabs__count {
+    min-width: var(--fb-size-count);
+    padding: 0 var(--fb-space-2);
+    border-radius: var(--fb-radius-full);
+    background: var(--fb-surface-2);
+    color: var(--fb-text-muted);
+    font-size: var(--fb-text-xs);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--fb-size-count);
+    text-align: center;
+}
+
+.fb-tabs__tab[aria-selected="true"] .fb-tabs__count {
+    background: var(--fb-accent-soft);
+    color: var(--fb-accent-text);
+}
+
+/* Something in the part is not saved, like the status of a form. */
+.fb-tabs__dot {
+    width: var(--fb-size-dot);
+    height: var(--fb-size-dot);
+    border-radius: var(--fb-radius-full);
+    background: var(--fb-accent);
+}
+
+/* The number of fields with an error in the part. */
+.fb-tabs__errors {
+    min-width: var(--fb-size-count);
+    padding: 0 var(--fb-space-2);
+    border-radius: var(--fb-radius-full);
+    background: var(--fb-danger);
+    color: var(--fb-on-danger);
+    font-size: var(--fb-text-xs);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--fb-weight-bold);
+    line-height: var(--fb-size-count);
+    text-align: center;
+}
+
+.fb-tabs__dot[hidden],
+.fb-tabs__errors[hidden] {
+    display: none;
+}
+
+.fb-tabs__tab[data-invalid] {
+    color: var(--fb-danger-text);
+}
+
+/* Tab panels: the parts of a long screen, one at a time. */
+fb-tab-panels {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fb-space-6);
+}
+
+fb-tab-panels > section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fb-space-6);
+}
+
+fb-tab-panels > section[hidden],
+fb-tab-panels:not(:defined) > section ~ section,
+fb-tab-panels:not(:defined) > a {
+    display: none;
+}
+
+/* The bar stays at the top of the page while a long part scrolls. */
+.fb-tab-panels__bar {
+    position: sticky;
+    top: 0;
+    z-index: var(--fb-layer-sticky);
+    background: var(--fb-bg);
+    scrollbar-width: none;
+}
+
+.fb-tab-panels__bar::-webkit-scrollbar {
+    display: none;
 }

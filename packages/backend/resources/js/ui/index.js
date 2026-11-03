@@ -19,3 +19,4 @@ export { Search } from './search.js';
 export { Help, proseStyles } from './help.js';
 export { RichTextInput } from './rich-text.js';
 export { ImageInput } from './image-input.js';
+export { TabPanels } from './tab-panels.js';

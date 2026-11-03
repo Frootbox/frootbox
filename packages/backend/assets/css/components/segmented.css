@@ -1,4 +1,6 @@
-/* A choice of a few options in one row, e.g. the appearance. */
+/* A choice of a few options in one row, e.g. the appearance, or links in
+   that look, e.g. the languages in the header of a screen with tab
+   panels (ui.segmented, decision 0235). */
 
 .fb-segmented {
     display: flex;
@@ -25,7 +27,20 @@
     color: var(--fb-text);
 }
 
-.fb-segmented__item[aria-pressed="true"] {
+.fb-segmented--links {
+    flex: none;
+}
+
+.fb-segmented--links .fb-segmented__item {
+    padding: 0 var(--fb-space-3);
+    font-size: var(--fb-text-sm);
+    font-weight: var(--fb-weight-semibold);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.fb-segmented__item[aria-pressed="true"],
+.fb-segmented__item[aria-current="page"] {
     background: var(--fb-surface);
     color: var(--fb-text);
     box-shadow: var(--fb-shadow-sm);
