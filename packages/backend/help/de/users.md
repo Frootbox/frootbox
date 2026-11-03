@@ -10,6 +10,11 @@ Medien, ein Administrator auch Benutzer.
 Eine Rolle lässt sich nur für einen Zweig der Sitemap vergeben. So ein
 Benutzer sieht den Weg zu seinen Seiten, ändert aber nichts außerhalb.
 
+Eine Rolle lässt sich auch für eine Verwaltung von News, Terminen,
+Stellen oder Personen vergeben, etwa nur die Stellen der Ausbildung. So
+ein Benutzer sieht nur die Einträge dieser Verwaltung, legt sie dort an
+und veröffentlicht sie, verschiebt aber nichts in eine andere.
+
 ## Deaktivieren statt löschen
 
 Ein deaktivierter Benutzer kann sich nicht mehr anmelden; was er getan

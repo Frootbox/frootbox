@@ -16,6 +16,9 @@ use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Auth\Scope;
 use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Page\ShowPageTree;
+use Frootbox\Core\Plugin\ListAllSpaces;
+use Frootbox\Core\Plugin\SpaceScope;
+use Frootbox\Core\Plugin\SpaceScopes;
 use Frootbox\Core\User\ListRoles;
 use Frootbox\Core\User\ShowUser;
 use Psr\Http\Message\ResponseInterface;
@@ -52,8 +55,11 @@ final readonly class UserHandler implements RequestHandlerInterface
         $profile = $this->runner->ask(new ShowUser(is_numeric($id) ? (int) $id : 0));
         $global = [];
         $scoped = [];
+        $inSpaces = [];
 
         $tree = $this->tree();
+        $spaces = $this->runner->ask(new ListAllSpaces());
+        $titles = array_column(array_map(static fn(SpaceScope $space): array => [$space->scope, $space->title], $spaces), 1, 0);
 
         foreach ($profile->roles as $assignment) {
             if (null === $assignment['scope']) {
@@ -62,8 +68,16 @@ final readonly class UserHandler implements RequestHandlerInterface
                 continue;
             }
 
-            // The title of the page, null if it is gone or of another kind.
             $scope = Scope::fromString($assignment['scope']);
+
+            // Roles within a space of a plugin (decision 0245), with its name; null if it is gone.
+            if (null !== $scope && SpaceScopes::KIND === $scope->kind) {
+                $inSpaces[] = [...$assignment, 'space' => $titles[$assignment['scope']] ?? null];
+
+                continue;
+            }
+
+            // The title of the page, null if it is gone or of another kind.
             $page = null !== $scope && 'page' === $scope->kind && null !== $tree && $tree->has($scope->id) ? $tree->row($scope->id) : null;
             $scoped[] = [...$assignment, 'page' => null === $page ? null : ['title' => $page['title'], 'path' => $page['path']]];
         }
@@ -74,6 +88,8 @@ final readonly class UserHandler implements RequestHandlerInterface
             'titles' => RoleTitles::of($roles),
             'assigned' => $global,
             'scoped' => $scoped,
+            'inSpaces' => $inSpaces,
+            'spaces' => array_map(static fn(SpaceScope $space): array => ['value' => $space->scope, 'label' => $space->title], $spaces),
             'pages' => null === $tree ? [] : array_map(static fn(array $option): array => [...$option, 'value' => 'page:' . $option['value']], $tree->options()),
             'yourself' => $this->context->get()->actor->id === $profile->user->id,
         ]);

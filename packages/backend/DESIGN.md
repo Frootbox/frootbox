@@ -703,7 +703,9 @@ answer:
 - Events: `fb-form-input` (`detail.input` can be replaced before
   sending), `fb-form-success` (cancelable) and `fb-form-error`.
 - Hide controls the user may not use: `{% if can('user.create') %}`.
-  The action checks again.
+  The action checks again. For one target, e.g. a space for a role
+  only there: `can_within('frootbox/jobs/job.create',
+  'space:frootbox/jobs/job:default')`.
 
 `.fb-form__actions` holds the buttons at the end, the primary one first,
 12 px apart. `.fb-fieldset` with `.fb-fieldset__legend` groups

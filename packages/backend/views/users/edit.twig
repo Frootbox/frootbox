@@ -97,6 +97,51 @@
         {% endif %}
     </section>
     {% endif %}
+    {% set may_assign_space = can('user.assign-role') and spaces is not empty %}
+    {% if inSpaces is not empty or may_assign_space %}
+    <section class="fb-card" id="user-spaces" aria-labelledby="user-spaces-title">
+        <div class="fb-card__header">
+            <div class="fb-stack fb-stack--sm">
+                <h2 class="fb-heading-4" id="user-spaces-title" tabindex="-1" data-fb-focus>{{ t('Roles within spaces') }}</h2>
+                <p class="fb-muted">{{ t('A role here applies only to the entries of the space, e.g. the jobs of the apprenticeships. Categories and the spaces themselves need a role above.') }}</p>
+            </div>
+        </div>
+        {% if inSpaces is not empty %}
+        <ul class="fb-list">
+            {%- for assignment in inSpaces %}
+            <li class="fb-list__item">
+                <div class="fb-list__main">
+                    <span class="fb-list__title">{{ titles[assignment.role] ?? assignment.role }}</span>
+                    <span class="fb-list__meta">{{ assignment.space ?? t('The space is gone.') }}</span>
+                </div>
+                {% if can('user.remove-role') %}
+                <fb-form action="user.remove-role" refresh="user-spaces" done="{{ t('The role is taken away.') }}">
+                    <form novalidate>
+                        <input type="hidden" name="userId" value="{{ user.id }}" data-type="number">
+                        <input type="hidden" name="role" value="{{ assignment.role }}">
+                        <input type="hidden" name="scope" value="{{ assignment.scope }}">
+                        {{ ui.button({label: t('Take away'), type: 'submit', variant: 'ghost', small: true}) }}
+                    </form>
+                </fb-form>
+                {% endif %}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+        {% if may_assign_space %}
+        <div class="fb-card__body">
+            <fb-form action="user.assign-role" refresh="user-spaces" done="{{ t('The role is given.') }}">
+                <form class="fb-stack" novalidate>
+                    <input type="hidden" name="userId" value="{{ user.id }}" data-type="number">
+                    {{ ui.select({label: t('Role'), name: 'role', id: 'user-space-role', options: roles|map(role => {value: role.name, label: role.title})}) }}
+                    {{ ui.select({label: t('Space'), name: 'scope', id: 'user-space-scope', options: spaces}) }}
+                    <div class="fb-form__actions">{{ ui.button({label: t('Give the role'), type: 'submit', variant: 'outline'}) }}</div>
+                </form>
+            </fb-form>
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
 
     {% if can('user.set-password') %}
     <section class="fb-card" aria-labelledby="fb-set-password-title">

@@ -440,6 +440,11 @@ The role is given.: Die Rolle ist vergeben.
 Role: Rolle
 With all pages below it.: Mit allen Seiten darunter.
 Give the role: Rolle vergeben
+
+# Roles within spaces (decision 0245)
+Roles within spaces: Rollen in Verwaltungen
+A role here applies only to the entries of the space, e.g. the jobs of the apprenticeships. Categories and the spaces themselves need a role above.: Eine Rolle hier gilt nur für die Einträge der Verwaltung, etwa die Stellen der Ausbildung. Für Kategorien und die Verwaltungen selbst braucht es eine Rolle oben.
+The space is gone.: Die Verwaltung gibt es nicht mehr.
 There is no kind of scope "{scope}".: Für „{scope}“ lassen sich keine Rollen vergeben.
 There is nothing for the scope "{scope}".: „{scope}“ gibt es nicht.
 "Editor bar": "Redaktionsleiste"

@@ -15,6 +15,7 @@ use Frootbox\Core\Action\CurrentContext;
 use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Action\Schema\InputMapper;
 use Frootbox\Core\Auth\Gate;
+use Frootbox\Core\Auth\Scope;
 use Frootbox\Core\Category\CategoryItem;
 use Frootbox\Core\Category\ListCategories;
 use Frootbox\Core\Category\ListGroups;
@@ -69,6 +70,7 @@ final class TwigExtension extends AbstractExtension
             new TwigFunction('path', $this->router->path(...)),
             new TwigFunction('icon', $this->icon(...), ['is_safe' => ['html']]),
             new TwigFunction('can', $this->can(...)),
+            new TwigFunction('can_within', $this->canWithin(...)),
             new TwigFunction('category_choices', $this->categoryChoices(...)),
             new TwigFunction('tag_choices', $this->tagChoices(...)),
             new TwigFunction('object_fields', $this->objectFields(...)),
@@ -167,6 +169,22 @@ final class TwigExtension extends AbstractExtension
     }
 
     /**
+     * Whether the user may run an action on one target, e.g.
+     * can_within('frootbox/jobs/job.create', 'space:frootbox/jobs/job:default')
+     * for the button to create a job in a space (decision 0245).
+     */
+    public function canWithin(string $name, string $scope): bool
+    {
+        $target = Scope::fromString($scope);
+
+        if (!$this->catalog->has($name) || null === $target) {
+            return false;
+        }
+
+        return $this->gate->allowsOn($this->context->get()->actor, $this->catalog->get($name), [$target]);
+    }
+
+    /**
      * An icon of assets/icons/ as inline SVG, hidden from screen readers:
      * the text next to it or the label of its button says what it means.
      */
@@ -209,15 +227,16 @@ final class TwigExtension extends AbstractExtension
     }
 
     /**
-     * The spaces of a plugin to move an object to (decision 0244), each
-     * with the page that shows it; empty with only the default one.
+     * The spaces of a plugin to move an object to (decision 0244), only
+     * those the user may change objects in (decision 0245); empty with
+     * fewer than two.
      *
      * @return list<array{value: string, label: string}>
      */
     public function spaceChoices(string $type): array
     {
         try {
-            $spaces = $this->runner->ask(new ListSpaces($type))->items;
+            $spaces = $this->runner->ask(new ListSpaces($type, $type . '.update'))->items;
         } catch (AccessDeniedException) {
             return [];
         }
