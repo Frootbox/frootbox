@@ -10,7 +10,8 @@ import { action, signIn } from './admin';
 // it in the settings of a page, also a new space; the objects of that
 // space get their addresses below the page, and the screen of the module
 // shows a tab for each space. With the switch for categories each
-// category gets a page of its own below it (decision 0243).
+// category gets a page of its own below it (decision 0243). An entry
+// moves to another space in its form, with publishing (decision 0244).
 
 test('an admin lets a new page show a new space of the jobs', async ({ page }) => {
     const unique = `${Date.now()}`;
@@ -117,4 +118,47 @@ test('the categories of a space get pages of their own with the switch', async (
     const results = await new AxeBuilder({ page: visitor }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
     expect(results.violations.flatMap((violation) => violation.nodes.map((node) => `${violation.id}: ${node.target.join(' ')}`))).toEqual([]);
     await context.close();
+});
+
+test('a job moves to another space and its old address leads there', async ({ page }) => {
+    const unique = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
+    await signIn(page, '/cms/pages');
+    const start = await page.locator('#page-tree .fb-tree__item').first().getAttribute('data-id');
+    // Two new pages with a new space each, so the jobs of the demo stay as they are.
+    const pages: Record<string, { slug: string; space: string }> = {};
+
+    for (const name of ['Praktikum', 'Lehre']) {
+        const slug = `${name.toLowerCase()}-${unique}`;
+        const created = await action(page, 'page.create', {
+            layout: 'frootbox/theme-base/Page',
+            parentId: start,
+            translations: { de: { title: name, slug, content: { fields: { title: name } } } },
+        });
+        expect(created.status).toBe(200);
+        const id: string = created.body.data.id;
+        const assigned = await action(page, 'plugin.assign', { id, type: 'frootbox/jobs/job', newSpace: `${name} ${unique}` });
+        expect(assigned.status).toBe(200);
+        expect((await action(page, 'page.publish', { ids: [id] })).status).toBe(200);
+        pages[name] = { slug, space: assigned.body.data.draft.plugin.space };
+    }
+
+    const job = await action(page, 'frootbox/jobs/job.create', { translations: { de: { title: `Röster ${unique}` } }, space: pages.Praktikum.space });
+    expect(job.status).toBe(200);
+    const jobId: string = job.body.data.id;
+    expect((await action(page, 'frootbox/jobs/job.publish', { ids: [jobId] })).status).toBe(200);
+
+    await page.goto(`/cms/vacancies/${jobId}`);
+    const space = page.getByRole('combobox', { name: 'Verwaltung', exact: true });
+    await expect(space.locator('option:checked')).toHaveText(`Praktikum ${unique}`);
+    await space.selectOption({ label: `Lehre ${unique}` });
+    const saved = page.waitForResponse((response) => response.url().endsWith('/frootbox/jobs/job.update') && response.ok());
+    await space.locator('xpath=ancestor::form').getByRole('button', { name: 'Speichern' }).click();
+    await saved;
+    expect((await action(page, 'frootbox/jobs/job.publish', { ids: [jobId] })).status).toBe(200);
+
+    const visitor = await page.context().browser()!.newPage();
+    await visitor.goto(`/${pages.Praktikum.slug}/roester-${unique}`);
+    await expect(visitor).toHaveURL(`/${pages.Lehre.slug}/roester-${unique}`);
+    await expect(visitor.getByRole('heading', { level: 1 })).toHaveText(`Röster ${unique}`);
+    await visitor.close();
 });

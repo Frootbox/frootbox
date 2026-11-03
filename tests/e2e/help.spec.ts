@@ -47,8 +47,8 @@ test('the search finds a help page', async ({ page }) => {
     await page.keyboard.press(KEYS);
     const dialog = page.getByRole('dialog', { name: 'Suchen' });
     await dialog.getByRole('combobox').fill('sitemap verschieben');
-    await expect(dialog.getByRole('group', { name: 'Hilfe' }).getByRole('option', { name: /Seiten/ })).toBeVisible();
-    await dialog.getByRole('group', { name: 'Hilfe' }).getByRole('option', { name: /Seiten/ }).click();
+    await expect(dialog.getByRole('group', { name: 'Hilfe' }).getByRole('option', { name: /^Seiten/ })).toBeVisible();
+    await dialog.getByRole('group', { name: 'Hilfe' }).getByRole('option', { name: /^Seiten/ }).click();
     await expect(page).toHaveURL('/cms/help/frootbox/backend/pages');
 });
 
