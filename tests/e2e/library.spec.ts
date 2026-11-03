@@ -168,6 +168,39 @@ designTest('shows a video with poster that starts only on request', async ({ pag
     expect(await video.evaluate((element: HTMLVideoElement) => [element.paused, Math.round(element.duration)])).toEqual([true, 4]);
 });
 
+designTest('loads a video of another provider only after consent', async ({ page }) => {
+    // Nothing reaches the providers in the test.
+    await page.route(/player\.vimeo\.com|openstreetmap\.org/, (route) => route.fulfill({ contentType: 'text/html', body: '<p>Video</p>' }));
+    await page.goto(DESIGN);
+    const embed = page.locator('fb-external[service="vimeo"]').first();
+    const settings = page.getByRole('button', { name: 'Datenschutz-Einstellungen' });
+
+    await expect(embed).toContainText('Dieser Inhalt kommt von Vimeo.');
+    await expect(embed.locator('iframe')).toHaveCount(0);
+    await expect(settings).toBeHidden();
+
+    // Agree once and for every video of the service (decisions 0224, 0225).
+    await embed.getByRole('checkbox', { name: 'Vimeo immer laden' }).check();
+    await embed.getByRole('button', { name: 'Inhalt laden' }).click();
+    await expect(embed.locator('iframe')).toHaveAttribute('src', 'https://player.vimeo.com/video/76979871?dnt=1');
+    await expect(embed).toBeFocused();
+
+    await page.reload();
+    await expect(embed.locator('iframe')).toHaveCount(1);
+
+    // Taken back in the footer, the next page asks again.
+    await settings.click();
+    const dialog = page.getByRole('dialog', { name: 'Datenschutz-Einstellungen' });
+    await dialog.getByRole('checkbox', { name: /Vimeo/ }).uncheck();
+    await expect(dialog.getByRole('checkbox', { name: /YouTube/ })).toBeHidden();
+    await dialog.getByRole('button', { name: 'Fertig' }).click();
+    await expect(settings).toBeHidden();
+
+    await page.reload();
+    await expect(embed.locator('iframe')).toHaveCount(0);
+    await expect(embed.getByRole('button', { name: 'Inhalt laden' })).toBeVisible();
+});
+
 test('jumps to a section and keeps the jump bar in view', async ({ page }) => {
     await page.goto(PAGES.coffee);
     const bar = page.getByRole('navigation', { name: 'Auf dieser Seite' });

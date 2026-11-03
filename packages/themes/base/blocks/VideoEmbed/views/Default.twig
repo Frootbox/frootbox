@@ -1,0 +1,20 @@
+{# frootbox
+title: Video from YouTube or Vimeo
+description: A video at YouTube or Vimeo, with a caption if you like. It loads only once the visitor agrees, because it comes from another provider. Enter the address of the video in the settings. For a video of your own, use the video widget.
+group: media
+keywords: [Film, Clip, Movie, Player, YouTube, Vimeo, Embed]
+options:
+  url: { type: text, label: Address of the video, description: 'The address at YouTube or Vimeo, e.g. "https://www.youtube.com/watch?v=…".' }
+fields:
+  caption: { type: text, label: Caption, optional: true, maxLength: 200 }
+# Content for the design page (decision 0206).
+examples:
+  - options: { url: 'https://vimeo.com/76979871' }
+    fields:
+      caption: 'A video at Vimeo'
+#}
+{% set video = video_embed(options.url, {title: t('Video') ~ (value('caption') ? ': ' ~ value('caption'))}) %}
+<figure class="base-video-embed">
+  {% if video %}{{ video }}{% elseif editing() %}<p class="base-video-embed__missing">{{ t('Enter the address of the video at YouTube or Vimeo in the settings of the block.') }}</p>{% endif %}
+  {% if value('caption') %}<figcaption class="base-video-embed__caption">{{ field('caption') }}</figcaption>{% endif %}
+</figure>

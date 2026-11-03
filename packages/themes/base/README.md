@@ -28,7 +28,7 @@ Every block has examples, so all of them show on the design page
 | Headers | `Hero` (variants `Default`, `Split`, `Background`), `PageHeader` |
 | Headings | widget `Heading`; its level follows from where it stands (decision 0129) |
 | Texts | `TextWithHeading` (`Default`, `Wide`), `Quote`, `Notice`, `Table`, widget `Text` |
-| Images and media | `ImageWithText` (`Default`, `End`), `Gallery`, `Slider`, `Video` (`Default`, `Narrow`), widget `Image` |
+| Images and media | `ImageWithText` (`Default`, `End`), `Gallery`, `Slider`, `Video` (`Default`, `Narrow`), `VideoEmbed` (YouTube or Vimeo after consent), `Map` (OpenStreetMap or Google Maps after consent), widget `Image` |
 | Teasers | `Cards`, `LinkList`, `Logos`, widget `Button` |
 | Callouts | `CallToAction`, `KeyFigures` |
 | Lists | `Features`, `Steps`, `Accordion` (`Default`, `Faq`), `Pricing`, `Testimonials`, `Downloads`, `Contact` |

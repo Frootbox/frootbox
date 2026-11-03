@@ -1,0 +1,25 @@
+{# frootbox
+title: Map
+description: A place on a map of OpenStreetMap or Google Maps, with the address below it if you like. The map loads only once the visitor agrees, because it comes from another provider. Enter the coordinates in the settings, e.g. copied from the map.
+group: media
+keywords: [Map, Location, Directions, Address, OpenStreetMap, Google Maps]
+options:
+  provider: { type: choice, label: Map, choices: { openstreetmap: OpenStreetMap, google-maps: Google Maps }, default: openstreetmap }
+  coordinates: { type: text, label: Coordinates, description: 'Latitude and longitude, e.g. "53.5444, 9.9663". Google Maps can do with the address.' }
+  zoom: { type: number, label: Zoom, description: 'From 3 (a country) to 19 (a house).', min: 3, max: 19, default: 16 }
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "How to find us" }
+  address: { type: text, label: Address, optional: true, multiline: true, maxLength: 300, placeholder: "Street, postcode and town" }
+# Content for the design page (decision 0206).
+examples:
+  - options: { coordinates: '53.5444, 9.9663' }
+    fields:
+      title: 'How to find us'
+      address: "Harbour Street 12\n20457 Hamburg"
+#}
+{% set map = map_embed({provider: options.provider, coordinates: options.coordinates, zoom: options.zoom, address: value('address')|replace({"\n": ', '}), title: t('Map') ~ (value('address') ? ': ' ~ value('address')|replace({"\n": ', '}))}) %}
+<div class="base-map">
+  {{ heading('title', 0, {class: 'base-map__title'}) }}
+  {% if map %}{{ map }}{% elseif editing() %}<p class="base-map__missing">{{ t('Enter the coordinates in the settings of the block, e.g. "53.5444, 9.9663". Google Maps can do with the address.') }}</p>{% endif %}
+  {% if value('address') %}<p class="base-map__address">{{ field('address') }}</p>{% endif %}
+</div>
