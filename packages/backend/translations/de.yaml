@@ -1281,3 +1281,5 @@ Apply the presets: Vorgaben übernehmen
 "must be an object with a value by language, e.g. {\"{language}\": …}.": "braucht einen Wert je Sprache, z. B. {\"{language}\": …}."
 "must be an object with a value by name of the field, see object.fields.": "braucht einen Wert je Name des Felds, siehe object.fields."
 "There is no language \"{language}\". Languages: {languages}.": "Die Sprache „{language}“ gibt es nicht. Sprachen: {languages}."
+'{type} "{title}"': '{type} „{title}“'
+'The page is published. The changes to {objects} stay open: you may not publish them.': 'Die Seite ist veröffentlicht. Die Änderungen an {objects} bleiben offen: Du darfst sie nicht veröffentlichen.'

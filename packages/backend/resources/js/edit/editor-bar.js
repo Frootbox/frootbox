@@ -1021,11 +1021,13 @@ export class EditorBar extends LitElement {
         const media = this.mediaDrafts.length > 0;
         // Media drafts count for those who may publish them; others publish only the page.
         const mediaOpen = media && this.config.media.publish;
+        // So do the drafts of objects whose fields the page shows (decision 0241).
+        const objectsOpen = this.objectDrafts.some((object) => object.publish);
 
         return {
-            status: page.status === 'published' && (site || mediaOpen) ? 'changed' : page.status,
-            canPublish: page.canPublish || (site && this.config.site.publish) || mediaOpen,
-            canDiscard: page.canDiscard || (site && this.config.site.discard) || (media && this.config.media.discard),
+            status: page.status === 'published' && (site || mediaOpen || objectsOpen) ? 'changed' : page.status,
+            canPublish: page.canPublish || (site && this.config.site.publish) || mediaOpen || objectsOpen,
+            canDiscard: page.canDiscard || (site && this.config.site.discard) || (media && this.config.media.discard) || this.objectDrafts.some((object) => object.discard),
         };
     }
 
@@ -1354,6 +1356,11 @@ export class EditorBar extends LitElement {
         return Boolean(this.config?.site?.draft);
     }
 
+    /** The objects whose fields the page shows that have a draft: [{ target, type, id, name, publish, discard }] (decision 0241). */
+    get objectDrafts() {
+        return (this.config?.objects ?? []).filter((object) => object.draft);
+    }
+
     /** The media the page uses that have a draft: [{ id, name, elsewhere }] (decision 0147). */
     get mediaDrafts() {
         return this.config?.media?.drafts ?? [];
@@ -1441,12 +1448,34 @@ export class EditorBar extends LitElement {
             this.config = { ...this.config, media: { ...media, drafts: [] } };
         }
 
+        // The objects in one call per type, e.g. "frootbox/news/article.publish" (decision 0241).
+        const types = new Map();
+
+        for (const object of this.objectDrafts.filter((item) => item.publish)) {
+            types.set(object.type, [...(types.get(object.type) ?? []), object]);
+        }
+
+        for (const [type, objects] of types) {
+            const response = await this.action(`${type}.publish`, { ids: objects.map((object) => object.id) });
+
+            if (!response?.ok) {
+                this.busy = false;
+                this.fail(response, true);
+
+                return;
+            }
+
+            this.objectsSettled(objects);
+        }
+
         this.busy = false;
         this.forget();
-        // Without the right to publish media, their drafts stay open; the bar names them.
+        // Without the right to publish media or objects, their drafts stay open; the bar names them.
         this.message = this.mediaDrafts.length > 0
             ? { tone: 'info', text: this.labels.mediaStayOpen.replace('{images}', this.imageNames(this.mediaDrafts)) }
-            : { tone: 'info', text: this.labels.publishDone };
+            : this.objectDrafts.length > 0
+                ? { tone: 'info', text: this.labels.objectsStayOpen.replace('{objects}', this.imageNames(this.objectDrafts)) }
+                : { tone: 'info', text: this.labels.publishDone };
     }
 
     /** Discards the drafts of the page, of the fields of the website and of the media the page uses. */
@@ -1457,6 +1486,7 @@ export class EditorBar extends LitElement {
             ...(page.canDiscard ? [['page.discard', { id: page.id }]] : []),
             ...(this.siteDraft && this.config.site.discard ? [['site.discard', {}]] : []),
             ...(this.config.media?.discard ? this.mediaDrafts.map((draft) => ['media.discard', { id: draft.id }]) : []),
+            ...this.objectDrafts.filter((object) => object.discard).map((object) => [`${object.type}.discard`, { id: object.id }]),
         ];
 
         for (const [name, input] of steps) {
@@ -1512,16 +1542,29 @@ export class EditorBar extends LitElement {
         return { ok: false, status: response?.status ?? 0 };
     }
 
+    /** Objects whose drafts are published now. */
+    objectsSettled(objects) {
+        const done = new Set(objects.map((object) => object.target));
+        this.config = { ...this.config, objects: (this.config.objects ?? []).map((object) => done.has(object.target) ? { ...object, draft: false } : object) };
+    }
+
     /**
-     * After a saved change: the page, or with $site the fields of the
-     * website, have a draft now, which may be undone.
+     * After a saved change: the page, with $site the fields of the
+     * website, or with $object that object (decision 0241), have a draft
+     * now, which may be undone.
      */
-    changed(entry, site = false) {
+    changed(entry, site = false, object = null) {
         const page = this.config.page;
 
         if (entry) {
             this.undo = [...this.undo, entry];
             writeSession(this.undoKey, this.undo);
+        }
+
+        if (object) {
+            this.config = { ...this.config, objects: (this.config.objects ?? []).map((item) => item.target === object ? { ...item, draft: true } : item) };
+
+            return;
         }
 
         if (site) {

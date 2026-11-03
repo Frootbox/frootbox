@@ -21,7 +21,7 @@ function field(container, path, site) {
     const selector = `[data-fb-field="${CSS.escape(path)}"]`;
 
     return [...(container ?? document).querySelectorAll(selector)]
-        .find((element) => element.hasAttribute('data-fb-site') === site && (site || owner(element) === container)) ?? null;
+        .find((element) => !element.hasAttribute('data-fb-object') && element.hasAttribute('data-fb-site') === site && (site || owner(element) === container)) ?? null;
 }
 
 /** Walks "areas/<name>/<index>" down to the block, then to its field. */

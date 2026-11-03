@@ -23,6 +23,7 @@ use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Media\ListMedia;
 use Frootbox\Core\Media\ListMediumUsages;
 use Frootbox\Core\Media\UploadReceiver;
+use Frootbox\Core\ObjectField\MarkedObjects;
 use Frootbox\Core\Page\EditMode;
 use Frootbox\Core\Page\PageStatus;
 use Frootbox\Core\Page\ShowPage;
@@ -72,6 +73,7 @@ final readonly class EditorBar
         private Translator $translator,
         private Languages $languages,
         private PublicAssets $public,
+        private MarkedObjects $marked,
     ) {}
 
     public function __invoke(BuildingHead $event): void
@@ -116,6 +118,8 @@ final readonly class EditorBar
             // The design page of the core is no page one changes (decision 0207).
             'designPage' => true === $event->request->getAttribute(DesignPage::class),
             'media' => null === $id || null === $page ? null : $this->media($id),
+            // Objects whose further fields the page marked (decision 0241).
+            'objects' => null === $page ? [] : $this->objects(),
             'labels' => $this->labels(),
         ];
 
@@ -222,6 +226,34 @@ final readonly class EditorBar
     }
 
     /**
+     * The objects whose further fields the page marked for editing, e.g.
+     * the article on its detail page (decision 0241): whether each has a
+     * draft and what the user may do with it.
+     *
+     * @return list<array{target: string, type: string, id: string, name: string, draft: bool, publish: bool, discard: bool}>
+     */
+    private function objects(): array
+    {
+        $objects = [];
+
+        foreach ($this->marked->all() as $object) {
+            $label = $this->translator->get($object['label']);
+
+            $objects[] = [
+                'target' => $object['type'] . ':' . $object['id'],
+                'type' => $object['type'],
+                'id' => $object['id'],
+                'name' => '' === $object['title'] ? $label : $this->translator->get('{type} "{title}"', ['type' => $label, 'title' => $object['title']]),
+                'draft' => $object['draft'],
+                'publish' => $this->permissions->can($object['type'] . '.publish', ['ids' => [$object['id']]]),
+                'discard' => $this->permissions->can($object['type'] . '.discard', ['id' => $object['id']]),
+            ];
+        }
+
+        return $objects;
+    }
+
+    /**
      * The fields of the website (decision 0128): whether they have a draft
      * and what the user may do with it, null without the right to change
      * them.
@@ -310,6 +342,7 @@ final readonly class EditorBar
             'publishDone' => $t('The page is published.'),
             'mediaElsewhere' => $t('Also changes {images} on other published pages.'),
             'mediaStayOpen' => $t('The page is published. The changes to {images} stay open: you may not publish images.'),
+            'objectsStayOpen' => $t('The page is published. The changes to {objects} stay open: you may not publish them.'),
             'offlineParents' => $t('These pages above it are not online yet and are published with it: {pages}.'),
             'discard' => $t('Discard the draft'),
             'discardConfirm' => $t('Discard the draft?'),

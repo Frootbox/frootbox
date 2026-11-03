@@ -103,12 +103,19 @@ export class Editing {
         return target instanceof Element ? target.closest('[data-fb-field]') : null;
     }
 
-    /** The elements of one field: itself and those of its parts, in the same block (decision 0203). */
+    /**
+     * The elements of one field: itself and those of its parts, in the
+     * same block (decision 0203); a field of an object wherever the page
+     * shows that object (decision 0241).
+     */
     twins(element) {
         const site = element.dataset.fbSite !== undefined;
+        const object = element.dataset.fbObject;
         const block = element.closest('[data-fb-block]');
         const all = [...document.querySelectorAll(`[data-fb-field="${CSS.escape(element.dataset.fbField)}"]`)]
-            .filter((item) => (item.dataset.fbSite !== undefined) === site && (site || item.closest('[data-fb-block]') === block));
+            .filter((item) => object !== undefined
+                ? item.dataset.fbObject === object
+                : item.dataset.fbObject === undefined && (item.dataset.fbSite !== undefined) === site && (site || item.closest('[data-fb-block]') === block));
 
         return all.includes(element) ? all : [element, ...all];
     }
@@ -275,7 +282,17 @@ export class Editing {
 
         // Fields of the website, e.g. in the footer, are the same on every page (decision 0128).
         const site = element.dataset.fbSite !== undefined;
-        const result = site
+        // Further fields of an object go into its draft (decision 0241).
+        const object = element.dataset.fbObject ?? null;
+        const result = object
+            ? await this.bar.run('object.update-field', {
+                target: object,
+                language: element.dataset.fbLanguage ?? this.bar.config.language,
+                name: element.dataset.fbField,
+                value,
+                previous,
+            })
+            : site
             ? await this.bar.run('site.update-field', {
                 language: this.bar.config.language,
                 path: element.dataset.fbField,
@@ -314,7 +331,7 @@ export class Editing {
             }
         }
 
-        this.bar.changed(data.entry, site);
+        this.bar.changed(data.entry, site, object);
 
         // A field publishing found missing is no longer marked once it has a value (decision 0143).
         if (data.value !== null) {

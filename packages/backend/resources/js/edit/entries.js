@@ -58,7 +58,7 @@ function entryElement(fields, owner) {
 export function markEntries() {
     const groups = new Map();
 
-    for (const field of document.querySelectorAll('[data-fb-field]:not([data-fb-site])')) {
+    for (const field of document.querySelectorAll('[data-fb-field]:not([data-fb-site]):not([data-fb-object])')) {
         const owner = ownerOf(field);
 
         for (const path of entryPaths(field.dataset.fbField)) {

@@ -448,7 +448,7 @@ export class Arranging {
         const block = state?.block ? document.querySelector(`${BLOCK}[data-fb-block="${CSS.escape(state.block)}"]`) : null;
         // After a change of a list: the field of the entry in question.
         const field = state?.field
-            ? [...(block ?? document).querySelectorAll(`[data-fb-field="${CSS.escape(state.field)}"]:not([data-fb-site])`)].find((item) => ownerOf(item) === block)
+            ? [...(block ?? document).querySelectorAll(`[data-fb-field="${CSS.escape(state.field)}"]:not([data-fb-site]):not([data-fb-object])`)].find((item) => ownerOf(item) === block)
             : null;
         const element = field ?? block;
 
