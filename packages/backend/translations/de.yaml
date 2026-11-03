@@ -251,6 +251,8 @@ The role is deleted.: Die Rolle ist gelöscht.
 "Discard the draft": "Entwurf verwerfen"
 "The start page has no address of its own.": "Die Startseite hat keine eigene Adresse."
 "If the address changes, the old one redirects to the new one.": "Ändert sich die Adresse, leitet die alte automatisch weiter."
+"Description for search engines": "Beschreibung für Suchmaschinen"
+"Search engines often show it below the title. 50 to 160 characters fit best.": "Suchmaschinen zeigen sie oft unter dem Titel. Am besten passen 50 bis 160 Zeichen."
 "Changes go into the draft. Visitors see them after publishing.": "Änderungen landen im Entwurf. Besucher sehen sie erst nach dem Veröffentlichen."
 "No version in {language} yet": "Noch keine Fassung in {language}"
 "Visitors in this language see the page in another language.": "Besucher in dieser Sprache sehen die Seite in einer anderen Sprache."

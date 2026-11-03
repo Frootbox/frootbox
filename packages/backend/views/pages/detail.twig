@@ -75,6 +75,7 @@
                 {% else %}
                     {{ ui.field({label: t('Address'), name: 'translations.' ~ page.language.code ~ '.slug', id: 'page-slug', value: translation.slug, prefix: page.prefix, required: true, disabled: not editable, attrs: {dir: 'ltr'}, hint: t('If the address changes, the old one redirects to the new one.')}) }}
                 {% endif %}
+                {{ ui.field({label: t('Description for search engines'), name: 'translations.' ~ page.language.code ~ '.description', id: 'page-description', value: translation.description, multiline: true, optional: true, disabled: not editable, hint: t('Search engines often show it below the title. 50 to 160 characters fit best.'), attrs: {lang: page.language.code, dir: page.language.direction.value, rows: 3, maxlength: 300}}) }}
                 {% if editable %}
                 <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}<p class="fb-form__note">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p></div>
                 {% endif %}
