@@ -13,7 +13,10 @@ use Frootbox\Core\Action\AsAction;
 use Frootbox\Core\Action\Schema\Description;
 use Frootbox\Core\Action\Schema\ListOf;
 use Frootbox\Core\Action\Schema\Range;
+use Frootbox\Core\Auth\Scope;
+use Frootbox\Core\Auth\Scoped;
 use Frootbox\Core\Plugin\Space;
+use Frootbox\Core\Plugin\SpaceScopes;
 use Frootbox\Database\Ulid;
 use Frootbox\People\Details;
 
@@ -21,7 +24,7 @@ use Frootbox\People\Details;
  * @implements Action<Details<PersonData>>
  */
 #[AsAction('frootbox/people/person.create', 'Creates a person as a draft; frootbox/people/person.publish puts the person online')]
-final readonly class CreatePerson implements Action
+final readonly class CreatePerson implements Action, Scoped
 {
     /**
      * @param array<mixed>      $translations
@@ -65,6 +68,16 @@ final readonly class CreatePerson implements Action
         #[Description('Further fields the views of the theme add, by name; a text one per language, e.g. {"subtitle": {"de": "…"}}, null removes one; see object.fields')]
         public array $fields = [],
     ) {}
+
+    /**
+     * The space it is created in (decision 0245).
+     *
+     * @return list<Scope>
+     */
+    public function scopes(): array
+    {
+        return [SpaceScopes::space(PersonStore::TYPE, $this->space)];
+    }
 
     /**
      * @return Details<PersonData>

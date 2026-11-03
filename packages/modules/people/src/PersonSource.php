@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Frootbox\People;
 
+use Frootbox\Core\Plugin\SpaceScopes;
 use Frootbox\Core\Revision\Revisions;
 use Frootbox\Core\Search\AsSearchSource;
 use Frootbox\Core\Search\SearchEntry;
@@ -51,6 +52,9 @@ final readonly class PersonSource implements SearchSource
                     text: null === $text ? $data->email : implode("\n", [$text->role, $text->text, $data->email]),
                     permission: 'frootbox/people/person.show',
                     language: $language,
+                    // Only for roles within its space (decision 0245).
+                    scopeKind: SpaceScopes::KIND,
+                    scopeId: SpaceScopes::object(PersonStore::TYPE, $id)->id,
                 );
             }
         }

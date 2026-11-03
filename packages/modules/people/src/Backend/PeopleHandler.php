@@ -36,18 +36,21 @@ final readonly class PeopleHandler implements RequestHandlerInterface
         }
 
         $params = $request->getQueryParams();
-        $spaces = $this->runner->ask(new ListSpaces(PersonStore::TYPE))->items;
+        $spaces = $this->runner->ask(new ListSpaces(PersonStore::TYPE, 'frootbox/people/person.list'))->items;
         $space = null;
 
         // With more than one space a tab for each, the default one first (decisions 0232, 0242).
         if (\count($spaces) > 1) {
             $ids = array_map(static fn($item): string => $item->id, $spaces);
             $space = \is_string($params['space'] ?? null) && \in_array($params['space'], $ids, true) ? $params['space'] : $ids[0];
+        } elseif (1 === \count($spaces) && !$spaces[0]->default) {
+            // A role only within one space (decision 0245): its list, new ones go there.
+            $space = $spaces[0]->id;
         }
 
         return $this->view->render($request, '@frootbox/people/backend/people.twig', [
             'people' => $this->runner->ask(new ListPeople(space: $space)),
-            'spaces' => null === $space ? [] : $spaces,
+            'spaces' => \count($spaces) > 1 ? $spaces : [],
             'space' => $space,
         ]);
     }

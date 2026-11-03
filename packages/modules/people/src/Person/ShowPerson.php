@@ -11,7 +11,10 @@ namespace Frootbox\People\Person;
 use Frootbox\Core\Action\AsQuery;
 use Frootbox\Core\Action\Query;
 use Frootbox\Core\Action\Schema\Pattern;
+use Frootbox\Core\Auth\Scope;
+use Frootbox\Core\Auth\Scoped;
 use Frootbox\Core\Language\Languages;
+use Frootbox\Core\Plugin\SpaceScopes;
 use Frootbox\Core\Url\Urls;
 use Frootbox\Database\Ulid;
 use Frootbox\People\Details;
@@ -20,12 +23,22 @@ use Frootbox\People\Details;
  * @implements Query<Details<PersonData>>
  */
 #[AsQuery('frootbox/people/person.show', 'Returns a person with its draft, its published version and the addresses of the profile by language')]
-final readonly class ShowPerson implements Query
+final readonly class ShowPerson implements Query, Scoped
 {
     public function __construct(
         #[Pattern(Ulid::PATTERN)]
         public string $id,
     ) {}
+
+    /**
+     * The object within its space (decision 0245).
+     *
+     * @return list<Scope>
+     */
+    public function scopes(): array
+    {
+        return [SpaceScopes::object(PersonStore::TYPE, $this->id)];
+    }
 
     /**
      * @return Details<PersonData>

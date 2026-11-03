@@ -14,7 +14,7 @@
         <div class="fb-cluster">
             {% if can('frootbox/people/location.list') %}{{ ui.button({label: t('Locations'), href: path('frootbox.people.locations'), variant: 'outline'}) }}{% endif %}
             {% if can('category.update') %}{{ ui.button({label: t('Categories'), href: path('backend.categories') ~ '?group=frootbox/people/categories', variant: 'outline'}) }}{% endif %}
-            {% if can('frootbox/people/person.create') %}{{ ui.button({label: t('New person'), href: path('frootbox.people.people.new') ~ (space ? '?space=' ~ space|url_encode : ''), icon: 'plus'}) }}{% endif %}
+            {% if can_within('frootbox/people/person.create', 'space:frootbox/people/person:' ~ (space ?: 'default')) %}{{ ui.button({label: t('New person'), href: path('frootbox.people.people.new') ~ (space ? '?space=' ~ space|url_encode : ''), icon: 'plus'}) }}{% endif %}
         </div>
     </header>
 
@@ -29,7 +29,7 @@
         </div>
         {% if people is empty %}
         <div class="fb-card__body">
-            {{ ui.empty({icon: 'users', title: t('No people yet'), text: t('Add the first person. It stays a draft until you publish it.'), action: can('frootbox/people/person.create') ? {label: t('New person'), href: path('frootbox.people.people.new') ~ (space ? '?space=' ~ space|url_encode : ''), icon: 'plus'} : null}) }}
+            {{ ui.empty({icon: 'users', title: t('No people yet'), text: t('Add the first person. It stays a draft until you publish it.'), action: can_within('frootbox/people/person.create', 'space:frootbox/people/person:' ~ (space ?: 'default')) ? {label: t('New person'), href: path('frootbox.people.people.new') ~ (space ? '?space=' ~ space|url_encode : ''), icon: 'plus'} : null}) }}
         </div>
         {% else %}
         <ul>

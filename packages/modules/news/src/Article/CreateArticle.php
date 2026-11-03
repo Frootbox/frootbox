@@ -14,14 +14,17 @@ use Frootbox\Core\Action\AsAction;
 use Frootbox\Core\Action\Schema\Description;
 use Frootbox\Core\Action\Schema\Length;
 use Frootbox\Core\Action\Schema\ListOf;
+use Frootbox\Core\Auth\Scope;
+use Frootbox\Core\Auth\Scoped;
 use Frootbox\Core\Plugin\Space;
+use Frootbox\Core\Plugin\SpaceScopes;
 use Frootbox\Database\Ulid;
 
 /**
  * @implements Action<ArticleDetails>
  */
 #[AsAction('frootbox/news/article.create', 'Creates a news article as a draft; frootbox/news/article.publish puts it online')]
-final readonly class CreateArticle implements Action
+final readonly class CreateArticle implements Action, Scoped
 {
     /**
      * @param array<mixed>      $translations
@@ -49,6 +52,16 @@ final readonly class CreateArticle implements Action
         #[Description('Further fields the views of the theme add, by name; a text one per language, e.g. {"subtitle": {"de": "…"}}, null removes one; see object.fields')]
         public array $fields = [],
     ) {}
+
+    /**
+     * The space it is created in (decision 0245).
+     *
+     * @return list<Scope>
+     */
+    public function scopes(): array
+    {
+        return [SpaceScopes::space(ArticleStore::TYPE, $this->space)];
+    }
 
     public function handle(ArticleEditor $editor): ArticleDetails
     {

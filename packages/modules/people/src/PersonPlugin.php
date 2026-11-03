@@ -70,6 +70,11 @@ final readonly class PersonPlugin implements Plugin
         }
     }
 
+    public function space(string $id): ?string
+    {
+        return ($this->store->draft($id) ?? $this->store->published($id))?->space;
+    }
+
     public function count(string $space): int
     {
         return \count(array_filter($this->store->ids(), fn(string $id): bool => $this->store->current($id)->space === $space));
