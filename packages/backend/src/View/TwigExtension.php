@@ -20,8 +20,11 @@ use Frootbox\Core\Category\ListCategories;
 use Frootbox\Core\Category\ListGroups;
 use Frootbox\Core\I18n\Translator;
 use Frootbox\Core\Language\Languages;
+use Frootbox\Core\Media\ShowMedium;
+use Frootbox\Core\ObjectField\ShowObjectFields;
 use Frootbox\Core\Routing\Router;
 use Frootbox\Core\Tag\ChooseTags;
+use Frootbox\Database\EntityNotFoundException;
 use Frootbox\RichText\Html;
 use Throwable;
 use Twig\Extension\AbstractExtension;
@@ -36,6 +39,7 @@ use Twig\TwigFunction;
  *     {% if can('user.create') %}…{% endif %}
  *     {% for group in category_choices('frootbox/news/article') %}…{% endfor %}
  *     {% set choices = tag_choices('frootbox/news/article', space, chosen) %}
+ *     {% set further = object_fields('frootbox/news/article', data.fields, 'de') %}
  */
 final class TwigExtension extends AbstractExtension
 {
@@ -64,7 +68,55 @@ final class TwigExtension extends AbstractExtension
             new TwigFunction('can', $this->can(...)),
             new TwigFunction('category_choices', $this->categoryChoices(...)),
             new TwigFunction('tag_choices', $this->tagChoices(...)),
+            new TwigFunction('object_fields', $this->objectFields(...)),
         ];
+    }
+
+    /**
+     * The further fields of an object for the section "More fields" of a
+     * form of a module (decision 0240), with the value in the language of
+     * the form; "orphans" are values no view declares any more.
+     *
+     * @param array<mixed> $values The fields of the draft
+     *
+     * @return array{fields: list<array{name: string, type: string, label: string, description: string, translatable: bool, settings: array<string, mixed>, value: mixed, image: array{preview: string, file: string}|null}>, orphans: list<string>}
+     */
+    public function objectFields(string $type, array $values, string $language): array
+    {
+        $fields = [];
+        $names = [];
+
+        foreach ($this->runner->ask(new ShowObjectFields($type)) as $field) {
+            $stored = $values[$field['name']] ?? null;
+            $value = $field['translatable'] ? (\is_array($stored) ? $stored[$language] ?? null : null) : $stored;
+            $names[] = $field['name'];
+            $fields[] = [
+                'name' => $field['name'],
+                'type' => $field['type'],
+                'label' => $field['label'],
+                'description' => $field['description'],
+                'translatable' => $field['translatable'],
+                'settings' => $field['settings'],
+                'value' => $value,
+                'image' => 'image' === $field['type'] && \is_array($value) && \is_string($value['media'] ?? null) ? $this->medium($value['media']) : null,
+            ];
+        }
+
+        return ['fields' => $fields, 'orphans' => array_values(array_diff(array_map(strval(...), array_keys($values)), $names))];
+    }
+
+    /**
+     * @return array{preview: string, file: string}|null
+     */
+    private function medium(string $id): ?array
+    {
+        try {
+            $medium = $this->runner->ask(new ShowMedium($id));
+        } catch (AccessDeniedException|EntityNotFoundException) {
+            return null;
+        }
+
+        return ['preview' => $medium->preview, 'file' => $medium->fileName];
     }
 
     /**

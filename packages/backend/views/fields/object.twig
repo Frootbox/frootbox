@@ -1,0 +1,44 @@
+{#- The further fields of an object in a form of a module (decisions 0234, 0240), as the views of the theme declare them. With type, values (the fields of the draft), language, disabled and prefix (for ids). Fields of other types are kept, but edited elsewhere for now. -#}
+{% import '@backend/ui.twig' as ui %}
+{% set further = object_fields(type, values ?? {}, language.code) %}
+{% if further.fields is not empty or further.orphans is not empty %}
+{% set id = (prefix ?? 'object') ~ '-fields' %}
+{% set disabled = disabled ?? false %}
+<fieldset class="fb-fieldset">
+    <legend class="fb-fieldset__legend">{{ t('More fields') }}</legend>
+    <div class="fb-stack">
+    {% for field in further.fields %}
+        {% set name = 'fields.' ~ field.name ~ (field.translatable ? '.' ~ language.code : '') %}
+        {% set at = id ~ '-' ~ field.name %}
+        {% set label = t(field.label) %}
+        {% set hint = field.description ? t(field.description) : null %}
+        {% set text = field.translatable ? {lang: language.code, dir: language.direction.value} : {} %}
+        {% if field.type in ['headline', 'text'] %}
+            {% set multiline = field.type == 'text' and field.settings.multiline ?? false %}
+            {{ ui.field({label: label, name: name, id: at, value: field.value ?? '', optional: true, hint: hint, disabled: disabled, multiline: multiline, attrs: text|merge({'data-empty': 'null', maxlength: field.settings.maxLength ?? null, rows: multiline ? 3 : null})}) }}
+        {% elseif field.type == 'richtext' %}
+            {{ ui.richtext({label: label, name: name, id: at, value: field.value, optional: true, hint: hint, disabled: disabled, lang: text.lang ?? null, dir: text.dir ?? null}) }}
+        {% elseif field.type == 'image' %}
+            {{ ui.image({label: label, name: name, id: at, value: field.value, preview: field.image.preview ?? null, file: field.image.file ?? null, optional: true, hint: hint, disabled: disabled}) }}
+        {% elseif field.type == 'boolean' %}
+            {{ ui.check({label: label, name: name, id: at, checked: field.value is same as(true), hint: hint, disabled: disabled}) }}
+        {% elseif field.type == 'link' %}
+            <div class="fb-stack fb-stack--sm" role="group" aria-labelledby="{{ at }}-label">
+                <span class="fb-label" id="{{ at }}-label">{{ label }} <span class="fb-label__optional">({{ t('optional') }})</span></span>
+                {% if field.value.target ?? null %}<input type="hidden" name="{{ name }}.target" value="{{ field.value.target }}">{% endif %}
+                {{ ui.field({label: t('Address'), name: name ~ '.url', id: at ~ '-url', type: 'url', value: field.value.url ?? '', hint: hint, disabled: disabled, attrs: {dir: 'ltr', maxlength: 2000}}) }}
+                {{ ui.field({label: t('Text of the link'), name: name ~ '.text', id: at ~ '-text', value: field.value.text ?? '', optional: true, disabled: disabled, attrs: text|merge({maxlength: 200})}) }}
+            </div>
+        {% else %}
+            <div class="fb-field">
+                <span class="fb-label">{{ label }}</span>
+                <p class="fb-hint">{{ field.value is null ? t('Not filled in yet.') : t('Filled in.') }} {{ t('This kind of field cannot be edited here yet; the API takes it.') }}</p>
+            </div>
+        {% endif %}
+    {% endfor %}
+    {% if further.orphans is not empty %}
+        {{ ui.alert({tone: 'info', text: t('Kept, but no view of the theme shows them: {names}', {names: further.orphans|join(', ')}), live: 'none'}) }}
+    {% endif %}
+    </div>
+</fieldset>
+{% endif %}
