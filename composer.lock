@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b155b174a9fb3bea0d122be4a963e645",
+    "content-hash": "d5c3733f368d7d457ac6ee1b14417f2b",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -754,6 +754,51 @@
                 "rich-text",
                 "sanitizer",
                 "tiptap"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "frootbox/search",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/modules/search",
+                "reference": "b99c1fe600d41ed256b4f85c1849a367e9d1214b"
+            },
+            "require": {
+                "frootbox/core": "^0.1",
+                "frootbox/database": "^0.1",
+                "php": ">=8.5"
+            },
+            "type": "frootbox-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\Search\\": "src/",
+                    "Frootbox\\Search\\Migrations\\": "migrations/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Frootbox\\Search\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Search for the Frootbox CMS: visitors find published pages, articles, events and more",
+            "keywords": [
+                "cms",
+                "frootbox",
+                "search",
+                "site-search"
             ],
             "transport-options": {
                 "symlink": true,
@@ -7230,6 +7275,7 @@
         "frootbox/news": 20,
         "frootbox/people": 20,
         "frootbox/rich-text": 20,
+        "frootbox/search": 20,
         "frootbox/seo": 20,
         "frootbox/theme-base": 20,
         "frootbox/theme-bohnenglueck": 20
