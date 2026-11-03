@@ -1,0 +1,56 @@
+/* A column per day or other step, its height from --fb-chart-value
+   (0 to 1, set on the item). Screen readers read the label and number of
+   each column; the axis below shows the first and the last label. */
+
+.fb-chart {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fb-space-2);
+    margin: 0;
+}
+
+.fb-chart__caption {
+    color: var(--fb-text-muted);
+    font-size: var(--fb-text-sm);
+}
+
+.fb-chart__bars {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--fb-space-0);
+    block-size: calc(var(--fb-space-16) * 3);
+    margin: 0;
+    padding: 0;
+    border-block-end: var(--fb-size-border) solid var(--fb-border-strong);
+    list-style: none;
+}
+
+.fb-chart__item {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-inline-size: 0;
+    block-size: 100%;
+}
+
+.fb-chart__bar {
+    block-size: calc(var(--fb-chart-value, 0) * 100%);
+    border-start-start-radius: var(--fb-space-0);
+    border-start-end-radius: var(--fb-space-0);
+    background: var(--fb-accent);
+    transition: background var(--fb-motion-fast);
+}
+
+.fb-chart__item:hover .fb-chart__bar {
+    background: var(--fb-accent-hover);
+}
+
+.fb-chart__axis {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--fb-space-4);
+    margin: 0;
+    color: var(--fb-text-muted);
+    font-size: var(--fb-text-xs);
+}

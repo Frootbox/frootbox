@@ -1,0 +1,35 @@
+/* A number with a bar for its share of the largest, e.g. the views of a
+   page in a list; --fb-share (0 to 1) is set on the element. */
+
+.fb-share {
+    display: flex;
+    flex: 0 1 calc(var(--fb-space-16) * 3.5);
+    gap: var(--fb-space-3);
+    align-items: center;
+}
+
+.fb-share__bar {
+    position: relative;
+    flex: 1 1 auto;
+    block-size: var(--fb-space-2);
+    overflow: hidden;
+    border-radius: var(--fb-radius-full);
+    background: var(--fb-accent-soft);
+}
+
+.fb-share__bar::before {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: calc(var(--fb-share, 0) * 100%);
+    border-radius: var(--fb-radius-full);
+    background: var(--fb-accent);
+    content: "";
+}
+
+.fb-share__value {
+    min-inline-size: var(--fb-space-12);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--fb-weight-semibold);
+    text-align: end;
+}

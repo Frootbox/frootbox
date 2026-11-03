@@ -957,6 +957,43 @@ warns below 4.5 : 1. The menu entry "Design" opens the website with
 browser shows in its own time zone (`localTimes()`), the server zone
 without JavaScript.
 
+### Number
+
+`{{ ui.number(1284) }}` writes a whole number with the separators of the
+language of the backend, "1.284" in German.
+
+### Figures
+
+`ui.figures([{label, value, note}])`
+
+Key figures side by side as a `<dl>`: tiles like a card (border,
+`--fb-radius-lg`, `--fb-surface`, `--fb-shadow-sm`, padding 20 px), at
+least 160 px wide and as many in a row as fit. The label 14 px muted
+above, the value 30 px bold with even digits, an optional note 13 px
+muted below, e.g. the change to the period before. Values come
+formatted, e.g. from `ui.number()`.
+
+### Chart
+
+`ui.chart({label, items: [{label, value}]})`
+
+Columns, e.g. visits per day, oldest first, in a `<figure>` with the
+label as caption. 192 px high, the columns share the width with 2 px
+gaps, `--fb-accent` with rounded tops, `--fb-accent-hover` under the
+pointer, which also shows label and number as a tooltip. The tallest
+column fills the height; the axis below shows the first and the last
+label. Screen readers read each column as "label: number". For more than
+about 90 columns group them, e.g. by week.
+
+### Share
+
+`ui.share(value, most)`
+
+A number with a bar for its share of the largest, at the end of a list
+item, e.g. the views of a page: the bar 8 px high in `--fb-accent-soft`
+filled with `--fb-accent` from the start, the number semibold with even
+digits. The bar is hidden from screen readers, the number is read.
+
 ### Avatar
 
 `ui.avatar(initials)`
@@ -1276,10 +1313,11 @@ an icon has a label (`icon_only`). New icons come from
 one file per icon as needed, drawn by hand only if Lucide has none: 24×24
 viewBox, stroke 1.8, round caps and joins, no fill, `stroke="currentColor"`.
 
-Available: alert, arrow-down, arrow-up, calendar, check, chevron-down, clock, close,
-comment, copy, dashboard, external, grip, image, inbox, info, lock, menu,
-navigation, pages, palette, parent, pencil, plus, redirect, restore,
-search, settings, shield, sign-out, square, trash, users, warning.
+Available: alert, arrow-down, arrow-up, calendar, chart, check,
+chevron-down, clock, close, comment, copy, dashboard, external, file,
+grip, image, inbox, info, lock, menu, navigation, news, pages, palette,
+parent, pencil, plus, redirect, restore, search, settings, shield,
+sign-out, square, trash, users, video, warning.
 
 The bar of the editing mode runs on the website without Twig and keeps
 the paths of its icons in `resources/js/edit/icons.js`. An icon used in

@@ -117,6 +117,29 @@
 </div>
 
 <div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('Figures and charts') }}</p>
+    {{ ui.figures([
+        {label: t('Visits'), value: ui.number(1284), note: t('{change} compared to the period before', {change: '+12 %'})},
+        {label: t('Page views'), value: ui.number(3907), note: t('{change} compared to the period before', {change: '−3 %'})},
+    ]) }}
+    <section class="fb-card fb-card--padded">
+        {%- set days = [] -%}
+        {%- for value in [32, 41, 38, 45, 29, 18, 22, 47, 52, 49, 55, 36, 24, 30] -%}
+            {%- set days = days|merge([{label: t('Day {n}', {n: loop.index}), value: value}]) -%}
+        {%- endfor -%}
+        {{ ui.chart({label: t('Visits per day'), items: days}) }}
+    </section>
+    <section class="fb-card">
+        <div class="fb-card__header"><h3 class="fb-heading-4">{{ t('Most visited pages') }}</h3></div>
+        <ul>
+            <li class="fb-list__item"><span class="fb-list__main"><span class="fb-list__title">Start</span><span class="fb-list__meta">/</span></span>{{ ui.share(1412, 1412) }}</li>
+            <li class="fb-list__item"><span class="fb-list__main"><span class="fb-list__title">Kaffee</span><span class="fb-list__meta">/kaffee</span></span>{{ ui.share(806, 1412) }}</li>
+            <li class="fb-list__item"><span class="fb-list__main"><span class="fb-list__title">Röstkurs</span><span class="fb-list__meta">/termine/roestkurs</span></span>{{ ui.share(97, 1412) }}</li>
+        </ul>
+    </section>
+</div>
+
+<div class="fb-design-sample">
     <p class="fb-design-sample__title">{{ t('Disclosure') }}</p>
     <details class="fb-card fb-disclosure" open>
         <summary class="fb-disclosure__summary">{{ t('All permissions') }}</summary>

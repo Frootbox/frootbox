@@ -1,0 +1,39 @@
+/* Key figures side by side, e.g. visits and views of a period: a label,
+   the number large and a note below. */
+
+.fb-figures {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(calc(var(--fb-space-16) * 2.5), 1fr));
+    gap: var(--fb-space-4);
+    margin: 0;
+}
+
+.fb-figure {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fb-space-1);
+    padding: var(--fb-space-5);
+    border: var(--fb-size-border) solid var(--fb-border);
+    border-radius: var(--fb-radius-lg);
+    background: var(--fb-surface);
+    box-shadow: var(--fb-shadow-sm);
+}
+
+.fb-figure__label {
+    color: var(--fb-text-muted);
+    font-size: var(--fb-text-sm);
+}
+
+.fb-figure__value {
+    margin: 0;
+    font-size: var(--fb-text-3xl);
+    font-weight: var(--fb-weight-bold);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--fb-leading-tight);
+}
+
+.fb-figure__note {
+    margin: 0;
+    color: var(--fb-text-muted);
+    font-size: var(--fb-text-xs);
+}

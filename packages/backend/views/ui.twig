@@ -197,6 +197,40 @@
     <time datetime="{{ datetime|date('c') }}" data-fb-time>{{ datetime|date(t('Y-m-d H:i')) }}</time>
 {%- endmacro %}
 
+{# A whole number with the separators of the language, e.g. 1.234 in German. #}
+{% macro number(value) -%}
+    {{ value|number_format(0, t('.'), t(',')) }}
+{%- endmacro %}
+
+{# Key figures side by side. figures: list of {label, value, note}; value is shown as given, e.g. from number(). #}
+{% macro figures(figures) -%}
+    <dl class="fb-figures">
+        {%- for figure in figures -%}
+            <div class="fb-figure"><dt class="fb-figure__label">{{ figure.label }}</dt><dd class="fb-figure__value">{{ figure.value }}</dd>{% if figure.note ?? null %}<dd class="fb-figure__note">{{ figure.note }}</dd>{% endif %}</div>
+        {%- endfor -%}
+    </dl>
+{%- endmacro %}
+
+{# Columns, e.g. visits per day. label: the caption; items: list of {label, value}, oldest first. #}
+{% macro chart(options) -%}
+    {%- set o = {label: '', items: []}|merge(options) -%}
+    {%- set most = max([1]|merge(o.items|map(item => item.value))) -%}
+    <figure class="fb-chart">
+        <figcaption class="fb-chart__caption">{{ o.label }}</figcaption>
+        <ol class="fb-chart__bars">
+            {%- for item in o.items -%}
+                <li class="fb-chart__item" style="--fb-chart-value: {{ (item.value / most)|round(3) }}" title="{{ item.label }}: {{ _self.number(item.value) }}"><span class="fb-chart__bar"></span><span class="fb-visually-hidden">{{ item.label }}: {{ _self.number(item.value) }}</span></li>
+            {%- endfor -%}
+        </ol>
+        {%- if o.items %}<p class="fb-chart__axis" aria-hidden="true"><span>{{ (o.items|first).label }}</span><span>{{ (o.items|last).label }}</span></p>{% endif %}
+    </figure>
+{%- endmacro %}
+
+{# A number with a bar for its share of the largest, e.g. at the end of a list item. #}
+{% macro share(value, most) -%}
+    <span class="fb-share" style="--fb-share: {{ most > 0 ? (value / most)|round(3) : 0 }}"><span class="fb-share__bar" aria-hidden="true"></span><span class="fb-share__value">{{ _self.number(value) }}</span></span>
+{%- endmacro %}
+
 {# The initials of a user, hidden from screen readers: the name is next to them. #}
 {% macro avatar(initials) -%}
     <span class="fb-avatar" aria-hidden="true">{{ initials }}</span>

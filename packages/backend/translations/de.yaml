@@ -712,6 +712,7 @@ A theme describes in its frootbox.yaml which tokens editors may change.: Ein The
 'Contrast {ratio} : 1': 'Kontrast {ratio} : 1'
 # The decimal point in numbers.
 '.': ','
+',': '.'
 The changes to the design are discarded.: Die Änderungen am Design sind verworfen.
 Discard all changes to the design?: Alle Änderungen am Design verwerfen?
 The website keeps the published design.: Die Website behält das veröffentlichte Design.
@@ -1130,3 +1131,11 @@ Cron does not run: Der Cron läuft nicht
   one: 'Ein Auftrag wartet. Ohne Cron laufen Aufträge nur, wenn jemand die Website aufruft. Trag diese Zeile in die Crontab des Servers ein:'
   other: '{count} Aufträge warten. Ohne Cron laufen Aufträge nur, wenn jemand die Website aufruft. Trag diese Zeile in die Crontab des Servers ein:'
 Show jobs: Aufträge anzeigen
+# Figures and charts (decision 0229)
+Figures and charts: Kennzahlen und Diagramme
+Visits: Besuche
+Page views: Seitenaufrufe
+'{change} compared to the period before': '{change} zum Zeitraum davor'
+Day {n}: Tag {n}
+Visits per day: Besuche je Tag
+Most visited pages: Meistbesuchte Seiten
