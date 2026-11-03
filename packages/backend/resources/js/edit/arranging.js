@@ -608,6 +608,9 @@ export class Arranging {
             ? html`<span class="note">${labels.removeConfirm.replace('{block}', title)}</span>
                 <button type="button" class="danger solid" ?disabled=${this.busy} @click=${() => this.remove(block)}>${labels.removeYes}</button>
                 <button type="button" @click=${() => this.confirm(false)}>${labels.cancel}</button>`
+            : block.hasAttribute('data-fb-fixed')
+            // The view of a plugin stays at its place and goes with the plugin of the page (decision 0232).
+            ? html`${button('settings', labels.blockSettings, () => this.openPanel(block))}`
             : html`
                 ${parent ? button('parent', labels.parentBlock, () => this.selectParent(parent)) : nothing}
                 ${button('up', labels.moveUp, () => this.move(block, siblings, index - 1), index <= 0)}
