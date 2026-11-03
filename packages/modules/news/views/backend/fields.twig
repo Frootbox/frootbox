@@ -11,11 +11,4 @@
 {{ ui.richtext({label: t('Text'), name: prefix ~ 'text', id: 'article-text', value: translation.text ?? null, optional: true, disabled: not editable, lang: code, dir: dir}) }}
 {{ ui.field({label: t('Date'), name: 'date', id: 'article-date', type: 'datetime-local', value: date ? date|date('Y-m-d\\TH:i') : '', optional: date is null, disabled: not editable, hint: t('Shown with the article and orders the list. Without a date it is now.'), attrs: {'data-type': 'datetime', 'data-value': date ? date|date('c') : null}}) }}
 {{ ui.image({label: t('Image'), name: 'image', id: 'article-image', value: image_value, preview: image.preview ?? null, file: image.file ?? null, optional: true, disabled: not editable}) }}
-{% if categories is not empty %}
-<fieldset class="fb-fieldset">
-    <legend class="fb-fieldset__legend">{{ t('Categories') }} <span class="fb-label__optional">({{ t('optional') }})</span></legend>
-    {% for category in categories %}
-        {{ ui.check({label: category.title, name: 'categories[]', id: 'article-category-' ~ category.id, value: category.id, checked: category.id in chosen, disabled: not editable}) }}
-    {% endfor %}
-</fieldset>
-{% endif %}
+{% include '@backend/categories/choices.twig' with {type: 'frootbox/news/article', chosen: chosen, disabled: not editable, prefix: 'article'} only %}

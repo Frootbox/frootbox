@@ -20,6 +20,9 @@ final readonly class ArticleStore
 {
     public const string TYPE = 'frootbox/news/article';
 
+    /** The group of categories of the news (decision 0233) */
+    public const string CATEGORIES = 'frootbox/news/categories';
+
     public function __construct(
         private Revisions $revisions,
         private Urls $urls,

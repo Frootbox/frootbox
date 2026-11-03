@@ -19,13 +19,11 @@ use Frootbox\Core\Plugin\AssignPlugin;
 use Frootbox\Core\Plugin\Space;
 use Frootbox\Core\Tests\Support\FixtureSite;
 use Frootbox\Core\Tests\Support\NotesTestCase;
-use Frootbox\News\Article\ArticleCategories;
 use Frootbox\News\Article\Articles;
 use Frootbox\News\Article\ArticleStore;
 use Frootbox\News\Article\ArticleTranslations;
 use Frootbox\News\Article\CreateArticle;
 use Frootbox\News\Article\PublishArticles;
-use Frootbox\News\Category\Categories;
 use Nyholm\Psr7\ServerRequest;
 use Psr\Http\Message\ResponseInterface;
 
@@ -38,7 +36,7 @@ abstract class NewsTestCase extends NotesTestCase
 
     protected function tables(): array
     {
-        return [ArticleCategories::TABLE, ArticleTranslations::TABLE, Articles::TABLE, Categories::TABLE];
+        return [ArticleTranslations::TABLE, Articles::TABLE, 'frootbox_news_article_categories', 'frootbox_news_categories'];
     }
 
     protected function environment(): Environment

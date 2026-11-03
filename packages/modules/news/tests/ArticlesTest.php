@@ -10,6 +10,9 @@ namespace Frootbox\News\Tests;
 
 use DateTimeImmutable;
 use Frootbox\Core\Action\InvalidInputException;
+use Frootbox\Core\Category\CreateCategory;
+use Frootbox\Core\Category\DeleteCategory;
+use Frootbox\Core\Category\ListCategories;
 use Frootbox\Core\Page\PublishPages;
 use Frootbox\Core\Schedule\Scheduler;
 use Frootbox\Core\Search\Search;
@@ -31,16 +34,11 @@ use Frootbox\News\Article\ShowArticle;
 use Frootbox\News\Article\UnpublishArticle;
 use Frootbox\News\Article\UpdateArticle;
 use Frootbox\News\ArticleSource;
-use Frootbox\News\Category\Categories;
-use Frootbox\News\Category\CategoryEditor;
-use Frootbox\News\Category\CreateCategory;
-use Frootbox\News\Category\DeleteCategory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(ArticleSource::class)]
 #[CoversClass(ArticleEditor::class)]
 #[CoversClass(ArticleStore::class)]
-#[CoversClass(CategoryEditor::class)]
 final class ArticlesTest extends NewsTestCase
 {
     public function testCreatesADraftAndPublishesIt(): void
@@ -131,15 +129,8 @@ final class ArticlesTest extends NewsTestCase
 
     public function testCategoriesAreCheckedAndDeletedCategoriesDropOut(): void
     {
-        $coffee = $this->runner()->run(new CreateCategory(['de' => ['title' => 'Kaffee']]));
+        $coffee = $this->runner()->run(new CreateCategory(ArticleStore::CATEGORIES, ['de' => ['title' => 'Kaffee']]));
         self::assertSame('kaffee', $coffee->slug('de'));
-
-        try {
-            $this->runner()->run(new CreateCategory(['de' => ['title' => 'Kaffee']]));
-            self::fail('Two categories cannot share a slug.');
-        } catch (InvalidInputException $error) {
-            self::assertArrayHasKey('/translations/de/slug', $error->errors);
-        }
 
         try {
             $this->create(['de' => ['title' => 'Neue Sorten']], categories: ['01JNOCATEGORY0000000000000']);
@@ -151,7 +142,7 @@ final class ArticlesTest extends NewsTestCase
         $id = $this->article(['de' => ['title' => 'Neue Sorten']], categories: [$coffee->id]);
         $this->runner()->run(new DeleteCategory($coffee->id));
 
-        self::assertSame([], $this->get(Categories::class)->all());
+        self::assertSame([], $this->runner()->ask(new ListCategories(ArticleStore::CATEGORIES)));
         $this->runner()->run(new UpdateArticle($id, ['de' => ['teaser' => 'Neu']]));
         $published = $this->runner()->run(new PublishArticles([$id]));
         self::assertCount(1, $published, 'A deleted category does not keep the article from being published.');

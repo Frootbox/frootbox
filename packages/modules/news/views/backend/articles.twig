@@ -12,7 +12,7 @@
             <p class="fb-muted">{{ t('Articles with a date, such as announcements, press releases or blog posts.') }}</p>
         </div>
         <div class="fb-cluster">
-            {{ ui.button({label: t('Categories'), href: path('frootbox.news.articles.categories'), variant: 'outline'}) }}
+            {% if can('category.update') %}{{ ui.button({label: t('Categories'), href: path('backend.categories') ~ '?group=frootbox/news/categories', variant: 'outline'}) }}{% endif %}
             {% if can('frootbox/news/article.create') %}{{ ui.button({label: t('New article'), href: path('frootbox.news.articles.new') ~ (space ? '?space=' ~ space|url_encode : ''), icon: 'plus'}) }}{% endif %}
         </div>
     </header>

@@ -62,7 +62,7 @@
             <fb-form action="frootbox/news/article.update" refresh="{{ refresh }}" done="{{ t('Saved') }}">
                 <form class="fb-stack" novalidate>
                     <input type="hidden" name="id" value="{{ article.id }}">
-                    {% include '@frootbox/news/backend/fields.twig' with {language: language, translation: translation, slug: true, date: data.date, image: image, image_value: data.image, categories: categories, chosen: data.categories, editable: editable} only %}
+                    {% include '@frootbox/news/backend/fields.twig' with {language: language, translation: translation, slug: true, date: data.date, image: image, image_value: data.image, chosen: data.categories, editable: editable} only %}
                     {% if editable %}
                     <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}<p class="fb-form__note">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p></div>
                     {% endif %}

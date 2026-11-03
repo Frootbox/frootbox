@@ -11,6 +11,7 @@ namespace Frootbox\News;
 use Frootbox\Backend\Screen;
 use Frootbox\Backend\SearchCommand;
 use Frootbox\Backend\SearchLink;
+use Frootbox\Core\Category\CategoryGroup;
 use Frootbox\Core\Extension\Extension;
 use Frootbox\Core\Extension\Registry;
 use Frootbox\Core\View\BuildingHead;
@@ -26,18 +27,13 @@ use Frootbox\News\Article\UnpublishArticle;
 use Frootbox\News\Article\UpdateArticle;
 use Frootbox\News\Backend\ArticleHandler;
 use Frootbox\News\Backend\ArticlesHandler;
-use Frootbox\News\Backend\CategoriesHandler;
-use Frootbox\News\Category\CreateCategory;
-use Frootbox\News\Category\DeleteCategory;
-use Frootbox\News\Category\ListCategories;
-use Frootbox\News\Category\UpdateCategory;
 use Frootbox\News\Feed\Feed;
 use Frootbox\News\Feed\FeedHandler;
 use Frootbox\News\Feed\FeedLink;
 
 /**
- * News as a plugin (decisions 0219, 0232): articles with drafts in
- * spaces, their addresses below the page that shows the space, the scheduler, the search and
+ * News as a plugin (decisions 0219, 0232): articles with drafts and
+ * categories of the core (0233) in spaces, their addresses below the page that shows the space, the scheduler, the search and
  * the feed. The screens come only with the backend.
  */
 final class NewsExtension implements Extension
@@ -53,13 +49,10 @@ final class NewsExtension implements Extension
         $registry->action(DeleteArticle::class);
         $registry->query(ListArticles::class);
         $registry->query(ShowArticle::class);
-        $registry->action(CreateCategory::class);
-        $registry->action(UpdateCategory::class);
-        $registry->action(DeleteCategory::class);
-        $registry->query(ListCategories::class);
         $registry->query(SpaceChoices::class);
 
         $registry->plugin(ArticlePlugin::class);
+        $registry->add(CategoryGroup::class, new CategoryGroup(ArticleStore::CATEGORIES, 'Categories of the news', [ArticleStore::TYPE]));
         $registry->scheduled(ArticleSchedule::class);
         $registry->searchSource(ArticleSource::class);
         $registry->settings(NewsSettings::class);
@@ -80,7 +73,6 @@ final class NewsExtension implements Extension
         $registry->mount('backend.path', '/cms')
             ->get('/news', ArticlesHandler::class, 'frootbox.news.articles')
             ->get('/news/new', ArticleHandler::class, 'frootbox.news.articles.new')
-            ->get('/news/categories', CategoriesHandler::class, 'frootbox.news.articles.categories')
             ->get('/news/{id:[0-9A-Za-z]{26}}', ArticleHandler::class, 'frootbox.news.articles.show');
 
         $registry->add(Screen::class, new Screen('News', 'frootbox.news.articles', Screen::CONTENT, 'news', ArticlesHandler::PERMISSION, order: 15));

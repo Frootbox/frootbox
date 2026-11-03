@@ -35,9 +35,9 @@ when the article goes offline.
 
 ## Categories
 
-Under **Categories** you create topics such as "Events" or "Press".
-Visitors can filter the list by them. Deleting a category keeps its
-articles.
+Under **Categories** you create topics such as "Events" or "Press",
+also below each other. Visitors can filter the list by them. Deleting a
+category keeps its articles.
 
 ## Feed
 

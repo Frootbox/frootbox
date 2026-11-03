@@ -10,12 +10,14 @@
 - page.tree: {}
   as: tree
 
-- frootbox/news/category.create:
+- category.create:
+    group: frootbox/news/categories
     translations:
       de: { title: Rösterei }
       en: { title: Roastery }
   as: roastery
-- frootbox/news/category.create:
+- category.create:
+    group: frootbox/news/categories
     translations:
       de: { title: Termine }
       en: { title: Events }

@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Frootbox\News\Tests;
 
 use Frootbox\Core\Action\Undo\UndoAction;
+use Frootbox\Core\Category\CreateCategory;
 use Frootbox\Core\Http\Exception\HttpException;
 use Frootbox\Core\Page\PublishPages;
 use Frootbox\Core\Page\UpdatePage;
@@ -21,7 +22,6 @@ use Frootbox\News\Article\UpdateArticle;
 use Frootbox\News\ArticlePlugin;
 use Frootbox\News\Blocks\ArticleList;
 use Frootbox\News\Blocks\ArticleTeaser;
-use Frootbox\News\Category\CreateCategory;
 use Frootbox\News\Feed\Feed;
 use Frootbox\News\Feed\FeedHandler;
 use Frootbox\News\SpaceChoices;
@@ -71,14 +71,19 @@ final class WebsiteTest extends NewsTestCase
 
     public function testFiltersByCategory(): void
     {
-        $coffee = $this->runner()->run(new CreateCategory(['de' => ['title' => 'Kaffee']]));
-        $this->runner()->run(new CreateCategory(['de' => ['title' => 'Presse']]));
+        $coffee = $this->runner()->run(new CreateCategory(ArticleStore::CATEGORIES, ['de' => ['title' => 'Kaffee']]));
+        $espresso = $this->runner()->run(new CreateCategory(ArticleStore::CATEGORIES, ['de' => ['title' => 'Espresso']], $coffee->id));
+        $this->runner()->run(new CreateCategory(ArticleStore::CATEGORIES, ['de' => ['title' => 'Presse']]));
         $this->article(['de' => ['title' => 'Bohnen']], categories: [$coffee->id]);
+        $this->article(['de' => ['title' => 'Crema']], categories: [$espresso->id]);
         $this->article(['de' => ['title' => 'Interview']]);
 
         $html = $this->html('/aktuelles?category=kaffee');
 
         self::assertStringContainsString('Bohnen', $html);
+        self::assertStringContainsString('Crema', $html, 'A category counts with all below it.');
+        self::assertStringContainsString('<li data-depth="1"><a class="news-filter__link" href="/aktuelles?category=espresso">Espresso</a></li>', $html);
+        self::assertStringNotContainsString('Bohnen', $this->html('/aktuelles?category=espresso'));
         self::assertStringNotContainsString('Interview', $html);
         self::assertStringContainsString('<a class="news-filter__link" href="/aktuelles?category=kaffee" aria-current="page">Kaffee</a>', $html);
         self::assertStringContainsString('<a class="news-filter__link" href="/aktuelles">Alle</a>', $html);

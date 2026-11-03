@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Frootbox\News\Blocks;
 
+use Frootbox\Core\Category\ObjectCategories;
 use Frootbox\Core\Component\BlockContext;
 use Frootbox\Core\Component\BlockController;
 use Frootbox\Core\Plugin\Space;
@@ -16,7 +17,6 @@ use Frootbox\News\Article\ArticleRendering;
 use Frootbox\News\Article\ArticleStore;
 use Frootbox\News\Article\ArticleView;
 use Frootbox\News\Article\PublishedArticles;
-use Frootbox\News\Category\Categories;
 use Frootbox\News\Feed\Feed;
 
 /**
@@ -28,7 +28,7 @@ final readonly class ArticleList implements BlockController
 {
     public function __construct(
         private PublishedArticles $articles,
-        private Categories $categories,
+        private ObjectCategories $categories,
         private ArticleRendering $rendering,
         private Urls $urls,
         private Feed $feed,
@@ -49,12 +49,13 @@ final readonly class ArticleList implements BlockController
             }
         }
 
-        $category = self::text($context->query('category'));
-        $category = null === $category ? null : $this->categories->bySlug($language, $category);
+        // A category counts with all below it (decision 0233).
+        $slug = self::text($context->query('category'));
+        [$category, $chosen] = (null === $slug ? null : $this->categories->bySlug(ArticleStore::TYPE, $language, $slug)) ?? [null, null];
         $year = $context->query('year');
         $year = null !== $year && 1 === preg_match('/^[12][0-9]{3}$/', $year) ? (int) $year : null;
         $perPage = max(1, min(50, is_numeric($context->options['perPage'] ?? null) ? (int) $context->options['perPage'] : 10));
-        $total = $this->articles->count($language, $category?->id, $year, $spaces);
+        $total = $this->articles->count($language, $chosen, $year, $spaces);
         $pages = max(1, (int) ceil($total / $perPage));
         $page = min($pages, max(1, (int) ($context->query('page') ?? 1)));
         $filter = array_filter(['category' => $category?->slug($language), 'year' => null === $year ? null : (string) $year], static fn(?string $value): bool => null !== $value);
@@ -64,18 +65,18 @@ final readonly class ArticleList implements BlockController
         $filters = [];
 
         if (false !== ($context->options['categories'] ?? true)) {
-            foreach ($this->categories->all() as $item) {
-                $slug = $item->slug($language);
+            foreach ($this->categories->tree(ArticleStore::TYPE, ArticleStore::CATEGORIES) as $item) {
+                $itemSlug = $item->slug($language);
                 $title = $item->title($language);
 
-                if (null !== $slug && null !== $title) {
-                    $filters[] = ['title' => $title, 'href' => $link(['category' => $slug]), 'current' => $item->id === $category?->id];
+                if (null !== $itemSlug && null !== $title) {
+                    $filters[] = ['title' => $title, 'href' => $link(['category' => $itemSlug]), 'current' => $item->id === $category?->id, 'depth' => $item->depth];
                 }
             }
         }
 
         return [
-            'articles' => array_map(fn(ArticleView $article): array => $this->withLinks($this->rendering->teaser($article, $context->language, $images), $base), $this->articles->list($language, $category?->id, $year, $perPage, ($page - 1) * $perPage, $spaces)),
+            'articles' => array_map(fn(ArticleView $article): array => $this->withLinks($this->rendering->teaser($article, $context->language, $images), $base), $this->articles->list($language, $chosen, $year, $perPage, ($page - 1) * $perPage, $spaces)),
             'filters' => [] === $filters ? [] : [['title' => null, 'href' => $link([]), 'current' => null === $category], ...$filters],
             'filtered' => [] !== $filter,
             'pagination' => [

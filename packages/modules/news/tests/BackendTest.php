@@ -13,27 +13,21 @@ use Frootbox\Core\Action\Context;
 use Frootbox\Core\Extension\ExtensionPackage;
 use Frootbox\Core\Extension\Extensions;
 use Frootbox\Core\User\CreateRole;
-use Frootbox\News\Article\ArticleCategories;
 use Frootbox\News\Article\Articles;
 use Frootbox\News\Article\ArticleTranslations;
 use Frootbox\News\Backend\ArticleHandler;
 use Frootbox\News\Backend\ArticlesHandler;
-use Frootbox\News\Backend\CategoriesHandler;
-use Frootbox\News\Category\Categories;
-use Frootbox\News\Category\CategoryEditor;
 use Frootbox\News\NewsExtension;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(ArticlesHandler::class)]
 #[CoversClass(ArticleHandler::class)]
-#[CoversClass(CategoriesHandler::class)]
-#[CoversClass(CategoryEditor::class)]
 #[CoversClass(NewsExtension::class)]
 final class BackendTest extends BackendTestCase
 {
     protected function tables(): array
     {
-        return [ArticleCategories::TABLE, ArticleTranslations::TABLE, Articles::TABLE, Categories::TABLE];
+        return [ArticleTranslations::TABLE, Articles::TABLE, 'frootbox_news_article_categories', 'frootbox_news_categories'];
     }
 
     protected function extensions(): Extensions
@@ -64,7 +58,7 @@ final class BackendTest extends BackendTestCase
         self::assertStringContainsString('<fb-image-input', $new);
         self::assertStringContainsString('src="/cms/queries/media.list"', $new);
 
-        $category = $this->id($this->action('frootbox/news/category.create', ['translations' => ['de' => ['title' => 'Presse'], 'en' => ['title' => '', 'slug' => '']]], $session));
+        $category = $this->id($this->action('category.create', ['group' => 'frootbox/news/categories', 'translations' => ['de' => ['title' => 'Presse'], 'en' => ['title' => '', 'slug' => '']]], $session));
         $created = $this->action('frootbox/news/article.create', [
             'translations' => ['de' => ['title' => 'Neue Sorten', 'teaser' => 'Frisch geröstet.', 'text' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Fruchtig.']]]]]]],
             'date' => null,
@@ -96,10 +90,10 @@ final class BackendTest extends BackendTestCase
         self::assertStringContainsString('href="/cms/news/' . $id . '">Neue Sorten</a>', $list);
         self::assertStringNotContainsString('Neue Sorten', $this->html($this->request('GET', '/cms/news?q=kaffee', session: $session)));
 
-        $categories = $this->html($this->request('GET', '/cms/news/categories', session: $session));
-        self::assertStringContainsString('<fb-form action="frootbox/news/category.update"', $categories);
-        self::assertStringContainsString('value="presse"', $categories);
-        self::assertStringContainsString('<fb-form action="frootbox/news/category.create"', $categories);
+        self::assertStringContainsString('href="/cms/categories?group=frootbox/news/categories"', $list, 'The categories are those of the core.');
+        $categories = $this->html($this->request('GET', '/cms/categories?group=frootbox/news/categories', session: $session));
+        self::assertStringContainsString('data-fb-focus>Kategorien der News</h2>', $categories);
+        self::assertStringContainsString('?category=presse', $categories);
     }
 
     public function testAnEmptyLanguageOfACategoryIsNone(): void
@@ -107,13 +101,13 @@ final class BackendTest extends BackendTestCase
         $this->createUser('editor@example.org', ['editor']);
         $session = $this->signIn('editor@example.org');
 
-        $created = $this->action('frootbox/news/category.create', ['translations' => ['de' => ['title' => 'Termine'], 'en' => ['title' => 'Events']]], $session);
-        $updated = $this->action('frootbox/news/category.update', ['id' => $this->id($created), 'translations' => ['de' => ['title' => 'Termine', 'slug' => 'termine'], 'en' => ['title' => '', 'slug' => '']]], $session);
+        $created = $this->action('category.create', ['group' => 'frootbox/news/categories', 'translations' => ['de' => ['title' => 'Termine'], 'en' => ['title' => 'Events']]], $session);
+        $updated = $this->action('category.update', ['id' => $this->id($created), 'translations' => ['de' => ['title' => 'Termine', 'slug' => 'termine'], 'en' => ['title' => '', 'slug' => '']]], $session);
         $translations = $this->data($updated, 'translations');
         self::assertIsArray($translations);
         self::assertSame(['de'], array_keys($translations));
 
-        $error = $this->action('frootbox/news/category.create', ['translations' => ['de' => ['title' => '', 'slug' => '']]], $session, 422);
+        $error = $this->action('category.create', ['group' => 'frootbox/news/categories', 'translations' => ['de' => ['title' => '', 'slug' => '']]], $session, 422);
         self::assertStringContainsString('"pointer":"\\/translations\\/de\\/title"', json_encode($error, \JSON_THROW_ON_ERROR));
     }
 

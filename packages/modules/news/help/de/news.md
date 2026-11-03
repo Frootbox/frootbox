@@ -34,8 +34,8 @@ oder wann der Artikel offline geht.
 ## Kategorien
 
 Unter **Kategorien** legst Du Themen an, z. B. „Veranstaltungen“ oder
-„Presse“. Besucher können die Liste danach filtern. Wenn Du eine
-Kategorie löschst, bleiben ihre Artikel erhalten.
+„Presse“, auch untereinander. Besucher können die Liste danach filtern.
+Wenn Du eine Kategorie löschst, bleiben ihre Artikel erhalten.
 
 ## Feed
 

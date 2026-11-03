@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace Frootbox\News\Article;
 
 use DateTimeImmutable;
-use Frootbox\News\Category\Category;
+use Frootbox\Core\Category\Category;
 
 /**
  * A published article in one language, for the website.

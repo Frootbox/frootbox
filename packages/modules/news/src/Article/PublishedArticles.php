@@ -12,14 +12,15 @@ use DateTimeImmutable;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Frootbox\Core\Category\CategoryLinks;
+use Frootbox\Core\Category\ObjectCategories;
 use Frootbox\Database\Values;
-use Frootbox\News\Category\Categories;
-use Frootbox\News\Category\Category;
 
 /**
- * The published articles for visitors: lists by language, category and
+ * The published articles for visitors: lists by language, categories and
  * year, newest first, read from the tables. With spaces only the articles
- * of these spaces (decision 0232), null for all.
+ * of these spaces (decision 0232), null for all; with categories only
+ * articles in one of them (decision 0233), e.g. a category and all below.
  */
 final readonly class PublishedArticles
 {
@@ -27,18 +28,18 @@ final readonly class PublishedArticles
         private Connection $connection,
         private Articles $articles,
         private ArticleTranslations $translations,
-        private ArticleCategories $articleCategories,
-        private Categories $categories,
+        private ObjectCategories $categories,
     ) {}
 
     /**
+     * @param list<string>|null $categories
      * @param list<string>|null $spaces
      *
      * @return list<ArticleView>
      */
-    public function list(string $language, ?string $category = null, ?int $year = null, int $limit = 10, int $offset = 0, ?array $spaces = null): array
+    public function list(string $language, ?array $categories = null, ?int $year = null, int $limit = 10, int $offset = 0, ?array $spaces = null): array
     {
-        $query = $this->query($language, $category, $year, $spaces)
+        $query = $this->query($language, $categories, $year, $spaces)
             ->select('a.id')
             ->orderBy('a.date', 'DESC')
             ->addOrderBy('a.id', 'DESC')
@@ -50,11 +51,12 @@ final readonly class PublishedArticles
     }
 
     /**
+     * @param list<string>|null $categories
      * @param list<string>|null $spaces
      */
-    public function count(string $language, ?string $category = null, ?int $year = null, ?array $spaces = null): int
+    public function count(string $language, ?array $categories = null, ?int $year = null, ?array $spaces = null): int
     {
-        $count = $this->query($language, $category, $year, $spaces)->select('COUNT(*)')->executeQuery()->fetchOne();
+        $count = $this->query($language, $categories, $year, $spaces)->select('COUNT(*)')->executeQuery()->fetchOne();
 
         return is_numeric($count) ? (int) $count : 0;
     }
@@ -62,15 +64,16 @@ final readonly class PublishedArticles
     /**
      * The years with articles, newest first.
      *
+     * @param list<string>|null $categories
      * @param list<string>|null $spaces
      *
      * @return list<int>
      */
-    public function years(string $language, ?string $category = null, ?array $spaces = null): array
+    public function years(string $language, ?array $categories = null, ?array $spaces = null): array
     {
         $years = [];
 
-        foreach ($this->query($language, $category, null, $spaces)->select('a.date')->executeQuery()->fetchFirstColumn() as $date) {
+        foreach ($this->query($language, $categories, null, $spaces)->select('a.date')->executeQuery()->fetchFirstColumn() as $date) {
             if (\is_string($date)) {
                 $years[(int) substr($date, 0, 4)] = true;
             }
@@ -88,18 +91,25 @@ final readonly class PublishedArticles
     }
 
     /**
+     * @param list<string>|null $categories
      * @param list<string>|null $spaces
      */
-    private function query(string $language, ?string $category, ?int $year, ?array $spaces): QueryBuilder
+    private function query(string $language, ?array $categories, ?int $year, ?array $spaces): QueryBuilder
     {
         $query = $this->connection->createQueryBuilder()
             ->from(Articles::TABLE, 'a')
             ->innerJoin('a', ArticleTranslations::TABLE, 't', 't.article_id = a.id AND t.language = :language')
             ->setParameter('language', $language);
 
-        if (null !== $category) {
-            $query->innerJoin('a', ArticleCategories::TABLE, 'c', 'c.article_id = a.id AND c.category_id = :category')
-                ->setParameter('category', $category);
+        if (null !== $categories) {
+            $linked = $this->connection->createQueryBuilder()
+                ->select('l.target_id')
+                ->from(CategoryLinks::TABLE, 'l')
+                ->where('l.target_type = :type')
+                ->andWhere($query->expr()->in('l.category_id', ':categories'));
+            $query->andWhere($query->expr()->in('a.id', $linked->getSQL()))
+                ->setParameter('type', ArticleStore::TYPE)
+                ->setParameter('categories', [] === $categories ? [''] : $categories, ArrayParameterType::STRING);
         }
 
         if (null !== $spaces) {
@@ -140,19 +150,7 @@ final readonly class PublishedArticles
             $texts[$translation->articleId] = $translation;
         }
 
-        $categories = [];
-
-        foreach ($this->categories->all() as $category) {
-            $categories[$category->id] = $category;
-        }
-
-        $assigned = [];
-
-        foreach ($this->articleCategories->fetch(['where' => ['articleId' => $ids], 'order' => 'id']) as $row) {
-            if (isset($categories[$row->categoryId])) {
-                $assigned[$row->articleId][] = $categories[$row->categoryId];
-            }
-        }
+        $assigned = $this->categories->of(ArticleStore::TYPE, $ids);
 
         $views = [];
 
@@ -164,21 +162,9 @@ final readonly class PublishedArticles
                 continue;
             }
 
-            $views[] = new ArticleView($id, $language, $article->date, $text->title, $text->slug, $text->teaser, $text->text, $article->image, self::sorted($assigned[$id] ?? []));
+            $views[] = new ArticleView($id, $language, $article->date, $text->title, $text->slug, $text->teaser, $text->text, $article->image, $assigned[$id] ?? []);
         }
 
         return $views;
-    }
-
-    /**
-     * @param list<Category> $categories
-     *
-     * @return list<Category>
-     */
-    private static function sorted(array $categories): array
-    {
-        usort($categories, static fn(Category $a, Category $b): int => [$a->position, $a->id] <=> [$b->position, $b->id]);
-
-        return $categories;
     }
 }

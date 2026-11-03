@@ -9,10 +9,10 @@ declare(strict_types=1);
 namespace Frootbox\News\Article;
 
 use DateTimeInterface;
+use Frootbox\Core\Category\Category;
 use Frootbox\Core\Field\Field;
 use Frootbox\Core\Field\FieldTypes;
 use Frootbox\Core\Url\Urls;
-use Frootbox\News\Category\Category;
 use IntlDateFormatter;
 use Twig\Markup;
 

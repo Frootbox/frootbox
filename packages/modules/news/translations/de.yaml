@@ -45,19 +45,11 @@
 "A few sentences for the list and for search engines.": "Ein paar Sätze für die Liste und für Suchmaschinen."
 "Date": "Datum"
 "Shown with the article and orders the list. Without a date it is now.": "Steht am Artikel und ordnet die Liste. Ohne Datum gilt jetzt."
-"Topics of the articles, such as events or press. Visitors can filter the list by them.": "Themen der Artikel, etwa Termine oder Presse. Besucher können die Liste danach filtern."
-"Used in the filter of the list, e.g. ?category=press.": "Steht im Filter der Liste, z. B. ?category=presse."
 "Delete {title}": "{title} löschen"
-"The category is deleted.": "Die Kategorie ist gelöscht."
-"The articles stay, they just lose this category.": "Die Artikel bleiben, sie verlieren nur diese Kategorie."
-"No categories yet": "Noch keine Kategorien"
-"Articles do not need one. Create categories if visitors should filter by topic.": "Artikel brauchen keine. Leg Kategorien an, wenn Besucher nach Themen filtern sollen."
-"New category": "Neue Kategorie"
-"The category is created.": "Die Kategorie ist angelegt."
-"Create the category": "Kategorie anlegen"
 # Settings (decision 0221)
 Articles on the website and in the feed: Artikel auf der Website und im Feed
 Articles in the feed: Artikel im Feed
 How many of the newest articles the RSS feed of a page lists.: Wie viele der neuesten Artikel der RSS-Feed einer Seite enthält.
 "There is no such space of the news.": "Diese Verwaltung gibt es in den News nicht."
 Space: Verwaltung
+Categories of the news: Kategorien der News
