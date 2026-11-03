@@ -2,6 +2,8 @@ app:
   name: Meine Website
   # The address of the website, for canonical links. Required live.
   # url: https://example.com
+  # Times are kept and shown in this time zone, e.g. those of events.
+  timezone: Europe/Berlin
 
 database:
   url: '%env(DATABASE_URL)%'
