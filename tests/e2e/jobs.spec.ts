@@ -55,7 +55,7 @@ test('visitors filter the jobs and apply with a CV', async ({ page }) => {
     // The entry names the job.
     await signIn(page, '/cms/forms');
     await page.getByRole('link', { name: 'Bewerbung', exact: true }).click();
-    await page.getByRole('link', { name: /Einsendung/ }).click();
+    await page.getByRole('tab', { name: /^Einsendungen/ }).click();
     const entry = page.locator('details').first();
     await expect(entry).toContainText('Betrifft');
     await expect(entry).toContainText('Barista (m/w/d)');
