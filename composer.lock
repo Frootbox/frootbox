@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f2af35cca548e2f27587aeea2a85596f",
+    "content-hash": "8c9235f190beeadd042232981e87277d",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -607,6 +607,58 @@
                 "cms",
                 "frootbox",
                 "news"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "frootbox/people",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/modules/people",
+                "reference": "53ec3849a96ee4bc5c2873b62fea315bf809b55c"
+            },
+            "require": {
+                "frootbox/core": "^0.1",
+                "frootbox/database": "^0.1",
+                "frootbox/rich-text": "^0.1",
+                "php": ">=8.5",
+                "psr/http-message": "^2.0",
+                "psr/http-server-handler": "^1.0"
+            },
+            "suggest": {
+                "frootbox/backend": "Screens for the people and locations"
+            },
+            "type": "frootbox-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\People\\": "src/",
+                    "Frootbox\\People\\Migrations\\": "migrations/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Frootbox\\People\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "People and locations for the Frootbox CMS: a team, a contact person and a location with its address, opening hours and a map",
+            "keywords": [
+                "cms",
+                "contact",
+                "frootbox",
+                "locations",
+                "team"
             ],
             "transport-options": {
                 "symlink": true,
@@ -7124,6 +7176,7 @@
         "frootbox/database": 20,
         "frootbox/forms": 20,
         "frootbox/news": 20,
+        "frootbox/people": 20,
         "frootbox/rich-text": 20,
         "frootbox/seo": 20,
         "frootbox/theme-base": 20,
