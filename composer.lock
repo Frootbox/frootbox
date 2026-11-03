@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8c9235f190beeadd042232981e87277d",
+    "content-hash": "b155b174a9fb3bea0d122be4a963e645",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -506,6 +506,57 @@
                 "frootbox",
                 "migrations",
                 "repository"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "frootbox/events",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/modules/events",
+                "reference": "2e40d6601018a01186208782daa453c1203d4f30"
+            },
+            "require": {
+                "frootbox/core": "^0.1",
+                "frootbox/database": "^0.1",
+                "frootbox/rich-text": "^0.1",
+                "php": ">=8.5",
+                "psr/http-message": "^2.0",
+                "psr/http-server-handler": "^1.0"
+            },
+            "suggest": {
+                "frootbox/backend": "Screens for the events and categories"
+            },
+            "type": "frootbox-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\Events\\": "src/",
+                    "Frootbox\\Events\\Migrations\\": "migrations/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Frootbox\\Events\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Events for the Frootbox CMS: dates with place and drafts, categories, upcoming and past events with an address for each, the next events as teasers and a calendar file",
+            "keywords": [
+                "calendar",
+                "cms",
+                "events",
+                "frootbox"
             ],
             "transport-options": {
                 "symlink": true,
@@ -7174,6 +7225,7 @@
         "frootbox/backend": 20,
         "frootbox/core": 20,
         "frootbox/database": 20,
+        "frootbox/events": 20,
         "frootbox/forms": 20,
         "frootbox/news": 20,
         "frootbox/people": 20,

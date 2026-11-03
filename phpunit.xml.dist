@@ -34,6 +34,9 @@
         <testsuite name="people">
             <directory>packages/modules/people/tests</directory>
         </testsuite>
+        <testsuite name="events">
+            <directory>packages/modules/events/tests</directory>
+        </testsuite>
         <testsuite name="seo">
             <directory>packages/modules/seo/tests</directory>
         </testsuite>
@@ -59,6 +62,7 @@
             <directory>packages/database/src</directory>
             <directory>packages/modules/forms/src</directory>
             <directory>packages/modules/people/src</directory>
+            <directory>packages/modules/events/src</directory>
             <directory>packages/modules/seo/src</directory>
             <directory>packages/modules/news/src</directory>
             <directory>packages/rich-text/src</directory>
