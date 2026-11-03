@@ -77,6 +77,10 @@ test('an editor builds and publishes a form, an admin reads its entries', async 
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
     const id = page.url().split('/').pop()!;
 
+    // The fields are a tab of their own (decision 0235); it stays open while they change.
+    await page.getByRole('tab', { name: /^Felder/ }).click();
+    await expect(page).toHaveURL(new RegExp(`/cms/forms/${id}#fields$`));
+
     for (const [type, label] of [['Text', 'Name'], ['Telefon', 'Telefonnummer']]) {
         await page.getByRole('button', { name: 'Feld hinzufügen' }).click();
         const dialog = page.getByRole('dialog', { name: 'Feld hinzufügen' });
@@ -89,6 +93,8 @@ test('an editor builds and publishes a form, an admin reads its entries', async 
 
     await page.getByRole('button', { name: 'Telefonnummer nach oben' }).click();
     await expect(page.locator('#form-detail ol li').first()).toContainText('Telefonnummer');
+    await expect(page.getByRole('tab', { name: /^Felder/ })).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tab', { name: /^Felder/ })).toHaveAccessibleName('Felder 2');
 
     await page.getByRole('button', { name: 'Veröffentlichen' }).click();
     await expect(page.locator('.fb-page-header')).toContainText('Veröffentlicht');
@@ -103,12 +109,93 @@ test('an editor builds and publishes a form, an admin reads its entries', async 
     expect(sent.status()).toBe(200);
 
     await page.reload();
-    await page.getByRole('link', { name: '1 Einsendung' }).click();
-    await expect(page).toHaveURL(new RegExp(`/cms/forms/${id}/entries$`));
+    await page.getByRole('tab', { name: 'Einsendungen 1' }).click();
+    await expect(page).toHaveURL(new RegExp(`/cms/forms/${id}/entries\\?language=de$`));
     await expect(page.locator('details').first()).toContainText('040 1234567');
     const csv = await page.request.get(`/cms/forms/${id}/entries.csv`);
     expect(csv.headers()['content-type']).toBe('text/csv; charset=utf-8');
     expect(await csv.text()).toContain('"Telefonnummer","Name"');
+
+    expect((await action(page, 'frootbox/forms/form.delete', { id })).status).toBe(200);
+});
+
+test('the parts of a form are tabs that keep their place, unsaved changes and errors', async ({ page }) => {
+    await signIn(page, '/cms/forms');
+    const created = await action(page, 'frootbox/forms/form.create', { translations: { de: { title: `Reiter ${unique()}` } }, recipients: [] });
+    expect(created.status).toBe(200);
+    const id = created.body.data.id;
+    await page.goto(`/cms/forms/${id}`);
+
+    const bar = page.getByRole('tablist', { name: 'Teile des Formulars' });
+    await expect(bar.getByRole('tab')).toHaveCount(5);
+    const entries = bar.getByRole('tab', { name: /^Einsendungen/ });
+    const texts = bar.getByRole('tab', { name: /^Texte/ });
+    const fields = bar.getByRole('tab', { name: /^Felder/ });
+    const recipients = bar.getByRole('tab', { name: /^Empfänger/ });
+    const more = bar.getByRole('tab', { name: /^Weiteres/ });
+    await expect(texts).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tabpanel', { name: /^Texte/ })).toBeVisible();
+    await expect(page.getByLabel('E-Mail-Adressen')).toBeHidden();
+    await expect(fields).toHaveAccessibleName('Felder 0');
+
+    // Arrow keys switch, the address follows without an entry in the history.
+    await texts.focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(fields).toBeFocused();
+    await expect(fields).toHaveAttribute('aria-selected', 'true');
+    await expect(page).toHaveURL(new RegExp(`/cms/forms/${id}#fields$`));
+    await page.keyboard.press('End');
+    await expect(more).toBeFocused();
+    await expect(page.getByRole('button', { name: 'Formular löschen' })).toBeVisible();
+    // The entries are a tab to their own screen (decision 0237): the arrows only reach it.
+    await page.keyboard.press('ArrowRight');
+    await expect(entries).toBeFocused();
+    await expect(entries).toHaveAttribute('aria-selected', 'false');
+    await expect(more).toHaveAttribute('aria-selected', 'true');
+    await expect(page).toHaveURL(new RegExp(`/cms/forms/${id}#more$`));
+    await page.keyboard.press('ArrowRight');
+    await expect(texts).toBeFocused();
+
+    // A reload and the languages in the header keep the tab.
+    await recipients.click();
+    await page.reload();
+    await expect(recipients).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByLabel('E-Mail-Adressen')).toBeVisible();
+    const languages = page.getByRole('navigation', { name: 'Sprachen' });
+    await expect(languages.getByRole('link', { name: 'Deutsch' })).toHaveAttribute('aria-current', 'page');
+    await expect(languages.getByRole('link', { name: 'English' })).toHaveAttribute('href', new RegExp(`/cms/forms/${id}\\?language=en#recipients$`));
+
+    // A changed field puts a dot on its tab, which another tab shows too.
+    await page.getByLabel('E-Mail-Adressen').fill('kein-mail');
+    await texts.click();
+    await expect(recipients).toHaveAccessibleDescription('Nicht gespeichert');
+    await expect(recipients.locator('.fb-tabs__dot')).toBeVisible();
+
+    // An error replaces the dot with the number of fields to check.
+    await recipients.click();
+    await page.getByRole('button', { name: 'Speichern' }).click();
+    await expect(page.getByText('„kein-mail“ ist keine E-Mail-Adresse.').first()).toBeVisible();
+    await expect(recipients).toHaveAccessibleDescription('Fehler: 1');
+    await expect(recipients.locator('.fb-tabs__dot')).toBeHidden();
+
+    // Saved, the tab is calm again and stays open after the part is loaded again.
+    await page.getByLabel('E-Mail-Adressen').fill('team@example.org');
+    await page.getByRole('button', { name: 'Speichern' }).click();
+    await expect(page.locator('.fb-toast')).toHaveText('Gespeichert');
+    await expect(recipients).toHaveAttribute('aria-selected', 'true');
+    await expect(recipients).toHaveAccessibleDescription('');
+    await expect(page.getByLabel('E-Mail-Adressen')).toHaveValue('team@example.org');
+
+    // The entries share the header and the bar; their tabs lead back to the parts of the form.
+    await expect(entries).toHaveAccessibleName('Einsendungen 0');
+    await entries.click();
+    await expect(page).toHaveURL(new RegExp(`/cms/forms/${id}/entries\\?language=de$`));
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(/^Reiter /);
+    await expect(entries).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tabpanel', { name: /^Einsendungen/ })).toContainText('Noch keine Einsendungen');
+    await bar.getByRole('tab', { name: 'Felder 0' }).click();
+    await expect(page).toHaveURL(new RegExp(`/cms/forms/${id}\\?language=de#fields$`));
+    await expect(fields).toHaveAttribute('aria-selected', 'true');
 
     expect((await action(page, 'frootbox/forms/form.delete', { id })).status).toBe(200);
 });
