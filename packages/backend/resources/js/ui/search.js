@@ -121,7 +121,7 @@ export class Search extends LitElement {
 
         .close:focus-visible, a:focus-visible { outline: var(--fb-size-focus) solid var(--fb-focus); outline-offset: var(--fb-size-focus-offset); }
 
-        .results { flex: 1; min-height: 0; padding: var(--fb-space-2); overflow-y: auto; }
+        .results { flex: 1 1 auto; min-height: 0; padding: var(--fb-space-2); overflow-y: auto; }
 
         .results:empty { display: none; }
 

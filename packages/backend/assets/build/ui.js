@@ -75,7 +75,7 @@ import{LitElement as e,css as t,html as n,nothing as r,render as i,svg as a}from
 
         .close:focus-visible, a:focus-visible { outline: var(--fb-size-focus) solid var(--fb-focus); outline-offset: var(--fb-size-focus-offset); }
 
-        .results { flex: 1; min-height: 0; padding: var(--fb-space-2); overflow-y: auto; }
+        .results { flex: 1 1 auto; min-height: 0; padding: var(--fb-space-2); overflow-y: auto; }
 
         .results:empty { display: none; }
 
@@ -340,7 +340,7 @@ import{LitElement as e,css as t,html as n,nothing as r,render as i,svg as a}from
 
         h2 { margin: 0; font-size: var(--fb-text-lg); font-weight: var(--fb-weight-bold); }
 
-        .body { display: flex; flex: 1; flex-direction: column; gap: var(--fb-space-4); min-block-size: 0; padding: var(--fb-space-4) var(--fb-space-6) var(--fb-space-6); overflow-y: auto; }
+        .body { display: flex; flex: 1 1 auto; flex-direction: column; gap: var(--fb-space-4); min-block-size: 0; padding: var(--fb-space-4) var(--fb-space-6) var(--fb-space-6); overflow-y: auto; }
 
         ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(calc(var(--fb-size-dialog) * 0.2), 1fr)); gap: var(--fb-space-3); margin: 0; padding: 0; list-style: none; }
 
