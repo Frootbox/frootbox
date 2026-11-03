@@ -1,0 +1,6 @@
+{#- The space of an object in a form of a module (decision 0244): a choice to move it, only with more than one space. With type, value (the space of the draft), disabled and prefix (for ids). -#}
+{% import '@backend/ui.twig' as ui %}
+{% set choices = space_choices(type) %}
+{% if choices is not empty %}
+{{ ui.select({label: t('Space'), name: 'space', id: (prefix ?? 'object') ~ '-space', value: value, options: choices, disabled: disabled ?? false, hint: t('Moves it with publishing. It then lives below the page of that space, and the old address leads there.')}) }}
+{% endif %}

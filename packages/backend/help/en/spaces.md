@@ -13,3 +13,10 @@ pages.
 Here you see each space with its page and how many entries it holds.
 You can rename spaces and add new ones. A space that holds nothing and
 that no page shows can be deleted.
+
+## To another space
+
+Move an entry to another space with **Space** in its form. Like every
+change it counts once you publish. Then it lives below the page of the
+new space, and the old address leads there. Its categories, tags and
+address stay.

@@ -22,6 +22,8 @@ use Frootbox\Core\I18n\Translator;
 use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Media\ShowMedium;
 use Frootbox\Core\ObjectField\ShowObjectFields;
+use Frootbox\Core\Plugin\ListSpaces;
+use Frootbox\Core\Plugin\SpaceSummary;
 use Frootbox\Core\Routing\Router;
 use Frootbox\Core\Tag\ChooseTags;
 use Frootbox\Database\EntityNotFoundException;
@@ -40,6 +42,7 @@ use Twig\TwigFunction;
  *     {% for group in category_choices('frootbox/news/article') %}…{% endfor %}
  *     {% set choices = tag_choices('frootbox/news/article', space, chosen) %}
  *     {% set further = object_fields('frootbox/news/article', data.fields, 'de') %}
+ *     {% for space in space_choices('frootbox/news/article') %}…{% endfor %}
  */
 final class TwigExtension extends AbstractExtension
 {
@@ -69,6 +72,7 @@ final class TwigExtension extends AbstractExtension
             new TwigFunction('category_choices', $this->categoryChoices(...)),
             new TwigFunction('tag_choices', $this->tagChoices(...)),
             new TwigFunction('object_fields', $this->objectFields(...)),
+            new TwigFunction('space_choices', $this->spaceChoices(...)),
         ];
     }
 
@@ -202,6 +206,27 @@ final class TwigExtension extends AbstractExtension
         }
 
         return $groups;
+    }
+
+    /**
+     * The spaces of a plugin to move an object to (decision 0244), each
+     * with the page that shows it; empty with only the default one.
+     *
+     * @return list<array{value: string, label: string}>
+     */
+    public function spaceChoices(string $type): array
+    {
+        try {
+            $spaces = $this->runner->ask(new ListSpaces($type))->items;
+        } catch (AccessDeniedException) {
+            return [];
+        }
+
+        if (\count($spaces) < 2) {
+            return [];
+        }
+
+        return array_map(static fn(SpaceSummary $space): array => ['value' => $space->id, 'label' => $space->title], $spaces);
     }
 
     /**
