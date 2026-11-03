@@ -303,6 +303,12 @@ fb-tree > .fb-alert {
     color: var(--fb-danger-text);
 }
 
+/* The plugin a page shows (decision 0242): a hint, not a warning. */
+.fb-tree__flag[data-status="plugin"] {
+    color: var(--fb-text-muted);
+    font-weight: var(--fb-weight-regular);
+}
+
 .fb-tree__item[data-collapsed] > .fb-tree__row .fb-tree__toggle .fb-icon:dir(rtl) {
     transform: rotate(90deg);
 }

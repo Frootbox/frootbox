@@ -1283,3 +1283,25 @@ Apply the presets: Vorgaben übernehmen
 "There is no language \"{language}\". Languages: {languages}.": "Die Sprache „{language}“ gibt es nicht. Sprachen: {languages}."
 '{type} "{title}"': '{type} „{title}“'
 'The page is published. The changes to {objects} stay open: you may not publish them.': 'Die Seite ist veröffentlicht. Die Änderungen an {objects} bleiben offen: Du darfst sie nicht veröffentlichen.'
+"Shows {plugin}": "Zeigt {plugin}"
+# The screen "Spaces" (decision 0242)
+"Default": "Standard"
+"Shown on": "Gezeigt auf"
+"Shown on a page": "Auf einer Seite gezeigt"
+"No page shows it": "Keine Seite zeigt sie"
+"{count} entry in it":
+  one: "{count} Eintrag"
+  other: "{count} Einträge"
+"New space": "Neue Verwaltung"
+"New space of {plugin}": "Neue Verwaltung für {plugin}"
+"Rename {space}": "{space} umbenennen"
+"Delete {space}": "{space} löschen"
+"Rename the space": "Verwaltung umbenennen"
+"Delete the space?": "Verwaltung löschen?"
+"It holds nothing and no page shows it.": "Sie enthält nichts, und keine Seite zeigt sie."
+"The space is saved.": "Die Verwaltung ist gespeichert."
+"The space is deleted.": "Die Verwaltung ist gelöscht."
+'What editors see, e.g. "Apprenticeships".': 'Was Redakteure sehen, z. B. „Ausbildung“.'
+"No modules with spaces": "Keine Module mit Verwaltungen"
+"Modules such as news or jobs bring them along once they are installed.": "Module wie News oder Stellen bringen sie mit, sobald sie installiert sind."
+"What modules keep apart, e.g. jobs for apprentices on a page of their own. Which page shows a space is set in the settings of the page.": "Was Module getrennt halten, z. B. Stellen für Auszubildende auf einer eigenen Seite. Welche Seite eine Verwaltung zeigt, stellst Du in den Einstellungen der Seite ein."

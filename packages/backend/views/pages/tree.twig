@@ -1,4 +1,4 @@
-{#- The sitemap as <fb-tree>; links load the details with htmx (decisions 0116, 0135). One line per page: the status as a dot, a label only where it is not "published". Whole levels open while they fit (decision 0136), else branches open along the current page; <fb-tree> remembers what was opened or closed. -#}
+{#- The sitemap as <fb-tree>; links load the details with htmx (decisions 0116, 0135). One line per page: the status as a dot, a label only where it is not "published", a mark for the plugin a page shows (decision 0242). Whole levels open while they fit (decision 0136), else branches open along the current page; <fb-tree> remembers what was opened or closed. -#}
 {% macro rows(rows, current, movable, open, levels) %}
     {%- set labels = {published: t('Published'), draft: t('Draft'), changed: t('Pending changes'), scheduled: t('Scheduled')} -%}
     {%- for row in rows %}
@@ -24,8 +24,9 @@
             <a class="fb-tree__link" href="{{ path('backend.pages.show', {id: row.id}) }}" title="{{ row.title }} · {{ row.path }} · {{ row.languages|join(', ') }} · {{ status }}" hx-get="{{ path('backend.pages.show', {id: row.id}) }}" hx-target="#page-detail" hx-select="#page-detail" hx-swap="outerHTML" hx-push-url="true"{% if row.id == current %} aria-current="page"{% endif %}{% if movable and not row.fixed %} aria-describedby="page-tree-hint"{% endif %}>
                 <span class="fb-tree__title" lang="{{ row.lang }}" dir="{{ row.dir }}">{{ row.title }}</span>
                 <span class="fb-tree__path" dir="ltr">{{ row.path }}</span>
-                <span class="fb-visually-hidden">, {{ status }}{% if row.locked %}, {{ t('Locked') }}{% endif %}</span>
+                <span class="fb-visually-hidden">, {{ status }}{% if row.locked %}, {{ t('Locked') }}{% endif %}{% if row.plugin %}, {{ t('Shows {plugin}', {plugin: row.plugin}) }}{% endif %}</span>
             </a>
+            {% if row.plugin %}<span class="fb-tree__flag" data-status="plugin" title="{{ t('Shows {plugin}', {plugin: row.plugin}) }}" aria-hidden="true">{{ icon('list', 'fb-icon fb-icon--small') }}{{ row.plugin }}</span>{% endif %}
             {% if row.locked %}<span class="fb-tree__flag" data-status="danger" aria-hidden="true">{{ icon('lock', 'fb-icon fb-icon--small') }}{{ t('Locked') }}</span>{% endif %}
             {% if row.status != 'published' %}<span class="fb-tree__flag" data-status="{{ row.status }}" aria-hidden="true">{{ status }}</span>{% endif %}
             {% endif %}

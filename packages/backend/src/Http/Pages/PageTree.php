@@ -20,7 +20,7 @@ use Frootbox\Core\Page\PageTreeNode;
  * the pages above them are "outside": shown, but not opened or moved
  * (decision 0118).
  *
- * @phpstan-type Row array{id: string, title: string, lang: string, dir: string, path: string, terms: string, languages: list<string>, status: string, layout: string, depth: int, start: bool, fixed: bool, online: bool, locked: bool, outside: bool, children: list<mixed>}
+ * @phpstan-type Row array{id: string, title: string, lang: string, dir: string, path: string, terms: string, languages: list<string>, status: string, layout: string, depth: int, start: bool, fixed: bool, online: bool, locked: bool, outside: bool, plugin: string|null, children: list<mixed>}
  */
 final readonly class PageTree
 {
@@ -234,6 +234,8 @@ final readonly class PageTree
                 // Locked by itself or a page above (decision 0117).
                 'locked' => null !== $node->visibility->lockedBy,
                 'outside' => $node->outside,
+                // What plugin the page shows (decision 0242).
+                'plugin' => $node->plugin,
                 'children' => [],
             ];
             $pages[$node->id] = ['row' => $row, 'parentId' => $parentId, 'ancestors' => $ancestors, 'paths' => $paths, 'children' => \count($node->children)];

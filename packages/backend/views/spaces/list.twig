@@ -1,0 +1,107 @@
+{#- The screen "Spaces" (decision 0242): the spaces of each plugin with their page and how many objects each holds; rename, delete and add. -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Spaces') }}{% endblock %}
+
+{% block content %}
+{% set refresh = 'spaces' %}
+<div class="fb-stack fb-stack--lg" id="spaces">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1" tabindex="-1" data-fb-focus>{{ t('Spaces') }}</h1>
+            <p class="fb-muted">{{ t('What modules keep apart, e.g. jobs for apprentices on a page of their own. Which page shows a space is set in the settings of the page.') }}</p>
+        </div>
+    </header>
+
+    {% for plugin in plugins %}
+    <section class="fb-card" aria-labelledby="spaces-{{ loop.index }}-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="spaces-{{ loop.index }}-title">{{ plugin.label }}</h2>
+            {% if plugin.several and can('space.create') %}
+            {{ ui.button({label: t('New space'), variant: 'outline', small: true, icon: 'plus', attrs: {commandfor: 'space-new', command: 'show-modal', 'aria-label': t('New space of {plugin}', {plugin: plugin.label}), 'data-fb-fill': {type: plugin.type}|json_encode}}) }}
+            {% endif %}
+        </div>
+        <ul>
+            {%- for entry in plugin.spaces %}
+            {% set space = entry.space %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title">{{ space.title }}</span>
+                    <span class="fb-list__meta">
+                        {%- if entry.page %}{{ t('Shown on') }} <a href="{{ path('backend.pages.show', {id: entry.page.id}) }}">{{ entry.page.title }}</a> <span dir="ltr">({{ entry.page.path }})</span>{% elseif space.pageId %}{{ t('Shown on a page') }}{% else %}{{ t('No page shows it') }}{% endif -%}
+                        {{ ' · ' }}{{ t(['{count} entry in it', '{count} entries in it'], {count: space.count ?? 0}) }}
+                    </span>
+                </span>
+                {% if space.default %}{{ ui.badge('neutral', t('Default')) }}{% endif %}
+                {% if not space.default and can('space.update') %}
+                {{ ui.button({label: t('Rename'), variant: 'outline', small: true, attrs: {commandfor: 'space-rename', command: 'show-modal', 'aria-label': t('Rename {space}', {space: space.title}), 'data-fb-fill': {id: space.id, title: space.title}|json_encode}}) }}
+                {% endif %}
+                {% if not space.default and not space.pageId and (space.count ?? 0) == 0 and can('space.delete') %}
+                {{ ui.button({label: t('Delete'), variant: 'ghost', small: true, icon: 'close', icon_only: true, attrs: {commandfor: 'space-delete', command: 'show-modal', 'aria-label': t('Delete {space}', {space: space.title}), 'data-fb-fill': {id: space.id}|json_encode}}) }}
+                {% endif %}
+            </li>
+            {%- endfor %}
+        </ul>
+    </section>
+    {% else %}
+    <section class="fb-card fb-card--padded">
+        {{ ui.empty({icon: 'list', title: t('No modules with spaces'), text: t('Modules such as news or jobs bring them along once they are installed.')}) }}
+    </section>
+    {% endfor %}
+</div>
+
+{% if can('space.create') %}
+<dialog class="fb-dialog" id="space-new" aria-labelledby="space-new-title">
+    <fb-form action="space.create" refresh="{{ refresh }}" done="{{ t('The space is saved.') }}">
+        <form novalidate>
+            <input type="hidden" name="type">
+            <div class="fb-dialog__body fb-stack">
+                <h2 class="fb-dialog__title" id="space-new-title">{{ t('New space') }}</h2>
+                {{ ui.field({label: t('Name'), name: 'title', id: 'space-new-title-field', required: true, hint: t('What editors see, e.g. "Apprenticeships".'), attrs: {maxlength: 100, autocomplete: 'off'}}) }}
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'space-new', command: 'close'}}) }}
+                {{ ui.button({label: t('Save'), type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if can('space.update') %}
+<dialog class="fb-dialog" id="space-rename" aria-labelledby="space-rename-title">
+    <fb-form action="space.update" refresh="{{ refresh }}" done="{{ t('The space is saved.') }}">
+        <form novalidate>
+            <input type="hidden" name="id">
+            <div class="fb-dialog__body fb-stack">
+                <h2 class="fb-dialog__title" id="space-rename-title">{{ t('Rename the space') }}</h2>
+                {{ ui.field({label: t('Name'), name: 'title', id: 'space-rename-title-field', required: true, attrs: {maxlength: 100, autocomplete: 'off'}}) }}
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'space-rename', command: 'close'}}) }}
+                {{ ui.button({label: t('Save'), type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if can('space.delete') %}
+<dialog class="fb-dialog" id="space-delete" aria-labelledby="space-delete-title">
+    <fb-form action="space.delete" refresh="{{ refresh }}" done="{{ t('The space is deleted.') }}">
+        <form novalidate>
+            <input type="hidden" name="id">
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="space-delete-title">{{ t('Delete the space?') }}</h2>
+                <p>{{ t('It holds nothing and no page shows it.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'space-delete', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Delete'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+{% endblock %}
