@@ -10,18 +10,21 @@ namespace Frootbox\News;
 
 use Frootbox\Core\Revision\Revisions;
 use Frootbox\Core\Search\AsSearchSource;
+use Frootbox\Core\Search\PublishedEntry;
+use Frootbox\Core\Search\PublishedSource;
 use Frootbox\Core\Search\SearchEntry;
-use Frootbox\Core\Search\SearchSource;
+use Frootbox\Core\Url\Target;
 use Frootbox\Database\EntityNotFoundException;
 use Frootbox\News\Article\ArticleStore;
 use Frootbox\RichText\RichText;
 
 /**
  * News articles in the search of the backend, as editors see them:
- * drafts first (decision 0217).
+ * drafts first (decision 0217); on the website the published ones
+ * (decision 0228).
  */
 #[AsSearchSource('frootbox/news/article', 'News')]
-final readonly class ArticleSource implements SearchSource
+final readonly class ArticleSource implements PublishedSource
 {
     public function __construct(
         private ArticleStore $store,
@@ -56,6 +59,24 @@ final readonly class ArticleSource implements SearchSource
                     text: implode("\n", array_filter([$text->teaser, $this->richText->toText($text->text)], static fn(string $part): bool => '' !== trim($part))),
                     permission: 'frootbox/news/article.show',
                     language: $language,
+                );
+            }
+        }
+    }
+
+    /**
+     * The published version for the search on the website (decision 0228).
+     */
+    public function published(array $items): iterable
+    {
+        foreach ($items as $id) {
+            foreach ($this->store->published($id)->translations ?? [] as $language => $text) {
+                yield new PublishedEntry(
+                    $id,
+                    $language,
+                    $text->title,
+                    implode("\n", array_filter([$text->teaser, $this->richText->toText($text->text)], static fn(string $part): bool => '' !== trim($part))),
+                    Target::parse(ArticleStore::target($id)),
                 );
             }
         }

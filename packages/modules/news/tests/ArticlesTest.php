@@ -30,12 +30,14 @@ use Frootbox\News\Article\ScheduleArticle;
 use Frootbox\News\Article\ShowArticle;
 use Frootbox\News\Article\UnpublishArticle;
 use Frootbox\News\Article\UpdateArticle;
+use Frootbox\News\ArticleSource;
 use Frootbox\News\Category\Categories;
 use Frootbox\News\Category\CategoryEditor;
 use Frootbox\News\Category\CreateCategory;
 use Frootbox\News\Category\DeleteCategory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(ArticleSource::class)]
 #[CoversClass(ArticleEditor::class)]
 #[CoversClass(ArticleStore::class)]
 #[CoversClass(CategoryEditor::class)]
@@ -176,6 +178,11 @@ final class ArticlesTest extends NewsTestCase
         self::assertSame(['frootbox/news/article'], array_values(array_unique(array_map(static fn($hit): string => $hit->source, $hits))));
         self::assertSame($id, $hits[0]->item);
         self::assertSame('/neue-sorten', $this->get(Urls::class)->path(ArticleStore::target($id), 'de'));
+
+        $published = iterator_to_array($this->get(ArticleSource::class)->published([$id]), false);
+        self::assertCount(1, $published, 'The published version, for the search on the website.');
+        self::assertSame(['Neue Sorten', 'de', ArticleStore::target($id)], [$published[0]->title, $published[0]->language, (string) $published[0]->target]);
+        self::assertStringContainsString('Geröstet in Hamburg', $published[0]->text);
 
         $editor = $this->get(Roles::class)->fetchOne(['where' => ['name' => 'editor']]);
         self::assertNotNull($editor);
