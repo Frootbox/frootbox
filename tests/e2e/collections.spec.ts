@@ -79,6 +79,8 @@ test('an editor adds a farm in the tab of the collection', async ({ page }) => {
 
 test('an admin adds a field to the collection', async ({ page }) => {
     await signIn(page, '/cms/collections');
+    // A retry starts without the field of the failed run.
+    await action(page, 'frootbox/collections/field.delete', { space: 'default', name: 'flaeche' });
     await page.getByRole('link', { name: 'Felder' }).click();
     await expect(page).toHaveURL(/\/cms\/collections\/fields\?space=default$/);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Felder');

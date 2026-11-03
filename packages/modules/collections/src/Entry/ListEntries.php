@@ -17,6 +17,7 @@ use Frootbox\Core\Auth\Scope;
 use Frootbox\Core\Auth\Scoped;
 use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Plugin\SpaceRights;
+use Frootbox\Database\EntityNotFoundException;
 
 /**
  * @implements Query<EntryList>
@@ -57,7 +58,13 @@ final readonly class ListEntries implements Query, Scoped
         $within = $rights->within(EntryStore::TYPE, 'frootbox/collections/entry.list');
 
         foreach ($store->ids() as $id) {
-            $details = $store->details($id);
+            try {
+                $details = $store->details($id);
+            } catch (EntityNotFoundException) {
+                // Deleted by someone else since the ids were read.
+                continue;
+            }
+
             $data = $details->current();
 
             if (null !== $this->space && $data->space !== $this->space) {
