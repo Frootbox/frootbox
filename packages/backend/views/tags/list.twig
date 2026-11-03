@@ -1,0 +1,149 @@
+{#- The common stock of tags (decisions 0233, 0239): labels per language, internal ones, how often each is used; rename, merge and delete in dialogs. -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% macro labels(prefix, languages) %}
+    {% import '@backend/ui.twig' as ui %}
+    {% set several = languages|length > 1 %}
+    {% for language in languages %}
+        {{ ui.field({label: several ? language.title : t('Label'), name: 'labels.' ~ language.code, id: prefix ~ '-' ~ language.code, optional: several and not loop.first, attrs: {lang: language.code, dir: language.direction.value, maxlength: 60}}) }}
+    {% endfor %}
+    {{ ui.check({label: t('Internal'), name: 'internal', id: prefix ~ '-internal', hint: t('Only for choosing content, e.g. in a teaser, and for switches in templates. Visitors never see it.')}) }}
+{% endmacro %}
+
+{% block title %}{{ t('Tags') }}{% endblock %}
+
+{% block content %}
+{#- The choice in the dialog to merge changes with the list. -#}
+{% set refresh = 'tags tag-targets' %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Tags') }}</h1>
+            <p class="fb-muted">{{ t('One stock of words for all content. A tag has a label per language; editors find it by any of them.') }}</p>
+        </div>
+        {% if can('tag.create') %}{{ ui.button({label: t('New tag'), icon: 'plus', attrs: {commandfor: 'tag-new', command: 'show-modal', 'data-fb-fill': '{}'}}) }}{% endif %}
+    </header>
+
+    <section class="fb-card" id="tags" aria-labelledby="tags-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="tags-title" tabindex="-1" data-fb-focus>{{ t('Tags') }}</h2>
+            {{ ui.badge('neutral', tags|length) }}
+        </div>
+        {% if total > 0 %}
+        <form class="fb-card__body fb-cluster" method="get" action="{{ path('backend.tags') }}" role="search">
+            {{ ui.field({label: t('Search'), name: 'q', id: 'tags-search', type: 'search', value: search, placeholder: t('Label or key')}) }}
+            {{ ui.button({label: t('Search'), variant: 'outline', type: 'submit', icon: 'search'}) }}
+        </form>
+        {% endif %}
+        {% if tags is empty %}
+        <div class="fb-card__body">
+            {% if search %}
+                {{ ui.empty({icon: 'tag', title: t('Nothing found'), text: t('Try another search.')}) }}
+            {% else %}
+                {{ ui.empty({icon: 'tag', title: t('No tags yet'), text: t('Editors add them to news, events and jobs as they write. Presets of the configuration appear once someone chooses them.')}) }}
+            {% endif %}
+        </div>
+        {% else %}
+        <ul>
+            {%- for tag in tags %}
+            {% set missing = languages|length > 1 and not tag.internal ? languages|filter(language => language.code in tag.missing)|map(language => language.title) : [] %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title">{{ tag.title }}</span>
+                    <span class="fb-list__meta">{{ tag.others is empty ? '' : tag.others|join(' · ') ~ ' · ' }}<code>{{ tag.key }}</code> · {{ t(['used {count} time', 'used {count} times'], {count: tag.count}) }}</span>
+                </span>
+                {#- Badges and buttons wrap as one below the title on narrow screens. -#}
+                <span class="fb-cluster">
+                {% if tag.internal %}{{ ui.badge('neutral', t('Internal')) }}{% endif %}
+                {% if tag.preset %}{{ ui.badge('neutral', t('Preset')) }}{% endif %}
+                {% if missing is not empty %}{{ ui.badge('draft', t('Without {languages}', {languages: missing|join(', ')})) }}{% endif %}
+                {% if can('tag.update') %}
+                {{ ui.button({label: t('Edit'), variant: 'outline', small: true, attrs: {commandfor: 'tag-edit', command: 'show-modal', 'aria-label': t('Edit {tag}', {tag: tag.title}), 'data-fb-fill': tag.fill|json_encode}}) }}
+                {% endif %}
+                {% if can('tag.merge') and targets|length > 1 %}
+                {{ ui.button({label: t('Merge'), variant: 'ghost', small: true, attrs: {commandfor: 'tag-merge', command: 'show-modal', 'aria-label': t('Merge {tag} into another tag', {tag: tag.title}), 'data-fb-fill': {id: tag.id}|json_encode}}) }}
+                {% endif %}
+                {% if can('tag.delete') %}
+                {{ ui.button({label: t('Delete {tag}', {tag: tag.title}), variant: 'ghost', small: true, icon: 'trash', icon_only: true, attrs: {commandfor: 'tag-delete', command: 'show-modal', 'data-fb-fill': {id: tag.id}|json_encode}}) }}
+                {% endif %}
+                </span>
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+    </section>
+</div>
+
+{% if can('tag.create') %}
+<dialog class="fb-dialog" id="tag-new" aria-labelledby="tag-new-title">
+    <fb-form action="tag.create" refresh="{{ refresh }}" done="{{ t('The tag is created.') }}">
+        <form novalidate>
+            <div class="fb-dialog__body fb-stack">
+                <h2 class="fb-dialog__title" id="tag-new-title">{{ t('New tag') }}</h2>
+                {{ _self.labels('tag-new', languages) }}
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'tag-new', command: 'close'}}) }}
+                {{ ui.button({label: t('Create'), type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if can('tag.update') %}
+<dialog class="fb-dialog" id="tag-edit" aria-labelledby="tag-edit-title">
+    <fb-form action="tag.update" refresh="{{ refresh }}" done="{{ t('Saved') }}">
+        <form novalidate>
+            <input type="hidden" name="id">
+            <div class="fb-dialog__body fb-stack">
+                <h2 class="fb-dialog__title" id="tag-edit-title">{{ t('Edit the tag') }}</h2>
+                {{ _self.labels('tag-edit', languages) }}
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'tag-edit', command: 'close'}}) }}
+                {{ ui.button({label: t('Save'), type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if can('tag.merge') and targets|length > 1 %}
+<dialog class="fb-dialog" id="tag-merge" aria-labelledby="tag-merge-title">
+    <fb-form action="tag.merge" refresh="{{ refresh }}" done="{{ t('The tags are merged.') }}">
+        <form novalidate>
+            <input type="hidden" name="id">
+            <div class="fb-dialog__body fb-stack">
+                <h2 class="fb-dialog__title" id="tag-merge-title">{{ t('Merge into another tag') }}</h2>
+                <p>{{ t('Everything with this tag gets the other one instead. Typing its labels finds the other one, too.') }}</p>
+                <div id="tag-targets">{{ ui.select({label: t('Into'), name: 'into', id: 'tag-merge-into', options: targets}) }}</div>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'tag-merge', command: 'close'}}) }}
+                {{ ui.button({label: t('Merge'), type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+
+{% if can('tag.delete') %}
+<dialog class="fb-dialog" id="tag-delete" aria-labelledby="tag-delete-title">
+    <fb-form action="tag.delete" refresh="{{ refresh }}" done="{{ t('The tag is deleted.') }}">
+        <form novalidate>
+            <input type="hidden" name="id">
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="tag-delete-title">{{ t('Delete the tag?') }}</h2>
+                <p>{{ t('The content stays, it just loses the tag.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'tag-delete', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Delete for good'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+{% endblock %}

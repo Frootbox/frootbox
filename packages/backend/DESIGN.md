@@ -340,6 +340,13 @@ categories of a type in a form of a module come from
 `{% include '@backend/categories/choices.twig' with {type, chosen, disabled, prefix} %}`:
 a fieldset for each group, `categories[]` with the ids (decision 0233).
 
+`<ul class="fb-checks fb-checks--inline">` puts checkboxes side by side
+and wraps them, e.g. tags. The tags of an object come from
+`{% include '@backend/tags/choices.twig' with {type, space, chosen, disabled, prefix} %}`:
+the chosen ones, the presets and the most used ones as `tags[]`, and,
+unless the list is closed, a field with `data-type="comma"` for new
+words with their labels in a `<datalist>` (decision 0239).
+
 ### Choice
 
 `ui.choice({title, text, name, id, value, checked, attrs})`
@@ -1411,8 +1418,8 @@ viewBox, stroke 1.8, round caps and joins, no fill, `stroke="currentColor"`.
 
 Available: alert, arrow-down, arrow-up, briefcase, calendar, chart, check,
 chevron-down, clock, close, comment, copy, dashboard, external, file,
-grip, image, inbox, info, list, lock, mail, menu, navigation, news, pages,
-palette, parent, pencil, plus, redirect, restore, search, settings,
+grip, hash, image, inbox, info, list, lock, mail, menu, navigation, news,
+pages, palette, parent, pencil, plus, redirect, restore, search, settings,
 shield, sign-out, square, tag, trash, type, users, video, warning.
 
 The bar of the editing mode runs on the website without Twig and keeps

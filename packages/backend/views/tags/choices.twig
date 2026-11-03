@@ -1,0 +1,28 @@
+{#- The tags of an object to choose in a form of a module (decisions 0233, 0239): the chosen ones, the presets and the most used ones as checkboxes, and a field for new words unless the list is closed. With type, space, chosen (ids), disabled and prefix (for ids). -#}
+{% import '@backend/ui.twig' as ui %}
+{% set choices = tag_choices(type, space ?? null, chosen ?? []) %}
+{% set id = (prefix ?? 'object') ~ '-tags' %}
+{% set field = {name: 'tags[]', id: id ~ '-new', optional: true, disabled: disabled ?? false, hint: t('Separated by commas. A word that exists already is found in any language.'), attrs: {'data-type': 'comma', list: id ~ '-known', autocomplete: 'off', maxlength: 500}} %}
+{% if choices.options is empty and not choices.closed %}
+{#- Nothing to tick yet: one field, no group around it. -#}
+{{ ui.field(field|merge({label: t('Tags')})) }}
+{% else %}
+<fieldset class="fb-fieldset">
+    <legend class="fb-fieldset__legend">{{ t('Tags') }} <span class="fb-label__optional">({{ t('optional') }})</span></legend>
+    {% if choices.options is not empty %}
+    <ul class="fb-checks fb-checks--inline">
+    {%- for option in choices.options %}
+        <li>{{ ui.check({label: option.internal ? t('{tag} (internal)', {tag: option.label}) : option.label, name: 'tags[]', id: id ~ '-' ~ loop.index, value: option.value, checked: option.checked, disabled: disabled ?? false}) }}</li>
+    {%- endfor %}
+    </ul>
+    {% else %}
+    <p class="fb-hint">{{ t('No tags are set out here yet.') }}</p>
+    {% endif %}
+    {% if not choices.closed %}{{ ui.field(field|merge({label: t('Add tags')})) }}{% endif %}
+</fieldset>
+{% endif %}
+{% if not choices.closed %}
+<datalist id="{{ id }}-known">
+{%- for label in choices.known %}<option value="{{ label }}"></option>{% endfor -%}
+</datalist>
+{% endif %}

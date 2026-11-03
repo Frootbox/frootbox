@@ -14,6 +14,7 @@ use Frootbox\Core\Action\Context;
 use Frootbox\Core\Category\CreateCategory;
 use Frootbox\Core\Category\CreateGroup;
 use Frootbox\Core\Extension\Extensions;
+use Frootbox\Core\ProjectPaths;
 use Frootbox\Core\Tests\Fixtures\Plugin\ItemPlugin;
 use Frootbox\Core\Tests\Support\FixtureSite;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -50,6 +51,15 @@ final class CategoriesScreenTest extends BackendTestCase
         self::assertStringContainsString('Noch keine Kategorien', $admin);
         self::assertStringContainsString('<fb-form action="category-group.create"', $admin);
         self::assertStringContainsString('<fb-form action="category-group.update"', $admin, 'A group of an admin can change.');
+    }
+
+    public function testOffersToApplyMissingPresets(): void
+    {
+        file_put_contents($this->get(ProjectPaths::class)->config('categories.yaml'), "groups:\n  acme/plugin/topics:\n    categories:\n      - Kurse\n      - Verkostungen\n");
+
+        $html = $this->html($this->request('GET', '/cms/categories', session: $this->signIn('editor@example.org')));
+        self::assertStringContainsString('Hier fehlen 2 Kategorien aus den Vorgaben.', $html);
+        self::assertStringContainsString('<fb-form action="category.apply-presets"', $html);
     }
 
     protected function extensions(): Extensions

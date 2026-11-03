@@ -108,6 +108,7 @@ final readonly class CategoriesHandler implements RequestHandlerInterface
                 'title' => self::title($item, $languages),
                 'slug' => $item->slug($languages[0] ?? ''),
                 'depth' => $item->depth,
+                'preset' => null !== $item->preset,
                 'missing' => array_values(array_filter($languages, static fn(string $language): bool => null === $item->title($language))),
                 'fill' => $fill,
                 'children' => $children,

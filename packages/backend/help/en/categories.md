@@ -25,3 +25,10 @@ stay.
 Every form of a module shows its groups with their categories. Tick the
 categories that fit. A published entry shows its categories on the
 website as soon as you publish it again.
+
+## Presets
+
+A developer can set out categories in `config/categories.yaml`, also
+for the groups of the modules. They are created on their own, and a
+badge marks them. If one is missing, e.g. after you deleted it, the
+screen offers to apply the presets again.

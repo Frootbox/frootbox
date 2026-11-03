@@ -15,6 +15,7 @@
             {% else %}
             <span class="fb-tree__link">{{ inner }}</span>
             {% endif %}
+            {% if row.preset %}{{ ui.badge('neutral', t('Preset')) }}{% endif %}
             {% if missing is not empty %}{{ ui.badge('draft', t('Without {languages}', {languages: missing|join(', ')})) }}{% endif %}
             {% if creatable %}{{ ui.button({label: t('Add a category below {category}', {category: row.title}), variant: 'ghost', small: true, icon: 'plus', icon_only: true, attrs: {commandfor: 'category-new', command: 'show-modal', 'data-fb-fill': {parentId: row.id}|json_encode}}) }}{% endif %}
             {% if deletable %}{{ ui.button({label: t('Delete {category}', {category: row.title}), variant: 'ghost', small: true, icon: 'trash', icon_only: true, attrs: {commandfor: 'category-delete', command: 'show-modal', 'data-fb-fill': {id: row.id}|json_encode}}) }}{% endif %}
@@ -100,6 +101,10 @@
         </div>
 
         <div class="fb-card__body fb-stack">
+            {% if group.missing > 0 and can('category.apply-presets') %}
+            {% set apply %}<fb-form action="category.apply-presets" refresh="{{ refresh }}" done="{{ t('The presets are applied.') }}"><form novalidate><input type="hidden" name="group" value="{{ group.key }}">{{ ui.button({label: t('Apply the presets'), type: 'submit', variant: 'outline', small: true}) }}</form></fb-form>{% endset %}
+            {{ ui.alert({tone: 'info', text: t(['{count} category of the presets is missing here.', '{count} categories of the presets are missing here.'], {count: group.missing}), action: apply}) }}
+            {% endif %}
             {% if rows is empty %}
                 {{ ui.empty({icon: 'tag', title: t('No categories yet'), text: t('Content does not need one. Create categories if visitors should filter by topic.')}) }}
             {% else %}

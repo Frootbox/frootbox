@@ -23,3 +23,10 @@ Termine und Stellen bleiben.
 Jedes Formular eines Moduls zeigt seine Gruppen mit ihren Kategorien.
 Hak die passenden an. Ein veröffentlichter Eintrag zeigt seine
 Kategorien auf der Website, sobald Du ihn wieder veröffentlichst.
+
+## Vorgaben
+
+Ein Entwickler kann Kategorien in `config/categories.yaml` vorgeben,
+auch für die Gruppen der Module. Sie entstehen von selbst, ein Hinweis
+kennzeichnet sie. Fehlt eine, etwa weil Du sie gelöscht hast, bietet
+der Bildschirm an, die Vorgaben wieder zu übernehmen.

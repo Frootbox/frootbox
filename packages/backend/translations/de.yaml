@@ -577,7 +577,6 @@ Delete the folder: Ordner löschen
 'Uploading {done} of {total} …': 'Lade {done} von {total} hoch …'
 File name or text: Dateiname oder Text
 Tag: Schlagwort
-Tags: Schlagwörter
 Nothing found: Nichts gefunden
 Try another search.: Versuch es mit einer anderen Suche.
 Pages of the list: Seiten der Liste
@@ -1222,3 +1221,52 @@ For: Für
 "Choose at least one kind of content.": "Wähl mindestens eine Art von Inhalten."
 No categories yet.: Noch keine Kategorien.
 Create some: Leg welche an
+
+# Tags and presets (decisions 0233, 0239)
+Any: Beliebig
+Tags: Schlagwörter
+Label: Bezeichnung
+Internal: Intern
+"Only for choosing content, e.g. in a teaser, and for switches in templates. Visitors never see it.": "Nur zum Auswählen von Inhalten, z. B. in einem Teaser, und für Schalter in Templates. Besucher sehen es nie."
+"One stock of words for all content. A tag has a label per language; editors find it by any of them.": "Ein Vorrat an Wörtern für alle Inhalte. Ein Schlagwort hat eine Bezeichnung je Sprache; Redakteure finden es über jede davon."
+New tag: Neues Schlagwort
+Label or key: Bezeichnung oder Schlüssel
+No tags yet: Noch keine Schlagwörter
+"Editors add them to news, events and jobs as they write. Presets of the configuration appear once someone chooses them.": "Redakteure vergeben sie beim Schreiben an News, Termine und Stellen. Vorgaben aus der Konfiguration erscheinen, sobald jemand sie wählt."
+Preset: Vorgabe
+"Edit {tag}": "„{tag}“ bearbeiten"
+Merge: Zusammenführen
+"Merge {tag} into another tag": "„{tag}“ mit einem anderen Schlagwort zusammenführen"
+"Delete {tag}": "„{tag}“ löschen"
+"The tag is created.": "Das Schlagwort ist angelegt."
+Edit the tag: Schlagwort bearbeiten
+"The tags are merged.": "Die Schlagwörter sind zusammengeführt."
+Merge into another tag: Mit einem anderen Schlagwort zusammenführen
+"Everything with this tag gets the other one instead. Typing its labels finds the other one, too.": "Alles mit diesem Schlagwort bekommt stattdessen das andere. Wer seine Bezeichnungen tippt, findet ebenfalls das andere."
+Into: In
+"The tag is deleted.": "Das Schlagwort ist gelöscht."
+"Delete the tag?": "Schlagwort löschen?"
+"The content stays, it just loses the tag.": "Die Inhalte bleiben, sie verlieren nur das Schlagwort."
+"used {count} time":
+  one: "{count}-mal verwendet"
+  other: "{count}-mal verwendet"
+"{tag} (internal)": "{tag} (intern)"
+"No tags are set out here yet.": "Hier sind noch keine Schlagwörter vorgegeben."
+Add tags: Schlagwörter hinzufügen
+"Separated by commas. A word that exists already is found in any language.": "Mit Komma getrennt. Ein Wort, das es schon gibt, wird in jeder Sprache gefunden."
+"The presets are applied.": "Die Vorgaben sind übernommen."
+Apply the presets: Vorgaben übernehmen
+"{count} category of the presets is missing here.":
+  one: "Hier fehlt {count} Kategorie aus den Vorgaben."
+  other: "Hier fehlen {count} Kategorien aus den Vorgaben."
+"There is no tag {id}.": "Ein Schlagwort {id} gibt es nicht."
+"\"{tag}\" is not one of the tags set out here.": "„{tag}“ gehört nicht zu den Schlagwörtern, die hier vorgegeben sind."
+"Another tag has the key \"{key}\" already.": "Ein anderes Schlagwort hat schon den Schlüssel „{key}“."
+"\"{language}\" is no language of the website.": "„{language}“ ist keine Sprache der Website."
+"The tag \"{tag}\" has this label already. Merge them instead.": "Das Schlagwort „{tag}“ hat diese Bezeichnung schon. Führ sie lieber zusammen."
+"must be a-z, 0-9 and hyphens, e.g. \"featured\".": "darf nur a–z, 0–9 und Bindestriche enthalten, z. B. „featured“."
+"needs at least one language, e.g. {\"de\": \"Nachhaltigkeit\"}.": "braucht mindestens eine Sprache."
+"is required for an internal tag without labels.": "ist nötig für ein internes Schlagwort ohne Bezeichnung."
+"There is no tag with this id.": "Ein Schlagwort mit dieser ID gibt es nicht."
+"A tag cannot be merged into itself.": "Ein Schlagwort lässt sich nicht mit sich selbst zusammenführen."
+"must be an object by language code, e.g. {\"de\": \"Nachhaltigkeit\"}.": "muss ein Objekt nach Sprachcode sein, z. B. {\"de\": \"Nachhaltigkeit\"}."

@@ -21,6 +21,7 @@ use Frootbox\Core\Category\ListGroups;
 use Frootbox\Core\I18n\Translator;
 use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Routing\Router;
+use Frootbox\Core\Tag\ChooseTags;
 use Frootbox\RichText\Html;
 use Throwable;
 use Twig\Extension\AbstractExtension;
@@ -34,6 +35,7 @@ use Twig\TwigFunction;
  *     {{ icon('pages') }}
  *     {% if can('user.create') %}…{% endif %}
  *     {% for group in category_choices('frootbox/news/article') %}…{% endfor %}
+ *     {% set choices = tag_choices('frootbox/news/article', space, chosen) %}
  */
 final class TwigExtension extends AbstractExtension
 {
@@ -61,7 +63,21 @@ final class TwigExtension extends AbstractExtension
             new TwigFunction('icon', $this->icon(...), ['is_safe' => ['html']]),
             new TwigFunction('can', $this->can(...)),
             new TwigFunction('category_choices', $this->categoryChoices(...)),
+            new TwigFunction('tag_choices', $this->tagChoices(...)),
         ];
+    }
+
+    /**
+     * The tags a form of a module offers (decision 0239): the chosen ones,
+     * the presets and the most used ones, closed when only presets count.
+     *
+     * @param list<mixed> $chosen Ids of tags
+     *
+     * @return array{closed: bool, options: list<array{value: string, label: string, internal: bool, preset: bool, checked: bool}>, known: list<string>}
+     */
+    public function tagChoices(string $type, ?string $space = null, array $chosen = []): array
+    {
+        return $this->runner->ask(new ChooseTags($type, $space, array_values(array_filter($chosen, \is_string(...)))));
     }
 
     /**

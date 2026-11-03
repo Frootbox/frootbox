@@ -110,7 +110,8 @@ function fill(template, data) {
  * - checkboxes are true or false, with a name ending in [] a list of the
  *   checked values
  * - type="number" and data-type="number" are numbers, empty is null
- * - data-type="lines" is a list of the lines that are not empty
+ * - data-type="lines" is a list of the lines that are not empty,
+ *   data-type="comma" one of the parts between commas, e.g. new tags
  * - data-type="boolean" is true for "1" or "true", e.g. a hidden field
  * - data-type="json" is the parsed value, empty is null, e.g. the hidden
  *   field of <fb-rich-text> or <fb-image-input>
@@ -161,6 +162,8 @@ export function formInput(form) {
             value = value === '' ? null : new Date(value).toISOString();
         } else if (element.dataset.type === 'lines') {
             value = value.split('\n').map((line) => line.trim()).filter((line) => line !== '');
+        } else if (element.dataset.type === 'comma') {
+            value = value.split(',').map((part) => part.trim()).filter((part) => part !== '');
         } else if (element.multiple) {
             value = [...element.selectedOptions].map((option) => option.value);
         } else if (value === '' && element.dataset.empty === 'null') {

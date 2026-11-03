@@ -20,6 +20,13 @@
     padding-inline-start: var(--fb-space-6);
 }
 
+/* Checkboxes side by side that wrap, e.g. tags. */
+.fb-checks--inline {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--fb-space-6);
+}
+
 .fb-check input,
 .fb-choice input {
     flex: none;
