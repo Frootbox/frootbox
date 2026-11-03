@@ -1,6 +1,5 @@
 .base-map { display: flex; flex-direction: column; gap: var(--space-s); }
 .base-map__title { margin: 0; font-size: var(--size-2xl); }
 .base-map .external__notice, .base-map fb-external > iframe { border-radius: var(--radius); }
-.base-map .external__notice { background: var(--color-surface); border-color: var(--color-line); }
 .base-map__missing { margin: 0; padding: var(--space-s); border: 1px dashed var(--color-line); border-radius: var(--radius); color: var(--color-muted); }
 .base-map__address { margin: 0; font-style: normal; color: var(--color-muted); }
