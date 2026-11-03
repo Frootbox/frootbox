@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Frootbox\Events\Category;
+namespace Frootbox\Core\Category;
 
 use Frootbox\Core\Action\Action;
 use Frootbox\Core\Action\AsAction;
@@ -16,7 +16,7 @@ use Frootbox\Database\Ulid;
 /**
  * @implements Action<null>
  */
-#[AsAction('frootbox/events/category.delete', 'Deletes a category; its events stay')]
+#[AsAction('category.delete', 'Deletes a category with all below it; the objects in it stay')]
 final readonly class DeleteCategory implements Action
 {
     public function __construct(
@@ -26,7 +26,7 @@ final readonly class DeleteCategory implements Action
 
     public function handle(CategoryEditor $editor): null
     {
-        $editor->delete($this->id);
+        $editor->delete('category.delete', $this->id);
 
         return null;
     }

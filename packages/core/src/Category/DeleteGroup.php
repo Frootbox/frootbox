@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Frootbox\News\Category;
+namespace Frootbox\Core\Category;
 
 use Frootbox\Core\Action\Action;
 use Frootbox\Core\Action\AsAction;
@@ -16,17 +16,17 @@ use Frootbox\Database\Ulid;
 /**
  * @implements Action<null>
  */
-#[AsAction('frootbox/news/category.delete', 'Deletes a category; its articles stay')]
-final readonly class DeleteCategory implements Action
+#[AsAction('category-group.delete', 'Deletes a group of categories created in the backend; it must have no categories')]
+final readonly class DeleteGroup implements Action
 {
     public function __construct(
         #[Pattern(Ulid::PATTERN)]
         public string $id,
     ) {}
 
-    public function handle(CategoryEditor $editor): null
+    public function handle(GroupEditor $editor): null
     {
-        $editor->delete($this->id);
+        $editor->delete('category-group.delete', $this->id);
 
         return null;
     }
