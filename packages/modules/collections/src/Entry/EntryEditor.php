@@ -163,7 +163,8 @@ final readonly class EntryEditor
 
     /**
      * The further fields of an action's input after those of the draft
-     * (decision 0240), checked against the views of the theme.
+     * (decision 0240), checked against the views of the theme and the
+     * fields of the collection (decision 0250).
      *
      * @param array<mixed> $current
      * @param array<mixed> $input
@@ -172,9 +173,9 @@ final readonly class EntryEditor
      *
      * @throws InvalidInputException
      */
-    public function fields(string $action, array $current, array $input): array
+    public function fields(string $action, string $space, array $current, array $input): array
     {
-        return $this->fields->check($action, EntryStore::TYPE, $current, $input);
+        return $this->fields->check($action, EntryStore::TYPE, $current, $input, space: $space);
     }
 
     /**

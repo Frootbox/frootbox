@@ -211,7 +211,8 @@ final class EntriesTest extends CollectionsTestCase
         self::assertSame(['Haus am See', 'de', EntryStore::target($id)], [$published[0]->title, $published[0]->language, (string) $published[0]->target]);
 
         $editor = $this->get(Roles::class)->fetchOne(['where' => ['name' => 'editor']]);
-        self::assertContains('frootbox/collections/*', $editor->permissions ?? []);
+        self::assertContains('frootbox/collections/entry.*', $editor->permissions ?? []);
+        self::assertNotContains('frootbox/collections/*', $editor->permissions ?? [], 'The fields stay with the admins (decision 0250).');
     }
 
     /**

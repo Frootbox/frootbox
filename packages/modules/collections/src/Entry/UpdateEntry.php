@@ -50,7 +50,7 @@ final readonly class UpdateEntry implements Action, Scoped
         #[ListOf('string')]
         #[Description('Ids, keys or labels of tags, replacing the ones before; a new word becomes a tag unless only presets count')]
         public ?array $tags = null,
-        #[Description('Further fields the views of the theme add, by name; a text one per language, e.g. {"subtitle": {"de": "…"}}, null removes one, the others stay; see object.fields; left out keeps them')]
+        #[Description('Further fields of the theme and of the collection, by name; a text one per language, e.g. {"subtitle": {"de": "…"}}, null removes one, the others stay; see object.fields with the space; left out keeps them')]
         public ?array $fields = null,
         #[Description('The collection to move it to; with publishing its address moves below the page of that collection and the old one redirects')]
         public ?string $space = null,
@@ -87,7 +87,7 @@ final readonly class UpdateEntry implements Action, Scoped
             $this->order ?? $current->order,
             null === $this->categories ? $current->categories : $editor->categories(self::NAME, $this->categories),
             null === $this->tags ? $current->tags : $editor->tags(self::NAME, $this->space ?? $current->space, $this->tags),
-            null === $this->fields ? $current->fields : $editor->fields(self::NAME, $current->fields, $this->fields),
+            null === $this->fields ? $current->fields : $editor->fields(self::NAME, $this->space ?? $current->space, $current->fields, $this->fields),
         );
 
         return $editor->saveDraft(self::NAME, $this->id, $data);

@@ -47,8 +47,22 @@ Unter **Kategorien** legst Du Bereiche an, etwa „Wohnbau“ oder
 tipp neue Wörter ein, getrennt durch Kommas. Besucher können die Liste
 nach beidem filtern.
 
-## Weitere Felder
+## Felder einer Sammlung
 
-Ein Theme kann den Einträgen Felder hinzufügen, etwa das Jahr oder den
-Kunden einer Referenz. Sie erscheinen im Formular unter **Weitere
-Felder** und im Bearbeitungsmodus direkt auf der Seite.
+Admins wählen über den Einträgen einer Sammlung **Felder** und legen an,
+was die Einträge gemeinsam haben, etwa „Fläche“ als Zahl in m²,
+„Baujahr“ als Datum oder „Bauweise“ als Auswahl aus einer Liste. Es gibt
+Texte, lange Texte, Zahlen mit Einheit, Daten, Ja oder Nein, Links,
+Auswahlen, Bilder und Dateien. Redakteure füllen sie unter **Weitere
+Felder** aus, die Seite eines Eintrags zeigt die ausgefüllten als
+Steckbrief unter dem Bild.
+
+Name und Art eines Felds bleiben. Fällt ein Feld weg, bleiben die Werte
+in den Einträgen gespeichert und kommen mit einem neuen Feld gleichen
+Namens zurück. Bei einer Auswahl schreibst Du eine Option je Zeile. Eine
+geänderte Zeile behält die Werte der Einträge, solange die Zahl der
+Zeilen gleich bleibt.
+
+Auch ein Theme kann den Einträgen weitere Felder hinzufügen. Sie
+erscheinen im Formular unter **Weitere Felder** und im Bearbeitungsmodus
+direkt auf der Seite.

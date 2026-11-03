@@ -11,6 +11,7 @@ namespace Frootbox\Collections\Tests;
 use Frootbox\Collections\Entry\CreateEntry;
 use Frootbox\Collections\Entry\EntryStore;
 use Frootbox\Collections\Entry\PublishEntries;
+use Frootbox\Collections\Field\CollectionFields;
 use Frootbox\Core\Config\Environment;
 use Frootbox\Core\Extension\ExtensionPackage;
 use Frootbox\Core\Extension\Extensions;
@@ -48,7 +49,7 @@ abstract class CollectionsTestCase extends NotesTestCase
 
     protected function tables(): array
     {
-        return [Entries::TABLE, Sendings::TABLE];
+        return [Entries::TABLE, Sendings::TABLE, CollectionFields::TABLE];
     }
 
     protected function environment(): Environment

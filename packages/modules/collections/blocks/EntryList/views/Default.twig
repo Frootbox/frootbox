@@ -1,6 +1,6 @@
 {# frootbox
 title: Collection
-description: The entries of the collection the page shows as cards with image, title and teaser, filtered by category and tag. Each entry gets its own address below the page with image and text, optionally with a form for requests.
+description: The entries of the collection the page shows as cards with image, title and teaser, filtered by category and tag. Each entry gets its own address below the page with image, the fields of the collection as a fact sheet and text, optionally with a form for requests.
 plugin: true
 query: [category, tag]
 options:
@@ -17,6 +17,15 @@ fields:
       {% if entry.teaser %}<p class="collection-entry__teaser">{{ entry.teaser }}</p>{% endif %}
     </header>
     {% if entry.image %}<div class="collection-entry__media">{{ entry.image }}</div>{% endif %}
+    {#- The fields of the collection from the backend as a fact sheet (decision 0250). -#}
+    {% set facts = object_facts(entry) %}
+    {% if facts %}
+      <dl class="collection-facts">
+        {% for fact in facts %}
+          <div class="collection-facts__item"><dt class="collection-facts__label">{{ fact.label }}</dt><dd class="collection-facts__value">{{ fact.type == 'boolean' ? (fact.value ? entry.yes : entry.no) : fact.output }}</dd></div>
+        {% endfor %}
+      </dl>
+    {% endif %}
     <div class="collection-entry__text">{{ entry.text }}</div>
     {% if form %}<div class="collection-entry__form">{{ render_block('frootbox/forms/Form', {form: form}) }}</div>{% endif %}
     {% if back %}<p class="collection-entry__back"><a href="{{ back }}">{{ t('All entries') }}</a></p>{% endif %}

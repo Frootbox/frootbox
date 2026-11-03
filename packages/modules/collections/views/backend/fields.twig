@@ -13,4 +13,4 @@
 {{ ui.field({label: t('Position'), name: 'order', id: 'entry-order', type: 'number', value: data.order ?? 0, disabled: not editable, hint: t('Smaller numbers come first. With the same number the newest comes first.'), attrs: {min: -10000, max: 10000, step: 1, inputmode: 'numeric'}}) }}
 {% include '@backend/categories/choices.twig' with {type: 'frootbox/collections/entry', chosen: data.categories ?? [], disabled: not editable, prefix: 'entry'} only %}
 {% include '@backend/tags/choices.twig' with {type: 'frootbox/collections/entry', space: data.space ?? (space ?? null), chosen: data.tags ?? [], disabled: not editable, prefix: 'entry'} only %}
-{% include '@backend/fields/object.twig' with {type: 'frootbox/collections/entry', values: data.fields ?? {}, language: language, disabled: not editable, prefix: 'entry'} only %}
+{% include '@backend/fields/object.twig' with {type: 'frootbox/collections/entry', space: data.space ?? (space ?? 'default'), values: data.fields ?? {}, language: language, disabled: not editable, prefix: 'entry'} only %}

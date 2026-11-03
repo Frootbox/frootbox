@@ -14,13 +14,15 @@ use Frootbox\Collections\Entry\EntryText;
 use Frootbox\Collections\Entry\PublishedEntry;
 use Frootbox\Core\Field\Field;
 use Frootbox\Core\Field\FieldTypes;
+use Frootbox\Core\I18n\Translator;
 use Frootbox\Core\Url\Urls;
 use Twig\Markup;
 
 /**
  * An entry as the views of the blocks use it (decision 0246): title,
  * teaser, text and the image as HTML. Further fields the views read with
- * object_field() and object_value() at the target (decision 0240).
+ * object_field() and object_value() at the target (decision 0240), the
+ * fields of the collection with object_facts() (decision 0250).
  */
 final readonly class EntryRendering
 {
@@ -33,6 +35,7 @@ final readonly class EntryRendering
     public function __construct(
         private FieldTypes $types,
         private Urls $urls,
+        private Translator $translator,
     ) {}
 
     /**
@@ -64,6 +67,9 @@ final readonly class EntryRendering
             ...$this->teaser($entry, $language),
             'image' => $this->image($entry->data, null, self::DETAIL_SIZES, true),
             'text' => $this->types->get('richtext')->output($text->text, new Field('text', 'richtext', 'Text')),
+            // Switches in the fact sheet, in the language of the content like the values (decision 0250).
+            'yes' => $this->translator->in($language, 'Yes', ['frootbox/collections']),
+            'no' => $this->translator->in($language, 'No', ['frootbox/collections']),
         ];
     }
 

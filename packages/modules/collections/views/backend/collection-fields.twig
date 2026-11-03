@@ -1,0 +1,128 @@
+{#- The fields of a collection (decision 0250): in this order in the form of an entry and in the fact sheet on its page; labels and options in the chosen language. -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+{% set refresh = 'collection-fields' %}
+{% set code = language.code %}
+{% set dir = language.direction.value %}
+{% set scope = 'space:frootbox/collections/entry:' ~ space.id %}
+{% set editable = can_within('frootbox/collections/field.update', scope) %}
+{% set self = path('frootbox.collections.fields') ~ '?space=' ~ space.id|url_encode %}
+
+{% block title %}{{ t('Fields') }} · {{ space.title }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg" id="collection-fields">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <p class="fb-muted"><a href="{{ path('frootbox.collections.entries') }}?space={{ space.id|url_encode }}">{{ space.title }}</a></p>
+            <h1 class="fb-heading-1" tabindex="-1" data-fb-focus>{{ t('Fields') }}</h1>
+            <p class="fb-muted">{{ t('What each entry of the collection can have, e.g. the area or the year. Editors fill them in, the page of an entry shows them as a fact sheet.') }}</p>
+        </div>
+        <div class="fb-cluster">
+            {% if languages|length > 1 %}
+            {{ ui.segmented(t('Languages'), languages|map(item => {label: item.title, href: self ~ '&language=' ~ item.code, current: item.code == code, attrs: {lang: item.code}})) }}
+            {% endif %}
+            {% if can_within('frootbox/collections/field.create', scope) %}{{ ui.button({label: t('Add a field'), icon: 'plus', attrs: {commandfor: 'field-add', command: 'show-modal'}}) }}{% endif %}
+        </div>
+    </header>
+
+    <section class="fb-card" aria-labelledby="collection-fields-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="collection-fields-title">{{ space.title }}</h2>
+            {{ ui.badge('neutral', fields|length) }}
+        </div>
+        {% if fields is empty %}
+        <div class="fb-card__body">
+            {{ ui.empty({icon: 'list', title: t('No fields yet'), text: t('Add what the entries have in common, e.g. "Area" as a number in m² or "Year".')}) }}
+        </div>
+        {% else %}
+        <ol>
+            {%- for field in fields %}
+            {% set shown = field.label ?: field.fallback %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title"{% if field.label %} lang="{{ code }}" dir="{{ dir }}"{% endif %}>{{ shown }}</span>
+                    <span class="fb-list__meta">{{ ([t(field.kind.title()), field.unit ?: null, field.kind.value == 'choice' ? t(['{count} option', '{count} options'], {count: field.options}) : null]|filter(part => part))|join(' · ') }} · <code>{{ field.name }}</code></span>
+                </span>
+                {% if field.used > 0 %}{{ ui.badge('neutral', t(['{count} entry', '{count} entries'], {count: field.used})) }}{% endif %}
+                {% if editable %}
+                {% set index = loop.index0 %}
+                {% for move in [{position: index - 1, icon: 'arrow-up', label: t('Move {name} up', {name: shown}), show: not loop.first}, {position: index + 1, icon: 'arrow-down', label: t('Move {name} down', {name: shown}), show: not loop.last}] %}
+                {% if move.show %}
+                <fb-form action="frootbox/collections/field.move" refresh="{{ refresh }}" done="{{ t('Moved') }}">
+                    <form novalidate>
+                        <input type="hidden" name="space" value="{{ space.id }}">
+                        <input type="hidden" name="name" value="{{ field.name }}">
+                        <input type="hidden" name="position" value="{{ move.position }}" data-type="number">
+                        {{ ui.button({label: move.label, type: 'submit', variant: 'ghost', small: true, icon: move.icon, icon_only: true}) }}
+                    </form>
+                </fb-form>
+                {% endif %}
+                {% endfor %}
+                {{ ui.button({label: t('Edit {name}', {name: shown}), variant: 'ghost', small: true, icon: 'pencil', icon_only: true, attrs: {commandfor: 'field-update', command: 'show-modal', 'data-fb-fill': field.fill|json_encode}}) }}
+                {% endif %}
+                {% if can_within('frootbox/collections/field.delete', scope) %}
+                {{ ui.button({label: t('Remove {name}', {name: shown}), variant: 'ghost', small: true, icon: 'trash', icon_only: true, attrs: {commandfor: 'field-delete-' ~ field.name, command: 'show-modal'}}) }}
+                {% endif %}
+            </li>
+            {%- endfor %}
+        </ol>
+        {% endif %}
+    </section>
+
+    {% for dialog in ['field-add', 'field-update'] %}
+    {% set adding = dialog == 'field-add' %}
+    {#- A new field gets its label in the first language, which makes its name. -#}
+    {% set at = adding ? first.code : code %}
+    {% set at_dir = adding ? first.direction.value : dir %}
+    {% if adding ? can_within('frootbox/collections/field.create', scope) : editable %}
+    <dialog class="fb-dialog" id="{{ dialog }}" aria-labelledby="{{ dialog }}-title">
+        <fb-form action="frootbox/collections/field.{{ adding ? 'create' : 'update' }}" refresh="{{ refresh }}" done="{{ adding ? t('The field is added.') : t('Saved') }}"{% if adding %} reset{% endif %}>
+            <form novalidate>
+                <input type="hidden" name="space" value="{{ space.id }}">
+                {% if not adding %}<input type="hidden" name="name">{% endif %}
+                <div class="fb-dialog__body fb-stack">
+                    <h2 class="fb-dialog__title" id="{{ dialog }}-title">{{ adding ? t('Add a field') : t('Edit the field') }}</h2>
+                    {% if adding %}
+                    {{ ui.select({label: t('Kind'), name: 'kind', id: dialog ~ '-kind', options: kinds|map(kind => {value: kind.value, label: t(kind.label)})}) }}
+                    {% else %}
+                    <p class="fb-muted">{{ t('Name and kind stay. For another kind add a new field.') }}</p>
+                    {% endif %}
+                    {{ ui.field({label: t('Label'), name: 'labels.' ~ at, id: dialog ~ '-label', required: adding or at == first.code, hint: languages|length > 1 ? t('In {language}.', {language: adding ? first.title : language.title}) : null, attrs: {lang: at, dir: at_dir, maxlength: 100}}) }}
+                    {{ ui.field({label: t('Unit'), name: 'unit', id: dialog ~ '-unit', optional: true, hint: t('Only for a number, e.g. "m²" or "%".'), attrs: {maxlength: 20, dir: 'auto'}}) }}
+                    {{ ui.field({label: t('Decimal places'), name: 'decimals', id: dialog ~ '-decimals', type: 'number', optional: true, hint: t('Only for a number. Empty or 0 for whole numbers.'), attrs: {min: 0, max: 6, step: 1, inputmode: 'numeric'}}) }}
+                    {{ ui.field({label: t('Options'), name: 'options.' ~ at, id: dialog ~ '-options', multiline: true, optional: true, hint: t('Only for a choice from a list: one option per line.') ~ (not adding and at != first.code ? ' ' ~ t('In the order of {language}.', {language: first.title}) : ''), attrs: {lang: at, dir: at_dir, rows: 4, 'data-type': 'lines'}}) }}
+                </div>
+                <div class="fb-dialog__actions">
+                    {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: dialog, command: 'close'}}) }}
+                    {{ ui.button({label: adding ? t('Add') : t('Save'), type: 'submit'}) }}
+                </div>
+            </form>
+        </fb-form>
+    </dialog>
+    {% endif %}
+    {% endfor %}
+
+    {% if can_within('frootbox/collections/field.delete', scope) %}
+    {% for field in fields %}
+    {% set dialog = 'field-delete-' ~ field.name %}
+    <dialog class="fb-dialog" id="{{ dialog }}" aria-labelledby="{{ dialog }}-title">
+        <fb-form action="frootbox/collections/field.delete" refresh="{{ refresh }}" done="{{ t('The field is removed.') }}">
+            <form novalidate>
+                <input type="hidden" name="space" value="{{ space.id }}">
+                <input type="hidden" name="name" value="{{ field.name }}">
+                <div class="fb-dialog__body">
+                    <h2 class="fb-dialog__title" id="{{ dialog }}-title">{{ t('Remove {name}?', {name: field.label ?: field.fallback}) }}</h2>
+                    <p>{{ field.used > 0 ? t(['One entry has a value in it. It stays saved and comes back with a new field of the same name.', '{count} entries have a value in it. They stay saved and come back with a new field of the same name.'], {count: field.used}) : t('No entry has a value in it yet.') }}</p>
+                </div>
+                <div class="fb-dialog__actions">
+                    {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: dialog, command: 'close', autofocus: true}}) }}
+                    {{ ui.button({label: t('Remove'), variant: 'danger-solid', type: 'submit'}) }}
+                </div>
+            </form>
+        </fb-form>
+    </dialog>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

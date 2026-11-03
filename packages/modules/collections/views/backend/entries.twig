@@ -28,6 +28,9 @@
         <div class="fb-card__header">
             <h2 class="fb-heading-4" id="collection-entries-title">{{ name ?: t('Entries') }}</h2>
             {{ ui.badge('neutral', list.total) }}
+            {% if can_within('frootbox/collections/field.update', 'space:frootbox/collections/entry:' ~ (space ?: 'default')) %}
+            {{ ui.button({label: t('Fields'), href: path('frootbox.collections.fields') ~ '?space=' ~ (space ?: 'default')|url_encode, variant: 'outline', small: true, icon: 'list'}) }}
+            {% endif %}
         </div>
         <form class="fb-card__body fb-cluster" method="get" action="{{ path('frootbox.collections.entries') }}" role="search">
             {% if space %}<input type="hidden" name="space" value="{{ space }}">{% endif %}

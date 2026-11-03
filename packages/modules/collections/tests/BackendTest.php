@@ -11,6 +11,7 @@ namespace Frootbox\Collections\Tests;
 use Frootbox\Backend\Tests\Support\BackendTestCase;
 use Frootbox\Collections\Backend\EntriesHandler;
 use Frootbox\Collections\Backend\EntryHandler;
+use Frootbox\Collections\Backend\FieldsHandler;
 use Frootbox\Collections\CollectionsExtension;
 use Frootbox\Collections\Entry\CreateEntry;
 use Frootbox\Collections\Entry\EntryStore;
@@ -26,6 +27,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(EntriesHandler::class)]
 #[CoversClass(EntryHandler::class)]
+#[CoversClass(FieldsHandler::class)]
 #[CoversClass(CollectionsExtension::class)]
 final class BackendTest extends BackendTestCase
 {
@@ -125,6 +127,47 @@ final class BackendTest extends BackendTestCase
         self::assertStringNotContainsString('class="fb-tabs"', $list);
         self::assertStringContainsString('href="/cms/collections/new?space=' . $projects . '"', $list);
         self::assertSame(403, $this->request('GET', '/cms/collections/' . $outside, session: $session)->getStatusCode());
+    }
+
+    public function testAdminsAddFieldsEditorsFillIn(): void
+    {
+        $this->createUser('admin@example.org', ['admin']);
+        $admin = $this->signIn('admin@example.org');
+
+        $list = $this->html($this->request('GET', '/cms/collections', session: $admin));
+        self::assertStringContainsString('href="/cms/collections/fields?space=default"', $list, 'Admins reach the fields of the collection.');
+
+        $screen = $this->html($this->request('GET', '/cms/collections/fields?space=default', session: $admin));
+        self::assertStringContainsString('Noch keine Felder', $screen);
+        self::assertStringContainsString('<fb-form action="frootbox/collections/field.create"', $screen);
+        self::assertStringContainsString('<option value="choice">Auswahl aus einer Liste</option>', $screen);
+
+        $this->action('frootbox/collections/field.create', ['kind' => 'number', 'labels' => ['de' => 'Fläche'], 'unit' => 'm²'], $admin);
+        $this->action('frootbox/collections/field.create', ['kind' => 'choice', 'labels' => ['de' => 'Bauweise'], 'options' => ['de' => ['Holz', 'Stein']]], $admin);
+        $this->action('frootbox/collections/field.create', ['kind' => 'date', 'labels' => ['de' => 'Fertig']], $admin);
+        $this->action('frootbox/collections/field.create', ['kind' => 'file', 'labels' => ['de' => 'Exposé']], $admin);
+
+        $screen = $this->html($this->request('GET', '/cms/collections/fields?space=default', session: $admin));
+        self::assertStringContainsString('Zahl · m² · <code>flaeche</code>', $screen);
+        self::assertStringContainsString('Auswahl aus einer Liste · 2 Optionen · <code>bauweise</code>', $screen);
+        self::assertStringContainsString('commandfor="field-delete-flaeche"', $screen);
+        self::assertSame(404, $this->request('GET', '/cms/collections/fields?space=nowhere', session: $admin)->getStatusCode());
+
+        $this->createUser('editor@example.org', ['editor']);
+        $editor = $this->signIn('editor@example.org');
+        self::assertStringNotContainsString('/cms/collections/fields', $this->html($this->request('GET', '/cms/collections', session: $editor)), 'Editors fill in, admins add.');
+        $this->action('frootbox/collections/field.create', ['kind' => 'text', 'labels' => ['de' => 'Ort']], $editor, 403);
+
+        $new = $this->html($this->request('GET', '/cms/collections/new', session: $editor));
+        self::assertMatchesRegularExpression('~<label class="fb-label" for="entry-fields-flaeche">Fläche \(m²\) <span class="fb-label__optional">\(optional\)</span></label><input class="fb-input" type="number"[^>]*name="fields.flaeche"~', $new);
+        self::assertStringContainsString('<option value="holz">Holz</option>', $new);
+        self::assertMatchesRegularExpression('~type="date"[^>]*name="fields.fertig"~', $new);
+        self::assertStringContainsString('<fb-image-input kind="document"', $new);
+
+        $created = $this->action('frootbox/collections/entry.create', ['translations' => ['de' => ['title' => 'Haus am See']], 'fields' => ['flaeche' => 142, 'bauweise' => 'holz', 'fertig' => '2025-09-30']], $editor);
+        $show = $this->html($this->request('GET', '/cms/collections/' . $this->id($created), session: $editor));
+        self::assertMatchesRegularExpression('~name="fields.flaeche"[^>]*value="142"|value="142"[^>]*name="fields.flaeche"~', $show);
+        self::assertStringContainsString('<option value="holz" selected>Holz</option>', $show);
     }
 
     /**

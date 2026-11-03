@@ -1,6 +1,6 @@
 ---
 title: Collections
-about: [screen:frootbox.collections.entries, action:frootbox/collections/entry.create]
+about: [screen:frootbox.collections.entries, screen:frootbox.collections.fields, action:frootbox/collections/entry.create, action:frootbox/collections/field.create]
 permission: frootbox/collections/entry.list
 order: 66
 ---
@@ -47,8 +47,19 @@ Under **Categories** you add areas, e.g. "Residential" or "Commercial",
 also below each other. Tick the fitting tags or type new words,
 separated by commas. Visitors can filter the list by both.
 
-## More fields
+## Fields of a collection
 
-A theme can add fields to the entries, such as the year or the client of
-a reference. They appear in the form under **More fields** and in the
-editing mode right on the page.
+Admins choose **Fields** above the entries of a collection and add what
+the entries have in common, e.g. "Area" as a number in m², "Year" as a
+date or "Construction" as a choice from a list. There are texts, long
+texts, numbers with a unit, dates, yes or no, links, choices, images
+and files. Editors fill them in under **More fields**; the page of an
+entry shows the filled ones as a fact sheet below the image.
+
+Name and kind of a field stay. If a field goes, the values in the
+entries stay saved and come back with a new field of the same name.
+For a choice, write one option per line. A changed line keeps the
+values of the entries as long as the number of lines stays the same.
+
+A theme can add further fields to the entries, too. They appear in the
+form under **More fields** and in the editing mode right on the page.

@@ -52,7 +52,7 @@ final readonly class CreateEntry implements Action, Scoped
         #[ListOf('string')]
         #[Description('Ids, keys or labels of tags; a new word becomes a tag unless only presets count, see tag.choices')]
         public array $tags = [],
-        #[Description('Further fields the views of the theme add, by name; a text one per language, e.g. {"subtitle": {"de": "…"}}, null removes one; see object.fields')]
+        #[Description('Further fields of the theme and of the collection, by name; a text one per language, e.g. {"subtitle": {"de": "…"}}, null removes one; see object.fields with the space')]
         public array $fields = [],
     ) {}
 
@@ -75,7 +75,7 @@ final readonly class CreateEntry implements Action, Scoped
             $this->order,
             $editor->categories(self::NAME, $this->categories),
             $editor->tags(self::NAME, $this->space, $this->tags),
-            $editor->fields(self::NAME, [], $this->fields),
+            $editor->fields(self::NAME, $this->space, [], $this->fields),
         );
 
         return $editor->saveDraft(self::NAME, Ulid::generate(), $data);

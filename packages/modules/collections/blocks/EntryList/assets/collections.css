@@ -43,6 +43,23 @@
 .collection-entry__title { margin: 0; font-size: var(--size-3xl, 2.5rem); }
 .collection-entry__teaser { margin: 0; font-size: var(--size-l, 1.25rem); }
 .collection-entry__media :is(picture, img) { display: block; inline-size: 100%; block-size: auto; border-radius: var(--radius, 0.5rem); }
+/* The fields of the collection as a fact sheet: label and value side by side where there is room. */
+.collection-facts {
+  display: grid;
+  grid-template-columns: minmax(min(100%, 10rem), max-content) 1fr;
+  gap: var(--space-2xs, 0.25rem) var(--space-m, 1.5rem);
+  margin: 0;
+  padding: var(--space-s, 1rem);
+  border-radius: var(--radius, 0.5rem);
+  background: var(--color-surface, #f5f5f4);
+}
+.collection-facts__item { display: contents; }
+.collection-facts__label { font-weight: 600; }
+.collection-facts__value { margin: 0; overflow-wrap: anywhere; }
+@container (max-width: 30rem) {
+  .collection-facts { grid-template-columns: 1fr; }
+  .collection-facts__value { margin-block-end: var(--space-2xs, 0.25rem); }
+}
 .collection-entry__text > :first-child { margin-block-start: 0; }
 .collection-entry__text:empty { display: none; }
 .collection-entry__back { margin: 0; }

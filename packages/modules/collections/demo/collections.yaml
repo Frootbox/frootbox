@@ -6,13 +6,19 @@
 # The first collection is named "Farmen" ("Farms"); a page "Unsere Farmen"
 # below the start page shows its three farms as cards, filtered by the
 # categories "Südamerika" and "Afrika". Each farm gets its address below
-# it, e.g. /unsere-farmen/finca-la-esperanza. The position puts them in
-# the order of the harvest.
+# it, e.g. /unsere-farmen/finca-la-esperanza, with a fact sheet of the
+# fields of the collection (altitude, region, process, organic). The
+# position puts them in the order of the harvest.
 
 - page.tree: {}
   as: tree
 
 - space.update: { id: default, type: frootbox/collections/entry, title: Farmen }
+
+- frootbox/collections/field.create: { kind: number, name: altitude, labels: { de: Höhe, en: Altitude }, unit: m }
+- frootbox/collections/field.create: { kind: text, name: region, labels: { de: Region, en: Region } }
+- frootbox/collections/field.create: { kind: choice, name: process, labels: { de: Aufbereitung, en: Process }, options: { de: [Gewaschen, Natur], en: [Washed, Natural] } }
+- frootbox/collections/field.create: { kind: boolean, name: organic, labels: { de: Bio-zertifiziert, en: Certified organic } }
 
 - category.create:
     group: frootbox/collections/categories
@@ -55,6 +61,7 @@
     order: 1
     categories: ['${america.id}']
     tags: [Bio]
+    fields: { altitude: 1700, region: { de: 'Huila, Kolumbien', en: 'Huila, Colombia' }, process: natur, organic: true }
     translations:
       de:
         title: Finca La Esperanza
@@ -74,6 +81,7 @@
 - frootbox/collections/entry.create:
     order: 2
     categories: ['${america.id}']
+    fields: { altitude: 1100, region: { de: 'Minas Gerais, Brasilien', en: 'Minas Gerais, Brazil' }, process: natur, organic: false }
     translations:
       de:
         title: Fazenda Santa Clara
@@ -86,6 +94,7 @@
     order: 3
     categories: ['${africa.id}']
     tags: [Bio]
+    fields: { altitude: 1900, region: { de: 'Sidama, Äthiopien', en: 'Sidama, Ethiopia' }, process: gewaschen, organic: true }
     translations:
       de:
         title: Kooperative Sidama
