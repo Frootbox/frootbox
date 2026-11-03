@@ -15,6 +15,7 @@ use Frootbox\Collections\Backend\FieldsHandler;
 use Frootbox\Collections\CollectionsExtension;
 use Frootbox\Collections\Entry\CreateEntry;
 use Frootbox\Collections\Entry\EntryStore;
+use Frootbox\Collections\Field\CollectionFields;
 use Frootbox\Core\Action\Context;
 use Frootbox\Core\Extension\Extensions;
 use Frootbox\Core\Plugin\CreateSpace;
@@ -34,6 +35,11 @@ final class BackendTest extends BackendTestCase
     protected function extensions(): Extensions
     {
         return new Extensions([self::backend(), CollectionsTestCase::package()], 'collections-backend');
+    }
+
+    protected function tables(): array
+    {
+        return [CollectionFields::TABLE];
     }
 
     protected function config(): array

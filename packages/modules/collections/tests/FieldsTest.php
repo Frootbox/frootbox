@@ -58,7 +58,9 @@ final class FieldsTest extends CollectionsTestCase
 
         $id = $this->entry(['de' => ['title' => 'Haus am See']], publish: false);
         $this->runner()->run(new UpdateEntry($id, fields: ['wohnflaeche' => 142.5, 'fertig' => '2025-09-30', 'bauweise' => 'holz', 'ausgezeichnet' => true, 'besonderheiten' => ['de' => "Lärche\nGlas"]]));
-        self::assertSame(['wohnflaeche' => 1, 'fertig' => 1, 'bauweise' => 1, 'ausgezeichnet' => 1, 'besonderheiten' => 1], $this->get(FieldEditor::class)->used(Space::DEFAULT));
+        $used = $this->get(FieldEditor::class)->used(Space::DEFAULT);
+        ksort($used);
+        self::assertSame(['ausgezeichnet' => 1, 'bauweise' => 1, 'besonderheiten' => 1, 'fertig' => 1, 'wohnflaeche' => 1], $used, 'MySQL keeps the keys of JSON in an order of its own.');
         self::assertSame(1, $this->runner()->ask(new ListFields())[0]->used);
 
         self::assertSame(['/fields/wohnflaeche'], $this->errors(fn() => $this->runner()->run(new UpdateEntry($id, fields: ['wohnflaeche' => 1.25]))), 'One decimal place.');
