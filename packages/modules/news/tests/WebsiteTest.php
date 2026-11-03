@@ -12,22 +12,25 @@ use Frootbox\Core\Action\Undo\UndoAction;
 use Frootbox\Core\Http\Exception\HttpException;
 use Frootbox\Core\Page\PublishPages;
 use Frootbox\Core\Page\UpdatePage;
+use Frootbox\Core\Plugin\CreateSpace;
 use Frootbox\Core\Settings\UpdateSettings;
+use Frootbox\News\Article\ArticleStore;
 use Frootbox\News\Article\PublishArticles;
 use Frootbox\News\Article\UnpublishArticle;
 use Frootbox\News\Article\UpdateArticle;
-use Frootbox\News\ArticlePages;
+use Frootbox\News\ArticlePlugin;
 use Frootbox\News\Blocks\ArticleList;
 use Frootbox\News\Blocks\ArticleTeaser;
 use Frootbox\News\Category\CreateCategory;
 use Frootbox\News\Feed\Feed;
 use Frootbox\News\Feed\FeedHandler;
+use Frootbox\News\SpaceChoices;
 use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(ArticleList::class)]
 #[CoversClass(ArticleTeaser::class)]
-#[CoversClass(ArticlePages::class)]
+#[CoversClass(ArticlePlugin::class)]
 #[CoversClass(Feed::class)]
 final class WebsiteTest extends NewsTestCase
 {
@@ -40,7 +43,7 @@ final class WebsiteTest extends NewsTestCase
         parent::setUp();
 
         $this->start = $this->page(null, 'Start', [['block' => 'frootbox/news/ArticleTeaser', 'options' => ['count' => 2]]]);
-        $this->news = $this->page($this->start, 'Aktuelles', [['block' => 'frootbox/news/ArticleList', 'options' => ['perPage' => 2]]]);
+        $this->news = $this->newsPage($this->start, 'Aktuelles', ['perPage' => 2]);
         $this->runner()->run(new PublishPages([$this->start, $this->news]));
     }
 
@@ -165,5 +168,25 @@ final class WebsiteTest extends NewsTestCase
 
         $this->expectException(HttpException::class);
         $this->get(FeedHandler::class)->handle(new ServerRequest('GET', 'https://example.org/')->withAttribute('page', $this->start)->withAttribute('language', 'de'));
+    }
+
+    public function testASpaceHasItsArticlesBelowItsOwnPage(): void
+    {
+        $press = $this->runner()->run(new CreateSpace(ArticleStore::TYPE, 'Presse'))->id;
+        $page = $this->newsPage($this->start, 'Presse', space: $press);
+        $this->runner()->run(new PublishPages([$page]));
+        $this->article(['de' => ['title' => 'Interview']], '2026-11-01', space: $press);
+        $this->article(['de' => ['title' => 'Neue Sorten']], '2026-10-01');
+
+        self::assertSame(200, $this->statusOf('/presse/interview'));
+        self::assertSame(404, $this->statusOf('/aktuelles/interview'), 'Not below the page of another space.');
+        self::assertStringNotContainsString('Neue Sorten', $this->html('/presse'), 'Only the articles of its space.');
+        self::assertStringNotContainsString('Interview', $this->html('/aktuelles'));
+
+        $teaser = $this->html('/');
+        self::assertStringContainsString('href="/presse/interview"', $teaser, 'A teaser over all spaces links each article below its page.');
+        self::assertStringContainsString('href="/aktuelles/neue-sorten"', $teaser);
+        self::assertStringContainsString('<a href="/aktuelles">Alle News</a>', $teaser, 'All of them: the page of the default space.');
+        self::assertSame([['', 'Alle'], ['default', 'News'], [$press, 'Presse']], array_map(static fn(array $choice): array => [$choice['value'], $choice['label']], $this->runner()->ask(new SpaceChoices())));
     }
 }

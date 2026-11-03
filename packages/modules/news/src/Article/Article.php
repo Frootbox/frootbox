@@ -25,5 +25,7 @@ final readonly class Article extends Entity
         public ?array $image,
         public DateTimeImmutable $createdAt,
         public ?DateTimeImmutable $updatedAt,
+        /** The space of the news (decision 0232) */
+        public string $space = 'default',
     ) {}
 }

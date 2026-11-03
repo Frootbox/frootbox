@@ -3,12 +3,14 @@
 News for the Frootbox CMS: articles with drafts, versions and planned
 publishing, categories, an RSS feed and two blocks for any theme.
 
-- **News** (`frootbox/news/ArticleList`) lists the articles page by page,
-  filtered by category (`?category=`) and year (`?year=`). Each published
-  article gets an address below the first page with this block, e.g.
-  `/news/new-varieties`; there the block shows the article.
+- **News** (`frootbox/news/ArticleList`) is the view of the plugin
+  (decision 0232): a page that shows a space of the news lists its
+  articles at `plugin()`, page by page, filtered by category
+  (`?category=`) and year (`?year=`). Each published article gets an
+  address below that page, e.g. `/news/new-varieties`; there the view
+  shows the article. An admin assigns the space with `plugin.assign`.
 - **Newest articles** (`frootbox/news/ArticleTeaser`) shows the latest
-  few with a link to the list.
+  few of all spaces or of one, with a link to the list.
 
 The feed of a list lives at `/_news/feed/<page id>/<language>.xml` and is
 announced in the head of that page.

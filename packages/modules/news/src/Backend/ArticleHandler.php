@@ -44,9 +44,12 @@ final readonly class ArticleHandler implements RequestHandlerInterface
         $categories = $this->categories();
 
         if (!\is_string($id)) {
+            $space = $request->getQueryParams()['space'] ?? null;
+
             return $this->view->render($request, '@frootbox/news/backend/article-new.twig', [
                 'language' => $this->languages->default(),
                 'categories' => $categories,
+                'space' => \is_string($space) && '' !== $space ? $space : null,
             ]);
         }
 

@@ -10,6 +10,8 @@ namespace Frootbox\News\Backend;
 
 use Frootbox\Backend\View\BackendView;
 use Frootbox\Core\Action\Runner;
+use Frootbox\Core\Plugin\ListSpaces;
+use Frootbox\News\Article\ArticleStore;
 use Frootbox\News\Article\ListArticles;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -17,7 +19,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * The screen "News": the articles, newest first, with a search and pages
- * (decision 0220).
+ * (decision 0220). With more than one space a tab for each, the default
+ * space first (decision 0232).
  */
 final readonly class ArticlesHandler implements RequestHandlerInterface
 {
@@ -39,11 +42,21 @@ final readonly class ArticlesHandler implements RequestHandlerInterface
         $params = $request->getQueryParams();
         $search = \is_string($params['q'] ?? null) ? mb_substr(trim($params['q']), 0, 100) : '';
         $page = \is_string($params['page'] ?? null) && ctype_digit($params['page']) ? max(1, (int) $params['page']) : 1;
-        $list = $this->runner->ask(new ListArticles(search: '' === $search ? null : $search, page: $page, perPage: self::PER_PAGE));
+        $spaces = $this->runner->ask(new ListSpaces(ArticleStore::TYPE))->items;
+        $space = null;
+
+        if (\count($spaces) > 1) {
+            $ids = array_map(static fn($item): string => $item->id, $spaces);
+            $space = \is_string($params['space'] ?? null) && \in_array($params['space'], $ids, true) ? $params['space'] : $ids[0];
+        }
+
+        $list = $this->runner->ask(new ListArticles(search: '' === $search ? null : $search, page: $page, perPage: self::PER_PAGE, space: $space));
 
         return $this->view->render($request, '@frootbox/news/backend/articles.twig', [
             'list' => $list,
             'search' => $search,
+            'spaces' => null === $space ? [] : $spaces,
+            'space' => $space,
         ]);
     }
 }

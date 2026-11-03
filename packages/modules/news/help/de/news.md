@@ -7,16 +7,19 @@ kurzen Anriss, einen Text und, wenn Du magst, ein Bild und Kategorien.
 
 ## News auf der Website zeigen
 
-Füg den Block **News** auf einer Seite ein, z. B. „Aktuelles“. Er zeigt
-die Artikel, die neuesten zuerst, Seite für Seite. Jeder Artikel bekommt
-eine eigene Adresse unter dieser Seite, z. B. `/aktuelles/neue-sorten`,
-und der Block zeigt dort den Artikel.
+Eine Seite zeigt die News, wenn ein Admin es in ihren Einstellungen
+unter **Diese Seite zeigt** wählt, z. B. bei „Aktuelles“. Dort stehen
+die Artikel, die neuesten zuerst, Seite für Seite, zwischen den Blöcken
+der Seite. Jeder Artikel bekommt eine eigene Adresse unter dieser Seite,
+z. B. `/aktuelles/neue-sorten`, und dort steht nur der Artikel.
 
-Haben mehrere Seiten den Block, gehören die Adressen zur ersten in der
-Sitemap; die anderen verlinken dorthin.
+Brauchst Du getrennte News, etwa für Presse und Blog, legt ein Admin dort
+eine weitere **Verwaltung** an. Jede hat eigene Artikel und eine eigene
+Seite; unter **News** wählst Du sie oben als Reiter.
 
 Der Block **Neueste Artikel** zeigt die letzten paar, z. B. auf der
-Startseite, mit einem Link auf alle.
+Startseite, aus allen Verwaltungen oder aus einer, mit einem Link auf
+alle.
 
 ## Artikel schreiben
 

@@ -170,7 +170,7 @@ final class ArticlesTest extends NewsTestCase
 
     public function testArticlesAreFoundAndEditorsMayChangeThem(): void
     {
-        $page = $this->page(null, 'Start', [['block' => 'frootbox/news/ArticleList']]);
+        $page = $this->newsPage(null, 'Start');
         $this->runner()->run(new PublishPages([$page]));
         $id = $this->article(['de' => ['title' => 'Neue Sorten', 'text' => self::text('Geröstet in Hamburg')]]);
 

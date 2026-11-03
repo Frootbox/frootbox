@@ -10,16 +10,18 @@ if you like, an image and categories.
 
 ## Show the news on the website
 
-Add the block **News** to a page, e.g. one called "News". It lists the
-articles, newest first, page by page. Each article gets its own address
-below that page, e.g. `/news/new-varieties`, and the block shows the
-article there.
+A page shows the news when an admin chooses it in its settings under
+**This page shows**, e.g. on a page called "News". The articles appear
+there, newest first, page by page, between the blocks of the page. Each
+article gets its own address below that page, e.g.
+`/news/new-varieties`, and only the article shows there.
 
-If several pages have the block, the first one in the sitemap holds the
-addresses; the others link to it.
+For separate news, such as press and blog, an admin adds another
+**space** there. Each has its own articles and its own page; under
+**News** you choose it as a tab at the top.
 
 The block **Newest articles** shows the latest few, e.g. on the start
-page, with a link to all of them.
+page, from all spaces or from one, with a link to all of them.
 
 ## Write an article
 

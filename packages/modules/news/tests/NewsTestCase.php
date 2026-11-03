@@ -14,10 +14,14 @@ use Frootbox\Core\Extension\Extensions;
 use Frootbox\Core\Http\Exception\HttpException;
 use Frootbox\Core\Page\CreatePage;
 use Frootbox\Core\Page\PageHandler;
+use Frootbox\Core\Page\UpdateBlock;
+use Frootbox\Core\Plugin\AssignPlugin;
+use Frootbox\Core\Plugin\Space;
 use Frootbox\Core\Tests\Support\FixtureSite;
 use Frootbox\Core\Tests\Support\NotesTestCase;
 use Frootbox\News\Article\ArticleCategories;
 use Frootbox\News\Article\Articles;
+use Frootbox\News\Article\ArticleStore;
 use Frootbox\News\Article\ArticleTranslations;
 use Frootbox\News\Article\CreateArticle;
 use Frootbox\News\Article\PublishArticles;
@@ -67,14 +71,38 @@ abstract class NewsTestCase extends NotesTestCase
     }
 
     /**
+     * A page that shows the news (decision 0232), with the options of the
+     * view of the plugin.
+     *
+     * @param array<string, mixed> $options
+     */
+    protected function newsPage(?string $parentId, string $title, array $options = [], string $space = Space::DEFAULT): string
+    {
+        $id = $this->page($parentId, $title);
+        $details = $this->runner()->run(new AssignPlugin($id, ArticleStore::TYPE, $space));
+
+        if ([] !== $options) {
+            foreach ($details->draft->translations ?? [] as $language => $translation) {
+                $view = $translation->content['plugin'] ?? null;
+
+                if (\is_array($view) && \is_string($view['id'] ?? null)) {
+                    $this->runner()->run(new UpdateBlock($id, $language, $view['id'], options: $options));
+                }
+            }
+        }
+
+        return $id;
+    }
+
+    /**
      * A published article.
      *
      * @param array<string, mixed> $translations
      * @param list<string>         $categories
      */
-    protected function article(array $translations, string $date = '2026-11-02 09:00', array $categories = [], bool $publish = true): string
+    protected function article(array $translations, string $date = '2026-11-02 09:00', array $categories = [], bool $publish = true, string $space = Space::DEFAULT): string
     {
-        $details = $this->runner()->run(new CreateArticle($translations, new \DateTimeImmutable($date), categories: $categories));
+        $details = $this->runner()->run(new CreateArticle($translations, new \DateTimeImmutable($date), categories: $categories, space: $space));
 
         if ($publish) {
             $this->runner()->run(new PublishArticles([$details->id]));

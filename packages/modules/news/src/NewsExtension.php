@@ -36,8 +36,8 @@ use Frootbox\News\Feed\FeedHandler;
 use Frootbox\News\Feed\FeedLink;
 
 /**
- * News as a plugin (decisions 0027, 0219): articles with drafts, their
- * addresses below the page with the list, the scheduler, the search and
+ * News as a plugin (decisions 0219, 0232): articles with drafts in
+ * spaces, their addresses below the page that shows the space, the scheduler, the search and
  * the feed. The screens come only with the backend.
  */
 final class NewsExtension implements Extension
@@ -57,8 +57,9 @@ final class NewsExtension implements Extension
         $registry->action(UpdateCategory::class);
         $registry->action(DeleteCategory::class);
         $registry->query(ListCategories::class);
+        $registry->query(SpaceChoices::class);
 
-        $registry->subpages(ArticlePages::class);
+        $registry->plugin(ArticlePlugin::class);
         $registry->scheduled(ArticleSchedule::class);
         $registry->searchSource(ArticleSource::class);
         $registry->settings(NewsSettings::class);

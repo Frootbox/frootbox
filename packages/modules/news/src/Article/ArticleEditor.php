@@ -13,6 +13,7 @@ use Frootbox\Core\Action\InvalidInputException;
 use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Media\MediaEditor;
 use Frootbox\Core\Page\Slug;
+use Frootbox\Core\Plugin\PluginSpaces;
 use Frootbox\Core\Revision\RevisionStore;
 use Frootbox\Core\Support\Message;
 use Frootbox\Core\Url\AddressSync;
@@ -44,6 +45,7 @@ final readonly class ArticleEditor
         private RichText $richText,
         private AddressSync $addresses,
         private Languages $languages,
+        private PluginSpaces $spaces,
     ) {}
 
     /**
@@ -378,6 +380,10 @@ final readonly class ArticleEditor
             }
         }
 
+        if (!$this->spaces->exists(ArticleStore::TYPE, $data->space)) {
+            $errors['/space'] = 'There is no such space of the news.';
+        }
+
         if (null !== $data->image && (null === $data->media() || 1 !== preg_match(self::MEDIA_PATTERN, $data->media()))) {
             $errors['/image'] = 'must be an image as {"media": "<id>", "alt": "…"}.';
         }
@@ -414,7 +420,7 @@ final readonly class ArticleEditor
 
     private function write(string $id, ArticleData $data): void
     {
-        $values = ['date' => $data->date, 'image' => $data->image];
+        $values = ['date' => $data->date, 'image' => $data->image, 'space' => $data->space];
 
         if (null === $this->articles->fetchById($id)) {
             $this->articles->insert(['id' => $id, ...$values]);

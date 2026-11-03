@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Frootbox\News\Article;
 
 use DateTimeImmutable;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Frootbox\Database\Values;
@@ -17,7 +18,8 @@ use Frootbox\News\Category\Category;
 
 /**
  * The published articles for visitors: lists by language, category and
- * year, newest first, read from the tables.
+ * year, newest first, read from the tables. With spaces only the articles
+ * of these spaces (decision 0232), null for all.
  */
 final readonly class PublishedArticles
 {
@@ -30,11 +32,13 @@ final readonly class PublishedArticles
     ) {}
 
     /**
+     * @param list<string>|null $spaces
+     *
      * @return list<ArticleView>
      */
-    public function list(string $language, ?string $category = null, ?int $year = null, int $limit = 10, int $offset = 0): array
+    public function list(string $language, ?string $category = null, ?int $year = null, int $limit = 10, int $offset = 0, ?array $spaces = null): array
     {
-        $query = $this->query($language, $category, $year)
+        $query = $this->query($language, $category, $year, $spaces)
             ->select('a.id')
             ->orderBy('a.date', 'DESC')
             ->addOrderBy('a.id', 'DESC')
@@ -45,9 +49,12 @@ final readonly class PublishedArticles
         return $this->views($ids, $language);
     }
 
-    public function count(string $language, ?string $category = null, ?int $year = null): int
+    /**
+     * @param list<string>|null $spaces
+     */
+    public function count(string $language, ?string $category = null, ?int $year = null, ?array $spaces = null): int
     {
-        $count = $this->query($language, $category, $year)->select('COUNT(*)')->executeQuery()->fetchOne();
+        $count = $this->query($language, $category, $year, $spaces)->select('COUNT(*)')->executeQuery()->fetchOne();
 
         return is_numeric($count) ? (int) $count : 0;
     }
@@ -55,13 +62,15 @@ final readonly class PublishedArticles
     /**
      * The years with articles, newest first.
      *
+     * @param list<string>|null $spaces
+     *
      * @return list<int>
      */
-    public function years(string $language, ?string $category = null): array
+    public function years(string $language, ?string $category = null, ?array $spaces = null): array
     {
         $years = [];
 
-        foreach ($this->query($language, $category, null)->select('a.date')->executeQuery()->fetchFirstColumn() as $date) {
+        foreach ($this->query($language, $category, null, $spaces)->select('a.date')->executeQuery()->fetchFirstColumn() as $date) {
             if (\is_string($date)) {
                 $years[(int) substr($date, 0, 4)] = true;
             }
@@ -78,7 +87,10 @@ final readonly class PublishedArticles
         return $this->views([$id], $language)[0] ?? null;
     }
 
-    private function query(string $language, ?string $category, ?int $year): QueryBuilder
+    /**
+     * @param list<string>|null $spaces
+     */
+    private function query(string $language, ?string $category, ?int $year, ?array $spaces): QueryBuilder
     {
         $query = $this->connection->createQueryBuilder()
             ->from(Articles::TABLE, 'a')
@@ -88,6 +100,11 @@ final readonly class PublishedArticles
         if (null !== $category) {
             $query->innerJoin('a', ArticleCategories::TABLE, 'c', 'c.article_id = a.id AND c.category_id = :category')
                 ->setParameter('category', $category);
+        }
+
+        if (null !== $spaces) {
+            $query->andWhere($query->expr()->in('a.space', ':spaces'))
+                ->setParameter('spaces', [] === $spaces ? [''] : $spaces, ArrayParameterType::STRING);
         }
 
         if (null !== $year) {

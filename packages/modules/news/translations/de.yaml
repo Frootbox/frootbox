@@ -16,7 +16,7 @@
 "Pages": "Seiten"
 "Subscribe via RSS": "Per RSS abonnieren"
 "The newest news articles as teasers, e.g. on the start page, with a link to all of them.": "Die neuesten Artikel als Teaser, z. B. auf der Startseite, mit einem Link auf alle."
-"The news articles, newest first, page by page and by category. Each article gets its own address below the first page with this block; there the block shows the article.": "Die Artikel der News, die neuesten zuerst, Seite für Seite und nach Kategorie. Jeder Artikel bekommt eine eigene Adresse unter der ersten Seite mit diesem Block; dort zeigt der Block den Artikel."
+"The news articles of the space the page shows, newest first, page by page and by category. Each article gets its own address below the page; there it shows the article.": "Die Artikel der Verwaltung, die die Seite zeigt, die neuesten zuerst, Seite für Seite und nach Kategorie. Jeder Artikel bekommt eine eigene Adresse unter der Seite; dort steht der Artikel."
 # Backend (decision 0220)
 "News": "News"
 "New article": "Neuer Artikel"
@@ -59,3 +59,5 @@
 Articles on the website and in the feed: Artikel auf der Website und im Feed
 Articles in the feed: Artikel im Feed
 How many of the newest articles the RSS feed of a page lists.: Wie viele der neuesten Artikel der RSS-Feed einer Seite enthält.
+"There is no such space of the news.": "Diese Verwaltung gibt es in den News nicht."
+Space: Verwaltung

@@ -3,8 +3,9 @@
 #
 #     php bin/frootbox seed frootbox/news:demo/news.yaml
 #
-# A page "Aktuelles" below the start page lists the articles; each one
-# gets its address below it, e.g. /aktuelles/neue-ernte-aus-peru.
+# A page "Aktuelles" below the start page shows the news (decision 0232):
+# it lists the articles, each one gets its address below it, e.g.
+# /aktuelles/neue-ernte-aus-peru.
 
 - page.tree: {}
   as: tree
@@ -31,8 +32,7 @@
             title: Aktuelles
             intro: Neues aus der Rösterei, Termine und frische Sorten.
           areas:
-            main:
-              - block: frootbox/news/ArticleList
+            main: []
       en:
         title: News
         content:
@@ -40,9 +40,9 @@
             title: News
             intro: News from the roastery, dates and fresh coffees.
           areas:
-            main:
-              - block: frootbox/news/ArticleList
+            main: []
   as: news
+- plugin.assign: { id: '${news.id}', type: frootbox/news/article }
 - page.publish: { ids: ['${news.id}'] }
 
 - frootbox/news/article.create:

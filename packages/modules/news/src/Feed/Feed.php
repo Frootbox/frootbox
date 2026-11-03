@@ -12,25 +12,25 @@ use DateTimeInterface;
 use Frootbox\Core\Config\Config;
 use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Page\PageReader;
-use Frootbox\Core\Url\BasePages;
+use Frootbox\Core\Plugin\PluginPages;
 use Frootbox\Core\Url\Target;
 use Frootbox\Core\Url\Urls;
 use Frootbox\News\Article\ArticleStore;
 use Frootbox\News\Article\PublishedArticles;
-use Frootbox\News\ArticlePages;
 use Frootbox\News\NewsSettings;
 use Frootbox\RichText\Html;
 
 /**
- * The RSS feed of the newest articles, one per language below the first
- * page with the list (decision 0219).
+ * The RSS feed of the newest articles, one per language and page that
+ * shows a space of the news, with the articles of that space (decisions
+ * 0219 and 0232).
  */
 final readonly class Feed
 {
     public const string ROUTE = '/_news/feed/{page:[0-7][0-9A-HJKMNP-TV-Z]{25}}/{language:[a-z]{2,3}(?:-[A-Za-z0-9]{1,8})*}.xml';
 
     public function __construct(
-        private BasePages $bases,
+        private PluginPages $plugins,
         private PublishedArticles $articles,
         private PageReader $pages,
         private Urls $urls,
@@ -40,7 +40,7 @@ final readonly class Feed
     ) {}
 
     /**
-     * The address of the feed of a page, null if it is not the main page of the news there.
+     * The address of the feed of a page, null if it shows no news there.
      */
     public function url(string $pageId, string $language): ?string
     {
@@ -49,7 +49,9 @@ final readonly class Feed
 
     public function has(string $pageId, string $language): bool
     {
-        return $this->languages->has($language) && ($this->bases->of([ArticlePages::LIST_BLOCK])[$language] ?? null) === $pageId;
+        return $this->languages->has($language)
+            && ArticleStore::TYPE === $this->plugins->at($pageId)?->type
+            && null !== $this->urls->href(Target::page($pageId), $language);
     }
 
     /**
@@ -75,7 +77,9 @@ final readonly class Feed
         $link = $this->urls->absolute(Target::page($pageId), $language, $site) ?? '';
         $items = '';
 
-        foreach ($this->articles->list($language, null, null, $this->settings->feedItems) as $article) {
+        $space = $this->plugins->at($pageId)->space ?? null;
+
+        foreach ($this->articles->list($language, null, null, $this->settings->feedItems, spaces: null === $space ? [] : [$space]) as $article) {
             $url = $this->urls->absolute(ArticleStore::target($article->id), $language, $site) ?? $link;
             $items .= '<item>'
                 . self::element('title', $article->title)

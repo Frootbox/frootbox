@@ -12,7 +12,9 @@ use DateTimeImmutable;
 use Frootbox\Core\Action\Action;
 use Frootbox\Core\Action\AsAction;
 use Frootbox\Core\Action\Schema\Description;
+use Frootbox\Core\Action\Schema\Length;
 use Frootbox\Core\Action\Schema\ListOf;
+use Frootbox\Core\Plugin\Space;
 use Frootbox\Database\Ulid;
 
 /**
@@ -36,6 +38,9 @@ final readonly class CreateArticle implements Action
         #[ListOf('string')]
         #[Description('Ids of categories')]
         public array $categories = [],
+        #[Length(1, 64)]
+        #[Description('The space of the news, "default" for the default one; see space.list')]
+        public string $space = Space::DEFAULT,
     ) {}
 
     public function handle(ArticleEditor $editor): ArticleDetails
@@ -45,6 +50,7 @@ final readonly class CreateArticle implements Action
             [] === $this->image ? null : $this->image,
             $editor->categories('frootbox/news/article.create', $this->categories),
             $editor->translations('frootbox/news/article.create', $this->translations),
+            $this->space,
         );
 
         return $editor->saveDraft('frootbox/news/article.create', Ulid::generate(), $data);
