@@ -651,6 +651,19 @@ the images (`media.list?kind=image`, 24 at a time, "Show more"); a
 click chooses one. Uploads stay on the screen "Media". The styles are in
 its shadow root and use the tokens only.
 
+### File input
+
+```twig
+{{ ui.file({label: t('Price list'), name: 'fields.prices', value: {media: id}, file: 'prices.pdf', optional: true}) }}
+```
+
+A document from the media to download (decision 0250), the same
+`<fb-image-input>` with `kind="document"`, stored like a file field as
+`{media, text}`. With a file it shows the file name, the field "Text of
+the link" (empty for the title of the file) and the buttons "Change"
+and "Remove"; the dialog lists the documents (`media.list?kind=document`)
+by file name, without previews.
+
 ### Form
 
 ```twig

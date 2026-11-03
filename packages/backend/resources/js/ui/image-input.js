@@ -17,6 +17,8 @@ const LABELS = {
     none: 'No images found.',
     loading: 'Loading …',
     failed: 'The media could not be loaded. Try again.',
+    text: 'Text of the link',
+    textHint: 'Empty for the title of the file.',
 };
 
 /**
@@ -30,6 +32,8 @@ const LABELS = {
  *
  * - src: the query media.list of the backend
  * - preview, file: the address of a preview and the file name of the current image
+ * - kind: "document" for a file to download instead (decision 0250), stored
+ *   like a file field: {media, text}
  * - labels: the texts, see LABELS
  *
  * New files go up on the screen "Media"; the dialog lists what is there.
@@ -37,6 +41,7 @@ const LABELS = {
 export class ImageInput extends LitElement {
     static properties = {
         src: {},
+        kind: {},
         preview: {},
         file: {},
         labels: { type: Object },
@@ -141,6 +146,7 @@ export class ImageInput extends LitElement {
     constructor() {
         super();
         this.src = '';
+        this.kind = 'image';
         this.preview = '';
         this.file = '';
         this.labels = {};
@@ -151,6 +157,10 @@ export class ImageInput extends LitElement {
 
     get text() {
         return { ...LABELS, ...this.labels };
+    }
+
+    get document() {
+        return this.kind === 'document';
     }
 
     get input() {
@@ -194,7 +204,7 @@ export class ImageInput extends LitElement {
     }
 
     async load(page) {
-        const query = new URLSearchParams({ page: String(page), perPage: String(PER_PAGE), kind: 'image' });
+        const query = new URLSearchParams({ page: String(page), perPage: String(PER_PAGE), kind: this.document ? 'document' : 'image' });
         const search = this.state.query.trim();
 
         if (search !== '') {
@@ -236,7 +246,8 @@ export class ImageInput extends LitElement {
     choose(item) {
         this.preview = item.preview;
         this.file = item.fileName;
-        this.store({ media: item.id, alt: this.value?.media === item.id ? this.value.alt ?? '' : '' });
+        const same = this.value?.media === item.id;
+        this.store(this.document ? { media: item.id, ...(same && this.value.text ? { text: this.value.text } : {}) } : { media: item.id, alt: same ? this.value.alt ?? '' : '' });
         this.close();
     }
 
@@ -262,12 +273,15 @@ export class ImageInput extends LitElement {
         return html`
             <slot></slot>
             ${value ? html`<div class="chosen">
-                <figure>${this.preview ? html`<img src=${this.preview} alt="" decoding="async">` : nothing}<figcaption>${this.file || value.media}</figcaption></figure>
+                <figure>${this.preview && !this.document ? html`<img src=${this.preview} alt="" decoding="async">` : nothing}<figcaption>${this.file || value.media}</figcaption></figure>
                 <div class="side">
-                    <label for="alt">${text.alt}</label>
+                    ${this.document ? html`<label for="text">${text.text}</label>
+                    <input id="text" type="text" maxlength="200" aria-describedby="text-hint" .value=${value.text ?? ''} ?disabled=${disabled}
+                        @input=${(event) => this.store({ ...value, text: event.target.value })}>
+                    <p class="hint" id="text-hint">${text.textHint}</p>` : html`<label for="alt">${text.alt}</label>
                     <input id="alt" type="text" maxlength="500" aria-describedby="alt-hint" .value=${value.alt ?? ''} ?disabled=${disabled}
                         @input=${(event) => this.store({ ...value, alt: event.target.value })}>
-                    <p class="hint" id="alt-hint">${text.altHint}</p>
+                    <p class="hint" id="alt-hint">${text.altHint}</p>`}
                     <div class="buttons">
                         <button class="open" type="button" ?disabled=${disabled} @click=${() => this.open()}>${text.change}</button>
                         <button type="button" ?disabled=${disabled} @click=${() => this.remove()}>${text.remove}</button>
@@ -283,7 +297,7 @@ export class ImageInput extends LitElement {
                     <input type="search" aria-label=${text.search} placeholder=${text.search} .value=${this.state.query} @input=${(event) => this.search(event.target.value)}>
                     ${this.state.failed ? html`<p class="status" role="alert">${text.failed}</p>` : nothing}
                     ${this.state.items.length > 0 ? html`<ul>${this.state.items.map((item) => html`<li><button type="button" aria-pressed=${String(item.id === value?.media)} @click=${() => this.choose(item)}>
-                        <img src=${item.preview} alt="" loading="lazy" decoding="async"><span>${item.fileName}</span></button></li>`)}</ul>` : nothing}
+                        ${this.document ? nothing : html`<img src=${item.preview} alt="" loading="lazy" decoding="async">`}<span>${item.fileName}</span></button></li>`)}</ul>` : nothing}
                     ${!this.state.loading && !this.state.failed && this.state.page > 0 && this.state.items.length === 0 ? html`<p class="status">${text.none}</p>` : nothing}
                     ${this.state.loading ? html`<p class="status" role="status">${text.loading}</p>` : nothing}
                     ${!this.state.loading && this.state.items.length < this.state.total ? html`<div><button type="button" @click=${() => this.load(this.state.page + 1)}>${text.more}</button></div>` : nothing}

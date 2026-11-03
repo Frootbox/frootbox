@@ -105,6 +105,21 @@
     </div>
 {%- endmacro %}
 
+{# A file from the media to download as {media, text} (decision 0250): file shows the name of the current one. #}
+{% macro file(options) -%}
+    {%- set o = {label: '', name: '', id: null, value: null, file: null, hint: null, error: null, optional: false, disabled: false}|merge(options) -%}
+    {%- set id = o.id ?? ('field-' ~ o.name) -%}
+    {%- set labels = {choose: t('Choose a file'), change: t('Change'), remove: t('Remove'), title: t('Choose a file'), search: t('Search the media'), more: t('Show more'), close: t('Close'), text: t('Text of the link'), textHint: t('Empty for the title of the file.'), none: t('No files found.'), loading: t('Loading …'), failed: t('The media could not be loaded. Try again.')} -%}
+    <div class="fb-field">
+        <span class="fb-label" id="{{ id }}-label">{{ o.label }}{% if o.optional %} <span class="fb-label__optional">({{ t('optional') }})</span>{% endif %}</span>
+        <fb-image-input kind="document" role="group" aria-labelledby="{{ id }}-label" src="{{ path('backend.query', {name: 'media.list'}) }}" labels="{{ labels|json_encode }}"{{ _self.attributes({file: o.file}) }}>
+            <input type="hidden" data-type="json"{{ _self.attributes({id: id, name: o.name, disabled: o.disabled}) }} value="{{ (o.value is empty ? {} : o.value)|json_encode }}">
+        </fb-image-input>
+        {%- if o.hint %}<p class="fb-hint" id="{{ id }}-hint">{{ o.hint }}</p>{% endif -%}
+        {%- if o.error %}<p class="fb-error" id="{{ id }}-error">{{ icon('alert', 'fb-icon fb-icon--small') }}<span>{{ o.error }}</span></p>{% endif -%}
+    </div>
+{%- endmacro %}
+
 {# options: list of {value, label}, optional attrs per option. #}
 {% macro select(options) -%}
     {%- set o = {label: '', name: '', id: null, options: [], value: null, hint: null, error: null, disabled: false, attrs: {}}|merge(options) -%}

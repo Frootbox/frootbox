@@ -83,16 +83,19 @@ final class TwigExtension extends AbstractExtension
      * form of a module (decision 0240), with the value in the language of
      * the form; "orphans" are values no view declares any more.
      *
+     * With a space also its fields, e.g. those of a collection with their
+     * label in the language of the form (decision 0250).
+     *
      * @param array<mixed> $values The fields of the draft
      *
-     * @return array{fields: list<array{name: string, type: string, label: string, description: string, translatable: bool, settings: array<string, mixed>, value: mixed, image: array{preview: string, file: string}|null}>, orphans: list<string>}
+     * @return array{fields: list<array{name: string, type: string, label: string, own: string|null, description: string, translatable: bool, settings: array<string, mixed>, value: mixed, image: array{preview: string, file: string}|null}>, orphans: list<string>}
      */
-    public function objectFields(string $type, array $values, string $language): array
+    public function objectFields(string $type, array $values, string $language, ?string $space = null): array
     {
         $fields = [];
         $names = [];
 
-        foreach ($this->runner->ask(new ShowObjectFields($type)) as $field) {
+        foreach ($this->runner->ask(new ShowObjectFields($type, $space)) as $field) {
             $stored = $values[$field['name']] ?? null;
             $value = $field['translatable'] ? (\is_array($stored) ? $stored[$language] ?? null : null) : $stored;
             $names[] = $field['name'];
@@ -100,11 +103,13 @@ final class TwigExtension extends AbstractExtension
                 'name' => $field['name'],
                 'type' => $field['type'],
                 'label' => $field['label'],
+                // A label an admin gave by language; the others are texts of the theme to translate.
+                'own' => [] === $field['labels'] ? null : $field['labels'][$language] ?? $field['label'],
                 'description' => $field['description'],
                 'translatable' => $field['translatable'],
                 'settings' => $field['settings'],
                 'value' => $value,
-                'image' => 'image' === $field['type'] && \is_array($value) && \is_string($value['media'] ?? null) ? $this->medium($value['media']) : null,
+                'image' => \in_array($field['type'], ['image', 'file'], true) && \is_array($value) && \is_string($value['media'] ?? null) ? $this->medium($value['media']) : null,
             ];
         }
 

@@ -30,9 +30,10 @@
 </div>
 
 <div class="fb-design-sample">
-    <p class="fb-design-sample__title">{{ t('Rich text and image') }}</p>
+    <p class="fb-design-sample__title">{{ t('Rich text, image and file') }}</p>
     {{ ui.richtext({label: t('Text'), name: 'text', id: id ~ '-text', value: {type: 'doc', content: [{type: 'paragraph', content: [{type: 'text', text: 'Frisch geröstet, '}, {type: 'text', marks: [{type: 'bold'}], text: 'jeden Dienstag'}, {type: 'text', text: '.'}]}]}}) }}
     {{ ui.image({label: t('Image'), name: 'image', id: id ~ '-image', optional: true}) }}
+    {{ ui.file({label: t('File'), name: 'file', id: id ~ '-file', optional: true}) }}
 </div>
 
 <div class="fb-design-sample">
