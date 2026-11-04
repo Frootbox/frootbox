@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fd4c427dad7e454c1780d40a92c2323b",
+    "content-hash": "61f9940dc72c625baa835a337880065a",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -4407,6 +4407,51 @@
             "time": "2026-09-22T09:54:55+00:00"
         },
         {
+            "name": "frootbox/migrate-frootbox1",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/tools/migrate-frootbox1",
+                "reference": "e646bdcfae5f9d1b250ea0f0081e3932dc001f31"
+            },
+            "require": {
+                "doctrine/dbal": "^4.5",
+                "frootbox/core": "^0.1",
+                "php": ">=8.5",
+                "symfony/console": "^8.1",
+                "symfony/yaml": "^8.1"
+            },
+            "type": "frootbox-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\MigrateFrootbox1\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Frootbox\\MigrateFrootbox1\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Moves websites from Frootbox 1 to Frootbox 2: analyse the old database, map blocks and plugins, import through actions",
+            "keywords": [
+                "cms",
+                "frootbox",
+                "migration"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "frootbox/workbench",
             "version": "dev-main",
             "dist": {
@@ -7771,6 +7816,7 @@
         "frootbox/forms": 20,
         "frootbox/google-fonts": 20,
         "frootbox/jobs": 20,
+        "frootbox/migrate-frootbox1": 20,
         "frootbox/news": 20,
         "frootbox/people": 20,
         "frootbox/rich-text": 20,

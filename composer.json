@@ -46,6 +46,7 @@
             "Frootbox\\GoogleFonts\\Tests\\": "packages/modules/google-fonts/tests/",
             "Frootbox\\Webhooks\\Tests\\": "packages/modules/webhooks/tests/",
             "Frootbox\\Workbench\\Tests\\": "packages/tools/workbench/tests/",
+            "Frootbox\\MigrateFrootbox1\\Tests\\": "packages/tools/migrate-frootbox1/tests/",
             "Frootbox\\RichText\\Tests\\": "packages/rich-text/tests/",
             "Frootbox\\ThemeBase\\Tests\\": "packages/themes/base/tests/",
             "Frootbox\\Tools\\PHPStan\\": "tools/phpstan/src/",
@@ -77,6 +78,7 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.95",
+        "frootbox/migrate-frootbox1": "^0.1@dev",
         "frootbox/workbench": "^0.1@dev",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.3",

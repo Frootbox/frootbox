@@ -64,6 +64,9 @@
         <testsuite name="workbench">
             <directory>packages/tools/workbench/tests</directory>
         </testsuite>
+        <testsuite name="migrate-frootbox1">
+            <directory>packages/tools/migrate-frootbox1/tests</directory>
+        </testsuite>
         <testsuite name="rich-text">
             <directory>packages/rich-text/tests</directory>
         </testsuite>
@@ -93,6 +96,7 @@
             <directory>packages/modules/google-fonts/src</directory>
             <directory>packages/modules/webhooks/src</directory>
             <directory>packages/tools/workbench/src</directory>
+            <directory>packages/tools/migrate-frootbox1/src</directory>
             <directory>packages/rich-text/src</directory>
         </include>
     </source>
