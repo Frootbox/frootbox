@@ -6,21 +6,10 @@
     "require": {
         "php": ">=8.5",
         "frootbox/backend": "^0.1@dev",
-        "frootbox/captcha-recaptcha": "^0.1@dev",
-        "frootbox/collections": "^0.1@dev",
         "frootbox/core": "^0.1@dev",
-        "frootbox/events": "^0.1@dev",
         "frootbox/forms": "^0.1@dev",
-        "frootbox/google-fonts": "^0.1@dev",
-        "frootbox/jobs": "^0.1@dev",
-        "frootbox/news": "^0.1@dev",
-        "frootbox/people": "^0.1@dev",
-        "frootbox/search": "^0.1@dev",
         "frootbox/seo": "^0.1@dev",
-        "frootbox/statistics": "^0.1@dev",
-        "frootbox/storage-s3": "^0.1@dev",
-        "frootbox/theme-base": "^0.1@dev",
-        "frootbox/webhooks": "^0.1@dev"
+        "frootbox/theme-base": "^0.1@dev"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

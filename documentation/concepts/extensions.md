@@ -76,9 +76,30 @@ Names without a slash belong to the core.
 
 ## Official modules
 
-Frootbox's own modules (news, forms, events, people, jobs, collections,
-SEO, search, statistics, Google Fonts, webhooks, storage in S3) use only
-the extension points that are open to everyone. Whatever they do, an
-extension of yours can do too.
+Frootbox's own modules use only the extension points that are open to
+everyone. Whatever they do, an extension of yours can do too.
+
+A new website from the skeleton brings forms and SEO. The others come
+with `composer require` and `php bin/frootbox migrate` when a website
+needs them, so a small website keeps a short backend:
+
+| Package | What it brings |
+|---|---|
+| `frootbox/forms` | forms with entries, mail and spam protection (in the skeleton) |
+| `frootbox/seo` | sitemap, robots.txt, Open Graph, structured data, page check (in the skeleton) |
+| `frootbox/news` | articles with categories, list, teasers and RSS |
+| `frootbox/events` | events with place, upcoming and past, calendar file |
+| `frootbox/people` | team, contact persons, locations with opening hours |
+| `frootbox/jobs` | open positions with application through a form |
+| `frootbox/collections` | references, projects and similar entries |
+| `frootbox/search` | search for visitors |
+| `frootbox/statistics` | visits without cookies or personal data |
+| `frootbox/google-fonts` | import Google Fonts to serve them from the own domain |
+| `frootbox/captcha-recaptcha` | reCAPTCHA for forms, after consent |
+| `frootbox/webhooks` | tell other services about changes |
+| `frootbox/storage-s3` | media and files in an S3-compatible bucket |
+
+Add a module early rather than remove it late: removing one whose
+blocks are on pages is not handled yet.
 
 See [Themes](themes.md) and [your first module](../tutorials/first-module.md).

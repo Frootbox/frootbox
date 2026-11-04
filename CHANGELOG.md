@@ -22,6 +22,17 @@ backend's own templates, styles and scripts are not part of it.
 
 - Reference: the block schema, every key of `block.yaml` and of the
   header of a view, with its value and where it may stand.
+- Documentation: the official modules with their packages, in
+  `concepts/extensions.md`, the installation and `AGENTS.md` of the
+  skeleton.
+
+### Changed
+
+- Skeleton: a new website brings only the core, the backend, the base
+  theme, forms and SEO, so a small website keeps a short backend. The
+  other official modules come with `composer require frootbox/<module>`
+  and `php bin/frootbox migrate`. Existing websites keep their
+  `composer.json` and do not change.
 
 ### Fixed
 

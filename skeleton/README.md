@@ -2,7 +2,8 @@
 
 The starting point for a new website with
 [Frootbox](https://github.com/Frootbox/frootbox). It brings the core, the
-backend, the base theme and the official modules.
+backend, the base theme, forms and SEO. The other official modules come
+with `composer require` when a website needs them.
 
 ```bash
 composer create-project frootbox/skeleton my-website

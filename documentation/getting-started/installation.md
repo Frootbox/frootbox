@@ -69,6 +69,19 @@ theme: frootbox/theme-base
 More languages can come at any time: pages show the content of the
 default language until they have a translation.
 
+## Modules
+
+The skeleton brings the core, the backend, the base theme, forms and
+SEO. News, events, people, jobs, collections, search for visitors,
+statistics and the other [official modules](../concepts/extensions.md#official-modules)
+come when the website needs them. An installed module is active, so
+each one adds its screens and blocks:
+
+```bash
+composer require frootbox/news
+php bin/frootbox migrate
+```
+
 ## The first page
 
 In the backend under **Pages**, create a page with the layout **Start

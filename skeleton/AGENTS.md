@@ -66,6 +66,36 @@ change shows up directly. Set `theme: acme/site` in `config/app.yaml`.
 page. Live (`APP_ENV=prod`) guests get cached pages; run `cache:clear`
 after a deployment.
 
+## Modules
+
+A new website brings the core, the backend, the base theme, forms and
+SEO. Every other official module comes when the website needs it, since
+an installed module is active: its screens, blocks and tables appear.
+
+```bash
+composer require frootbox/news
+php bin/frootbox migrate
+```
+
+| Package | What it brings |
+|---|---|
+| `frootbox/forms` | forms with entries, mail and spam protection (included) |
+| `frootbox/seo` | sitemap, robots.txt, Open Graph, structured data, page check (included) |
+| `frootbox/news` | articles with categories, list, teasers and RSS |
+| `frootbox/events` | events with place, upcoming and past, calendar file |
+| `frootbox/people` | team, contact persons, locations with opening hours |
+| `frootbox/jobs` | open positions with application through a form |
+| `frootbox/collections` | references, projects and similar entries |
+| `frootbox/search` | search for visitors |
+| `frootbox/statistics` | visits without cookies or personal data |
+| `frootbox/google-fonts` | import Google Fonts to serve them from the own domain |
+| `frootbox/captcha-recaptcha` | reCAPTCHA for forms, after consent |
+| `frootbox/webhooks` | tell other services about changes |
+| `frootbox/storage-s3` | media and files in an S3-compatible bucket |
+
+Add a module early rather than remove it late: removing one whose
+blocks are on pages is not handled yet.
+
 ## A child theme
 
 `frootbox.yaml` with `theme: { parent: frootbox/theme-base }` and

@@ -10,7 +10,8 @@ declare(strict_types=1);
  * Creates sandbox/, a local test installation for developing Frootbox.
  *
  * It is a copy of skeleton/ that loads the packages from packages/ via path
- * repositories, so every change there shows up immediately. It runs the
+ * repositories, so every change there shows up immediately. On top of the
+ * skeleton it requires every official module (decision 0273). It runs the
  * demo theme Bohnenglück in German and English with its demo website
  * (decision 0109).
  *
@@ -123,9 +124,9 @@ $composer['repositories'] = [
     ...(($theme['fixtures'] ?? false) ? [['type' => 'path', 'url' => $up . 'tests/Fixtures/Themes/*', 'options' => ['symlink' => true]]] : []),
 ];
 
-// The official modules come from the skeleton like in every new website
-// (decision 0165), the sandbox only adds its theme. A module missing there
-// stops the build, so the sandbox and the browser tests notice it.
+// The skeleton brings only the modules almost every website needs
+// (decision 0273). The sandbox and the browser tests add every official
+// module from packages/modules/, so each one runs in a real installation.
 $require = is_array($composer['require'] ?? null) ? $composer['require'] : [];
 
 $moduleFiles = glob(dirname(__DIR__) . '/packages/modules/*/composer.json');
@@ -135,13 +136,12 @@ foreach (false === $moduleFiles ? [] : $moduleFiles as $moduleFile) {
     $moduleName = is_array($module) && is_string($module['name'] ?? null) ? $module['name'] : null;
 
     if (null !== $moduleName && !isset($require[$moduleName])) {
-        fwrite(STDERR, "skeleton/composer.json does not require the official module {$moduleName}.\n");
-
-        exit(1);
+        $require[$moduleName] = '^0.1@dev';
     }
 }
 
 $composer['require'] = [...$require, $theme['package'] => '^0.1@dev'];
+ksort($composer['require']);
 
 file_put_contents(
     $composerFile,
