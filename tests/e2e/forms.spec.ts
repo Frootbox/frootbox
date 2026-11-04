@@ -2,17 +2,32 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { expect, test } from '@playwright/test';
+import { createHash } from 'node:crypto';
+import { expect, test, type Page } from '@playwright/test';
 import { action, signIn } from './admin';
 
 // The forms (decision 0222): the demo form below "Schreib uns" sent with
 // and without JavaScript, errors at the fields, building and publishing a
 // form in the backend, and reading its entries. A person needs at least 3
 // seconds for a form, so the tests wait before sending. New forms have
-// unique titles, so retries find no leftovers.
+// unique titles, so retries find no leftovers. Forms ask for a proof of
+// work by standard (decision 0261), so a test that posts by itself solves
+// one as the browser would.
 
 const unique = () => `${Date.now()}${Math.floor(Math.random() * 1000)}`;
 const human = 3_200;
+
+async function proof(page: Page, id: string): Promise<Record<string, string>> {
+    const { data } = await (await page.request.get(`/_forms/proof/${id}`)).json();
+
+    for (let number = 0; number <= data.max; number++) {
+        if (createHash('sha256').update(data.salt + number).digest('hex') === data.challenge) {
+            return { 'captcha[task]': data.task, 'captcha[number]': String(number) };
+        }
+    }
+
+    throw new Error('The task has no solution.');
+}
 
 test('a visitor sends the contact form with JavaScript', async ({ page }) => {
     await page.goto('/schreib-uns');
@@ -32,8 +47,11 @@ test('a visitor sends the contact form with JavaScript', async ({ page }) => {
     await expect(page.getByLabel('E-Mail')).toHaveAttribute('aria-invalid', 'true');
     await expect(page.getByLabel('E-Mail')).toBeFocused();
 
+    // After the failed try a fresh proof of work goes with the form (decision 0261).
     await page.getByLabel('E-Mail').fill('ada@example.org');
+    const request = page.waitForRequest((sent) => sent.url().endsWith('/_forms/submit'));
     await page.getByRole('button', { name: 'Nachricht senden' }).click();
+    expect((await request).postData()).toMatch(/name="captcha\[number\]"\r\n\r\n\d+\r\n/);
     await expect(page.getByRole('status').filter({ hasText: 'Danke! Wir antworten innerhalb eines Werktags.' })).toBeFocused();
     await expect(form).toHaveCount(0);
 });
@@ -104,7 +122,7 @@ test('an editor builds and publishes a form, an admin reads its entries', async 
     await page.waitForTimeout(human);
     const sent = await page.request.post('/_forms/submit', {
         headers: { Accept: 'application/json' },
-        form: { _form: id, _language: 'de', _token: token, 'values[telefonnummer]': '040 1234567', 'values[name]': 'Ada' },
+        form: { _form: id, _language: 'de', _token: token, 'values[telefonnummer]': '040 1234567', 'values[name]': 'Ada', ...(await proof(page, id)) },
     });
     expect(sent.status()).toBe(200);
 
@@ -127,7 +145,7 @@ test('the parts of a form are tabs that keep their place, unsaved changes and er
     await page.goto(`/cms/forms/${id}`);
 
     const bar = page.getByRole('tablist', { name: 'Teile des Formulars' });
-    await expect(bar.getByRole('tab')).toHaveCount(5);
+    await expect(bar.getByRole('tab')).toHaveCount(6);
     const entries = bar.getByRole('tab', { name: /^Einsendungen/ });
     const texts = bar.getByRole('tab', { name: /^Texte/ });
     const fields = bar.getByRole('tab', { name: /^Felder/ });
@@ -214,7 +232,7 @@ test('a visitor sends files with a form, only the backend hands them out', async
     const token = (await (await page.request.get(`/_forms/token/${id}`)).json()).data.token;
     await page.waitForTimeout(human);
     const data = new FormData();
-    for (const [key, value] of Object.entries({ _form: id, _language: 'de', _token: token, 'values[name]': 'Ada' })) {
+    for (const [key, value] of Object.entries({ _form: id, _language: 'de', _token: token, 'values[name]': 'Ada', ...(await proof(page, id)) })) {
         data.append(key, value);
     }
     data.append('files[lebenslauf][]', new Blob(['%PDF-1.4\n%Lebenslauf\n'], { type: 'application/pdf' }), 'Lebenslauf Ada.pdf');
@@ -233,6 +251,42 @@ test('a visitor sends files with a form, only the backend hands them out', async
     const guest = await page.context().browser()!.newContext();
     expect((await guest.request.get(`${new URL(page.url()).origin}${await link.getAttribute('href')}`, { maxRedirects: 0 })).status()).not.toBe(200);
     await guest.close();
+
+    expect((await action(page, 'frootbox/forms/form.delete', { id })).status).toBe(200);
+});
+
+test('an entry without a proof of work waits in the spam folder until it is no spam', async ({ page }) => {
+    await signIn(page, '/cms/forms');
+    const created = await action(page, 'frootbox/forms/form.create', { translations: { de: { title: `Spam ${unique()}` } }, recipients: ['team@example.org'] });
+    expect(created.status).toBe(200);
+    const id = created.body.data.id;
+    expect((await action(page, 'frootbox/forms/form.field-add', { id, type: 'text', translations: { de: { label: 'Name' } }, required: true })).status).toBe(200);
+    expect((await action(page, 'frootbox/forms/form.publish', { id })).status).toBe(200);
+
+    // A script without a browser solves no proof of work, but sees the thanks.
+    const token = (await (await page.request.get(`/_forms/token/${id}`)).json()).data.token;
+    await page.waitForTimeout(human);
+    const sent = await page.request.post('/_forms/submit', { headers: { Accept: 'application/json' }, form: { _form: id, _language: 'de', _token: token, 'values[name]': 'Bot' } });
+    expect(sent.status()).toBe(200);
+
+    await page.goto(`/cms/forms/${id}/entries`);
+    const folders = page.getByRole('navigation', { name: 'Ordner' });
+    await expect(folders.getByRole('link', { name: 'Eingang (0)' })).toHaveAttribute('aria-current', 'page');
+    await folders.getByRole('link', { name: 'Spam (1)' }).click();
+    await expect(page.locator('details').first()).toContainText('Der Rechenbeweis fehlt.');
+    await page.getByRole('button', { name: 'Kein Spam' }).click();
+    await page.getByRole('dialog', { name: 'Kein Spam?' }).getByRole('button', { name: 'In den Eingang' }).click();
+    await expect(page.locator('.fb-toast')).toHaveText('Die Einsendung ist im Eingang.');
+    await expect(folders.getByRole('link', { name: 'Eingang (1)' })).toBeVisible();
+
+    // The form chooses another captcha in its own tab.
+    await page.goto(`/cms/forms/${id}#spam`);
+    await expect(page.getByRole('radio', { name: /^Standard der Website/ })).toBeChecked();
+    await page.getByRole('radio', { name: /^Rechenaufgabe/ }).check();
+    await page.getByRole('tabpanel', { name: /^Spam-Schutz/ }).getByRole('button', { name: 'Speichern' }).click();
+    await expect(page.locator('.fb-toast')).toHaveText('Gespeichert');
+    await page.reload();
+    await expect(page.getByRole('radio', { name: /^Rechenaufgabe/ })).toBeChecked();
 
     expect((await action(page, 'frootbox/forms/form.delete', { id })).status).toBe(200);
 });
