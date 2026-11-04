@@ -93,8 +93,12 @@ php bin/frootbox migrate
 | `frootbox/webhooks` | tell other services about changes |
 | `frootbox/storage-s3` | media and files in an S3-compatible bucket |
 
-Add a module early rather than remove it late: removing one whose
-blocks are on pages is not handled yet.
+Before removing a module, check the query `system.component-usages`
+(or **Extensions** in the backend) for pages with its blocks and
+layouts. Pages keep them as they were and stay editable; the edit mode
+shows a missing block as a placeholder to remove. Content that was
+stored is kept even when its block, option, field, variant or area is
+gone; new or changed content is still checked.
 
 ## A child theme
 

@@ -465,7 +465,7 @@ export class Arranging {
         element.focus({ preventScroll: true });
         this.select(element);
 
-        if (state.panel) {
+        if (state.panel && !element.hasAttribute('data-fb-missing')) {
             this.openPanel(element);
         }
     }
@@ -601,6 +601,8 @@ export class Arranging {
         const siblings = siblingsOf(parent, block.dataset.fbArea);
         const index = siblings.indexOf(block);
         const title = block.dataset.fbTitle ?? '';
+        // A block whose extension is gone can only be moved or removed (decision 0276).
+        const missing = block.hasAttribute('data-fb-missing');
         const button = (name, label, action, disabled = false, tone = '') => html`<button type="button" class=${tone}
             aria-label=${label} title=${label} ?disabled=${disabled || this.busy} @click=${action}>${icon(name)}</button>`;
 
@@ -615,8 +617,8 @@ export class Arranging {
                 ${parent ? button('parent', labels.parentBlock, () => this.selectParent(parent)) : nothing}
                 ${button('up', labels.moveUp, () => this.move(block, siblings, index - 1), index <= 0)}
                 ${button('down', labels.moveDown, () => this.move(block, siblings, index + 1), index >= siblings.length - 1)}
-                ${button('copy', labels.copyBlock, () => this.copy(block))}
-                ${button('settings', labels.blockSettings, () => this.openPanel(block))}
+                ${missing ? nothing : button('copy', labels.copyBlock, () => this.copy(block))}
+                ${missing ? nothing : button('settings', labels.blockSettings, () => this.openPanel(block))}
                 ${button('plus', labels.insertBelow, () => this.openPicker(this.targetBelow(block)))}
                 ${button('trash', labels.removeBlock, () => this.confirm(true), false, 'danger')}`;
 

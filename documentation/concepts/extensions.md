@@ -99,8 +99,15 @@ needs them, so a small website keeps a short backend:
 | `frootbox/webhooks` | tell other services about changes |
 | `frootbox/storage-s3` | media and files in an S3-compatible bucket |
 
-Add a module early rather than remove it late: removing one whose
-blocks are on pages is not handled yet.
+Before removing a module, look under **Extensions** on how many pages
+its blocks and layouts are. A page keeps what an extension left on it
+as it was and stays editable: visitors see nothing of a missing block,
+the edit mode shows it as "Missing block" to remove, and a page whose
+layout is gone shows the first layout editors may choose. The query
+`system.component-usages` lists which pages use which blocks and
+layouts and whether they are installed. Once the module is back,
+everything is there again. Its tables and settings stay in the
+database.
 
 Superusers see what a website has installed under **Extensions** in the
 backend, with version and what each one brings; the REST API and the

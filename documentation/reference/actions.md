@@ -1374,6 +1374,17 @@ Lists the backups of the database, newest first, and whether they can be restore
 
 Query · right `system.backup-list`
 
+### `system.component-usages`
+
+Lists the blocks and layouts used on pages, in drafts or published, with the pages and whether their extension is installed
+
+Query · right `system.component-usages`
+
+| Input | Type | Description |
+|---|---|---|
+| `package` | string or null, optional | Only the blocks and layouts of this extension, e.g. "frootbox/news" |
+| `missing` | boolean, optional | Only those whose extension is not installed |
+
 ### `system.extension-list`
 
 Lists the installed extensions with version, theme, and the blocks, layouts, actions, queries and field types they bring

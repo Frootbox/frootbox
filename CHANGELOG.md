@@ -33,8 +33,21 @@ backend's own templates, styles and scripts are not part of it.
   `concepts/extensions.md`, the installation and `AGENTS.md` of the
   skeleton.
 
+- Core: the query `system.component-usages` lists the blocks and
+  layouts on pages, in drafts or published, with the pages and whether
+  their extension is installed. **Extensions** in the backend shows on
+  how many pages each extension is, and a section **Missing blocks and
+  layouts** with their pages.
+
 ### Changed
 
+- Core: content an extension left behind when it was removed or updated
+  no longer freezes a page. A block whose extension is gone, the view of
+  a plugin, and a variant, option, field or area a block or layout no
+  longer has stay as they were stored and are no error; new or changed
+  ones still are. The edit mode shows a missing block as a placeholder
+  that can be moved within its area and removed. A page whose layout is
+  gone shows the first layout editors may choose.
 - Skeleton: a new website brings only the core, the backend, the base
   theme, forms and SEO, so a small website keeps a short backend. The
   other official modules come with `composer require frootbox/<module>`

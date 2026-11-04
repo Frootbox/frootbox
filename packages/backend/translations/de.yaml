@@ -105,6 +105,7 @@ Title: Titel
 Address: Adresse
 Description: Beschreibung
 Layout: Layout
+Block: Block
 Languages: Sprachen
 Versions: Versionen
 Menu: Menü
@@ -1174,7 +1175,16 @@ Active theme: Aktives Theme
 This website: Diese Website
 Add or remove: Hinzufügen oder entfernen
 'Extensions come with Composer in the folder of the website, then the database gets their tables:': 'Erweiterungen kommen per Composer im Ordner der Website dazu, danach bekommt die Datenbank ihre Tabellen:'
-Remove an extension only when none of its blocks is on a page. On web space without Composer, upload the website with its vendor/ folder again.: Entferne eine Erweiterung nur, wenn keiner ihrer Blöcke auf einer Seite liegt. Auf Webspace ohne Composer lädst Du die Website danach mit ihrem Ordner vendor/ neu hoch.
+"Before removing an extension, look on which pages its blocks are. They stay there as missing blocks until someone removes them. On web space without Composer, upload the website with its vendor/ folder again.": "Schau vor dem Entfernen einer Erweiterung, auf welchen Seiten ihre Blöcke liegen. Sie bleiben dort als fehlende Blöcke, bis jemand sie entfernt. Auf Webspace ohne Composer lädst Du die Website danach mit ihrem Ordner vendor/ neu hoch."
+"On {count} page":
+  one: "Auf {count} Seite"
+  other: "Auf {count} Seiten"
+"Missing blocks and layouts": "Fehlende Blöcke und Layouts"
+"{count} missing":
+  one: "{count} fehlt"
+  other: "{count} fehlen"
+"Their extension is not installed. The pages keep them as they were: visitors see nothing of a missing block, a page without its layout shows the first one. In the edit mode a missing block can be removed.": "Ihre Erweiterung ist nicht installiert. Die Seiten behalten sie unverändert: Besucher sehen von einem fehlenden Block nichts, eine Seite ohne ihr Layout zeigt das erste. Im Bearbeitungsmodus lässt sich ein fehlender Block entfernen."
+"A block whose extension is missing only moves within its area.": "Ein Block, dessen Erweiterung fehlt, lässt sich nur innerhalb seines Bereichs verschieben."
 # Figures and charts (decision 0229)
 Figures and charts: Kennzahlen und Diagramme
 Visits: Besuche
@@ -1393,3 +1403,5 @@ Generated or edited with AI.: Mit KI erzeugt oder bearbeitet.
 "The test mail is sent.": "Die Testmail ist verschickt."
 "Test mail from {site}": "Testmail von {site}"
 "This is a test mail from {site}{url}.\n\nIf it arrived, mails of forms reach their recipients the same way.": "Das ist eine Testmail von {site}{url}.\n\nIst sie angekommen, erreichen Mails aus Formularen ihre Empfänger auf demselben Weg."
+"Missing block": "Block fehlt"
+"Its extension is not installed. Remove the block or install the extension again.": "Die Erweiterung dazu ist nicht installiert. Entferne den Block oder installiere die Erweiterung wieder."

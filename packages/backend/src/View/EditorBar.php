@@ -54,6 +54,7 @@ final readonly class EditorBar
     private const string PAGE_CSS = 'fb-field,fb-area,[data-fb-field]{outline:none}'
         . 'fb-field[data-fb-type="richtext"],fb-field[data-fb-type="table"],fb-area{display:block}'
         . 'fb-area[data-fb-empty]{min-block-size:4rem}'
+        . 'fb-missing{display:block;padding:1rem;border:1px dashed currentColor;opacity:.7}'
         . '[data-fb-field][contenteditable]{cursor:text}'
         . '[data-fb-field]:empty::before{content:attr(data-fb-label);opacity:.5}'
         . '[data-fb-field][data-fb-placeholder]:empty::before{content:attr(data-fb-placeholder)}'

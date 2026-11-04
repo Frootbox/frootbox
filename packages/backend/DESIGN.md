@@ -1235,6 +1235,9 @@ data from the JSON block `#fb-edit-config` in the head.
   empty areas. The bar draws them over the page with
   `getBoundingClientRect()`; the page itself only gets a rule without a
   layer for `fb-field`, `fb-area` and `[data-fb-field]`.
+- A block whose extension is gone is a `<fb-missing>` placeholder with
+  a dashed border in `currentColor`, its name and a hint. Its tools are
+  only parent, up, down, insert below and remove.
 - When publishing fails, every field it names gets an outline in
   `--fb-danger` with its label in `--fb-danger` and `--fb-on-danger`, also with "Show all places" off. The label names the
   field; only the field in focus or under the mouse adds the reason. The

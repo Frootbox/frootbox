@@ -31,6 +31,7 @@
             {%- if extension.fieldTypes is not empty %}{% set parts = parts|merge([t(['{count} field type', '{count} field types'], {count: extension.fieldTypes|length})]) %}{% endif -%}
             {%- if extension.settings %}{% set parts = parts|merge([t('Settings')]) %}{% endif -%}
             {%- if extension.migrations %}{% set parts = parts|merge([t('Own tables')]) %}{% endif -%}
+            {%- if pages[extension.name] ?? 0 %}{% set parts = parts|merge([t(['On {count} page', 'On {count} pages'], {count: pages[extension.name]})]) %}{% endif -%}
             <li class="fb-list__item">
                 <span class="fb-list__main">
                     <span class="fb-list__title">{{ extension.title }}</span>
@@ -45,6 +46,28 @@
         {% endif %}
     </section>
 
+    {% if missing is not empty %}
+    <section class="fb-card" aria-labelledby="extensions-missing">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="extensions-missing">{{ t('Missing blocks and layouts') }}</h2>
+            {{ ui.badge('changed', t(['{count} missing', '{count} missing'], {count: missing|length})) }}
+        </div>
+        <div class="fb-card__body">
+            <p class="fb-muted">{{ t('Their extension is not installed. The pages keep them as they were: visitors see nothing of a missing block, a page without its layout shows the first one. In the edit mode a missing block can be removed.') }}</p>
+        </div>
+        <ul>
+            {%- for usage in missing %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title"><code>{{ usage.name }}</code></span>
+                    <span class="fb-list__meta">{{ usage.kind.value == 'layout' ? t('Layout') : t('Block') }} · {% for page in usage.pages %}<a href="{{ path('backend.pages.show', {id: page.id}) }}">{{ page.title ?: t('Page without title') }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</span>
+                </span>
+            </li>
+            {%- endfor %}
+        </ul>
+    </section>
+    {% endif %}
+
     <section class="fb-card" aria-labelledby="extensions-composer">
         <div class="fb-card__header">
             <h2 class="fb-heading-4" id="extensions-composer">{{ t('Add or remove') }}</h2>
@@ -52,7 +75,7 @@
         <div class="fb-card__body fb-stack fb-stack--sm">
             <p>{{ t('Extensions come with Composer in the folder of the website, then the database gets their tables:') }}</p>
             <p><code>composer require frootbox/news</code><br><code>php bin/frootbox migrate</code></p>
-            <p class="fb-muted">{{ t('Remove an extension only when none of its blocks is on a page. On web space without Composer, upload the website with its vendor/ folder again.') }}</p>
+            <p class="fb-muted">{{ t('Before removing an extension, look on which pages its blocks are. They stay there as missing blocks until someone removes them. On web space without Composer, upload the website with its vendor/ folder again.') }}</p>
         </div>
     </section>
 </div>
