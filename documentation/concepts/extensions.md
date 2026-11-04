@@ -95,6 +95,37 @@ hints with rule and place, what it brings (blocks, layouts, actions,
 queries, field types, tables, settings, languages of its texts and help)
 and its dependencies with their license.
 
+## In the directory
+
+The extension directory on frootbox.de shows what a package says about
+itself: from `composer.json` the description, `keywords`, `homepage`,
+`support` and `authors`, from `README.md` the long text, from the
+manifest the title, an icon and screenshots, and the `preview.webp` of
+its blocks and layouts.
+
+```yaml
+# frootbox.yaml
+title: Daily specials
+icon: icon.svg
+screenshots:
+  - screenshots/list.png
+  - file: screenshots/edit.png
+    caption: Editing a special
+```
+
+The icon is square, SVG, PNG or WebP, up to 100 KB. Up to eight
+screenshots, PNG, WebP or JPEG, up to 1 MB each. All files lie inside the
+package. `extension:check` checks them; a package without an icon gets a
+hint. `--json` returns all of it as `listing`.
+
+```
+php bin/frootbox extension:catalog packages/* --out var/catalog --release 0.2.0
+```
+
+writes `catalog.json` with the listing, contents and dependencies of
+each package that passes the check, and copies its files to
+`files/<vendor>/<package>/`. A package with errors is left out and named.
+
 ## Where they live
 
 - **Modules for many websites** are their own Composer packages, from

@@ -127,6 +127,20 @@ php bin/frootbox call <name> [<input>]
 | `name` | Name of the action or query, e.g. page.create |
 | `input` | Input as a JSON object |
 
+## `extension:catalog`
+
+Writes catalog.json for the extension directory from package folders
+
+```
+php bin/frootbox extension:catalog [options] [--] <folders>...
+```
+
+| Argument or option | Description |
+|---|---|
+| `folders` | Package folders, each with composer.json and frootbox.yaml |
+| `--out` | The folder for catalog.json and files/ |
+| `--release` | One version for all packages, e.g. "0.1.0" |
+
 ## `extension:check`
 
 Checks an extension package: names, migrations, blocks and licenses

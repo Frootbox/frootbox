@@ -65,6 +65,7 @@
         "test": "@php vendor/bin/phpunit",
         "sandbox": "@php tools/sandbox.php",
         "design-doc": "@php tools/design-doc.php",
+        "catalog": "@php tools/catalog.php",
         "reference": "@php tools/reference.php",
         "serve": [
             "Composer\\Config::disableProcessTimeout",

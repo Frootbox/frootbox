@@ -58,6 +58,18 @@ backend's own templates, styles and scripts are not part of it.
   from their manifests. `system.extension-list` returns those not
   installed as `available` with their Composer command; **Extensions**
   in the backend lists them under **More official modules**.
+- Core: `frootbox.yaml` takes `icon` and `screenshots` for the extension
+  directory. `extension:check` reads what a package says about itself
+  (title, description, README, keywords, homepage, support, authors,
+  icon, screenshots, previews of its blocks) and checks the files: type,
+  size, inside the package, a square icon. A missing icon is a hint.
+  `--json` returns it as `listing`.
+- Core: `bin/frootbox extension:catalog <folders…> --out <dir>
+  [--release <version>]` writes `catalog.json` with the listing of each
+  package that passes the check and copies its files next to it.
+  `composer catalog` does so for the official modules in `var/catalog/`.
+- Modules: every official module has an icon, a homepage and links for
+  issues, source and documentation.
 
 ### Changed
 
