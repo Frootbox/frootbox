@@ -10,6 +10,12 @@
         "s3",
         "object-storage"
     ],
+    "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/storage-s3",
+    "support": {
+        "issues": "https://github.com/Frootbox/frootbox/issues",
+        "source": "https://github.com/frootbox-packages/storage-s3",
+        "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+    },
     "require": {
         "php": ">=8.5",
         "ext-simplexml": "*",

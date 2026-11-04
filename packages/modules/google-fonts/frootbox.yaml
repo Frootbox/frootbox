@@ -1,3 +1,5 @@
 title: Google Fonts
 description: Search the catalog of Google Fonts and import fonts once, so visitors load them from the own domain
 extension: Frootbox\GoogleFonts\GoogleFontsExtension
+# For the extension directory (decision 0282).
+icon: icon.svg

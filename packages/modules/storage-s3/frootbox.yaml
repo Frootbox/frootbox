@@ -1,3 +1,5 @@
 title: S3 storage
 description: Keep media and files from forms in an S3-compatible bucket and deliver public media from there
 extension: Frootbox\StorageS3\StorageS3Extension
+# For the extension directory (decision 0282).
+icon: icon.svg

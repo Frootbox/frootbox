@@ -1,3 +1,5 @@
 title: Collections
 description: Collections of entries of the same kind such as references, projects or show homes, with drafts, image, categories and tags, cards filtered by category and tag with an address for each entry, and some entries as teasers
 extension: Frootbox\Collections\CollectionsExtension
+# For the extension directory (decision 0282).
+icon: icon.svg

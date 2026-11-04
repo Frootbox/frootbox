@@ -10,6 +10,12 @@
         "google-fonts",
         "privacy"
     ],
+    "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/google-fonts",
+    "support": {
+        "issues": "https://github.com/Frootbox/frootbox/issues",
+        "source": "https://github.com/frootbox-packages/google-fonts",
+        "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+    },
     "require": {
         "php": ">=8.5",
         "frootbox/core": "^0.1",

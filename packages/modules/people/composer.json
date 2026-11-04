@@ -10,6 +10,12 @@
         "contact",
         "locations"
     ],
+    "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/people",
+    "support": {
+        "issues": "https://github.com/Frootbox/frootbox/issues",
+        "source": "https://github.com/frootbox-packages/people",
+        "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+    },
     "require": {
         "php": ">=8.5",
         "frootbox/core": "^0.1",
