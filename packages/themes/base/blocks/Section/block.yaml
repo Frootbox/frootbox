@@ -3,9 +3,9 @@ description: Columns with headings, texts, images, buttons and smaller blocks su
 group: structure
 keywords: [Columns, Grid]
 areas:
-  first: { label: First column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures, ImageWithText, Gallery, Slider, Video, VideoEmbed, Map, Cards, Logos, LinkList, Accordion, Steps, Testimonials, Pricing, Contact, Features, Downloads, Table] }
-  second: { label: Second column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures, ImageWithText, Gallery, Slider, Video, VideoEmbed, Map, Cards, Logos, LinkList, Accordion, Steps, Testimonials, Pricing, Contact, Features, Downloads, Table] }
-  third: { label: Third column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures, ImageWithText, Gallery, Slider, Video, VideoEmbed, Map, Cards, Logos, LinkList, Accordion, Steps, Testimonials, Pricing, Contact, Features, Downloads, Table] }
+  first: { label: First column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures, ImageWithText, Gallery, Slider, Video, VideoEmbed, Map, Cards, Logos, LinkList, Accordion, Steps, Testimonials, Pricing, Contact, Features, Downloads, Table, ImageCredits] }
+  second: { label: Second column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures, ImageWithText, Gallery, Slider, Video, VideoEmbed, Map, Cards, Logos, LinkList, Accordion, Steps, Testimonials, Pricing, Contact, Features, Downloads, Table, ImageCredits] }
+  third: { label: Third column, allow: [Heading, Text, Image, Button, TextWithHeading, Quote, Notice, Divider, CallToAction, KeyFigures, ImageWithText, Gallery, Slider, Video, VideoEmbed, Map, Cards, Logos, LinkList, Accordion, Steps, Testimonials, Pricing, Contact, Features, Downloads, Table, ImageCredits] }
 # Content for the design page (decision 0206).
 examples:
   - variant: Default

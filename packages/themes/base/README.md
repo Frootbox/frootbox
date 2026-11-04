@@ -31,7 +31,7 @@ Every block has examples, so all of them show on the design page
 | Images and media | `ImageWithText` (`Default`, `End`), `Gallery`, `Slider`, `Video` (`Default`, `Narrow`), `VideoEmbed` (YouTube or Vimeo after consent), `Map` (OpenStreetMap or Google Maps after consent), widget `Image` |
 | Teasers | `Cards`, `LinkList`, `Logos`, widget `Button` |
 | Callouts | `CallToAction`, `KeyFigures` |
-| Lists | `Features`, `Steps`, `Accordion` (`Default`, `Faq`), `Pricing`, `Testimonials`, `Downloads`, `Contact` |
+| Lists | `Features`, `Steps`, `Accordion` (`Default`, `Faq`), `Pricing`, `Testimonials`, `Downloads`, `Contact`, `ImageCredits` (fills itself from the media library, `image_credits()`) |
 | Structure | `Section` (columns `Default`, `Two`, `Three`, `OneTwo`, `TwoOne`, with areas for widgets and smaller blocks), `JumpBar`, `Divider` |
 
 The description in the head of each view says what a block is for and

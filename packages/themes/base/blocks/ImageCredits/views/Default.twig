@@ -1,0 +1,37 @@
+{# frootbox
+title: Image credits
+description: The list of all published images with a copyright and the pages that show them, e.g. in the imprint. It fills itself from the media library; the copyright is entered there or when choosing an image.
+group: list
+keywords: [Copyright, Photo credits, Sources, Imprint, Pictures, Photographers]
+fields:
+  title: { type: headline, label: Heading, optional: true, maxLength: 100, placeholder: "Image credits" }
+# Content for the design page (decision 0206).
+examples:
+  - fields:
+      title: 'Image credits'
+#}
+{% set credits = image_credits() %}
+<div class="base-credits">
+  {{ heading('title', 0, {class: 'base-credits__title'}) }}
+  {% if credits %}
+    <ul class="base-credits__list">
+      {% for credit in credits %}
+        <li class="base-credits__item">
+          {% if credit.preview %}<img class="base-credits__image" src="{{ credit.preview }}" alt="" width="{{ credit.previewWidth }}" height="{{ credit.previewHeight }}" loading="lazy" decoding="async">{% endif %}
+          <span class="base-credits__main">
+            <span class="base-credits__copyright">{{ credit.copyright }}</span>
+            <span class="base-credits__places">
+              {%- if credit.everywhere -%}
+                {{ t('On every page') }}
+              {%- else -%}
+                {{ t('Shown on') }} {% for page in credit.pages %}<a href="{{ page.url }}">{{ page.title }}</a>{{ not loop.last ? ', ' }}{% endfor %}
+              {%- endif -%}
+            </span>
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="base-credits__empty">{{ t('No published image has a copyright yet.') }}</p>
+  {% endif %}
+</div>

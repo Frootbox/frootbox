@@ -1,0 +1,9 @@
+.base-credits { display: flex; flex-direction: column; gap: var(--space-s); }
+.base-credits__title { margin: 0; font-size: var(--size-2xl); }
+.base-credits__list { margin: 0; padding: 0; list-style: none; border-block-start: var(--border); }
+.base-credits__item { display: flex; align-items: center; gap: var(--space-xs); padding-block: var(--space-xs); border-block-end: var(--border); }
+/* The small image only to recognise the photo by, the text says the rest. */
+.base-credits__image { flex: none; inline-size: 4rem; block-size: auto; max-block-size: 4rem; object-fit: cover; border-radius: var(--radius); }
+.base-credits__main { display: flex; flex-direction: column; gap: var(--space-3xs); min-inline-size: 0; }
+.base-credits__copyright { font-weight: 600; overflow-wrap: anywhere; }
+.base-credits__places, .base-credits__empty { margin: 0; color: var(--color-muted); font-size: var(--size-s); }
