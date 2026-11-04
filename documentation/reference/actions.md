@@ -437,7 +437,7 @@ Action · right `media.create`
 
 | Input | Type | Description |
 |---|---|---|
-| `upload` | string | The token from POST /api/v1/uploads |
+| `upload` | string | The token from POST /api/v1/uploads, or from an "upload" step of a seed file |
 | `folderId` | string or null, optional | The folder, none for the top |
 | `texts` | object, optional | Alternative text and title by language, e.g. {"de": {"alt": "Röster am Hafen", "title": ""}} |
 | `tags` | array, optional |  |
