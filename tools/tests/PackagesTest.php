@@ -75,10 +75,13 @@ final class PackagesTest extends TestCase
     public function testTheChangelogHasAPlaceForTheNextVersion(): void
     {
         $changelog = (string) file_get_contents(self::ROOT . '/CHANGELOG.md');
-        $version = explode('-', Frootbox::VERSION)[0];
 
         self::assertStringContainsString("\n## [Unreleased]\n", $changelog);
-        self::assertStringContainsString("\n## [" . $version . ']', $changelog, 'The version in the code is in the changelog.');
+
+        // A release names its version; between releases main is "-dev".
+        if (!str_contains(Frootbox::VERSION, '-')) {
+            self::assertStringContainsString("\n## [" . Frootbox::VERSION . '] - ', $changelog, 'The released version is in the changelog.');
+        }
     }
 
     /**
