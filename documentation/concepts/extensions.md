@@ -102,4 +102,9 @@ needs them, so a small website keeps a short backend:
 Add a module early rather than remove it late: removing one whose
 blocks are on pages is not handled yet.
 
+Superusers see what a website has installed under **Extensions** in the
+backend, with version and what each one brings; the REST API and the
+console give the same through the query `system.extension-list` and
+`php bin/frootbox extensions`.
+
 See [Themes](themes.md) and [your first module](../tutorials/first-module.md).

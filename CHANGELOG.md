@@ -22,6 +22,13 @@ backend's own templates, styles and scripts are not part of it.
 
 - Reference: the block schema, every key of `block.yaml` and of the
   header of a view, with its value and where it may stand.
+- Backend: the screen **Extensions** under Administration lists what is
+  installed besides the core, read only: version, theme, the website's
+  own packages, and the blocks, layouts, actions, queries, field types,
+  settings and tables each one brings. For superusers, through the new
+  query `system.extension-list`.
+- Core: `ExtensionPackage::$version` from Composer; `bin/frootbox
+  extensions` shows it.
 - Documentation: the official modules with their packages, in
   `concepts/extensions.md`, the installation and `AGENTS.md` of the
   skeleton.

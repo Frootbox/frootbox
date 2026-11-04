@@ -1374,6 +1374,12 @@ Lists the backups of the database, newest first, and whether they can be restore
 
 Query · right `system.backup-list`
 
+### `system.extension-list`
+
+Lists the installed extensions with version, theme, and the blocks, layouts, actions, queries and field types they bring
+
+Query · right `system.extension-list`
+
 ### `system.job-delete`
 
 Removes a job from the queue without running it

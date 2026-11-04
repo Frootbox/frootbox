@@ -1,0 +1,59 @@
+{#- The installed extensions, read only, for superusers (decision 0274). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Extensions') }}{% endblock %}
+
+{% block content %}
+<div class="fb-stack fb-stack--lg" id="extensions">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Extensions') }}</h1>
+            <p class="fb-muted">{{ t('What is installed besides the core. An installed extension is active.') }}</p>
+        </div>
+    </header>
+
+    <section class="fb-card" aria-labelledby="extensions-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="extensions-title">{{ t('Installed') }}</h2>
+            {{ ui.badge('neutral', t('Core {version}', {version: list.version})) }}
+        </div>
+        {% if list.extensions is empty %}
+            {{ ui.empty({icon: 'layout-grid', title: t('No extensions installed'), text: t('Only the core runs. Add extensions with Composer, see below.')}) }}
+        {% else %}
+        <ul>
+            {%- for extension in list.extensions %}
+            {%- set parts = [] -%}
+            {%- if extension.blocks is not empty %}{% set parts = parts|merge([t(['{count} block', '{count} blocks'], {count: extension.blocks|length})]) %}{% endif -%}
+            {%- if extension.layouts is not empty %}{% set parts = parts|merge([t(['{count} layout', '{count} layouts'], {count: extension.layouts|length})]) %}{% endif -%}
+            {%- if extension.actions is not empty %}{% set parts = parts|merge([t(['{count} action', '{count} actions'], {count: extension.actions|length})]) %}{% endif -%}
+            {%- if extension.queries is not empty %}{% set parts = parts|merge([t(['{count} query', '{count} queries'], {count: extension.queries|length})]) %}{% endif -%}
+            {%- if extension.fieldTypes is not empty %}{% set parts = parts|merge([t(['{count} field type', '{count} field types'], {count: extension.fieldTypes|length})]) %}{% endif -%}
+            {%- if extension.settings %}{% set parts = parts|merge([t('Settings')]) %}{% endif -%}
+            {%- if extension.migrations %}{% set parts = parts|merge([t('Own tables')]) %}{% endif -%}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title">{{ extension.title }}</span>
+                    {% if extension.description %}<span class="fb-list__meta">{{ extension.description }}</span>{% endif %}
+                    <span class="fb-list__meta"><code>{{ extension.name }}</code>{% if extension.version %} · {{ extension.version }}{% endif %}{% if parts is not empty %} · {{ parts|join(' · ') }}{% endif %}</span>
+                </span>
+                {% if extension.activeTheme %}{{ ui.badge('published', t('Active theme')) }}{% elseif extension.theme %}{{ ui.badge('neutral', t('Theme')) }}{% endif %}
+                {% if extension.project %}{{ ui.badge('neutral', t('This website')) }}{% endif %}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+    </section>
+
+    <section class="fb-card" aria-labelledby="extensions-composer">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="extensions-composer">{{ t('Add or remove') }}</h2>
+        </div>
+        <div class="fb-card__body fb-stack fb-stack--sm">
+            <p>{{ t('Extensions come with Composer in the folder of the website, then the database gets their tables:') }}</p>
+            <p><code>composer require frootbox/news</code><br><code>php bin/frootbox migrate</code></p>
+            <p class="fb-muted">{{ t('Remove an extension only when none of its blocks is on a page. On web space without Composer, upload the website with its vendor/ folder again.') }}</p>
+        </div>
+    </section>
+</div>
+{% endblock %}

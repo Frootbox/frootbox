@@ -1147,6 +1147,34 @@ Cron does not run: Der Cron läuft nicht
   one: 'Ein Auftrag wartet. Ohne Cron laufen Aufträge nur, wenn jemand die Website aufruft. Trag diese Zeile in die Crontab des Servers ein:'
   other: '{count} Aufträge warten. Ohne Cron laufen Aufträge nur, wenn jemand die Website aufruft. Trag diese Zeile in die Crontab des Servers ein:'
 Show jobs: Aufträge anzeigen
+# Extensions (decision 0274)
+Extensions: Erweiterungen
+What is installed besides the core. An installed extension is active.: Was außer dem Kern installiert ist. Eine installierte Erweiterung ist aktiv.
+Installed: Installiert
+Core {version}: 'Kern {version}'
+No extensions installed: Keine Erweiterungen installiert
+Only the core runs. Add extensions with Composer, see below.: Es läuft nur der Kern. Erweiterungen kommen per Composer dazu, siehe unten.
+"{count} block":
+  one: "{count} Block"
+  other: "{count} Blöcke"
+"{count} layout":
+  one: "{count} Layout"
+  other: "{count} Layouts"
+"{count} action":
+  one: "{count} Aktion"
+  other: "{count} Aktionen"
+"{count} query":
+  one: "{count} Query"
+  other: "{count} Queries"
+"{count} field type":
+  one: "{count} Feldtyp"
+  other: "{count} Feldtypen"
+Own tables: Eigene Tabellen
+Active theme: Aktives Theme
+This website: Diese Website
+Add or remove: Hinzufügen oder entfernen
+'Extensions come with Composer in the folder of the website, then the database gets their tables:': 'Erweiterungen kommen per Composer im Ordner der Website dazu, danach bekommt die Datenbank ihre Tabellen:'
+Remove an extension only when none of its blocks is on a page. On web space without Composer, upload the website with its vendor/ folder again.: Entferne eine Erweiterung nur, wenn keiner ihrer Blöcke auf einer Seite liegt. Auf Webspace ohne Composer lädst Du die Website danach mit ihrem Ordner vendor/ neu hoch.
 # Figures and charts (decision 0229)
 Figures and charts: Kennzahlen und Diagramme
 Visits: Besuche

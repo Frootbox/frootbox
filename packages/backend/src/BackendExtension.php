@@ -17,6 +17,7 @@ use Frootbox\Backend\Http\Comments\CommentsHandler;
 use Frootbox\Backend\Http\DashboardHandler;
 use Frootbox\Backend\Http\DesignHandler;
 use Frootbox\Backend\Http\EditModeHandler;
+use Frootbox\Backend\Http\Extensions\ExtensionsHandler;
 use Frootbox\Backend\Http\Help\HelpHandler;
 use Frootbox\Backend\Http\Jobs\JobsHandler;
 use Frootbox\Backend\Http\LoginHandler;
@@ -99,7 +100,8 @@ final class BackendExtension implements Extension
             ->get('/roles/new', RoleHandler::class, 'backend.roles.new')
             ->get('/roles/{name:[a-z][a-z0-9-]*}', RoleHandler::class, 'backend.roles.show')
             ->get('/settings', SettingsHandler::class, 'backend.settings')
-            ->get('/jobs', JobsHandler::class, 'backend.jobs');
+            ->get('/jobs', JobsHandler::class, 'backend.jobs')
+            ->get('/extensions', ExtensionsHandler::class, 'backend.extensions');
 
         $registry->listen(BuildingHead::class, EditorBar::class);
         $registry->listen(BuildingHead::class, PreviewNote::class);
@@ -122,6 +124,7 @@ final class BackendExtension implements Extension
         $registry->add(Screen::class, new Screen('Users', 'backend.users', Screen::ADMINISTRATION, 'users', UsersHandler::PERMISSION, order: 100));
         $registry->add(Screen::class, new Screen('Roles', 'backend.roles', Screen::ADMINISTRATION, 'shield', RolesHandler::PERMISSION, order: 110));
         $registry->add(Screen::class, new Screen('Settings', 'backend.settings', Screen::ADMINISTRATION, 'settings', SettingsHandler::PERMISSION, order: 120));
+        $registry->add(Screen::class, new Screen('Extensions', 'backend.extensions', Screen::ADMINISTRATION, 'layout-grid', ExtensionsHandler::PERMISSION, order: 125));
         $registry->add(Screen::class, new Screen('Background jobs', 'backend.jobs', Screen::ADMINISTRATION, 'clock', JobsHandler::PERMISSION, order: 130));
         $registry->add(Screen::class, new Screen('Design system', 'backend.design', Screen::ADMINISTRATION, 'palette', DesignHandler::PERMISSION, order: 900, development: true));
 
