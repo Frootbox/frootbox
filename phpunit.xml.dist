@@ -58,6 +58,9 @@
         <testsuite name="google-fonts">
             <directory>packages/modules/google-fonts/tests</directory>
         </testsuite>
+        <testsuite name="captcha-recaptcha">
+            <directory>packages/modules/captcha-recaptcha/tests</directory>
+        </testsuite>
         <testsuite name="webhooks">
             <directory>packages/modules/webhooks/tests</directory>
         </testsuite>
@@ -94,6 +97,7 @@
             <directory>packages/modules/seo/src</directory>
             <directory>packages/modules/news/src</directory>
             <directory>packages/modules/google-fonts/src</directory>
+            <directory>packages/modules/captcha-recaptcha/src</directory>
             <directory>packages/modules/webhooks/src</directory>
             <directory>packages/tools/workbench/src</directory>
             <directory>packages/tools/migrate-frootbox1/src</directory>

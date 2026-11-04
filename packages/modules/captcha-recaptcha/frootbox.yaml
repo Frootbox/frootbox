@@ -1,0 +1,3 @@
+title: reCAPTCHA
+description: reCAPTCHA of Google for the forms, v2 with a box or v3 with a score, loaded only after consent
+extension: Frootbox\CaptchaRecaptcha\RecaptchaExtension

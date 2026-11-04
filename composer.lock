@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "61f9940dc72c625baa835a337880065a",
+    "content-hash": "c3a583866fd5b1ad82c3554a97644f42",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -403,6 +403,53 @@
             }
         },
         {
+            "name": "frootbox/captcha-recaptcha",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/modules/captcha-recaptcha",
+                "reference": "96af6057d52aaad9f2704c0c10fd2fa0673d81b3"
+            },
+            "require": {
+                "frootbox/core": "^0.1",
+                "frootbox/forms": "^0.1",
+                "php": ">=8.5",
+                "symfony/http-client": "^8.1"
+            },
+            "type": "frootbox-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\CaptchaRecaptcha\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Frootbox\\CaptchaRecaptcha\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "reCAPTCHA of Google for the forms of the Frootbox CMS: v2 with a box or v3 with a score, loaded only after consent",
+            "keywords": [
+                "captcha",
+                "cms",
+                "forms",
+                "frootbox",
+                "recaptcha",
+                "spam"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "frootbox/collections",
             "version": "dev-main",
             "dist": {
@@ -622,7 +669,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/modules/forms",
-                "reference": "f6418872a554f2c64fe809380a2914e692b1b2fe"
+                "reference": "e6d153eaecdae76cfc80db042c92026c5724f872"
             },
             "require": {
                 "frootbox/core": "^0.1",
@@ -654,7 +701,7 @@
             "license": [
                 "MIT"
             ],
-            "description": "Forms for the Frootbox CMS: build forms from field types, send entries by mail through the queue, keep them in the backend, spam protection without a captcha",
+            "description": "Forms for the Frootbox CMS: build forms from field types, send entries by mail through the queue, keep them in the backend, spam protection with captchas of your choice and a spam folder",
             "keywords": [
                 "cms",
                 "contact",
@@ -7809,6 +7856,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "frootbox/backend": 20,
+        "frootbox/captcha-recaptcha": 20,
         "frootbox/collections": 20,
         "frootbox/core": 20,
         "frootbox/database": 20,

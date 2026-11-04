@@ -1,0 +1,35 @@
+{
+    "name": "frootbox/captcha-recaptcha",
+    "description": "reCAPTCHA of Google for the forms of the Frootbox CMS: v2 with a box or v3 with a score, loaded only after consent",
+    "type": "frootbox-extension",
+    "license": "MIT",
+    "keywords": [
+        "cms",
+        "frootbox",
+        "forms",
+        "captcha",
+        "recaptcha",
+        "spam"
+    ],
+    "require": {
+        "php": ">=8.5",
+        "frootbox/core": "^0.1",
+        "frootbox/forms": "^0.1",
+        "symfony/http-client": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Frootbox\\CaptchaRecaptcha\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Frootbox\\CaptchaRecaptcha\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    }
+}

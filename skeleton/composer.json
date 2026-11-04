@@ -6,6 +6,7 @@
     "require": {
         "php": ">=8.5",
         "frootbox/backend": "^0.1@dev",
+        "frootbox/captcha-recaptcha": "^0.1@dev",
         "frootbox/collections": "^0.1@dev",
         "frootbox/core": "^0.1@dev",
         "frootbox/events": "^0.1@dev",
