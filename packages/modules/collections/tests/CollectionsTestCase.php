@@ -25,6 +25,7 @@ use Frootbox\Core\Plugin\AssignPlugin;
 use Frootbox\Core\Plugin\Space;
 use Frootbox\Core\Tests\Support\FixtureSite;
 use Frootbox\Core\Tests\Support\NotesTestCase;
+use Frootbox\Forms\Captcha\Proofs;
 use Frootbox\Forms\Entry\Entries;
 use Frootbox\Forms\Website\Sendings;
 use Nyholm\Psr7\ServerRequest;
@@ -49,7 +50,7 @@ abstract class CollectionsTestCase extends NotesTestCase
 
     protected function tables(): array
     {
-        return [Entries::TABLE, Sendings::TABLE, CollectionFields::TABLE];
+        return [Entries::TABLE, Sendings::TABLE, Proofs::TABLE, CollectionFields::TABLE];
     }
 
     protected function environment(): Environment
