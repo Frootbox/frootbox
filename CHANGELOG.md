@@ -45,6 +45,10 @@ project. Everything is new.
   Fonts, webhooks and storage in S3-compatible buckets.
 - Tools: the workbench for many local websites and the import from
   Frootbox 1.
+- Documentation for developers, a reference written from the code
+  (`bin/frootbox reference:build`: actions, console, extension points,
+  Twig functions, field types, events) and an `AGENTS.md` for coding
+  agents in every new website.
 
 [Unreleased]: https://github.com/Frootbox/frootbox/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/Frootbox/frootbox/releases/tag/v0.1.0
