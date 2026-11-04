@@ -3,20 +3,58 @@
 Frootbox is a content management system written in PHP: smart, simple and
 AI-assisted, as an alternative to WordPress.
 
-> **Status:** early development. Nothing here is usable yet.
+> **Status:** developer preview (`0.x`). The ideas are settled, names and
+> details may still change between versions; see the [changelog](CHANGELOG.md).
+
+```bash
+composer create-project frootbox/skeleton my-website
+cd my-website
+php bin/frootbox install
+```
+
+## Documentation
+
+- [Installation](documentation/getting-started/installation.md)
+- Tutorials: [a website from a design](documentation/tutorials/website-from-a-design.md),
+  [your first module](documentation/tutorials/first-module.md)
+- [Frootbox for WordPress developers](documentation/guides/for-wordpress-developers.md)
+- [Concepts](documentation/concepts/README.md) and the
+  [reference](documentation/reference/README.md), written from the code
+
+Questions, bugs and ideas are welcome, see [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Repository
 
-This monorepo contains the core, the official modules, the themes and the
-tooling. Every package under `packages/` has its own `composer.json` and is
-mirrored into a read-only repository.
+This monorepo contains the core, the backend, the official modules, the
+themes, the tools and the skeleton for new websites. Every package has its
+own `composer.json` and is mirrored into a read-only repository in
+[frootbox-packages](https://github.com/frootbox-packages), the source for
+Composer. All packages share one version.
 
 | Path | Package |
 |---|---|
-| `packages/core` | `frootbox/core` |
-| `packages/database` | `frootbox/database` |
-| `packages/rich-text` | `frootbox/rich-text` (MIT) |
-| `packages/themes/bohnenglueck` | `frootbox/theme-bohnenglueck`, demo theme (MIT) |
+| `packages/backend` | [`frootbox/backend`](https://github.com/frootbox-packages/backend) |
+| `packages/core` | [`frootbox/core`](https://github.com/frootbox-packages/core) |
+| `packages/database` | [`frootbox/database`](https://github.com/frootbox-packages/database) |
+| `packages/modules/captcha-recaptcha` | [`frootbox/captcha-recaptcha`](https://github.com/frootbox-packages/captcha-recaptcha) |
+| `packages/modules/collections` | [`frootbox/collections`](https://github.com/frootbox-packages/collections) |
+| `packages/modules/events` | [`frootbox/events`](https://github.com/frootbox-packages/events) |
+| `packages/modules/forms` | [`frootbox/forms`](https://github.com/frootbox-packages/forms) |
+| `packages/modules/google-fonts` | [`frootbox/google-fonts`](https://github.com/frootbox-packages/google-fonts) |
+| `packages/modules/jobs` | [`frootbox/jobs`](https://github.com/frootbox-packages/jobs) |
+| `packages/modules/news` | [`frootbox/news`](https://github.com/frootbox-packages/news) |
+| `packages/modules/people` | [`frootbox/people`](https://github.com/frootbox-packages/people) |
+| `packages/modules/search` | [`frootbox/search`](https://github.com/frootbox-packages/search) |
+| `packages/modules/seo` | [`frootbox/seo`](https://github.com/frootbox-packages/seo) |
+| `packages/modules/statistics` | [`frootbox/statistics`](https://github.com/frootbox-packages/statistics) |
+| `packages/modules/storage-s3` | [`frootbox/storage-s3`](https://github.com/frootbox-packages/storage-s3) |
+| `packages/modules/webhooks` | [`frootbox/webhooks`](https://github.com/frootbox-packages/webhooks) |
+| `packages/rich-text` | [`frootbox/rich-text`](https://github.com/frootbox-packages/rich-text) |
+| `packages/themes/base` | [`frootbox/theme-base`](https://github.com/frootbox-packages/theme-base) |
+| `packages/themes/bohnenglueck` | [`frootbox/theme-bohnenglueck`](https://github.com/frootbox-packages/theme-bohnenglueck) |
+| `packages/tools/migrate-frootbox1` | [`frootbox/migrate-frootbox1`](https://github.com/frootbox-packages/migrate-frootbox1) |
+| `packages/tools/workbench` | [`frootbox/workbench`](https://github.com/frootbox-packages/workbench) |
+| `skeleton` | [`frootbox/skeleton`](https://github.com/frootbox-packages/skeleton) |
 
 ## Development
 
@@ -29,6 +67,9 @@ composer check
 
 `composer check` runs PHP-CS-Fixer, PHPStan and PHPUnit. Single tools:
 `composer cs`, `composer cs:fix`, `composer stan`, `composer test`.
+`composer reference` writes `documentation/reference/` from the code
+after a change of an action, a command, the registry, a Twig function or
+a field type; a test fails while it is behind.
 PHPStan also enforces the naming rules of PSR-1 and PER Coding Style with
 the rules in `tools/phpstan/`: PascalCase for classes and enum cases,
 camelCase for methods, properties and variables, UPPER_SNAKE_CASE for

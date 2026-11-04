@@ -1,6 +1,7 @@
 * text=auto eol=lf
 
 # A new website is the project of its author, not a copy of Frootbox:
-# create-project leaves out the license of the skeleton.
+# create-project leaves out the license and the README of the skeleton.
 /LICENSE export-ignore
+/README.md export-ignore
 /.gitattributes export-ignore

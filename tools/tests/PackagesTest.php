@@ -43,6 +43,7 @@ final class PackagesTest extends TestCase
         self::assertSame('frootbox/' . (self::mirrors()[$path] ?? ''), $name, 'The mirror has the name of the package without vendor.');
         self::assertSame('MIT', $composer['license'] ?? null);
         self::assertFileExists(self::ROOT . '/' . $path . '/LICENSE');
+        self::assertStringContainsString('github.com/Frootbox/frootbox', (string) file_get_contents(self::ROOT . '/' . $path . '/README.md'), 'The mirror says where the package is developed.');
 
         self::assertFileExists(self::ROOT . '/' . $path . '/.gitattributes');
         $attributes = (string) file_get_contents(self::ROOT . '/' . $path . '/.gitattributes');
@@ -57,6 +58,7 @@ final class PackagesTest extends TestCase
 
         if ('skeleton' === $path) {
             self::assertStringContainsString('/LICENSE export-ignore', $attributes, 'A new website does not take the license of Frootbox.');
+            self::assertStringContainsString('/README.md export-ignore', $attributes);
             $constraint = '^' . $minor . '@dev';
         } else {
             self::assertSame(['dev-main' => $minor . '.x-dev'], self::branchAlias($composer), 'main is the next version (decision 0271).');
