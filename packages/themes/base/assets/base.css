@@ -59,8 +59,10 @@ hr { border: 0; border-block-start: var(--border); margin-block: var(--space-l);
 }
 button { cursor: pointer; }
 
-/* The button to load content of another provider, on every surface. */
-.external__button {
+/* The button to load content of another provider and the three equal
+   choices of the banner (decision 0264), on every surface. */
+.external__button,
+.consent-banner__button {
   min-block-size: 2.75rem;
   padding: var(--space-2xs) var(--space-m);
   border: 0;
@@ -69,7 +71,14 @@ button { cursor: pointer; }
   background: transparent;
   font-weight: 600;
 }
-.external__button:hover { text-decoration: underline; text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+.external__button:hover,
+.consent-banner__button:hover { text-decoration: underline; text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+.consent-banner {
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
 
 /* The link to skip to the content, shown when it has the focus. */
 .base-skip-link {
