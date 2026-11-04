@@ -23,7 +23,7 @@
             <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
             {% set inner %}<span class="fb-tree__title"{% if type in ['phone', 'email'] and item.label is not defined %} dir="ltr"{% else %} lang="{{ language.code }}" dir="{{ language.direction.value }}"{% endif %}>{{ title }}</span>{% if meta %}<span class="fb-tree__meta">{{ meta }}</span>{% endif %}{% endset %}
             {% if editable %}
-            <button class="fb-tree__link" type="button" commandfor="navigation-item" command="show-modal" data-fb-fill="{{ row.fill|json_encode }}" aria-describedby="navigation-tree-hint">{{ inner }}</button>
+            <button class="fb-tree__link" type="button" data-fb-commandfor="navigation-item" data-fb-fill="{{ row.fill|json_encode }}" aria-describedby="navigation-tree-hint">{{ inner }}</button>
             {% else %}
             <span class="fb-tree__link">{{ inner }}</span>
             {% endif %}

@@ -43,6 +43,13 @@ final readonly class Head
      */
     private const string FORM_SCRIPT = 'document.addEventListener("submit",function(e){var f=e.target;if(customElements.get("fb-form")||!f.closest||!f.closest("fb-form"))return;e.preventDefault();var s=e.submitter||null;customElements.whenDefined("fb-form").then(function(){f.requestSubmit(s)})},true);';
 
+    /**
+     * Holds back a click on a button that fills in a dialog before it
+     * opens (data-fb-fill) until the script is there, then clicks it
+     * again: the script fills the dialog and opens it.
+     */
+    private const string FILL_SCRIPT = 'document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-fb-fill][data-fb-commandfor]");if(!b||customElements.get("fb-form"))return;customElements.whenDefined("fb-form").then(function(){setTimeout(function(){if(b.isConnected)b.click()})})},true);';
+
     /** Sets the appearance chosen in the browser before anything is drawn. */
     private const string THEME_SCRIPT = 'try{var t=localStorage.getItem("fb-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}';
 
@@ -70,7 +77,7 @@ final readonly class Head
             null === $actions ? '' : '<meta name="fb-actions" content="' . Html::escape($actions) . '">',
             // Uploads go in parts of this size, under the limits of the server (decision 0177).
             null === $csrf ? '' : '<meta name="fb-upload-part" content="' . UploadReceiver::partBytes() . '">',
-            '<script>' . self::THEME_SCRIPT . self::FORM_SCRIPT . '</script>',
+            '<script>' . self::THEME_SCRIPT . self::FORM_SCRIPT . self::FILL_SCRIPT . '</script>',
             '<style>' . $assets->layerOrder() . '</style>',
             '<style>@layer tokens{' . $this->design->css() . '}</style>',
             $this->tags->styles($assets),

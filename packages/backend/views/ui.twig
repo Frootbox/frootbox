@@ -25,6 +25,10 @@
 {% macro button(options) -%}
     {%- set o = {label: '', variant: (options.saves ?? false) ? 'tonal' : 'primary', type: 'button', href: null, icon: null, icon_only: false, small: false, block: false, disabled: false, saves: false, attrs: {}}|merge(options) -%}
     {%- set o = o|merge({attrs: o.saves ? o.attrs|merge({'data-fb-saves': true}) : o.attrs}) -%}
+    {#- A dialog with data-fb-fill opens through the script only, which fills it in first: before it, the dialog would open empty. -#}
+    {%- if o.attrs['data-fb-fill'] is defined and o.attrs.commandfor is defined -%}
+        {%- set o = o|merge({attrs: o.attrs|filter((value, name) => name not in ['commandfor', 'command'])|merge({'data-fb-commandfor': o.attrs.commandfor})}) -%}
+    {%- endif -%}
     {%- set classes = ['fb-button', 'fb-button--' ~ o.variant]
         |merge(o.small ? ['fb-button--small'] : [])
         |merge(o.block ? ['fb-button--block'] : [])

@@ -4,7 +4,7 @@
 
 import { createHash } from 'node:crypto';
 import { expect, test, type Page } from '@playwright/test';
-import { action, ready, signIn } from './admin';
+import { action, signIn } from './admin';
 
 // The forms (decision 0222): the demo form below "Schreib uns" sent with
 // and without JavaScript, errors at the fields, building and publishing a
@@ -274,12 +274,20 @@ test('an entry without a proof of work waits in the spam folder until it is no s
     await expect(folders.getByRole('link', { name: 'Eingang (0)' })).toHaveAttribute('aria-current', 'page');
     await folders.getByRole('link', { name: 'Spam (1)' }).click();
     await expect(page.locator('details').first()).toContainText('Der Rechenbeweis fehlt.');
-    // Before its script the button opens the dialog without the entry in it.
-    await ready(page, 'fb-form');
+
+    // A click before the script waits for it: the dialog never opens without the entry.
+    const script = /\/build\/backend\.js/;
+    await page.route(script, async (route) => {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await route.continue();
+    });
+    await page.reload({ waitUntil: 'commit' });
     await page.getByRole('button', { name: 'Kein Spam' }).click();
+    expect(await page.evaluate(() => customElements.get('fb-form') === undefined)).toBe(true);
     await page.getByRole('dialog', { name: 'Kein Spam?' }).getByRole('button', { name: 'In den Eingang' }).click();
     await expect(page.locator('.fb-toast')).toHaveText('Die Einsendung ist im Eingang.');
     await expect(folders.getByRole('link', { name: 'Eingang (1)' })).toBeVisible();
+    await page.unroute(script);
 
     // The form chooses another captcha in its own tab.
     await page.goto(`/cms/forms/${id}#spam`);

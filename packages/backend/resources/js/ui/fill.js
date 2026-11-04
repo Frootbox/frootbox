@@ -1,22 +1,25 @@
 /**
  * Small helpers for dialogs and choices (decision 0116):
  *
- * - <button commandfor="redirect-edit" command="show-modal"
+ * - <button data-fb-commandfor="redirect-edit"
  *   data-fb-fill='{"id": 3, "path": "/old"}'> fills the fields with these
- *   names in the dialog before it opens and clears old errors; a
+ *   names in the dialog, clears old errors and then opens it; a
  *   checkbox takes true or false, or a list for names ending in [] that
  *   checks those with a value in it; a radio button checks the one with
- *   that value
+ *   that value. ui.button turns commandfor and command into it: with
+ *   the native ones, a click before this script opened the dialog empty
+ *   and it sent nothing or the wrong thing. Such a click waits for the
+ *   script instead (Head::FILL_SCRIPT).
  * - <input type="radio" data-fb-enables="redirect-location"> enables
  *   that field while it is checked and disables the fields of the other
  *   radio buttons of its group, so only the chosen one is sent
  */
 export function bindFills(root = document) {
     root.addEventListener('click', (event) => {
-        const button = event.target instanceof Element ? event.target.closest('[data-fb-fill][commandfor]') : null;
-        const dialog = button ? document.getElementById(button.getAttribute('commandfor')) : null;
+        const button = event.target instanceof Element ? event.target.closest('[data-fb-fill][data-fb-commandfor]') : null;
+        const dialog = button && !button.disabled ? document.getElementById(button.dataset.fbCommandfor) : null;
 
-        if (!dialog) {
+        if (!(dialog instanceof HTMLDialogElement)) {
             return;
         }
 
@@ -53,6 +56,10 @@ export function bindFills(root = document) {
         // The filled values are the saved state of the dialog (decision 0130).
         for (const fbForm of dialog.querySelectorAll('fb-form')) {
             fbForm.remember?.();
+        }
+
+        if (!dialog.open) {
+            dialog.showModal();
         }
     });
 

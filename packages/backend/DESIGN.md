@@ -771,7 +771,12 @@ A form that edits something has three states:
 Helpers for forms, started by `backend.js`:
 
 - `data-fb-fill='{"id": 3, "path": "/old"}'` on a button that opens a
-  dialog fills the fields of that name in it and clears old errors.
+  dialog fills the fields of that name in it, clears old errors and
+  then opens it. `ui.button` turns its `commandfor` into
+  `data-fb-commandfor`, so the dialog opens only through the script:
+  before it, the dialog would open empty and send nothing or the wrong
+  thing. A click before the script waits for it. A button written by
+  hand takes `data-fb-commandfor` itself.
 - `data-fb-enables="<field id>"` on a radio button enables that field
   while it is checked and hides the fields of the other buttons.
 - `data-fb-slug="<title field id>"` on an address field fills it from

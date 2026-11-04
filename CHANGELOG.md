@@ -28,6 +28,10 @@ backend's own templates, styles and scripts are not part of it.
 - Forms: `entry.release` and `entry.delete` fail with 422 for an id
   without an entry and change nothing. Before, an empty id, e.g. from a
   dialog opened before its script, reported success for nothing.
+- Backend: a dialog that a button fills in, e.g. to edit a category,
+  opens only once the script is in. Before, a click right after loading
+  opened it empty, and a new category could land at the top instead of
+  below the chosen one.
 
 ## [0.1.0] - 2026-11-04
 
