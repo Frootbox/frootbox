@@ -18,7 +18,7 @@ backend's own templates, styles and scripts are not part of it.
 
 ## [Unreleased]
 
-## [0.1.0] - unreleased
+## [0.1.0] - 2026-11-04
 
 The developer preview: the first version for developers outside the
 project. Everything is new.
