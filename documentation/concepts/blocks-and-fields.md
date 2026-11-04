@@ -48,7 +48,8 @@ fields:
 - **`group`** and **`keywords`** place it in the block picker.
 - **`examples`** fill the design page under `/_design`.
 
-`bin/frootbox blocks:check` checks every schema and template.
+`bin/frootbox blocks:check` checks every schema and template. The
+[block schema](../reference/block-schema.md) lists every key.
 
 ## Fields
 

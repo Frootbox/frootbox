@@ -115,7 +115,8 @@ Rules for templates:
 - Values in seed files and actions follow the field types:
   `php bin/frootbox reference:build` writes the reference of this
   website to `documentation/reference/`, with every action, field type
-  and Twig function, e.g. an image is `{media: <id>, alt: …}`.
+  and Twig function, e.g. an image is `{media: <id>, alt: …}`, and
+  every key of a block schema.
 - Links with `url()`, navigations with `navigation()`, the language with
   `language()` and `alternates()`.
 - Content of another server (video, map, script) only through

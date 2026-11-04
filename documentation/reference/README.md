@@ -15,4 +15,6 @@ the one of this version.
 - [Twig functions](twig.md) for blocks, layouts and partials.
 - [Field types](field-types.md) for the fields of blocks, the
   website and objects.
+- [Block schema](block-schema.md): the keys of `block.yaml` and
+  of the header of a view, for blocks and layouts.
 - [Events](events.md) an extension can listen to.
