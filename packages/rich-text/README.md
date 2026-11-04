@@ -48,6 +48,19 @@ Marks: `link`, `bold`, `italic`, `underline`, `strike`, `subscript`,
 English quote in an Arabic text: `{"type": "paragraph", "attrs": {"dir":
 "ltr"}, …}` becomes `<p dir="ltr">…</p>`.
 
+## From HTML
+
+`HtmlReader` turns HTML, e.g. from an older CMS, into a document of the
+standard schema. Wrappers such as `<div>` are unwrapped, whitespace is
+collapsed as a browser does, `h1` to `h4` become headings of rank 1 to 3.
+What has no counterpart, such as images or tables, is left out and named
+by `dropped()`. A callback may change or remove each link:
+
+```php
+$reader = new HtmlReader(fn(string $href): ?string => $href === 'old-page' ? '/new-page' : $href);
+$json = $reader->read('<div><p>Hello <b>world</b></p></div>');
+```
+
 ## Own nodes and marks
 
 ```php
