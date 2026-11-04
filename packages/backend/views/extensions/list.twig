@@ -34,8 +34,8 @@
             {%- if pages[extension.name] ?? 0 %}{% set parts = parts|merge([t(['On {count} page', 'On {count} pages'], {count: pages[extension.name]})]) %}{% endif -%}
             <li class="fb-list__item">
                 <span class="fb-list__main">
-                    <span class="fb-list__title">{{ extension.title }}</span>
-                    {% if extension.description %}<span class="fb-list__meta">{{ extension.description }}</span>{% endif %}
+                    <span class="fb-list__title">{{ t(extension.title) }}</span>
+                    {% if extension.description %}<span class="fb-list__meta">{{ t(extension.description) }}</span>{% endif %}
                     <span class="fb-list__meta"><code>{{ extension.name }}</code>{% if extension.version %} · {{ extension.version }}{% endif %}{% if parts is not empty %} · {{ parts|join(' · ') }}{% endif %}</span>
                 </span>
                 {% if extension.activeTheme %}{{ ui.badge('published', t('Active theme')) }}{% elseif extension.theme %}{{ ui.badge('neutral', t('Theme')) }}{% endif %}
@@ -100,6 +100,29 @@
                 <span class="fb-list__main">
                     <span class="fb-list__title"><code>{{ usage.name }}</code></span>
                     <span class="fb-list__meta">{{ usage.kind.value == 'layout' ? t('Layout') : t('Block') }} · {% for page in usage.pages %}<a href="{{ path('backend.pages.show', {id: page.id}) }}">{{ page.title ?: t('Page without title') }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</span>
+                </span>
+            </li>
+            {%- endfor %}
+        </ul>
+    </section>
+    {% endif %}
+
+    {% if list.available is not empty %}
+    <section class="fb-card" aria-labelledby="extensions-available">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="extensions-available">{{ t('More official modules') }}</h2>
+            {{ ui.badge('neutral', t(['{count} module', '{count} modules'], {count: list.available|length})) }}
+        </div>
+        <div class="fb-card__body">
+            <p class="fb-muted">{{ t('Not installed here. Each one comes with its Composer command in the folder of the website, then update the database above.') }}</p>
+        </div>
+        <ul>
+            {%- for module in list.available %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title">{{ t(module.title) }}</span>
+                    <span class="fb-list__meta">{{ t(module.description) }}</span>
+                    <span class="fb-list__meta"><code>{{ module.command }}</code></span>
                 </span>
             </li>
             {%- endfor %}

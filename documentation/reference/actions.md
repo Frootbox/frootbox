@@ -1387,7 +1387,7 @@ Query · right `system.component-usages`
 
 ### `system.extension-list`
 
-Lists the installed extensions with version, theme, and the blocks, layouts, actions, queries and field types they bring
+Lists the installed extensions with version, theme, and the blocks, layouts, actions, queries and field types they bring, and the official modules that are not installed
 
 Query · right `system.extension-list`
 

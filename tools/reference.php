@@ -10,11 +10,13 @@ declare(strict_types=1);
  * Writes documentation/reference/ from the code of every package of the
  * monorepo (decision 0265), like reference:build in a project. Run it
  * with `composer reference` after changing an action, a command, the
- * registry, a Twig function or a field type; a test fails while the
+ * registry, a Twig function or a field type, and with it the catalog of
+ * official modules after adding a module; a test fails while the
  * reference is behind. With --check it only tells.
  */
 
 use Frootbox\Core\Application;
+use Frootbox\Core\Extension\OfficialModules;
 use Frootbox\Core\Extension\Registry;
 use Frootbox\Core\Extension\Source\ComposerSource;
 use Frootbox\Core\Reference\Reference;
@@ -44,6 +46,17 @@ try {
     $arguments = $_SERVER['argv'] ?? [];
     $check = is_array($arguments) && in_array('--check', $arguments, true);
     $changed = Reference::sync($root . '/documentation/reference', new Reference($registry, $container)->pages(), $check);
+
+    // The catalog of official modules the core brings (decision 0279).
+    $catalog = OfficialModules::encode(OfficialModules::fromFolder($root . '/packages/modules'));
+
+    if (!is_file(OfficialModules::FILE) || file_get_contents(OfficialModules::FILE) !== $catalog) {
+        if (!$check) {
+            file_put_contents(OfficialModules::FILE, $catalog);
+        }
+
+        $changed[] = 'packages/core/resources/official-modules.json';
+    }
 } finally {
     // Boot may leave var/ behind, e.g. logs.
     $items = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($project, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);

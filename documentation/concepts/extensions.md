@@ -106,7 +106,10 @@ and its dependencies with their license.
 ## Official modules
 
 Frootbox's own modules use only the extension points that are open to
-everyone. Whatever they do, an extension of yours can do too.
+everyone. Whatever they do, an extension of yours can do too. The core
+knows them from a catalog it brings, so **Extensions** in the backend
+lists those that are not installed with their Composer command, and
+the query `system.extension-list` returns them as `available`.
 
 A new website from the skeleton brings forms and SEO. The others come
 with `composer require` and `php bin/frootbox migrate` when a website

@@ -17,6 +17,8 @@ after a backup, like `php bin/frootbox migrate` in the console. If no
 backup can be made before, back up the database yourself and use
 **Update without a backup**. The dashboard points to pending
 migrations.
+**More official modules** lists the modules of Frootbox that are not
+installed here, each with its Composer command.
 **On … pages** shows where the blocks and layouts of an extension are.
 Look there before you remove it.
 

@@ -53,11 +53,18 @@ backend's own templates, styles and scripts are not part of it.
   database, its blocks and layouts, and the licenses of its
   dependencies. `--json` lists what it brings. Without a target it
   checks the packages in `extensions/`.
+- Core: a catalog of the official modules in
+  `resources/official-modules.json`, written by `composer reference`
+  from their manifests. `system.extension-list` returns those not
+  installed as `available` with their Composer command; **Extensions**
+  in the backend lists them under **More official modules**.
 
 ### Changed
 
 - Core: `Migrator` takes the connection and the migration sources and
   builds a fresh Doctrine factory for every run.
+- Backend: titles and descriptions of extensions are translated, the
+  German texts of the official modules come with the backend.
 - Core: `blocks:check` runs its checks through the new
   `Component\ComponentCheck`, which `extension:check` shares.
 - Core: content an extension left behind when it was removed or updated

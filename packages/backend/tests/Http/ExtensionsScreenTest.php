@@ -8,11 +8,13 @@ declare(strict_types=1);
 
 namespace Frootbox\Backend\Tests\Http;
 
+use Frootbox\Backend\BackendExtension;
 use Frootbox\Backend\Http\Extensions\ExtensionsHandler;
 use Frootbox\Backend\Tests\Support\BackendTestCase;
 use Frootbox\Core\Action\Context;
 use Frootbox\Core\Extension\ExtensionPackage;
 use Frootbox\Core\Extension\Extensions;
+use Frootbox\Core\Extension\OfficialModules;
 use Frootbox\Core\Extension\Registry;
 use Frootbox\Core\Frootbox;
 use Frootbox\Core\Page\CreatePage;
@@ -20,6 +22,7 @@ use Frootbox\Core\Page\PageReader;
 use Frootbox\Core\Tests\Fixtures\Migrations\Version20261030000000;
 use Frootbox\Core\Tests\Support\FixtureSite;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * The installed extensions, read only, for superusers (decision 0274).
@@ -41,6 +44,27 @@ final class ExtensionsScreenTest extends BackendTestCase
         self::assertSame(2, substr_count($html, 'Aktives Theme'), 'The theme and its parent.');
         self::assertStringContainsString('composer require frootbox/news', $html);
         self::assertStringNotContainsString('<fb-form', $html, 'Read only.');
+        self::assertStringContainsString('Weitere offizielle Module', $html);
+        self::assertStringContainsString('<span class="fb-list__title">Personen und Standorte</span>', $html, 'Titles in the language of the backend.');
+        self::assertStringContainsString('<code>composer require frootbox/people</code>', $html);
+    }
+
+    public function testEveryOfficialModuleHasGermanTexts(): void
+    {
+        $german = Yaml::parseFile(BackendExtension::ROOT . '/translations/de.yaml');
+        self::assertIsArray($german);
+        $missing = [];
+
+        foreach (OfficialModules::load() as $module) {
+            foreach ([$module->title, $module->description] as $text) {
+                if (!\array_key_exists($text, $german)) {
+                    $missing[] = $text;
+                }
+            }
+        }
+
+        self::assertNotSame([], OfficialModules::load());
+        self::assertSame([], $missing, 'Add these texts of the catalog to translations/de.yaml.');
     }
 
     public function testShowsThePagesOfAnExtensionAndWhatIsMissing(): void

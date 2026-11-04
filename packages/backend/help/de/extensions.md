@@ -13,8 +13,10 @@ mit, nennt die Karte **Datenbank** die ausstehenden Migrationen, und
 **Jetzt aktualisieren** führt sie nach einem Backup aus, wie
 `php bin/frootbox migrate` in der Konsole. Ist vorher kein Backup
 möglich, sichere die Datenbank selbst und nimm **Ohne Backup
-aktualisieren**. Das Dashboard weist auf ausstehende Migrationen hin. **Auf … Seiten** zeigt, wo die Blöcke und
-Layouts einer Erweiterung stehen. Schau dort nach, bevor Du sie entfernst.
+aktualisieren**. Das Dashboard weist auf ausstehende Migrationen hin.
+**Weitere offizielle Module** nennt die Module von Frootbox, die hier
+nicht installiert sind, je mit ihrem Befehl für Composer. **Auf …
+Seiten** zeigt, wo die Blöcke und Layouts einer Erweiterung stehen. Schau dort nach, bevor Du sie entfernst.
 
 Fehlt eine Erweiterung, deren Blöcke noch auf Seiten stehen, nennt
 **Fehlende Blöcke und Layouts** sie mit den Seiten dazu. Die Seiten
