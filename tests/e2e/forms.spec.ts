@@ -4,7 +4,7 @@
 
 import { createHash } from 'node:crypto';
 import { expect, test, type Page } from '@playwright/test';
-import { action, signIn } from './admin';
+import { action, ready, signIn } from './admin';
 
 // The forms (decision 0222): the demo form below "Schreib uns" sent with
 // and without JavaScript, errors at the fields, building and publishing a
@@ -274,6 +274,8 @@ test('an entry without a proof of work waits in the spam folder until it is no s
     await expect(folders.getByRole('link', { name: 'Eingang (0)' })).toHaveAttribute('aria-current', 'page');
     await folders.getByRole('link', { name: 'Spam (1)' }).click();
     await expect(page.locator('details').first()).toContainText('Der Rechenbeweis fehlt.');
+    // Before its script the button opens the dialog without the entry in it.
+    await ready(page, 'fb-form');
     await page.getByRole('button', { name: 'Kein Spam' }).click();
     await page.getByRole('dialog', { name: 'Kein Spam?' }).getByRole('button', { name: 'In den Eingang' }).click();
     await expect(page.locator('.fb-toast')).toHaveText('Die Einsendung ist im Eingang.');
