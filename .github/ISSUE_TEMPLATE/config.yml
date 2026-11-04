@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question
+    url: https://github.com/Frootbox/frootbox/discussions
+    about: How to build something, whether Frootbox fits, what is planned.
+  - name: Security issue
+    url: https://github.com/Frootbox/frootbox/security/advisories/new
+    about: Report a vulnerability privately, never in a public issue.

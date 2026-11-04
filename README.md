@@ -314,4 +314,5 @@ Frootbox is licensed under the MIT License. See [`LICENSE`](LICENSE).
 Extensions may use any license. Font files may also be licensed under the
 SIL Open Font License 1.1, with `OFL.txt` next to them.
 
-Contributions are not accepted yet.
+Questions, bugs and ideas are welcome, pull requests not yet; see
+[`CONTRIBUTING.md`](CONTRIBUTING.md).
