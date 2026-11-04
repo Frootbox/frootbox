@@ -54,7 +54,8 @@
             "Frootbox\\RichText\\Tests\\": "packages/rich-text/tests/",
             "Frootbox\\ThemeBase\\Tests\\": "packages/themes/base/tests/",
             "Frootbox\\Tools\\PHPStan\\": "tools/phpstan/src/",
-            "Frootbox\\Tools\\PHPStan\\Tests\\": "tools/phpstan/tests/"
+            "Frootbox\\Tools\\PHPStan\\Tests\\": "tools/phpstan/tests/",
+            "Frootbox\\Tools\\Tests\\": "tools/tests/"
         }
     },
     "scripts": {

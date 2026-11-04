@@ -1,0 +1,54 @@
+name: Split packages
+
+# Every package of the monorepo is mirrored into its own read-only repo in
+# github.com/frootbox-packages, the source for Packagist. The list is
+# .github/split.json, a test makes sure every package is in it.
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: split-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  split:
+    name: Split and push
+    if: github.repository == 'Frootbox/frootbox'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Split every package into its mirror
+        env:
+          SPLIT_TOKEN: ${{ secrets.SPLIT_TOKEN }}
+        run: |
+          if [ -z "$SPLIT_TOKEN" ]; then
+            echo "::notice::No SPLIT_TOKEN yet, the mirrors stay as they are."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            target="refs/tags/$GITHUB_REF_NAME"
+          else
+            target="refs/heads/main"
+          fi
+
+          # git subtree split gives the same commits for the same history,
+          # so the mirrors move forward without force.
+          jq -r 'to_entries[] | "\(.key) \(.value)"' .github/split.json | while read -r path repo; do
+            echo "::group::$path → frootbox-packages/$repo"
+            sha=$(git subtree split -q --prefix="$path" "$GITHUB_SHA")
+            git push "https://x-access-token:${SPLIT_TOKEN}@github.com/frootbox-packages/${repo}.git" "${sha}:${target}"
+            echo "::endgroup::"
+          done

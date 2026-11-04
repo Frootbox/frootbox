@@ -81,6 +81,7 @@
         </testsuite>
         <testsuite name="tools">
             <directory>tools/phpstan/tests</directory>
+            <directory>tools/tests</directory>
             <exclude>tools/phpstan/tests/data</exclude>
         </testsuite>
     </testsuites>
