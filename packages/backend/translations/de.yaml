@@ -1327,3 +1327,12 @@ Generated or edited with AI.: Mit KI erzeugt oder bearbeitet.
 "Images made or changed with AI show a small badge “AI” on the website. A file that says so sets it when uploaded.": "Bilder, die mit KI erzeugt oder bearbeitet sind, zeigen auf der Website eine kleine Plakette „KI“. Eine Datei, die es angibt, setzt es beim Hochladen."
 "A file that says so sets it when uploaded.": "Eine Datei, die es angibt, setzt es beim Hochladen."
 "Saved in the media library. Images made or changed with AI show a small badge “AI” on the website.": "Wird in der Mediathek gespeichert. Bilder, die mit KI erzeugt oder bearbeitet sind, zeigen auf der Website eine kleine Plakette „KI“."
+# The settings of the core about consent (decision 0264).
+"Privacy": "Datenschutz"
+"How visitors agree to services of other providers": "Wie Besucher Diensten anderer Anbieter zustimmen"
+"Consent tool": "Consent-Tool"
+"Empty: the only consent tool that is set up takes over, the core asks otherwise. The name of a tool to choose one of several, or none for the core.": "Leer: Das einzige eingerichtete Consent-Tool übernimmt, sonst fragt der Kern. Der Name eines Tools, um eins von mehreren zu wählen, oder none für den Kern."
+"Keep a proof of consent": "Nachweis der Einwilligung aufbewahren"
+"Keeps each choice of a visitor with a random ID, without address or browser, so you can show it later.": "Bewahrt jede Wahl eines Besuchers mit einer zufälligen ID auf, ohne Adresse und Browser, damit Du sie später nachweisen kannst."
+"Keep proofs": "Nachweise aufbewahren"
+"Days a proof of consent is kept.": "Tage, die ein Nachweis der Einwilligung aufbewahrt wird."
