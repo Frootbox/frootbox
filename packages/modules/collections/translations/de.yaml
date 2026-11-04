@@ -101,3 +101,8 @@
 "must be a list of texts, e.g. [\"Arabica\", \"Robusta\"].": "muss eine Liste von Texten sein, z. B. [\"Arabica\", \"Robusta\"]."
 "needs from 1 to {count} options.": "braucht 1 bis {count} Optionen."
 "has more lines than the options in {language}.": "hat mehr Zeilen als die Optionen auf {language}."
+"Catalogue": "Katalog"
+"Portfolio": "Portfolio"
+"Products": "Produkte"
+"Projects": "Projekte"
+"Teasers": "Teaser"
