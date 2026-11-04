@@ -153,9 +153,14 @@ test('gives headings that want the same level the same level, also in the editor
     await page.goto(`/cms/pages/${id}`);
     await page.getByRole('button', { name: 'Auf der Website bearbeiten' }).click();
     await expect(page).toHaveURL(`/${slug}`);
+    // Click only once the edit mode runs, else the click goes nowhere.
+    await expect(page.locator('h1[data-fb-field="title"]')).toHaveAttribute('contenteditable', 'plaintext-only');
     const second = page.locator('[data-fb-field="body"]').nth(1);
-    await second.getByText('Mit dem Bus bis zur Mühle.').click();
-    await expect(page.locator('fb-editor-bar').getByRole('toolbar', { name: 'Formatierung' })).toBeVisible();
+    const toolbar = page.locator('fb-editor-bar').getByRole('toolbar', { name: 'Formatierung' });
+    await expect(async () => {
+        await second.getByText('Mit dem Bus bis zur Mühle.').click();
+        await expect(toolbar).toBeVisible({ timeout: 1000 });
+    }).toPass();
     await expect(second.locator('h2[data-rank="2"]')).toHaveText('Anfahrt');
 
     await page.goto(`/cms/pages/${id}`);
