@@ -33,3 +33,43 @@ languages:
 # Defaults: debug in dev, warning in prod.
 # log:
 #   level: warning
+
+# The sender of mails, e.g. of forms. Without it the one of the backend
+# settings, else noreply@ and the host of app.url.
+# mail:
+#   from: hello@example.com
+
+# Sign-in: a session ends this long after its last use, with "stay
+# signed in" in days, else in hours.
+# auth:
+#   session_days: 14
+#   session_hours: 12
+
+# Changes can be undone for undo_days; the log of who changed what is
+# kept for log_days. Deleted media are kept as long as changes can be
+# undone.
+# actions:
+#   undo_days: 30
+#   log_days: 365
+
+# The largest upload in MB by kind of file. PHP's upload_max_filesize
+# and post_max_size must allow it too.
+# media:
+#   max_upload_mb: 20       # images
+#   max_video_mb: 2000
+#   max_document_mb: 100
+
+# How long a link to the preview of a draft works.
+# preview:
+#   days: 14
+
+# Backups of the database in storage/backups/: one before the first
+# change of a day (0 turns it off) and before every migrate. Kept are
+# all of the last 7 days, one a week up to 5 weeks, one a month up to
+# 6 months, then one a quarter up to max_months; always those made by
+# hand and the last keep_migrate ones from before a migrate.
+# backup:
+#   interval_hours: 24
+#   stages: { all: 7 days, week: 5 weeks, month: 6 months }
+#   max_months: 12
+#   keep_migrate: 3
