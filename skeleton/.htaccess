@@ -1,0 +1,10 @@
+# The web server shows public/, it is the document root. This file only
+# counts when it shows this folder instead: then nothing here is served,
+# neither .env nor the database in storage/ nor the code (decision 0270).
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+</IfModule>
