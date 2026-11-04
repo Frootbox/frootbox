@@ -13,6 +13,7 @@ use Frootbox\Backend\View\BackendView;
 use Frootbox\Core\Action\Normalizer;
 use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Api\JsonResponder;
+use Frootbox\Core\Frootbox;
 use Frootbox\Core\Help\ListHelp;
 use Frootbox\Core\Help\ShowHelp;
 use Frootbox\Core\Http\Exception\HttpException;
@@ -53,7 +54,7 @@ final readonly class HelpHandler implements RequestHandlerInterface
         $id = $request->getAttribute('id');
         $entries = $this->runner->ask(new ListHelp());
         $brand = $this->design->brand();
-        $context = ['entries' => $entries, 'brand' => $brand, 'current' => null, 'article' => null];
+        $context = ['entries' => $entries, 'brand' => $brand, 'current' => null, 'article' => null, 'version' => Frootbox::version()];
 
         if (\is_string($id)) {
             try {

@@ -13,6 +13,7 @@ use Frootbox\Backend\Tests\Support\BackendTestCase;
 use Frootbox\Backend\View\HelpLink;
 use Frootbox\Core\Extension\ExtensionPackage;
 use Frootbox\Core\Extension\Extensions;
+use Frootbox\Core\Frootbox;
 use Frootbox\Core\Tests\Support\FixtureSite;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -51,6 +52,7 @@ final class HelpScreenTest extends BackendTestCase
         self::assertStringContainsString('Blöcke dieser Website', $html, 'Written from the installation.');
         self::assertStringNotContainsString('Benutzer und Rollen', $html, 'Editors may not see users.');
         self::assertStringNotContainsString('<fb-help', $html, 'No help button on the help.');
+        self::assertStringContainsString('Version ' . Frootbox::VERSION, $html, 'Which code runs, for a question to the support.');
     }
 
     public function testAnswersThePanelWithJson(): void

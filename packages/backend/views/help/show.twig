@@ -52,5 +52,8 @@
             </div>
         </article>
     </div>
+
+    {#- Signed in only, a guest learns nothing about the software (decision 0271). -#}
+    <p class="fb-muted">{{ t('Version {number}', {number: version}) }}</p>
 </div>
 {% endblock %}
