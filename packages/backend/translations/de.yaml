@@ -1405,3 +1405,23 @@ Generated or edited with AI.: Mit KI erzeugt oder bearbeitet.
 "This is a test mail from {site}{url}.\n\nIf it arrived, mails of forms reach their recipients the same way.": "Das ist eine Testmail von {site}{url}.\n\nIst sie angekommen, erreichen Mails aus Formularen ihre Empfänger auf demselben Weg."
 "Missing block": "Block fehlt"
 "Its extension is not installed. Remove the block or install the extension again.": "Die Erweiterung dazu ist nicht installiert. Entferne den Block oder installiere die Erweiterung wieder."
+Database: Datenbank
+"Up to date": "Aktuell"
+"{count} pending":
+  one: "{count} ausstehend"
+  other: "{count} ausstehend"
+"All migrations of the core and the extensions have run.": "Alle Migrationen des Kerns und der Erweiterungen sind gelaufen."
+"These migrations add the tables and columns the core and the extensions need. Run them before the website uses the new parts.": "Diese Migrationen ergänzen Tabellen und Spalten, die der Kern und die Erweiterungen brauchen. Führe sie aus, bevor die Website die neuen Teile nutzt."
+"The database is up to date. A backup from before is in storage/backups/.": "Die Datenbank ist aktuell. Ein Backup von vorher liegt in storage/backups/."
+"The database is up to date.": "Die Datenbank ist aktuell."
+"Update now": "Jetzt aktualisieren"
+"No backup can be made here before, e.g. without mysqldump. Make one by hand first, then update without a backup.": "Hier lässt sich vorher kein Backup anlegen, etwa ohne mysqldump. Sichere die Datenbank zuerst selbst und aktualisiere dann ohne Backup."
+"Update without a backup": "Ohne Backup aktualisieren"
+"Update the database without a backup?": "Datenbank ohne Backup aktualisieren?"
+"If a migration fails, there is no state from before to go back to.": "Scheitert eine Migration, gibt es keinen Stand von vorher, zu dem Du zurückkannst."
+"{count} migration is pending":
+  one: "{count} Migration steht aus"
+  other: "{count} Migrationen stehen aus"
+"The database is missing tables or columns of the core or an extension. Bring it up to date under Extensions.": "Der Datenbank fehlen Tabellen oder Spalten des Kerns oder einer Erweiterung. Bring sie unter Erweiterungen auf den neuen Stand."
+"To the database": "Zur Datenbank"
+"The backup failed, so nothing was migrated: {error}": "Das Backup ist gescheitert, deshalb ist nichts migriert: {error}"

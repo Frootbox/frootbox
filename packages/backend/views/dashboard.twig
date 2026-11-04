@@ -15,6 +15,10 @@
 
     {% if queue is not null %}{% include '@backend/jobs/cron.twig' with {status: queue, link: can('system.job-list')} %}{% endif %}
 
+    {% if migrations > 0 %}
+    {{ ui.alert({tone: 'warning', title: t(['{count} migration is pending', '{count} migrations are pending'], {count: migrations}), text: t('The database is missing tables or columns of the core or an extension. Bring it up to date under Extensions.'), live: 'none', action: ui.button({label: t('To the database'), href: path('backend.extensions') ~ '#extensions-database', variant: 'outline', small: true})}) }}
+    {% endif %}
+
     <section class="fb-card fb-card--accent fb-callout" aria-labelledby="fb-edit-title">
         <div class="fb-callout__text">
             <h2 class="fb-heading-3" id="fb-edit-title">{{ t('You edit content right on the website') }}</h2>

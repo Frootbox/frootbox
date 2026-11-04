@@ -39,8 +39,18 @@ backend's own templates, styles and scripts are not part of it.
   how many pages each extension is, and a section **Missing blocks and
   layouts** with their pages.
 
+- Core: the query `system.migration-list` lists pending migrations with
+  their package, and the action `system.migrate` runs them after a backup
+  (409 if none can be made, `withoutBackup: true` to go on). Backend: a
+  card **Database** under **Extensions** with the list and a button, and
+  a notice on the dashboard for superusers.
+- Core: `#[AsAction(transactional: false)]` for `system.*` actions that
+  cannot be undone, e.g. to change the schema.
+
 ### Changed
 
+- Core: `Migrator` takes the connection and the migration sources and
+  builds a fresh Doctrine factory for every run.
 - Core: content an extension left behind when it was removed or updated
   no longer freezes a page. A block whose extension is gone, the view of
   a plugin, and a variant, option, field or area a block or layout no

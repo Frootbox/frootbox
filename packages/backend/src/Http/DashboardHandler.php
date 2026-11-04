@@ -15,6 +15,7 @@ use Frootbox\Core\Action\Catalog;
 use Frootbox\Core\Action\CurrentContext;
 use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Auth\Gate;
+use Frootbox\Core\Database\ListMigrations;
 use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Page\PageStatus;
 use Frootbox\Core\Page\PublishPages;
@@ -69,9 +70,17 @@ final readonly class DashboardHandler implements RequestHandlerInterface
             $queue = null;
         }
 
+        try {
+            // Pending migrations, e.g. of a module that just came (decision 0277).
+            $migrations = \count($this->runner->ask(new ListMigrations())->pending);
+        } catch (AccessDeniedException) {
+            $migrations = 0;
+        }
+
         return $this->view->render($request, '@backend/dashboard.twig', [
             'name' => explode(' ', trim($user->name))[0],
             'queue' => $queue,
+            'migrations' => $migrations,
             'pending' => $pending,
             'publishable' => $publishable,
         ]);

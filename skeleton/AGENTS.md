@@ -77,6 +77,10 @@ composer require frootbox/news
 php bin/frootbox migrate
 ```
 
+The action `system.migrate` does the same for a superuser, after a
+backup (409 if none can be made, `withoutBackup: true` to go on), and
+`system.migration-list` shows what is pending.
+
 | Package | What it brings |
 |---|---|
 | `frootbox/forms` | forms with entries, mail and spam protection (included) |

@@ -49,6 +49,10 @@ final readonly class CreateSpecial implements Action
   Composer package. Names without a slash belong to the core.
 - `undoable: false` marks an action that cannot be undone, e.g. one that
   sends a mail.
+- `transactional: false` runs an action without a database transaction.
+  Only core actions under `system.*` that cannot be undone may use it,
+  e.g. `system.migrate`, whose changes to the schema end a transaction on
+  MySQL. Such an action does not run inside another one.
 
 A query looks the same with `#[AsQuery]` and `implements Query`.
 

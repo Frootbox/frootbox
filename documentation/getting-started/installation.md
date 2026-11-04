@@ -82,6 +82,11 @@ composer require frootbox/news
 php bin/frootbox migrate
 ```
 
+Without a console, a superuser runs the migrations in the backend under
+**Extensions**, card **Database**, after a backup; the dashboard says
+when some are pending. The REST API has the same as the query
+`system.migration-list` and the action `system.migrate`.
+
 ## The first page
 
 In the backend under **Pages**, create a page with the layout **Start

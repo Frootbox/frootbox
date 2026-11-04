@@ -1423,6 +1423,22 @@ Builds the index of where media are used anew from pages and the fields of the w
 
 Action · right `system.media-usages`
 
+### `system.migrate`
+
+Runs all pending migrations of the core and the extensions, after a backup of the database
+
+Action · right `system.migrate` · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `withoutBackup` | boolean, optional | Run them even if no backup can be made before |
+
+### `system.migration-list`
+
+Lists the migrations of the core and the extensions that have not run yet, with their package, and whether a backup can be made before
+
+Query · right `system.migration-list`
+
 ### `system.prune-previews`
 
 Deletes preview links 30 days after they expired or were revoked and returns how many

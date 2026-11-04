@@ -46,6 +46,45 @@
         {% endif %}
     </section>
 
+    <section class="fb-card" id="extensions-database" aria-labelledby="extensions-database-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="extensions-database-title" tabindex="-1" data-fb-focus>{{ t('Database') }}</h2>
+            {% if migrations.pending is empty %}{{ ui.badge('published', t('Up to date')) }}{% else %}{{ ui.badge('changed', t(['{count} pending', '{count} pending'], {count: migrations.pending|length})) }}{% endif %}
+        </div>
+        {% if migrations.pending is empty %}
+        <div class="fb-card__body">
+            <p class="fb-muted">{{ t('All migrations of the core and the extensions have run.') }}</p>
+        </div>
+        {% else %}
+        <div class="fb-card__body">
+            <p>{{ t('These migrations add the tables and columns the core and the extensions need. Run them before the website uses the new parts.') }}</p>
+        </div>
+        <ul>
+            {%- for migration in migrations.pending %}
+            {%- set short = migration.version|split('\\')|last %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title">{{ migration.description ?: short }}</span>
+                    <span class="fb-list__meta">{% if migration.package %}<code>{{ migration.package }}</code> · {% endif %}<code>{{ short }}</code></span>
+                </span>
+            </li>
+            {%- endfor %}
+        </ul>
+        {% if can('system.migrate') %}
+        <div class="fb-card__body fb-stack fb-stack--sm">
+            {% if migrations.backup %}
+            <fb-form action="system.migrate" refresh="extensions-database fb-nav" done="{{ t('The database is up to date. A backup from before is in storage/backups/.') }}">
+                <form novalidate>{{ ui.button({label: t('Update now'), type: 'submit'}) }}</form>
+            </fb-form>
+            {% else %}
+            <p class="fb-muted">{{ t('No backup can be made here before, e.g. without mysqldump. Make one by hand first, then update without a backup.') }}</p>
+            <div>{{ ui.button({label: t('Update without a backup'), variant: 'danger', attrs: {commandfor: 'extensions-migrate', command: 'show-modal'}}) }}</div>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% endif %}
+    </section>
+
     {% if missing is not empty %}
     <section class="fb-card" aria-labelledby="extensions-missing">
         <div class="fb-card__header">
@@ -79,4 +118,21 @@
         </div>
     </section>
 </div>
+{% if migrations.pending is not empty and not migrations.backup and can('system.migrate') %}
+<dialog class="fb-dialog" id="extensions-migrate" aria-labelledby="extensions-migrate-title">
+    <fb-form action="system.migrate" refresh="extensions-database fb-nav" done="{{ t('The database is up to date.') }}">
+        <form novalidate>
+            <input type="hidden" name="withoutBackup" value="true" data-type="boolean">
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="extensions-migrate-title">{{ t('Update the database without a backup?') }}</h2>
+                <p>{{ t('If a migration fails, there is no state from before to go back to.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'extensions-migrate', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Update without a backup'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
 {% endblock %}

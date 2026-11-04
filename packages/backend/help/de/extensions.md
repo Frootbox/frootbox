@@ -8,8 +8,12 @@ Einstellungen und eigene Tabellen. **Aktives Theme** kennzeichnet das
 Theme der Website und seine Eltern.
 
 Eine installierte Erweiterung ist aktiv. Wer die Website entwickelt,
-fügt eine per Composer im Ordner der Website hinzu und führt danach
-`php bin/frootbox migrate` aus. **Auf … Seiten** zeigt, wo die Blöcke und
+fügt eine per Composer im Ordner der Website hinzu. Bringt sie Tabellen
+mit, nennt die Karte **Datenbank** die ausstehenden Migrationen, und
+**Jetzt aktualisieren** führt sie nach einem Backup aus, wie
+`php bin/frootbox migrate` in der Konsole. Ist vorher kein Backup
+möglich, sichere die Datenbank selbst und nimm **Ohne Backup
+aktualisieren**. Das Dashboard weist auf ausstehende Migrationen hin. **Auf … Seiten** zeigt, wo die Blöcke und
 Layouts einer Erweiterung stehen. Schau dort nach, bevor Du sie entfernst.
 
 Fehlt eine Erweiterung, deren Blöcke noch auf Seiten stehen, nennt

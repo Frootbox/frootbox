@@ -12,6 +12,7 @@ use Frootbox\Backend\View\BackendView;
 use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Component\ComponentUsage;
 use Frootbox\Core\Component\ListComponentUsages;
+use Frootbox\Core\Database\ListMigrations;
 use Frootbox\Core\Extension\ListExtensions;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -50,6 +51,8 @@ final readonly class ExtensionsHandler implements RequestHandlerInterface
             'list' => $this->runner->ask(new ListExtensions()),
             'pages' => array_map(\count(...), $pages),
             'missing' => array_values(array_filter($usages, static fn(ComponentUsage $usage): bool => !$usage->installed)),
+            // Pending migrations with a button to run them (decision 0277).
+            'migrations' => $this->runner->ask(new ListMigrations()),
         ]);
     }
 }

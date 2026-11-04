@@ -13,9 +13,11 @@ use Frootbox\Backend\Tests\Support\BackendTestCase;
 use Frootbox\Core\Action\Context;
 use Frootbox\Core\Extension\ExtensionPackage;
 use Frootbox\Core\Extension\Extensions;
+use Frootbox\Core\Extension\Registry;
 use Frootbox\Core\Frootbox;
 use Frootbox\Core\Page\CreatePage;
 use Frootbox\Core\Page\PageReader;
+use Frootbox\Core\Tests\Fixtures\Migrations\Version20261030000000;
 use Frootbox\Core\Tests\Support\FixtureSite;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -64,13 +66,53 @@ final class ExtensionsScreenTest extends BackendTestCase
         self::assertStringContainsString('Block · <a href="/cms/pages/' . $page->id . '">Start</a>', $html);
     }
 
+    public function testOffersToRunPendingMigrations(): void
+    {
+        $this->createUser('root@example.org', ['superuser']);
+        $session = $this->signIn('root@example.org');
+
+        $html = $this->html($this->request('GET', '/cms/extensions', session: $session));
+        self::assertStringContainsString('Alle Migrationen des Kerns und der Erweiterungen sind gelaufen.', $html);
+        self::assertStringNotContainsString('Migrationen stehen aus', $this->html($this->request('GET', '/cms', session: $session)));
+
+        // As if a module with these migrations just came with Composer (decision 0277).
+        $this->connection()->executeStatement('DROP TABLE ' . Version20261030000000::TABLE);
+
+        foreach (['Version20261030000000', 'Version20261030000001'] as $version) {
+            $this->connection()->delete('migrations', ['version' => 'Frootbox\Core\Tests\Fixtures\Migrations\\' . $version]);
+        }
+
+        $html = $this->html($this->request('GET', '/cms/extensions', session: $session));
+        self::assertStringContainsString('2 ausstehend', $html);
+        self::assertStringContainsString('Creates the test table test_items', $html);
+        self::assertStringContainsString('<code>acme/fixtures</code> · <code>Version20261030000000</code>', $html);
+        self::assertStringContainsString('Hier lässt sich vorher kein Backup anlegen', $html, 'The database is in memory.');
+        self::assertStringContainsString('<input type="hidden" name="withoutBackup" value="true" data-type="boolean">', $html);
+
+        $dashboard = $this->html($this->request('GET', '/cms', session: $session));
+        self::assertStringContainsString('2 Migrationen stehen aus', $dashboard);
+        self::assertStringContainsString('href="/cms/extensions#extensions-database"', $dashboard);
+    }
+
     public function testAdminsDoNotSeeIt(): void
     {
         $this->createUser('admin@example.org', ['admin']);
         $session = $this->signIn('admin@example.org');
+        $this->connection()->delete('migrations', ['version' => 'Frootbox\Core\Tests\Fixtures\Migrations\\Version20261030000001']);
+        self::assertStringNotContainsString('Migration steht aus', $this->html($this->request('GET', '/cms', session: $session)), 'Only for superusers.');
 
         self::assertStringNotContainsString('href="/cms/extensions"', $this->html($this->request('GET', '/cms/settings', session: $session)));
         self::assertSame(403, $this->request('GET', '/cms/extensions', session: $session)->getStatusCode());
+    }
+
+    protected function register(Registry $registry): void
+    {
+        $registry->migrations('Frootbox\Core\Tests\Fixtures\Migrations', \dirname(__DIR__, 3) . '/core/tests/Fixtures/Migrations', 'acme/fixtures');
+    }
+
+    protected function tables(): array
+    {
+        return [Version20261030000000::TABLE];
     }
 
     protected function extensions(): Extensions

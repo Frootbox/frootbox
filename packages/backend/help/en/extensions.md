@@ -11,7 +11,12 @@ own tables. **Active theme** marks the theme of the website and its
 parents.
 
 An installed extension is active. The developer adds one with Composer
-in the folder of the website and then runs `php bin/frootbox migrate`.
+in the folder of the website. If it brings tables, the card
+**Database** lists the pending migrations, and **Update now** runs them
+after a backup, like `php bin/frootbox migrate` in the console. If no
+backup can be made before, back up the database yourself and use
+**Update without a backup**. The dashboard points to pending
+migrations.
 **On … pages** shows where the blocks and layouts of an extension are.
 Look there before you remove it.
 
