@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c3a583866fd5b1ad82c3554a97644f42",
+    "content-hash": "a14a6341439f1043fae92c769d0654d0",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -1254,6 +1254,54 @@
                 "frootbox",
                 "privacy",
                 "statistics"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "frootbox/storage-s3",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/modules/storage-s3",
+                "reference": "004b4693f51204f2477ae46ea296332761bb5f56"
+            },
+            "require": {
+                "ext-simplexml": "*",
+                "frootbox/core": "^0.1",
+                "nyholm/psr7": "^1.8",
+                "php": ">=8.5",
+                "psr/http-message": "^2.0",
+                "symfony/http-client": "^8.1"
+            },
+            "type": "frootbox-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\StorageS3\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Frootbox\\StorageS3\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "S3-compatible storage for the Frootbox CMS: media and files from forms in a bucket, public media delivered from there",
+            "keywords": [
+                "cms",
+                "frootbox",
+                "object-storage",
+                "s3",
+                "storage"
             ],
             "transport-options": {
                 "symlink": true,
@@ -8267,6 +8315,7 @@
         "frootbox/search": 20,
         "frootbox/seo": 20,
         "frootbox/statistics": 20,
+        "frootbox/storage-s3": 20,
         "frootbox/theme-base": 20,
         "frootbox/theme-bohnenglueck": 20,
         "frootbox/webhooks": 20,

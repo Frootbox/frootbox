@@ -1,0 +1,36 @@
+{
+    "name": "frootbox/storage-s3",
+    "description": "S3-compatible storage for the Frootbox CMS: media and files from forms in a bucket, public media delivered from there",
+    "type": "frootbox-extension",
+    "license": "MIT",
+    "keywords": [
+        "cms",
+        "frootbox",
+        "storage",
+        "s3",
+        "object-storage"
+    ],
+    "require": {
+        "php": ">=8.5",
+        "ext-simplexml": "*",
+        "frootbox/core": "^0.1",
+        "nyholm/psr7": "^1.8",
+        "psr/http-message": "^2.0",
+        "symfony/http-client": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Frootbox\\StorageS3\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Frootbox\\StorageS3\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    }
+}

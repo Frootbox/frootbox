@@ -18,6 +18,7 @@
         "frootbox/search": "^0.1@dev",
         "frootbox/seo": "^0.1@dev",
         "frootbox/statistics": "^0.1@dev",
+        "frootbox/storage-s3": "^0.1@dev",
         "frootbox/theme-base": "^0.1@dev",
         "frootbox/webhooks": "^0.1@dev"
     },

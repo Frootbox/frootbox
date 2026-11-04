@@ -20,6 +20,7 @@
         "frootbox/google-fonts": "^0.1@dev",
         "frootbox/captcha-recaptcha": "^0.1@dev",
         "frootbox/webhooks": "^0.1@dev",
+        "frootbox/storage-s3": "^0.1@dev",
         "frootbox/rich-text": "^0.1@dev",
         "frootbox/theme-base": "^0.1@dev",
         "frootbox/theme-bohnenglueck": "^0.1@dev"
@@ -47,6 +48,7 @@
             "Frootbox\\GoogleFonts\\Tests\\": "packages/modules/google-fonts/tests/",
             "Frootbox\\CaptchaRecaptcha\\Tests\\": "packages/modules/captcha-recaptcha/tests/",
             "Frootbox\\Webhooks\\Tests\\": "packages/modules/webhooks/tests/",
+            "Frootbox\\StorageS3\\Tests\\": "packages/modules/storage-s3/tests/",
             "Frootbox\\Workbench\\Tests\\": "packages/tools/workbench/tests/",
             "Frootbox\\MigrateFrootbox1\\Tests\\": "packages/tools/migrate-frootbox1/tests/",
             "Frootbox\\RichText\\Tests\\": "packages/rich-text/tests/",
