@@ -46,11 +46,20 @@ backend's own templates, styles and scripts are not part of it.
   a notice on the dashboard for superusers.
 - Core: `#[AsAction(transactional: false)]` for `system.*` actions that
   cannot be undone, e.g. to change the schema.
+- Core: `bin/frootbox extension:check [target] [--json] [--strict]`
+  checks a package folder or an installed package without touching the
+  website: `composer.json`, `frootbox.yaml`, loading, the names of
+  actions, queries, field types and tables, migrations on an empty
+  database, its blocks and layouts, and the licenses of its
+  dependencies. `--json` lists what it brings. Without a target it
+  checks the packages in `extensions/`.
 
 ### Changed
 
 - Core: `Migrator` takes the connection and the migration sources and
   builds a fresh Doctrine factory for every run.
+- Core: `blocks:check` runs its checks through the new
+  `Component\ComponentCheck`, which `extension:check` shares.
 - Core: content an extension left behind when it was removed or updated
   no longer freezes a page. A block whose extension is gone, the view of
   a plugin, and a variant, option, field or area a block or layout no

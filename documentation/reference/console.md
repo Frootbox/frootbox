@@ -127,6 +127,20 @@ php bin/frootbox call <name> [<input>]
 | `name` | Name of the action or query, e.g. page.create |
 | `input` | Input as a JSON object |
 
+## `extension:check`
+
+Checks an extension package: names, migrations, blocks and licenses
+
+```
+php bin/frootbox extension:check [options] [--] [<target>]
+```
+
+| Argument or option | Description |
+|---|---|
+| `target` | A folder with composer.json and frootbox.yaml, or the name of an installed package |
+| `--json` | Print the reports as JSON |
+| `--strict` | Count hints as errors, e.g. in CI |
+
 ## `extensions`
 
 Lists the installed extensions in load order

@@ -53,6 +53,7 @@ php bin/frootbox make:extension acme/site --theme   # a child theme in extension
 php bin/frootbox make:extension acme/shop       # an extension with a class
 php bin/frootbox blocks                         # blocks available to editors
 php bin/frootbox blocks:check                   # schemas, templates, previews
+php bin/frootbox extension:check                # names, migrations, licenses of extensions/*
 php bin/frootbox seed content.yaml              # pages and media from a file ("upload" step, then media.create)
 php bin/frootbox actions                        # every action and query
 php bin/frootbox cache:clear                    # live, after changed templates

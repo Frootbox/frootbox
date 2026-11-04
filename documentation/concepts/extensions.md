@@ -66,6 +66,35 @@ extensions never collide:
 
 Names without a slash belong to the core.
 
+## Checking a package
+
+`bin/frootbox extension:check` checks a package before it goes to other
+websites, e.g. in CI:
+
+```
+php bin/frootbox extension:check extensions/acme-specials   # a folder
+php bin/frootbox extension:check frootbox/news              # an installed package
+php bin/frootbox extension:check --strict --json            # every package in extensions/
+```
+
+It boots the installation twice in a throwaway folder with SQLite in
+memory, once without the package and once with it, so the website stays
+as it is and the folder need not be installed. What the second boot has
+more belongs to the package. Errors are a missing or incomplete
+`composer.json` (name, license), a `frootbox.yaml` that cannot be read,
+a class that does not load, a name that does not start with the
+package (actions, queries, field types, and tables with
+`<vendor>_<package>_`), a theme with actions, queries or tables, a
+migration that fails on an empty database, and what `blocks:check`
+reports for its blocks and layouts. Hints are those of `blocks:check`,
+`frootbox/core` missing in `require`, and dependencies whose license is
+unknown or copyleft (GPL, AGPL, LGPL, MPL), as far as they are installed.
+`--strict` counts hints as errors. `--json` prints for each package its
+name, version, license, the Frootbox version it needs, the errors and
+hints with rule and place, what it brings (blocks, layouts, actions,
+queries, field types, tables, settings, languages of its texts and help)
+and its dependencies with their license.
+
 ## Where they live
 
 - **Modules for many websites** are their own Composer packages, from
