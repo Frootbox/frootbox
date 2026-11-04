@@ -256,6 +256,55 @@ that are no block.
 schemas and templates and hints at missing groups and previews,
 `cache:clear` empties `var/cache` after a deployment.
 
+### Consent
+
+Nothing loads from another server before the visitor agrees, and the
+core needs no cookie for it. An extension registers each service of
+another provider with its purpose and reach:
+
+```php
+$registry->add(ExternalService::class, new ExternalService(
+    'acme/stats/matomo', 'Matomo', 'Acme Hosting GmbH', 'https://acme.example/privacy',
+    Purpose::Statistics, Reach::Site,
+));
+```
+
+Content such as a video sits in `{{ external('acme/video/service', html) }}`
+and loads at its place after a click. A script on every page goes into the
+head inactive, e.g. from a listener on `BuildingHead`:
+`$event->head->add($consent->deferred('acme/stats/matomo', '<script src="…"></script>'))`.
+Then the core shows a banner with "Reject all", "Settings" and "Accept
+all" of equal weight, only where such a script stands and the visitor has
+not decided yet. `{{ privacy_settings() }}` puts the button to change the
+choice into the footer; without it, the core adds a floating one.
+
+The placeholder, the dialog and the banner are partials of the core in
+`partials/consent/` (`external.twig`, `settings.twig`, `banner.twig`). A
+theme overrides them file by file like its own partials, keeping the
+`fb-*` elements and the `data-external-*` and `data-consent-*`
+attributes the script needs.
+
+In the browser `window.frootboxConsent` tells `allowed(name)` (true,
+false or null), takes `set({name: true})` and `open()`, and fires
+`frootbox:consent` on `document` after each change. A consent tool of
+another provider takes over: its module registers
+`$registry->add(ConsentTool::class, new ConsentTool('acme/consent/tool', 'Acme Consent', AcmeConsent::class))`
+with a `ConsentToolProvider` (`ready()`, `head()` for its script), and the
+script calls `frootboxConsent.use({allowed(name), set(choices), open()})`
+(or leaves the object in `window.frootboxConsentTool` when it loads
+first) and `frootboxConsent.changed()` when the choice changes. The query
+`consent.services`, public and in the REST API, lists every service, so a
+tool needs no scanner.
+
+The setting "Keep a proof of consent" of the core (off by default) keeps
+each choice with a random ID, its version and the time, without address
+or browser, for 1095 days. The query `consent.proof.list` finds them by
+the ID the visitor reads in the privacy settings.
+
+The maintainer of Frootbox also offers a consent tool. The core prefers
+none: every tool uses the same interface and comes as a module of its
+own.
+
 Tests run against in-memory SQLite. Set `DATABASE_URL` to run them against
 MySQL or MariaDB, as the CI does.
 
