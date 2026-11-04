@@ -63,6 +63,11 @@ backend's own templates, styles and scripts are not part of it.
 
 - Core: `Migrator` takes the connection and the migration sources and
   builds a fresh Doctrine factory for every run.
+- Core: the registry remembers which package added an item with
+  `add()` (`Registry::origin()`) or a command (`commandsOf()`).
+  `system.extension-list` returns the jobs, search sources and commands
+  of each extension; **Extensions** in the backend also shows its
+  screens.
 - Backend: titles and descriptions of extensions are translated, the
   German texts of the official modules come with the backend.
 - Core: `blocks:check` runs its checks through the new

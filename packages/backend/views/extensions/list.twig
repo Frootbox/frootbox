@@ -29,6 +29,10 @@
             {%- if extension.actions is not empty %}{% set parts = parts|merge([t(['{count} action', '{count} actions'], {count: extension.actions|length})]) %}{% endif -%}
             {%- if extension.queries is not empty %}{% set parts = parts|merge([t(['{count} query', '{count} queries'], {count: extension.queries|length})]) %}{% endif -%}
             {%- if extension.fieldTypes is not empty %}{% set parts = parts|merge([t(['{count} field type', '{count} field types'], {count: extension.fieldTypes|length})]) %}{% endif -%}
+            {%- if screens[extension.name] ?? false %}{% set parts = parts|merge([t(['{count} screen', '{count} screens'], {count: screens[extension.name]|length}) ~ ' (' ~ screens[extension.name]|map(label => t(label))|join(', ') ~ ')']) %}{% endif -%}
+            {%- if extension.jobs is not empty %}{% set parts = parts|merge([t(['{count} job', '{count} jobs'], {count: extension.jobs|length})]) %}{% endif -%}
+            {%- if extension.searchSources is not empty %}{% set parts = parts|merge([t(['{count} search source', '{count} search sources'], {count: extension.searchSources|length})]) %}{% endif -%}
+            {%- if extension.commands is not empty %}{% set parts = parts|merge([t(['{count} command', '{count} commands'], {count: extension.commands|length})]) %}{% endif -%}
             {%- if extension.settings %}{% set parts = parts|merge([t('Settings')]) %}{% endif -%}
             {%- if extension.migrations %}{% set parts = parts|merge([t('Own tables')]) %}{% endif -%}
             {%- if pages[extension.name] ?? 0 %}{% set parts = parts|merge([t(['On {count} page', 'On {count} pages'], {count: pages[extension.name]})]) %}{% endif -%}

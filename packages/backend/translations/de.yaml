@@ -1171,6 +1171,18 @@ Only the core runs. Add extensions with Composer, see below.: Es läuft nur der 
   one: "{count} Feldtyp"
   other: "{count} Feldtypen"
 Own tables: Eigene Tabellen
+"{count} screen":
+  one: "{count} Bildschirm"
+  other: "{count} Bildschirme"
+"{count} job":
+  one: "{count} Auftrag"
+  other: "{count} Aufträge"
+"{count} search source":
+  one: "{count} Suchquelle"
+  other: "{count} Suchquellen"
+"{count} command":
+  one: "{count} Befehl"
+  other: "{count} Befehle"
 Active theme: Aktives Theme
 This website: Diese Website
 Add or remove: Hinzufügen oder entfernen

@@ -4,7 +4,7 @@ title: Erweiterungen
 **Erweiterungen** zeigt, was außer dem Kern installiert ist: Module wie
 News oder Formulare, Themes und die Pakete dieser Website. Zu jeder
 stehen die Version und was sie mitbringt, etwa Blöcke, Aktionen,
-Einstellungen und eigene Tabellen. **Aktives Theme** kennzeichnet das
+Bildschirme, Aufträge, Befehle, Einstellungen und eigene Tabellen. **Aktives Theme** kennzeichnet das
 Theme der Website und seine Eltern.
 
 Eine installierte Erweiterung ist aktiv. Wer die Website entwickelt,
