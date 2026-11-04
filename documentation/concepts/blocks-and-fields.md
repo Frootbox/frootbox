@@ -67,6 +67,17 @@ fields:
       text: { type: text, optional: true }
 ```
 
+A list gives its entries to loop over, each with `field()`, `value()`
+and `heading()` of its own. Visitors get only entries with a value:
+
+```twig
+<ul class="benefits">
+  {% for item in field('items') %}
+    <li>{{ item.heading('title', 1) }}<p>{{ item.field('text') }}</p></li>
+  {% endfor %}
+</ul>
+```
+
 Print fields with `field()`, without a condition. An empty optional
 field disappears for visitors, with any element that held nothing else.
 While editing it keeps its place and shows its `placeholder`. Use
@@ -79,6 +90,12 @@ While editing it keeps its place and shows its `placeholder`. Use
 
 Drafts may be unfinished; required fields and `min` are checked when a
 page is published.
+
+In a seed file or an action a field takes its value as JSON: a string
+for `headline` and `text`, `{media: <id>, alt: …}` for `image`,
+`{target: 'page:<id>', text: …}` for `link`, a list of entries for
+`list`. The [field types](../reference/field-types.md) give the format
+and the settings of each.
 
 ## Controllers
 

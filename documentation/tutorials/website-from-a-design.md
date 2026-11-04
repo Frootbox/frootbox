@@ -248,6 +248,25 @@ php bin/frootbox seed content/this-week.yaml
 Open `/this-week`: the page heading is the `h1`, the banner and the offer
 get `h2`, the footer shows the opening hours.
 
+Images come into a seed file in two steps: `upload` keeps a file (its
+path relative to the seed file), `media.create` adds it to the media
+library. An image field then names the medium by its id. A medium
+becomes public with the first published page that uses it:
+
+```yaml
+- upload: { file: media/rye.jpg }
+  as: rye
+- media.create:
+    upload: '${rye.token}'
+    texts: { en: { alt: Two rye loaves on a board } }
+  as: ryeImage
+
+# … then in the fields of a block:
+#   image: { media: '${ryeImage.id}' }
+```
+
+The format of each field's value is in the [field types](../reference/field-types.md).
+
 ## What you did not have to do
 
 - Write accessible markup for navigation, skip links, focus and the

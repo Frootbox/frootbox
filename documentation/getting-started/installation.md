@@ -47,7 +47,11 @@ first page. Sign in at http://localhost:8000/cms with the superuser.
 
 ## Name and language
 
-`config/app.yaml` holds what the developer decides and Git keeps:
+`config/app.yaml` holds what the developer decides and Git keeps. The
+skeleton starts with German as its only language and without a theme.
+Set the languages before the first page, since the first one is the
+default and has no prefix in the address, and choose a theme, e.g. the
+base theme the skeleton brings:
 
 ```yaml
 app:
@@ -62,7 +66,8 @@ languages:
 theme: frootbox/theme-base
 ```
 
-The first language is the default and has no prefix in the address.
+More languages can come at any time: pages show the content of the
+default language until they have a translation.
 
 ## The first page
 

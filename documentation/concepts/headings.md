@@ -12,7 +12,7 @@ from where the block stands.
 
 ```twig
 {{ heading('title', 0, {class: 'teaser__title'}) }}     {# the main heading of the block #}
-{% for item in items %}
+{% for item in field('items') %}
   {{ item.heading('question', 1) }}                    {# one rank below #}
 {% endfor %}
 {{ heading_text(article.title, 1, {}, article.url) }}  {# a title from data, as a link #}

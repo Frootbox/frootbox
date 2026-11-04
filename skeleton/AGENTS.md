@@ -53,7 +53,7 @@ php bin/frootbox make:extension acme/site --theme   # a child theme in extension
 php bin/frootbox make:extension acme/shop       # an extension with a class
 php bin/frootbox blocks                         # blocks available to editors
 php bin/frootbox blocks:check                   # schemas, templates, previews
-php bin/frootbox seed content.yaml              # pages and media from a file
+php bin/frootbox seed content.yaml              # pages and media from a file ("upload" step, then media.create)
 php bin/frootbox actions                        # every action and query
 php bin/frootbox cache:clear                    # live, after changed templates
 php bin/frootbox about                          # version, environment, database
@@ -110,7 +110,12 @@ Rules for templates:
 - Print fields with `field()` without a condition. While editing an empty
   field keeps its place and shows its placeholder, visitors get neither
   the field nor an element that only held empty fields. Use `value()` for
-  attributes and conditions.
+  attributes and conditions. A list field gives its entries to loop
+  over: `{% for item in field('items') %}{{ item.field('text') }}{% endfor %}`.
+- Values in seed files and actions follow the field types:
+  `php bin/frootbox reference:build` writes the reference of this
+  website to `documentation/reference/`, with every action, field type
+  and Twig function, e.g. an image is `{media: <id>, alt: …}`.
 - Links with `url()`, navigations with `navigation()`, the language with
   `language()` and `alternates()`.
 - Content of another server (video, map, script) only through

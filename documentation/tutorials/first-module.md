@@ -21,6 +21,8 @@ This creates `extensions/acme-specials/` with a `composer.json` (PSR-4
 namespace `Acme\Specials\` for `src/` and `Acme\Specials\Migrations\`
 for `migrations/`), the manifest `frootbox.yaml` and the class
 `src/SpecialsExtension.php`, which registers what the package brings.
+Its `composer.json` says `"license": "proprietary"`, as fits a package
+of one website; change it if you publish the package.
 After the one `composer require`, every change shows up at once.
 
 When it is done, the folder looks like this:
@@ -90,7 +92,8 @@ php bin/frootbox migrate
 ```
 
 Use `$table->ulid()` instead of `$table->id()` for ids that must exist
-before a row is saved, e.g. for drafts.
+before a row is saved, e.g. for drafts. The columns the `Blueprint`
+knows are listed in the [README of frootbox/database](../../packages/database/README.md#migrations).
 
 ## 3. Entity and repository
 
