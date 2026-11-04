@@ -24,3 +24,27 @@ Anbieter zustimmen, etwa Videos, Karten oder einer Statistik:
 
 Ein Banner zeigt die Website nur, wenn ein Dienst auf jeder Seite lädt.
 Inhalte wie ein Video fragen an ihrer Stelle.
+
+## E-Mail
+
+Unter **E-Mail** legst Du fest, wie die Website Mails verschickt, etwa
+die Einsendungen von Formularen. Ohne SMTP-Server gehen sie mit mail()
+von PHP hinaus. Das klappt auf den meisten Webservern, landet aber oft
+im Spam.
+
+- **Absender**: die Adresse, von der Mails kommen, am besten die des
+  SMTP-Kontos, z. B. info@example.org.
+- **SMTP-Server** und **Port**: von Deinem Mail-Anbieter, meist Port
+  587. Port 465 ist von Anfang an verschlüsselt.
+- **Benutzername** und **Passwort**: der Zugang des Postfachs. Das
+  Passwort wird verschlüsselt gespeichert. Mit Benutzername muss die
+  Verbindung verschlüsselt sein, damit das Passwort nie offen durchs
+  Netz geht.
+
+Mit **Testmail senden** geht sofort eine kurze Mail hinaus. Lehnt der
+Server sie ab, erscheint sein Fehler direkt dort.
+
+Die Karte zeigt, wie Mails gerade hinausgehen. Der Entwickler kann den
+Zugang in `.env` als `MAILER_DSN` setzen, das geht vor den Einstellungen
+hier. Im Entwicklungsmodus landen Mails im Log und erreichen niemanden,
+damit eine Kopie einer Live-Website nichts verschickt.

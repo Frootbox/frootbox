@@ -10,6 +10,8 @@ namespace Frootbox\Backend\Http\Settings;
 
 use Frootbox\Backend\View\BackendView;
 use Frootbox\Core\Action\Runner;
+use Frootbox\Core\Auth\Permissions;
+use Frootbox\Core\Mail\ShowMailStatus;
 use Frootbox\Core\Security\Secrets;
 use Frootbox\Core\Settings\ListSettings;
 use Psr\Http\Message\ResponseInterface;
@@ -27,11 +29,14 @@ final readonly class SettingsHandler implements RequestHandlerInterface
         private BackendView $view,
         private Runner $runner,
         private Secrets $secrets,
+        private Permissions $permissions,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        if (null === $this->view->user()) {
+        $user = $this->view->user();
+
+        if (null === $user) {
             return $this->view->requireUser($request) ?? $this->view->redirect('/');
         }
 
@@ -39,6 +44,8 @@ final readonly class SettingsHandler implements RequestHandlerInterface
             'extensions' => $this->runner->ask(new ListSettings()),
             // Without APP_SECRET no secret can be stored.
             'secretsAvailable' => $this->secrets->available(),
+            // How mails leave the server, on the card of the core about mail (decision 0269).
+            'mail' => $this->permissions->allows($user, 'mail.status') ? $this->runner->ask(new ShowMailStatus()) : null,
         ]);
     }
 }

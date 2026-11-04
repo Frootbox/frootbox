@@ -32,6 +32,9 @@
             <code class="fb-muted">{{ extension.package }}</code>
         </div>
         <div class="fb-card__body fb-stack fb-stack--lg">
+            {% if extension.package == 'frootbox/core.mail' and mail %}
+                {% include '@backend/settings/mail.twig' %}
+            {% endif %}
             {% if values is not empty %}
             <fb-form action="settings.update" refresh="{{ key }}" done="{{ t('The settings are saved.') }}">
                 <form class="fb-stack" novalidate>

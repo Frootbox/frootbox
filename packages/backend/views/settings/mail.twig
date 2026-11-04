@@ -1,0 +1,25 @@
+{#- How mails leave the server and a test mail, on the card "Email" (decision 0269). -#}
+{% import '@backend/ui.twig' as ui %}
+{% if mail.source == 'environment' %}
+    {% set text = mail.transport == 'smtp'
+        ? t('Mails go out over {host} as MAILER_DSN in .env says. It goes before the settings here.', {host: mail.host ?? '?'})
+        : t('MAILER_DSN in .env decides how mails go out ({transport}). It goes before the settings here.', {transport: mail.transport}) %}
+    {{ ui.alert({tone: 'info', title: t('Set in .env'), text: text}) }}
+{% elseif mail.source == 'settings' %}
+    {{ ui.alert({tone: 'success', title: t('Over SMTP'), text: t('Mails go out over the SMTP server {host}, port {port}.', {host: mail.host, port: mail.port})}) }}
+{% elseif mail.transport == 'log' %}
+    {{ ui.alert({tone: 'warning', title: t('Development mode'), text: t('Mails go to the log and reach nobody, also with an SMTP server here. To try one, set MAILER_DSN in .env.')}) }}
+{% else %}
+    {{ ui.alert({tone: 'info', title: t('With mail() of PHP'), text: t('Mails go out over the web server. With the SMTP server of your mailbox they reach their recipients more reliably and less often land in spam.')}) }}
+{% endif %}
+<p class="fb-muted">{{ t('Sender: {from}', {from: mail.from}) }}</p>
+{% if can('mail.test') %}
+<fb-form action="mail.test" done="{{ t('The test mail is sent.') }}">
+    <form class="fb-stack" novalidate>
+        {{ ui.field({label: t('Send a test mail to'), name: 'to', id: 'mail-test-to', type: 'email', optional: true, autocomplete: 'email', attrs: {'data-empty': 'null'}, hint: t('Empty: to the address of your account. It goes out at once, an error of the server shows here.')}) }}
+        <div class="fb-form__actions">
+            {{ ui.button({label: t('Send a test mail'), type: 'submit', variant: 'tonal'}) }}
+        </div>
+    </form>
+</fb-form>
+{% endif %}

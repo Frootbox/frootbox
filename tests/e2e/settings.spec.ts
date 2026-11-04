@@ -35,3 +35,23 @@ test('the superuser sees the jobs', async ({ page }) => {
     await expect(page.getByRole('link', { name: 'Aufträge' }).first()).toHaveAttribute('aria-current', 'page');
     await expect(page.getByRole('heading', { name: 'Warteschlange' })).toBeVisible();
 });
+
+// SMTP of the core (decision 0269): its own card with the state and a
+// test mail. Nothing listens on port 1, so the error of the server shows.
+test('an admin sends a test mail over the SMTP server of the settings', async ({ page }) => {
+    await signIn(page, '/cms/settings');
+    const card = page.locator('#settings-frootbox-core-mail');
+    await expect(card.getByRole('heading', { name: 'E-Mail' })).toBeVisible();
+    await expect(card.getByText('Mit mail() von PHP', { exact: true })).toBeVisible();
+
+    expect((await action(page, 'settings.update', { package: 'frootbox/core.mail', values: { host: '127.0.0.1', port: 1 } })).status).toBe(200);
+    await page.reload();
+    await expect(card.getByText('Mails gehen über den SMTP-Server 127.0.0.1 hinaus, Port 1.')).toBeVisible();
+
+    await card.getByLabel('Testmail senden an').fill('team@example.test');
+    await card.getByRole('button', { name: 'Testmail senden' }).click();
+    await expect(card.getByText('The SMTP server did not take the mail', { exact: false })).toBeVisible();
+
+    // Back to mail() of PHP, so other tests see the website as it was.
+    expect((await action(page, 'settings.update', { package: 'frootbox/core.mail', values: { host: '', port: 587 } })).status).toBe(200);
+});

@@ -48,6 +48,23 @@ final class SettingsScreenTest extends BackendTestCase
         self::assertSame(403, $this->request('GET', '/cms/jobs', session: $session)->getStatusCode());
     }
 
+    public function testTheCardAboutMailShowsHowMailsGoOutAndSendsATestMail(): void
+    {
+        $this->createUser('admin@example.org', ['admin']);
+        $session = $this->signIn('admin@example.org');
+
+        $html = $this->html($this->request('GET', '/cms/settings', session: $session));
+        self::assertStringContainsString('<code class="fb-muted">frootbox/core.mail</code>', $html, 'A card of its own (decision 0269).');
+        self::assertStringContainsString('id="settings-frootbox-core-mail"', $html);
+        self::assertStringContainsString('Mails go to the log and reach nobody', $html, 'In development nothing leaves.');
+        self::assertStringContainsString('name="values.host"', $html);
+        self::assertStringContainsString('<fb-form action="mail.test"', $html);
+
+        $sent = $this->action('mail.test', ['to' => null], $session)['data'] ?? null;
+        self::assertIsArray($sent);
+        self::assertSame(['log', 'default'], [$sent['transport'] ?? null, $sent['source'] ?? null]);
+    }
+
     public function testSuperusersSeeTheJobsAndTheWarningWithoutCron(): void
     {
         $this->createUser('root@example.org', ['superuser']);
