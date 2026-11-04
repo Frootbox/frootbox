@@ -25,6 +25,9 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          # Else the token of this repository goes along with every push to
+          # github.com and wins over SPLIT_TOKEN.
+          persist-credentials: false
 
       - name: Split every package into its mirror
         env:
