@@ -23,6 +23,12 @@ backend's own templates, styles and scripts are not part of it.
 - Reference: the block schema, every key of `block.yaml` and of the
   header of a view, with its value and where it may stand.
 
+### Fixed
+
+- Forms: `entry.release` and `entry.delete` fail with 422 for an id
+  without an entry and change nothing. Before, an empty id, e.g. from a
+  dialog opened before its script, reported success for nothing.
+
 ## [0.1.0] - 2026-11-04
 
 The developer preview: the first version for developers outside the
