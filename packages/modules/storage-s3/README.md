@@ -73,3 +73,9 @@ and `public/media/` (but not `public/media/fonts/`) can go.
   cURL.
 
 MIT licensed.
+
+## Source and issues
+
+This package is developed in the [Frootbox monorepo](https://github.com/Frootbox/frootbox)
+and mirrored here read-only. Questions, bugs and ideas go there, see the
+[documentation](https://github.com/Frootbox/frootbox/tree/main/documentation).

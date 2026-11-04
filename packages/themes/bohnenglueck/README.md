@@ -47,6 +47,12 @@ Then open `/` and `/en`. The Impressum has no English translation, so
 "Über uns" and `/shop` a redirect, both lead on with a 301. In development mode every change to the templates, the CSS
 or the tokens shows up on the next reload.
 
+## Source and issues
+
+This package is developed in the [Frootbox monorepo](https://github.com/Frootbox/frootbox)
+and mirrored here read-only. Questions, bugs and ideas go there, see the
+[documentation](https://github.com/Frootbox/frootbox/tree/main/documentation).
+
 ## License
 
 MIT, see [LICENSE](LICENSE).

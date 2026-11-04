@@ -20,3 +20,9 @@ imports.
 
 MIT licensed. The fonts keep their own licences, mostly the SIL Open
 Font License.
+
+## Source and issues
+
+This package is developed in the [Frootbox monorepo](https://github.com/Frootbox/frootbox)
+and mirrored here read-only. Questions, bugs and ideas go there, see the
+[documentation](https://github.com/Frootbox/frootbox/tree/main/documentation).

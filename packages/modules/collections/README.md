@@ -1,12 +1,11 @@
 # frootbox/collections
 
-Collections for the Frootbox CMS (decision 0246): entries of the same
+Collections for the Frootbox CMS: entries of the same
 kind such as references, projects or show homes, with drafts, versions
 and planned publishing, an image, a position, categories, tags, fields
 per collection from the backend and two blocks for any theme.
 
-Each collection is a space of the plugin `frootbox/collections/entry`
-(decision 0232). The first one is the default space; name it under
+Each collection is a space of the plugin `frootbox/collections/entry`. The first one is the default space; name it under
 "Spaces" in the backend or with `space.update` (`id: "default"`,
 `type: "frootbox/collections/entry"`), e.g. "References". Further ones
 come with `space.create`.
@@ -33,28 +32,28 @@ Everything goes through actions, also from the REST API and the AI:
 `frootbox/collections/entry.create`, `.update`, `.publish`, `.unpublish`,
 `.schedule`, `.discard`, `.delete` and the queries
 `frootbox/collections/entry.list`, `.show`, `space.choices` and
-`category.choices`. Categories are the ones of the core (decision 0233)
+`category.choices`. Categories are the ones of the core
 in the group `frootbox/collections/categories`; the actions take
 `categories` as a list of their ids. Tags are the common stock of the
-core (decision 0239): the actions take `tags` as ids, keys or labels,
+core: the actions take `tags` as ids, keys or labels,
 and new words become tags unless `config/tags.yaml` closes the list for
 `frootbox/collections/entry` or the collection. Roles can hold within a
-collection (decision 0245). The role "editor" gets
+collection. The role "editor" gets
 `frootbox/collections/entry.*`, `space.choices` and `category.choices`
 on installation; the fields stay with the admins.
 
-Further fields (decision 0240): a view of the theme declares them under
+Further fields: a view of the theme declares them under
 `object: fields:` in its header, e.g. an override of `EntryList` with
 the year and the client of a reference, and the actions take them as
 `fields`; `object.fields` with the type `frootbox/collections/entry`
 lists them. The form in the backend shows them under "More fields". In
 the editing mode editors change them right on the page
 (`object.update-field`), and the editor bar publishes the entry with
-the page (decision 0241).
+the page.
 
 ## Fields of a collection
 
-Admins add fields to each collection (decision 0250):
+Admins add fields to each collection:
 `frootbox/collections/field.create` with `space`, `kind` (`text`,
 `longtext`, `number`, `date`, `boolean`, `link`, `choice`, `image`,
 `file`), `labels` by language and, for a number, `unit` and
@@ -83,6 +82,12 @@ the fact sheet below, or lists them with `object_facts(entry)`.
 With `frootbox/backend` installed, the screen "Collections" appears in
 the sidebar at `/cms/collections`, with a tab for each collection and,
 for admins, its fields at `/cms/collections/fields?space=<id>`.
+
+## Source and issues
+
+This package is developed in the [Frootbox monorepo](https://github.com/Frootbox/frootbox)
+and mirrored here read-only. Questions, bugs and ideas go there, see the
+[documentation](https://github.com/Frootbox/frootbox/tree/main/documentation).
 
 ## License
 

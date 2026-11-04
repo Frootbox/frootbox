@@ -6,9 +6,9 @@ their parent (`parent: frootbox/theme-base`) and override its views and
 CSS file by file.
 
 It is the block library of Frootbox: 29 blocks in eight groups, three
-layouts and the partials around them (decisions 0120, 0124 and 0163).
+layouts and the partials around them.
 Every block has examples, so all of them show on the design page
-`/_design` (decisions 0205 and 0206).
+`/_design`.
 
 ## Contents
 
@@ -26,7 +26,7 @@ Every block has examples, so all of them show on the design page
 | Group | Blocks |
 |---|---|
 | Headers | `Hero` (variants `Default`, `Split`, `Background`), `PageHeader` |
-| Headings | widget `Heading`; its level follows from where it stands (decision 0129) |
+| Headings | widget `Heading`; its level follows from where it stands |
 | Texts | `TextWithHeading` (`Default`, `Wide`), `Quote`, `Notice`, `Table`, widget `Text` |
 | Images and media | `ImageWithText` (`Default`, `End`), `Gallery`, `Slider`, `Video` (`Default`, `Narrow`), `VideoEmbed` (YouTube or Vimeo after consent), `Map` (OpenStreetMap or Google Maps after consent), widget `Image` |
 | Teasers | `Cards`, `LinkList`, `Logos`, widget `Button` |
@@ -56,7 +56,7 @@ screen readers, so the text next to a symbol carries its meaning.
 
 ## Frameworks
 
-No framework is needed, and any can be used (decision 0167). A child
+No framework is needed, and any can be used. A child
 theme that wants Bootstrap puts its CSS into `assets/reset.css`: it then
 replaces the reset of the base theme and lies in the lowest layer, so
 the blocks always win while classes such as `.container`, `.row` and
@@ -66,8 +66,13 @@ handed to the framework, e.g. `--bs-primary: var(--color-primary)` in
 the child's `assets/site.css`.
 
 `tests/Fixtures/Themes/agency` in the repository shows a whole design
-built this way, compared pixel for pixel with its static original
-(decision 0212).
+built this way, compared pixel for pixel with its static original.
+
+## Source and issues
+
+This package is developed in the [Frootbox monorepo](https://github.com/Frootbox/frootbox)
+and mirrored here read-only. Questions, bugs and ideas go there, see the
+[documentation](https://github.com/Frootbox/frootbox/tree/main/documentation).
 
 ## License
 

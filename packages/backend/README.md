@@ -62,6 +62,12 @@ composer design-doc  # after changing tokens.yaml
 Values for colors, spaces and sizes come only from
 [`tokens.yaml`](tokens.yaml).
 
+## Source and issues
+
+This package is developed in the [Frootbox monorepo](https://github.com/Frootbox/frootbox)
+and mirrored here read-only. Questions, bugs and ideas go there, see the
+[documentation](https://github.com/Frootbox/frootbox/tree/main/documentation).
+
 ## License
 
 MIT, see [`LICENSE`](LICENSE). Lit (BSD-3-Clause), htmx (0BSD) and Tiptap

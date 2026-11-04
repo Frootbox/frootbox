@@ -2,11 +2,11 @@
 
 A design of an agency, `design/index.html`, built as a child theme of the
 base theme. The browser tests (`tests/e2e/agency.spec.ts`) compare both
-pixel for pixel, wide and narrow (decision 0212). It is never shipped.
+pixel for pixel, wide and narrow. It is never shipped.
 
 Its journal, a page with the news, shows the articles in markup of its
 own (`overrides/frootbox/news/blocks/ArticleList/`) with two further
-fields, a subtitle and a plan (decisions 0240, 0241).
+fields, a subtitle and a plan.
 `tests/e2e/object-fields.spec.ts` edits them on the website.
 
 Third-party files, only here:

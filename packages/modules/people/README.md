@@ -56,6 +56,12 @@ the first one.
 adds a café and a roastery, four people and a page "Team" below the
 start page that shows them with profiles.
 
+## Source and issues
+
+This package is developed in the [Frootbox monorepo](https://github.com/Frootbox/frootbox)
+and mirrored here read-only. Questions, bugs and ideas go there, see the
+[documentation](https://github.com/Frootbox/frootbox/tree/main/documentation).
+
 ## License
 
 MIT

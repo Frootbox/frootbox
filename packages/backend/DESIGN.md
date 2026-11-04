@@ -31,7 +31,7 @@ one-off markup in a screen.
   from `tokens.yaml`. Stylelint rejects anything else (see
   [Allowed and forbidden](#allowed-and-forbidden)).
 - **No business logic.** A screen shows what queries return and changes
-  data only through actions (decision 0114). A PHPStan rule rejects
+  data only through actions. A PHPStan rule rejects
   repositories, the `Writer` and the database connection in
   `Frootbox\Backend`.
 
@@ -338,14 +338,14 @@ Checkboxes of a tree, e.g. categories with subcategories, stand in
 `<ul class="fb-checks">`; a list in a list is indented by 24 px. The
 categories of a type in a form of a module come from
 `{% include '@backend/categories/choices.twig' with {type, chosen, disabled, prefix} %}`:
-a fieldset for each group, `categories[]` with the ids (decision 0233).
+a fieldset for each group, `categories[]` with the ids.
 
 `<ul class="fb-checks fb-checks--inline">` puts checkboxes side by side
 and wraps them, e.g. tags. The tags of an object come from
 `{% include '@backend/tags/choices.twig' with {type, space, chosen, disabled, prefix} %}`:
 the chosen ones, the presets and the most used ones as `tags[]`, and,
 unless the list is closed, a field with `data-type="comma"` for new
-words with their labels in a `<datalist>` (decision 0239).
+words with their labels in a `<datalist>`.
 
 ### Choice
 
@@ -386,7 +386,7 @@ semibold. `danger` has `role="alert"` and is read out at once, the others
 
 `action` is HTML at the end of the line, e.g. a small outline button
 "Undo" in its own `<fb-form>`. The alert stays until the screen changes,
-unlike a toast, so the action has no time limit (decision 0176).
+unlike a toast, so the action has no time limit.
 
 Use an alert for something the user should know on this screen, the
 error summary of a form included. Use a toast for a confirmation.
@@ -463,7 +463,7 @@ narrow screens. `label` names the `<nav>` for screen readers.
 </fb-tab-panels>
 ```
 
-The parts of a long screen, one at a time (decision 0235). The web
+The parts of a long screen, one at a time. The web
 component builds the bar from its parts: every `<section>` has an `id`
 and a heading as its first child (`h2` on a screen), which becomes the
 tab and is then only read out. `data-count` shows a number on the tab.
@@ -494,13 +494,13 @@ tab and is then only read out. `data-count` shows a number on the tab.
 - `fb-reveal` on an element inside opens its part. It fires
   `fb-tab-change` with `detail.id`.
 - An icon in the heading of a part stands before the name on its tab,
-  18 px in the color of the text (decision 0237). The name always stays.
+  18 px in the color of the text. The name always stays.
   Icons are optional and the component takes them as they come; best
   give all tabs of a bar an icon or none, mixed the tabs look of
   different weight. They help with many tabs and on narrow screens, two
   or three tabs need none.
 - A link `<a href>` among the parts is a tab to another screen, with
-  `data-count` and an icon like a part (decision 0237). So two screens
+  `data-count` and an icon like a part. So two screens
   share one bar, e.g. a form and its entries: each shows its own parts
   and links to those of the other (`…#fields`). The link is a `tab` that
   is never selected; the arrows only move the focus to it, Enter and
@@ -552,7 +552,7 @@ through invoker commands: `commandfor="<id>" command="show-modal"` and
 {{ ui.search(path('backend.search')) }}
 ```
 
-The search of the backend (decisions 0214, 0217) as `<fb-search>`: a
+The search of the backend as `<fb-search>`: a
 link to the screen of the search, which opens a dialog instead, and
 Ctrl+K or ⌘+K from anywhere (`shortcut`, once per page). The frame puts
 it at the top of the sidebar as `.fb-nav__item--search`, with a border,
@@ -584,7 +584,7 @@ sample `groups`, as on the design page.
 {{ ui.help(fb.help, path('backend.help')) }}
 ```
 
-The help about a screen (decisions 0215, 0218) as `<fb-help>`: a small
+The help about a screen as `<fb-help>`: a small
 ghost button "Help: <page>" with the info icon, which opens the page
 in a panel at the inline end instead of leaving the screen. Without a
 script, or with a modifier key, it is a link to the page on the screen
@@ -621,7 +621,7 @@ user. The panel of `<fb-help>` has the same rules (`proseStyles`).
 {{ ui.richtext({label: t('Text'), name: 'translations.de.text', value: article.text, lang: 'de', dir: 'ltr'}) }}
 ```
 
-Rich text in a form of the backend (decision 0220) as `<fb-rich-text>`
+Rich text in a form of the backend as `<fb-rich-text>`
 with the editor of the editing mode: the same nodes and marks, the same
 cleaning, stored as Tiptap JSON in a hidden field with
 `data-type="json"`. Above the text a toolbar on `--fb-surface-2` with
@@ -641,7 +641,7 @@ the field appears; until then it says "Loading the editor …".
 {{ ui.image({label: t('Image'), name: 'image', value: {media: id, alt: 'Beans'}, preview: url, file: 'beans.jpg', optional: true}) }}
 ```
 
-An image from the media (decision 0220) as `<fb-image-input>`, stored
+An image from the media as `<fb-image-input>`, stored
 like an image field as `{media, alt}`, `{}` for none. Without an image
 it is the button "Choose an image"; with one a preview (30 % of
 `--fb-size-dialog`, border, radius `--fb-radius-md`), the file name,
@@ -657,7 +657,7 @@ its shadow root and use the tokens only.
 {{ ui.file({label: t('Price list'), name: 'fields.prices', value: {media: id}, file: 'prices.pdf', optional: true}) }}
 ```
 
-A document from the media to download (decision 0250), the same
+A document from the media to download, the same
 `<fb-image-input>` with `kind="document"`, stored like a file field as
 `{media, text}`. With a file it shows the file name, the field "Text of
 the link" (empty for the title of the file) and the buttons "Change"
@@ -676,7 +676,7 @@ by file name, without previews.
 ```
 
 Every form that changes something runs one action through
-`<fb-form>` (decision 0115). It sends the fields as JSON to
+`<fb-form>`. It sends the fields as JSON to
 `POST <backend.path>/actions/<action>` with the CSRF token and shows the
 answer:
 
@@ -701,8 +701,7 @@ answer:
   are left out.
 - `refresh="page-tree page-detail"` loads the current address again
   after success and replaces only the elements with these ids; focus
-  goes to the element with the same id or to `[data-fb-focus]` in it
-  (decision 0116). `base="/items/de/2"` takes errors below that JSON
+  goes to the element with the same id or to `[data-fb-focus]` in it. `base="/items/de/2"` takes errors below that JSON
   pointer to the fields of the form, e.g. `/items/de/2/label` to `label`.
   An error without a field names the last part of its pointer.
 - `data-type="datetime"` on a `datetime-local` field sends the time with
@@ -729,7 +728,7 @@ shows it.
 
 ### Saving
 
-Nothing in the backend saves by itself (decision 0130). A button that is
+Nothing in the backend saves by itself. A button that is
 the action itself (e.g. "Lock for visitors") says that it acts at once.
 A form that edits something has three states:
 
@@ -747,7 +746,7 @@ A form that edits something has three states:
 ```
 
 - `saves: true` marks the save button (`data-fb-saves`) and makes it
-  `tonal` (decision 0131). Other buttons in a form, e.g. "Create the
+  `tonal`. Other buttons in a form, e.g. "Create the
   token", do not get the status.
 - `<fb-form>` remembers the input as it would be sent when it loads and
   after success. While the input differs it has `dirty`, its save
@@ -817,7 +816,7 @@ the first entry. Centered, padding 56 px 24 px, dashed 2 px border
 ### Error page
 
 `@backend/error/message.twig`, rendered by `BackendErrorPage` for every
-error below the backend path (decision 0132). Signed in, it sits in the
+error below the backend path. Signed in, it sits in the
 frame with the menu and marks the area; a guest gets a card like the
 sign-in. From top to bottom: the icon in a 56 px circle (`--fb-size-row`) in
 `--fb-accent-soft`, "Error 404" small and muted, the title as
@@ -829,8 +828,7 @@ by status: missing (404, 410), forbidden (403), failed (5xx), other.
 On pages of the website, `site-access.twig` answers the password of a
 protected website (401) and an ended preview link (410) as a card like
 the sign-in: title, name of the website, one sentence, the password
-field with "Continue" and below the card "Sign in to edit" (decisions
-0152 to 0155).
+field with "Continue" and below the card "Sign in to edit".
 
 ### Split
 
@@ -841,10 +839,9 @@ field with "Continue" and below the card "Sign in to edit" (decisions
 </div>
 ```
 
-A narrow side, e.g. a tree, next to the main part, e.g. its details
-(decision 0116). 24 px apart; the side starts at `--fb-size-narrow` and
+A narrow side, e.g. a tree, next to the main part, e.g. its details. 24 px apart; the side starts at `--fb-size-narrow` and
 the main part takes the rest. When less than about 860 px is left, they
-wrap, side on top. `.fb-split__side--sticky` (decision 0135) keeps a long
+wrap, side on top. `.fb-split__side--sticky` keeps a long
 side in view from a window of 1240 px: it stays at the top and its last
 child scrolls by itself.
 
@@ -888,7 +885,7 @@ padding 20 px. Smaller than the empty state, it sits inside a card.
 </fb-tree>
 ```
 
-Pages or menu items as a tree that can be rearranged (decision 0116).
+Pages or menu items as a tree that can be rearranged.
 Each row is at least 56 px high and indents 24 px per level
 (`data-depth`, at most 6). The link covers the row; the current one has
 `aria-current="page"`, `--fb-accent-soft` and a 3 px line on the left. A
@@ -908,16 +905,14 @@ category, stay clickable above the link.
 - `data-fixed` keeps a row in place (the start page), `data-leaf` takes
   no children, `roots` allows the top level, `depth="2"` limits the
   levels.
-- A row that is only shown, e.g. a page above the own branch (decision
-  0118), has `data-fixed data-leaf data-outside` and a
+- A row that is only shown, e.g. a page above the own branch, has `data-fixed data-leaf data-outside` and a
   `<span class="fb-tree__link">` instead of a link: muted text, regular
   weight, no status, skipped by the arrow keys.
 
 Put a hint like "Drag to move, or Alt and the arrow keys." in the
 header and link it with `aria-describedby` from the movable links.
 
-**Compact tree** (`<ul class="fb-tree fb-tree--compact">`, decision
-0135), for long trees like the sitemap: one line per row, at least 36 px
+**Compact tree** (`<ul class="fb-tree fb-tree--compact">`), for long trees like the sitemap: one line per row, at least 36 px
 (`--fb-size-control-sm`), titles in 14 px cut with "…" (put the full
 title, the path and the status into `title`), 16 px per level with thin
 guide lines, `data-depth` up to 9. The handle shows only on hover or
@@ -949,9 +944,9 @@ focus, in the step to the left.
   the way to the current link stays open. A tree that scrolls by itself
   scrolls to the current link and keeps its place when loaded again.
 - Which branches start open is up to the screen; the sitemap opens
-  whole levels while they fit into 50 rows (decision 0136).
+  whole levels while they fit into 50 rows.
 
-**Search in a tree** (decision 0136):
+**Search in a tree**:
 
 ```html
 <fb-tree-filter class="fb-tree-filter" for="page-tree" found="{count} pages found" one="One page found" empty="No page found">
@@ -974,7 +969,7 @@ hit, Enter opens it, Escape empties the field and brings the tree back.
 
 `<fb-navigation name="main" language="de" items="[…]" refresh="…">`
 holds the items of a navigation in one language and saves them all with
-`navigation.update` (decision 0116). Inside are an `<fb-tree movable
+`navigation.update`. Inside are an `<fb-tree movable
 roots depth="…">` with the items (moves are saved at once) and a
 `<dialog>` with an `<fb-form>` that edits one item: `_path` is its place
 (`"2.0"`, empty for a new one), `data-types="url anchor"` shows a field
@@ -1004,13 +999,12 @@ item.
 </fb-focus>
 ```
 
-The media library (decision 0126). `.fb-media-grid` shows square tiles
+The media library. `.fb-media-grid` shows square tiles
 with the file name below; the image is decoration (`alt=""`), the name
 is the text of the link. The chosen tile has `aria-current="true"` or,
-as a button, `aria-pressed="true"`. A video (decision 0177) shows its
+as a button, `aria-pressed="true"`. A video shows its
 first picture and `.fb-media-grid__kind` with the video icon in the
-corner; in the details `.fb-media-video` is the player. A document
-(decision 0179) shows `.fb-media-grid__file`, the file icon with its
+corner; in the details `.fb-media-video` is the player. A document shows `.fb-media-grid__file`, the file icon with its
 format on the surface of the tile; its details have no focus point, only
 the title per language that names the link, and a button that opens the
 file.
@@ -1024,7 +1018,7 @@ file.
   `disabled` takes nothing. `uploadMedium(url, file, folder)` does the
   same for one file in a script.
 - Files go in parts of the size in `<meta name="fb-upload-part">`
-  (`sendInParts()` in `ui/parts.js`, decision 0177), so large videos
+  (`sendInParts()` in `ui/parts.js`), so large videos
   arrive on any server; `{percent}` in `progress` follows the current
   file. `accept` (`image`, `video`, `document`, empty for all) limits the file
   dialog, `replace` replaces the file of a medium and `source` adds a
@@ -1037,11 +1031,10 @@ file.
 In the editing mode the bar has its own dialog for images (`media.js`):
 the library with search and upload, the alternative text for the place
 and "Remove the image". For a video field it has two tabs, "Video" and
-"Poster image", each with only the media of its kind. For a file field
-(decision 0179) it lists the documents as `.file-tile` (file icon and
+"Poster image", each with only the media of its kind. For a file field it lists the documents as `.file-tile` (file icon and
 format) and asks for a link text instead of the alternative text.
 
-For an icon field (decisions 0179, 0182) the bar has a dialog of the
+For an icon field the bar has a dialog of the
 same build (`icon-picker.js`): a "Set" select (all sets, the theme, sets
 of extensions, own symbols, each with its count; only shown with more
 than one set), a search and "Upload an SVG" in `.media-tools`, then a
@@ -1057,7 +1050,7 @@ settings panel shows the chosen symbol on a `.link-field` button
 <span class="fb-swatch" style="--fb-swatch: #8a4b2a" aria-hidden="true"></span>
 ```
 
-A colour of the website, e.g. on the screen "Design" (decision 0127).
+A colour of the website, e.g. on the screen "Design".
 The colour comes from the data through `--fb-swatch`, never from a rule
 of the backend; the text next to it names the colour, so the swatch is
 hidden from screen readers.
@@ -1140,11 +1133,11 @@ Below "View the website", `#fb-site-notices` holds notes on the state of
 the website that nobody should forget, as `.fb-nav__item--small
 .fb-nav__item--notice` on `--fb-warning-bg` / `--fb-warning-text` with a
 small icon, e.g. "Website is password protected" with a lock, leading to
-the screen "Access" (decision 0155). The container is always there, so a
+the screen "Access". The container is always there, so a
 screen refreshes it with `refresh="… fb-site-notices"`.
 
 An item may carry a number to look at, from a query its screen names
-(`Screen(count: 'comment.count')`, decision 0156): `.fb-nav__count` at
+(`Screen(count: 'comment.count')`): `.fb-nav__count` at
 the end of the item, `--fb-accent` / `--fb-on-accent`, 12 px semibold,
 fully rounded, at least 20 px wide, with ", 3 open" for screen readers.
 Zero shows nothing. The menu has the id `fb-nav`, so a screen refreshes
@@ -1152,7 +1145,7 @@ the number with `refresh="… fb-nav"`.
 
 ### Comment
 
-`.fb-comment` for one comment of a thread (decision 0156): a meta line
+`.fb-comment` for one comment of a thread: a meta line
 (`.fb-comment__meta`, 14 px) with the author in semibold, a neutral badge
 "Preview link" for guests and the time muted, then the text
 (`.fb-comment__body`), kept as written with line breaks. Replies get
@@ -1172,9 +1165,8 @@ paint. It fires `fb-theme-change` with `detail.theme`.
 
 ### Editor bar
 
-`<fb-editor-bar>`, the editor bar (German "Redaktionsleiste", decision
-0137), is the bar of the editing mode on pages of the website, not on
-backend screens (decision 0119). Docs and trainings call it by that name;
+`<fb-editor-bar>`, the editor bar (German "Redaktionsleiste"), is the bar of the editing mode on pages of the website, not on
+backend screens. Docs and trainings call it by that name;
 "toolbar" is only the bar of rich text. It lives in its own shadow DOM
 with `all: initial` on the host and the tokens of the backend on
 `:host`, so neither the theme nor the backend CSS reaches it. The script
@@ -1186,18 +1178,18 @@ data from the JSON block `#fb-edit-config` in the head.
   the layout of the page; the page only
   gets room at its end (`padding-block-end` on `body`, the measured
   height of the bar plus 2rem), so the footer can be reached.
-- Content (decision 0139): only commands for the page in view, in order
+- Content: only commands for the page in view, in order
   of use. Switch "Edit" (`role="switch"`), "Undo", "Publish" (primary),
   "More", collapse, and the status docked at the end. No logo: whoever
   sees the bar is signed in. Editing off leaves the switch, "More" and
   collapse.
-- The bar keeps its width while one works (decision 0140). "Undo" and
+- The bar keeps its width while one works. "Undo" and
   "Publish" stay in place with nothing to do, muted with
   `aria-disabled="true"` and a tooltip that says why; they stay
   reachable by keyboard.
 - The status sits flush at the end, separated by `--fb-border`, with the
   end radii of the bar. It answers one question, whether visitors see
-  what one sees (decision 0141): published (dot, `--fb-success-bg`),
+  what one sees: published (dot, `--fb-success-bg`),
   pending changes (dot, `--fb-warning-bg`), draft (ring,
   `--fb-warning-bg`); an error (warning, `--fb-danger-bg`) goes first.
   It only changes text, mark and colour. All texts lie in one grid cell
@@ -1239,8 +1231,7 @@ data from the JSON block `#fb-edit-config` in the head.
   `getBoundingClientRect()`; the page itself only gets a rule without a
   layer for `fb-field`, `fb-area` and `[data-fb-field]`.
 - When publishing fails, every field it names gets an outline in
-  `--fb-danger` with its label in `--fb-danger` and `--fb-on-danger`
-  (decision 0143), also with "Show all places" off. The label names the
+  `--fb-danger` with its label in `--fb-danger` and `--fb-on-danger`, also with "Show all places" off. The label names the
   field; only the field in focus or under the mouse adds the reason. The
   status shows the error and opens by itself: the message, how many
   fields still need something, a list of the fields the page does not
@@ -1248,7 +1239,7 @@ data from the JSON block `#fb-edit-config` in the head.
   which scrolls the first one to the middle and focuses it. A field loses
   its outline once a value for it is saved; with none left the
   explanation closes.
-- List entries (decision 0145): the bar finds each entry from its fields
+- List entries: the bar finds each entry from its fields
   and marks it `data-fb-entry`. The entry under the pointer or with the
   focus gets a dashed outline without a label and, inside its top end
   corner, the same toolbar as a block (`.block-tools.entry-tools`):
@@ -1259,7 +1250,7 @@ data from the JSON block `#fb-edit-config` in the head.
   again with the focus in the entry. Alt+F10 in an entry reaches its
   toolbar, again Alt+F10 that of the block, Escape goes back to the
   field.
-- **Field tools** (decision 0150): the label of the field under the
+- **Field tools**: the label of the field under the
   pointer or with the focus carries the buttons of its type and becomes
   a `role="toolbar"` named "Field <label>". Icon buttons of
   `--fb-space-6` (24 px) in `--fb-accent` with a line in
@@ -1277,12 +1268,11 @@ data from the JSON block `#fb-edit-config` in the head.
   `customElements.get('fb-editor-bar').fieldTools(type, factory)`, see
   `resources/js/edit/field-tools.js`.
 
-Editing fields (decision 0122) keeps the look of the theme: the text is
+Editing fields keeps the look of the theme: the text is
 typed where it stands, nothing is replaced by a form.
 
 - An empty field shows its placeholder, else its label at half opacity;
-  a field emptied by hand is cleared, so it shows it again (decision
-  0144). Templates print optional fields without a condition.
+  a field emptied by hand is cleared, so it shows it again. Templates print optional fields without a condition.
 - `headline` and `text` become `contenteditable="plaintext-only"`. Enter
   ends a headline, Esc takes back what is not saved yet. Saving runs a
   second after the last input and when the field is left; the status
@@ -1299,13 +1289,12 @@ typed where it stands, nothing is replaced by a form.
   buttons keep the selection (no focus on mouse down). First a native
   `<select>` "Text style" (`--fb-size-control-sm`, `--fb-radius-sm`,
   `--fb-text-sm`): "Text", "Heading", "Subheading", "Small heading", as
-  many ranks as the field offers (decision 0129); the page decides the
+  many ranks as the field offers; the page decides the
   level, the editor shows it like visitors see it. Last "Other writing
   direction" (icon `direction`, pressed while the block has its own
   `dir`): turns paragraphs, headings and quotes of the selection the
-  other way than the field, e.g. English in Arabic, and back (decision
-  0133).
-- **Toolbar of a table** (field type `table`, decision 0187): the same
+  other way than the field, e.g. English in Arabic, and back.
+- **Toolbar of a table** (field type `table`): the same
   bar with a native `<select>` "Rows and columns" in place of the text
   style (insert a row above or below, a column before or after, delete
   the row or column of the cursor; actions that do not apply are
@@ -1325,12 +1314,12 @@ typed where it stands, nothing is replaced by a form.
   own markup with `value()` is shown but not editable on the page, only
   in the settings of the block.
 - Empty fields show their label at half opacity, so they can be reached.
-- Fields of the website (`data-fb-site`, decision 0128), e.g. in the
+- Fields of the website (`data-fb-site`), e.g. in the
   footer, look and behave like fields of the page and are saved with
   `site.update-field`. Their draft counts like one of the page: the
   status says "Pending changes", "Publish" and "Discard the draft" act on both.
 
-Arranging blocks (decision 0123), from `resources/js/edit/arranging.js`:
+Arranging blocks, from `resources/js/edit/arranging.js`:
 
 - **Block tools**: a `role="toolbar"` named "Block <title>" above the top
   end of the block under the pointer or focus (inside it near the top
@@ -1347,7 +1336,7 @@ Arranging blocks (decision 0123), from `resources/js/edit/arranging.js`:
   blocks that also finds keywords and group names. Only blocks the area
   allows; a full area says so. Clicking an empty area opens it. Up to
   eight blocks the dialog is `--fb-size-form` wide; above it is
-  `--fb-size-content` wide, with the groups (decision 0148) as a list of
+  `--fb-size-content` wide, with the groups as a list of
   toggle buttons with counts at the start (`--fb-accent-soft` when
   chosen, a scrolling row on narrow screens) and a fixed height, so it
   does not jump between groups. While searching, the results come from
@@ -1368,14 +1357,14 @@ Arranging blocks (decision 0123), from `resources/js/edit/arranging.js`:
   remove) and "Add an entry". A change saves when the field is left.
 - Every structural change loads the page again; the focus returns to the
   block and an open panel opens again.
-- **Share a preview** (menu "More", section Website, decision 0152): a
+- **Share a preview** (menu "More", section Website): a
   dialog with note, "Works for" as a select (1 to 90 days, 14 chosen) and
   a hint that the link shows all drafts. After "Create the link" the
   same dialog shows the address in a read-only monospace field on
   `--fb-surface-2` with "Copy link" (primary), "Done" and a link "All
   preview links" to the screen "Access". The details of the status say
   when the website is password protected.
-- **Comments** (decision 0156): an icon button with the number of open
+- **Comments**: an icon button with the number of open
   threads of the page in an accent pill, between the page controls and
   "More". It opens a side panel like the settings of a block: "Comment"
   (primary) starts picking a place as in the preview note (a click on a
@@ -1385,7 +1374,7 @@ Arranging blocks (decision 0123), from `resources/js/edit/arranging.js`:
   "Mark as done" / "Open again" and "Delete thread" with a confirmation
   in place. Numbered pins mark the places; the one of the chosen thread
   has a focus ring.
-- **Outline** (menu "More", section This page, decision 0129): a side
+- **Outline** (menu "More", section This page): a side
   panel like the comments with the headings of the draft from
   `page.outline`, indented by level (`--fb-space-4` per level), each a
   row button with the level ("H2", `--fb-text-xs` semibold muted) and its
@@ -1399,7 +1388,7 @@ Arranging blocks (decision 0123), from `resources/js/edit/arranging.js`:
 ### Preview note
 
 `<fb-preview-note>` from `assets/build/preview.js` (no Lit) for guests
-with a preview link instead of the bar (decision 0152): shielded like the
+with a preview link instead of the bar: shielded like the
 bar (`all: initial` on `:host`, tokens from the brand), fixed at the
 bottom centre on `--fb-layer-edit`, `--fb-surface` with `--fb-border`,
 `--fb-radius-lg` and `--fb-shadow-lg`, 14 px. "Preview, not published
@@ -1407,7 +1396,7 @@ yet" semibold, until when the link works muted, and "End the preview" as
 a small link button on `--fb-surface-2`. It wraps on narrow screens and
 is not printed.
 
-On pages it also has "Comment" and "Comments" (decision 0156). The host
+On pages it also has "Comment" and "Comments". The host
 covers the window without catching the pointer, so pins and panels
 position themselves. "Comment" (pressed while active) shows a hint on
 `--fb-inverse-bg` at the top start with "The whole page" and "Cancel",
@@ -1568,7 +1557,7 @@ $registry->add(Brand::class, new Brand(
   falls below 4.5:1.
 - `helpName`, `helpUrl` (https or mailto:) and `helpPhone` add "Help
   from <helpName>" with both at the top of the screen "Help", e.g. for
-  the agency that looks after the website (decision 0215).
+  the agency that looks after the website.
 - Overriding views of the backend file by file is possible but breaks on
   updates; prefer the brand and your own screens.
 
@@ -1607,6 +1596,6 @@ $registry->add(SearchCommand::class, new SearchCommand('New order', 'acme.orders
 ```
 
 Help pages lie in `help/<language>/<name>.md` of the package, English
-as the source (decision 0218). `about: [screen:acme.orders]` in the
+as the source. `about: [screen:acme.orders]` in the
 head makes the help button of that screen open the page, also for
 routes below it such as `acme.orders.show`.

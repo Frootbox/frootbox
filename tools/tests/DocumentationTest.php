@@ -12,8 +12,9 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
 /**
- * The public documentation links only to files that exist and names no
- * internal decision (decisions 0265, 0272).
+ * The public texts (documentation, READMEs, help, DESIGN.md) link only to
+ * files that exist and name no internal decision (decisions 0265, 0272).
+ * Comments in the code keep their numbers.
  */
 #[CoversNothing]
 final class DocumentationTest extends TestCase
@@ -23,11 +24,17 @@ final class DocumentationTest extends TestCase
     public function testLinksLeadToFilesAndNoDecisionIsNamed(): void
     {
         $files = [self::ROOT . '/README.md', self::ROOT . '/CONTRIBUTING.md', self::ROOT . '/SECURITY.md', self::ROOT . '/CHANGELOG.md', self::ROOT . '/skeleton/AGENTS.md'];
-        $items = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(self::ROOT . '/documentation', \FilesystemIterator::SKIP_DOTS));
+        foreach (['documentation', 'packages', 'tests/Fixtures'] as $folder) {
+            $items = new \RecursiveIteratorIterator(new \RecursiveCallbackFilterIterator(
+                new \RecursiveDirectoryIterator(self::ROOT . '/' . $folder, \FilesystemIterator::SKIP_DOTS),
+                // Fixtures of tests may hold broken links on purpose.
+                static fn(\SplFileInfo $item): bool => !\in_array($item->getFilename(), ['vendor', 'node_modules'], true) && !str_ends_with($item->getPathname(), '/tests/Fixtures'),
+            ));
 
-        foreach ($items as $item) {
-            if ($item instanceof \SplFileInfo && 'md' === $item->getExtension()) {
-                $files[] = $item->getPathname();
+            foreach ($items as $item) {
+                if ($item instanceof \SplFileInfo && 'md' === $item->getExtension()) {
+                    $files[] = $item->getPathname();
+                }
             }
         }
 
@@ -38,7 +45,7 @@ final class DocumentationTest extends TestCase
             $text = (string) file_get_contents($file);
             $name = substr((string) realpath($file), \strlen((string) realpath(self::ROOT)) + 1);
 
-            if (1 === preg_match('/decisions? \d{4}/', $text)) {
+            if (1 === preg_match('/decisions?\s+\d{4}/', $text)) {
                 $decisions[] = $name;
             }
 
