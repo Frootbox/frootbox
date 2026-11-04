@@ -296,7 +296,7 @@ function copyDirectory(string $from, string $to): void
     }
 
     foreach ($entries as $entry) {
-        if (in_array($entry, ['.', '..', 'vendor', '.env'], true)) {
+        if (in_array($entry, ['.', '..', 'vendor', '.env', 'LICENSE', '.gitattributes'], true)) {
             continue;
         }
 
