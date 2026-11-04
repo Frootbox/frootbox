@@ -1,5 +1,5 @@
-title: 'Basis'
-description: 'Basis-Theme: Layouts, Tokens, Bausteine und Blöcke, auf denen Themes aufbauen'
+title: Base
+description: 'The base theme: layouts, tokens, building blocks and blocks that themes build on'
 theme:
   # Tokens with a type can be changed in the editing mode (decision 0127),
   # child themes change the value with the short form. Scales stay fixed
