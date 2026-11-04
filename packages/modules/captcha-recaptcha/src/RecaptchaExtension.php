@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Frootbox\CaptchaRecaptcha;
 
 use Frootbox\Core\Consent\ExternalService;
+use Frootbox\Core\Consent\Purpose;
 use Frootbox\Core\Extension\Extension;
 use Frootbox\Core\Extension\Registry;
 use Frootbox\Forms\Captcha\Captcha;
@@ -24,7 +25,7 @@ final class RecaptchaExtension implements Extension
     public function register(Registry $registry): void
     {
         $registry->settings(RecaptchaSettings::class);
-        $registry->add(ExternalService::class, new ExternalService(self::NAME, 'reCAPTCHA', 'Google Ireland Limited', 'https://policies.google.com/privacy'));
+        $registry->add(ExternalService::class, new ExternalService(self::NAME, 'reCAPTCHA', 'Google Ireland Limited', 'https://policies.google.com/privacy', Purpose::Security));
         $registry->add(Captcha::class, new Captcha(
             self::NAME,
             'reCAPTCHA',
