@@ -71,7 +71,7 @@ test('creates, publishes and restores a page', async ({ page }) => {
     await expect(page.locator('.fb-toast').last()).toHaveText('Die Seite ist veröffentlicht.');
     expect((await page.request.get(`/${slug}`)).status()).toBe(200);
 
-    await detail(page).getByLabel('Titel').fill(`${title} neu`);
+    await detail(page).getByLabel('Titel', { exact: true }).fill(`${title} neu`);
     await detail(page).getByRole('button', { name: 'Speichern' }).first().click();
     await expect(status(page)).toHaveText('Änderungen offen');
     await detail(page).getByRole('button', { name: 'Veröffentlichen' }).click();
@@ -250,7 +250,7 @@ test('finds a page in the sitemap', async ({ page }) => {
 
     await search.press('Enter');
     await expect(page).toHaveURL(new RegExp(`/cms/pages/${child.id}$`));
-    await expect(detail(page).getByLabel('Titel')).toHaveValue(`Tiefe Seite ${word}`);
+    await expect(detail(page).getByLabel('Titel', { exact: true })).toHaveValue(`Tiefe Seite ${word}`);
 
     await search.press('Escape');
     await expect(search).toHaveValue('');
@@ -267,23 +267,23 @@ test('marks unsaved changes and asks before they get lost', async ({ page }) => 
     const visibility = detail(page).locator('fb-form[action="page.update"]').nth(1);
 
     await expect(save).toHaveClass(/fb-button--tonal/);
-    await form.getByLabel('Titel').fill(`${title} neu`);
+    await form.getByLabel('Titel', { exact: true }).fill(`${title} neu`);
     await expect(save).toHaveClass(/fb-button--primary/);
     await expect(form.getByRole('status')).toHaveText('Nicht gespeichert');
 
-    await form.getByLabel('Titel').fill(title);
+    await form.getByLabel('Titel', { exact: true }).fill(title);
     await expect(save).toHaveClass(/fb-button--tonal/);
     await expect(form.getByRole('status')).toHaveText('');
 
     // Another page in the tree asks first; staying keeps the change.
-    await form.getByLabel('Titel').fill(`${title} neu`);
+    await form.getByLabel('Titel', { exact: true }).fill(`${title} neu`);
     await visibility.getByLabel('Suchmaschinen').selectOption({ index: 1 });
     page.once('dialog', (dialog) => {
         expect(dialog.message()).toBe('Deine Änderungen sind nicht gespeichert. Trotzdem verlassen?');
         void dialog.dismiss();
     });
     await page.locator('#page-tree').getByRole('link', { name: /Über uns/ }).click();
-    await expect(form.getByLabel('Titel')).toHaveValue(`${title} neu`);
+    await expect(form.getByLabel('Titel', { exact: true })).toHaveValue(`${title} neu`);
 
     // Saving one form keeps the changes of the other.
     await save.click();

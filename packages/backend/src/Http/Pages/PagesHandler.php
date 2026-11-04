@@ -13,6 +13,7 @@ use Frootbox\Core\Action\AccessDeniedException;
 use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Component\LayoutSummary;
 use Frootbox\Core\Component\ListLayouts;
+use Frootbox\Core\Config\Config;
 use Frootbox\Core\Language\Language;
 use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Page\ListPageVersions;
@@ -20,6 +21,7 @@ use Frootbox\Core\Page\PageData;
 use Frootbox\Core\Page\PageVersion;
 use Frootbox\Core\Page\ShowPage;
 use Frootbox\Core\Page\ShowPageTree;
+use Frootbox\Core\Page\TranslationData;
 use Frootbox\Core\Plugin\ListPlugins;
 use Frootbox\Core\User\ListUsers;
 use Frootbox\Database\EntityNotFoundException;
@@ -42,6 +44,7 @@ final readonly class PagesHandler implements RequestHandlerInterface
         private BackendView $view,
         private Runner $runner,
         private Languages $languages,
+        private Config $config,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -93,6 +96,7 @@ final readonly class PagesHandler implements RequestHandlerInterface
         // Parents that were never published go online together with the page.
         $offline = array_values(array_filter($tree->ancestors($id), static fn(string $ancestor): bool => !$tree->row($ancestor)['online']));
         $parentId = $tree->parentId($id);
+        $translation = $data->translations[$language->code] ?? null;
 
         // Settings that come from a page above, by the title of that page (decision 0117).
         $visibility = $details->visibility;
@@ -106,7 +110,9 @@ final readonly class PagesHandler implements RequestHandlerInterface
             'language' => $language,
             'languages' => $this->languages->all(),
             'default' => $this->languages->default(),
-            'translation' => $data->translations[$language->code] ?? null,
+            'translation' => $translation,
+            // What search engines show without a title of its own (decision 0266).
+            'default_title' => null === $translation ? null : TranslationData::defaultTitle($translation->title, $this->config->string('app.name', 'Frootbox'), null === $parentId),
             'prefix' => $this->host($request, $language) . rtrim($language->path(null === $parentId ? '' : $tree->path($parentId, $language->code)), '/') . '/',
             'url' => $details->urls[$language->code] ?? null,
             // The draft at its address on this host, in the editing mode (decision 0119).
