@@ -12,19 +12,34 @@ import StarterKit from '@tiptap/starter-kit';
 
 /**
  * The levels the page gives the headings of a document, by the rule of
- * the core: each rank wants its level, none skips one after the heading
- * before, none goes above the floor, and only one h1.
+ * the core (Outline, decisions 0129 and 0257): each rank wants its level,
+ * none goes more than one below the open heading it belongs to (the last
+ * one that wanted a higher level), so headings that want the same level
+ * get the same; none goes above the floor, and only one h1.
  */
-function levelsOf(ranks, { wanted, last, floor, main }) {
+function levelsOf(ranks, { wanted, open, floor, main }) {
+    const stack = open.map(([asked, got]) => [asked, got]);
+
     return ranks.map((rank) => {
-        let level = Math.max(Math.min(Math.max(1, wanted[rank - 1] ?? wanted.at(-1)), last + 1), floor);
+        const asked = wanted[rank - 1] ?? wanted.at(-1);
+        const parent = stack.findLast(([before]) => before < asked)?.[1] ?? 0;
+        let level = Math.max(Math.min(Math.max(1, asked), parent + 1), floor);
         level = Math.min(main && level === 1 ? 2 : level, 6);
-        last = level;
+
+        while (stack.length > 0 && (stack.at(-1)[0] >= asked || stack.at(-1)[1] >= level)) {
+            stack.pop();
+        }
+
+        stack.push([asked, level]);
         main = main || level === 1;
 
         return level;
     });
 }
+
+const pairsOf = (open) => Array.isArray(open)
+    ? open.filter((pair) => Array.isArray(pair) && pair.length === 2).map(([asked, got]) => [Number(asked), Number(got)])
+    : [];
 
 /** What the page gives the field, see Headings::flow() in the core. */
 function flowOf(element) {
@@ -32,13 +47,13 @@ function flowOf(element) {
         const flow = JSON.parse(element.dataset.fbHeadingFlow ?? '');
 
         if (Array.isArray(flow.wanted) && flow.wanted.length > 0) {
-            return { wanted: flow.wanted.map(Number), last: Number(flow.last) || 0, floor: Number(flow.floor) || 1, main: Boolean(flow.main) };
+            return { wanted: flow.wanted.map(Number), open: pairsOf(flow.open), floor: Number(flow.floor) || 1, main: Boolean(flow.main) };
         }
     } catch {
         // Without it the headings start below an h1.
     }
 
-    return { wanted: [2, 3, 4], last: 1, floor: 1, main: true };
+    return { wanted: [2, 3, 4], open: [[1, 1]], floor: 1, main: true };
 }
 
 const rankOf = (node, levels) => levels.includes(node.attrs.level) ? node.attrs.level : levels[0];
@@ -53,7 +68,7 @@ const levelOf = (decorations) => decorations.find((decoration) => decoration.spe
  */
 const RankedHeading = Heading.extend({
     addOptions() {
-        return { ...this.parent?.(), levels: [1, 2, 3], flow: { wanted: [2, 3, 4], last: 1, floor: 1, main: true } };
+        return { ...this.parent?.(), levels: [1, 2, 3], flow: { wanted: [2, 3, 4], open: [[1, 1]], floor: 1, main: true } };
     },
 
     parseHTML() {

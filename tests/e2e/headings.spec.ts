@@ -116,3 +116,49 @@ test('gives headings the level of their place and shows the outline', async ({ p
     expect((await action(page, 'page.unpublish', { id })).status).toBe(200);
     expect((await action(page, 'page.delete', { id })).status).toBe(200);
 });
+
+test('gives headings that want the same level the same level, also in the editor', async ({ page, browser }) => {
+    const slug = `geschwister-${unique()}`;
+    const text = (heading: string, paragraph: string) => ({ block: 'frootbox/theme-base/Text', fields: { body: { type: 'doc', content: [
+        { type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: heading }] },
+        { type: 'paragraph', content: [{ type: 'text', text: paragraph }] },
+    ] } } });
+
+    await signIn(page, '/cms/pages');
+    const start = await page.locator('#page-tree .fb-tree__item').first().getAttribute('data-id');
+    const created = await action(page, 'page.create', {
+        layout: 'frootbox/theme-base/Page',
+        parentId: start,
+        translations: { de: { title: 'Geschwister', slug, content: {
+            fields: { title: 'Kontakt' },
+            areas: { main: [{ block: 'frootbox/theme-base/Section', variant: 'Two', areas: {
+                first: [text('Öffnungszeiten', 'Montags bis freitags.')],
+                second: [text('Anfahrt', 'Mit dem Bus bis zur Mühle.')],
+            } }] },
+        } } },
+    });
+    expect(created.status).toBe(200);
+    const id: string = created.body.data.id;
+    expect((await action(page, 'page.publish', { ids: [id] })).status).toBe(200);
+
+    // Two subheadings in columns without a heading above them are both h2,
+    // not h2 and h3.
+    const visitorContext = await browser.newContext();
+    const visitor = await visitorContext.newPage();
+    await visitor.goto(`/${slug}`);
+    await expect(visitor.locator('main h2[data-rank="2"]')).toHaveText(['Öffnungszeiten', 'Anfahrt']);
+    await visitorContext.close();
+
+    // The editor of the second column gives the same level.
+    await page.goto(`/cms/pages/${id}`);
+    await page.getByRole('button', { name: 'Auf der Website bearbeiten' }).click();
+    await expect(page).toHaveURL(`/${slug}`);
+    const second = page.locator('[data-fb-field="body"]').nth(1);
+    await second.getByText('Mit dem Bus bis zur Mühle.').click();
+    await expect(page.locator('fb-editor-bar').getByRole('toolbar', { name: 'Formatierung' })).toBeVisible();
+    await expect(second.locator('h2[data-rank="2"]')).toHaveText('Anfahrt');
+
+    await page.goto(`/cms/pages/${id}`);
+    expect((await action(page, 'page.unpublish', { id })).status).toBe(200);
+    expect((await action(page, 'page.delete', { id })).status).toBe(200);
+});
