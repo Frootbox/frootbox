@@ -465,6 +465,11 @@ nor the form.
 **Undo and log.** Every run is logged with who and when
 (`php bin/frootbox actions:log`) and can be undone with `action.undo`.
 
+**The page cache.** Live, visitors get pages from a cache. An action
+that writes through a repository clears it, wherever it runs: the
+backend, the REST API, the console or a seed file. Only an action that
+writes with SQL of its own clears it itself with `PageCache::clear()`.
+
 **The console.** `php bin/frootbox call acme/specials/special.list` runs
 the query, `php bin/frootbox actions acme/specials/special.create` shows
 its schema.

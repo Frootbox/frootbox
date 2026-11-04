@@ -4,7 +4,9 @@
 
 Live (`APP_ENV=prod`), a guest gets each page from a **full-page cache**:
 the HTML is built once and then delivered without database queries.
-Every publication empties it. After a deployment with changed templates,
+Every action that changes what visitors see empties it, including the
+actions of modules that write through a repository; drafts don't. After
+a deployment with changed templates,
 run:
 
 ```bash
