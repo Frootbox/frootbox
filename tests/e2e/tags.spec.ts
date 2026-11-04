@@ -2,8 +2,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { axeBuilder } from './axe';
 import { signIn } from './admin';
 
 // Tags (decisions 0233, 0239): an editor types new words in the form of
@@ -45,7 +45,7 @@ test('an editor tags an article, visitors filter by it and the stock stays tidy'
     await page.goto(`/cms/tags?q=${id}`);
     const row = (label: string) => page.locator('.fb-list__item', { has: page.locator('.fb-list__title', { hasText: label }) });
     await expect(row(beans)).toContainText('1-mal verwendet');
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
+    const results = await (await axeBuilder(page)).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
     expect(results.violations.flatMap((violation) => violation.nodes.map((node) => `${violation.id}: ${node.target.join(' ')}`))).toEqual([]);
 
     await row(roast).getByRole('button', { name: `„${roast}“ mit einem anderen Schlagwort zusammenführen` }).click();

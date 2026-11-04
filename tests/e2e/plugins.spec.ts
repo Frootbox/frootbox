@@ -2,8 +2,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { axeBuilder } from './axe';
 import { action, signIn } from './admin';
 
 // Pages that show a space of a plugin (decision 0232): an admin chooses
@@ -115,7 +115,7 @@ test('the categories of a space get pages of their own with the switch', async (
     await expect(visitor.getByRole('navigation', { name: 'Brotkrumen' }).getByRole('link', { name: 'Berufe' })).toBeVisible();
     // The click only waits for the address; axe needs the styles.
     await visitor.waitForLoadState('load');
-    const results = await new AxeBuilder({ page: visitor }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
+    const results = await (await axeBuilder(visitor)).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
     expect(results.violations.flatMap((violation) => violation.nodes.map((node) => `${violation.id}: ${node.target.join(' ')}`))).toEqual([]);
     await context.close();
 });

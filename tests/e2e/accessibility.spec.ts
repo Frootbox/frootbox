@@ -2,8 +2,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { axeBuilder } from './axe';
 import { DESIGN, LIBRARY, PAGES, PREVIEW_NOTE, designTest, frames } from './library';
 
 // Accessibility of the base theme with axe-core (decisions 0163, 0169,
@@ -21,7 +21,7 @@ const widths = { wide: { width: 1280, height: 800 }, narrow: { width: 390, heigh
 /** The violations, short enough to read in the report. */
 async function violations(page: import('@playwright/test').Page): Promise<string[]> {
     // The note of a preview link belongs to the backend.
-    const results = await new AxeBuilder({ page }).withTags(TAGS).exclude(PREVIEW_NOTE).analyze();
+    const results = await (await axeBuilder(page)).withTags(TAGS).exclude(PREVIEW_NOTE).analyze();
     // A page that axe could not check would pass silently.
     expect(results.passes.map((pass) => pass.id)).toEqual(expect.arrayContaining(['color-contrast', 'html-has-lang', 'landmark-one-main', 'heading-order', 'region']));
 
@@ -98,7 +98,7 @@ designTest('has no violations with an image of the gallery shown large', async (
     await expect(page.getByRole('dialog', { name: 'Bilder' })).toBeVisible();
 
     // The page behind the open dialog is inert, so only the dialog counts.
-    const results = await new AxeBuilder({ page }).withTags(TAGS).include('dialog[open]').analyze();
+    const results = await (await axeBuilder(page)).withTags(TAGS).include('dialog[open]').analyze();
     expect(results.passes.map((pass) => pass.id)).toEqual(expect.arrayContaining(['button-name', 'image-alt']));
     expect(results.violations.map((violation) => violation.id)).toEqual([]);
 });

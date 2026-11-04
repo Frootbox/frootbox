@@ -2,8 +2,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { axeBuilder } from './axe';
 import { action, signIn } from './admin';
 
 // Webhooks (decision 0253): the screen under administration, a webhook
@@ -11,7 +11,7 @@ import { action, signIn } from './admin';
 // sent: no action of the test is chosen.
 
 const violations = async (page: Page) => {
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
+    const results = await (await axeBuilder(page)).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
 
     return results.violations.flatMap((violation) => violation.nodes.map((node) => `${violation.id}: ${node.target.join(' ')}`));
 };

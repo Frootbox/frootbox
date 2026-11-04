@@ -2,8 +2,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { axeBuilder } from './axe';
 import { signIn } from './admin';
 
 // The statistics (decision 0229): a visitor's page view reaches the
@@ -28,7 +28,7 @@ test('a visit shows up in the statistics', async ({ browser, page }) => {
     await expect(page.locator('.fb-figure').first()).toContainText('Besuche');
     await expect(page.getByRole('region', { name: 'Meistbesuchte Seiten' })).toContainText('Termine');
 
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
+    const results = await (await axeBuilder(page)).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
     expect(results.violations.flatMap((violation) => violation.nodes.map((node) => `${violation.id}: ${node.target.join(' ')}`))).toEqual([]);
 
     await page.getByRole('link', { name: 'Letzte 7 Tage' }).click();

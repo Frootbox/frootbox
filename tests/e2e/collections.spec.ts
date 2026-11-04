@@ -2,8 +2,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { axeBuilder } from './axe';
 import { action, signIn } from './admin';
 
 // The collections (decision 0246): the demo of Bohnenglück names the first
@@ -16,7 +16,7 @@ const violations = async (page: Page) => {
     // Under load styles and the logo may still be loading; without their sizes axe sees targets too small.
     await page.waitForLoadState('load');
     await page.waitForFunction(() => [...document.images].every((image) => image.complete));
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
+    const results = await (await axeBuilder(page)).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
 
     return results.violations.flatMap((violation) => violation.nodes.map((node) => `${violation.id}: ${node.target.join(' ')}`));
 };

@@ -2,8 +2,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { axeBuilder } from './axe';
 
 // The search on the website (decision 0228): the head links to the page
 // "Suche" of the demo, which finds pages, articles and events of
@@ -20,7 +20,7 @@ test('visitors search the website from the head', async ({ page }) => {
     await expect(page).toHaveURL(/\/suche\?q=R%C3%B6stkurs$/);
     await expect(page.getByRole('status')).toHaveText(/Treffer zu „Röstkurs“\.$/);
 
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
+    const results = await (await axeBuilder(page)).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
     expect(results.violations.flatMap((violation) => violation.nodes.map((node) => `${violation.id}: ${node.target.join(' ')}`))).toEqual([]);
 
     await page.locator('.search-hit').getByRole('link', { name: 'Röstkurs', exact: true }).click();

@@ -3,8 +3,8 @@
  */
 
 import { readFileSync } from 'node:fs';
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { axeBuilder } from './axe';
 import { action, signIn } from './admin';
 
 // The media library (decision 0126): upload, focus point and texts in the
@@ -223,7 +223,7 @@ test('labels an image made with AI and shows a badge to visitors', async ({ page
     await expect(badge).toBeVisible();
     await expect(badge).toHaveText('KIMit KI erzeugt');
     await expect(guest.locator('.ai-image__label')).toHaveCSS('clip-path', 'inset(50%)');
-    const results = await new AxeBuilder({ page: guest }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).include('.base-image').analyze();
+    const results = await (await axeBuilder(guest)).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).include('.base-image').analyze();
     expect(results.violations).toEqual([]);
     await context.close();
 

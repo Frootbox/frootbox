@@ -2,8 +2,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { axeBuilder } from './axe';
 import { signIn } from './admin';
 
 // The categories of the core (decision 0233): a tree per group, edited in
@@ -32,7 +32,7 @@ test('an editor builds a tree of categories and chooses from it', async ({ page 
     const kitchen = tree.locator('.fb-tree__item[data-title="Küche"]');
     await expect(kitchen.locator('.fb-tree__group .fb-tree__link', { hasText: 'Konditorei' })).toBeVisible();
     await expect(kitchen.locator('.fb-tree__meta').first()).toHaveText('?category=kueche');
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
+    const results = await (await axeBuilder(page)).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
     expect(results.violations.flatMap((violation) => violation.nodes.map((node) => `${violation.id}: ${node.target.join(' ')}`))).toEqual([]);
 
     await link('Konditorei').click();

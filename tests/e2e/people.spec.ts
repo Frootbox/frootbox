@@ -2,8 +2,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page, test } from '@playwright/test';
+import { axeBuilder } from './axe';
 
 // People and locations (decision 0226) on the page "Team" of the demo of
 // Bohnenglück: the team, two locations whose maps wait for consent
@@ -11,7 +11,7 @@ import { expect, type Page, test } from '@playwright/test';
 // shows the people as a plugin with a profile for each (decision 0242).
 
 const axe = async (page: Page) => {
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
+    const results = await (await axeBuilder(page)).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
     expect(results.violations.flatMap((violation) => violation.nodes.map((node) => `${violation.id}: ${node.target.join(' ')}`))).toEqual([]);
 };
 

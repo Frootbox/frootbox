@@ -2,8 +2,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { axeBuilder } from './axe';
 import { signIn } from './admin';
 
 // The events (decision 0227): the demo of Bohnenglück below "Termine"
@@ -24,7 +24,7 @@ test('visitors see the upcoming events and open one', async ({ page }) => {
     const titles = page.locator('.events-item__title');
     await expect(titles).toHaveText(['Röstkurs', 'Verkostung neuer Sorten', 'Tage der offenen Rösterei']);
 
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
+    const results = await (await axeBuilder(page)).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
     expect(results.violations.flatMap((violation) => violation.nodes.map((node) => `${violation.id}: ${node.target.join(' ')}`))).toEqual([]);
 
     await page.getByRole('link', { name: 'Vergangene Termine' }).click();

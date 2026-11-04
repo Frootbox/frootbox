@@ -2,8 +2,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { axeBuilder } from './axe';
 import { signIn } from './admin';
 
 // Roles within a branch of the page tree (decision 0118): an editor for
@@ -130,7 +130,7 @@ test('limits an editor to a space of the jobs', async ({ page, browser }) => {
 
     // The user screen with the new section has no violations.
     await page.waitForLoadState('load');
-    const results = await new AxeBuilder({ page }).include('#user-spaces').withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
+    const results = await (await axeBuilder(page)).include('#user-spaces').withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
     expect(results.violations.flatMap((violation) => violation.nodes.map((node) => `${violation.id}: ${node.target.join(' ')}`))).toEqual([]);
 
     for (const job of [inside, outside]) {
