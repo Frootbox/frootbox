@@ -20,6 +20,16 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core: an MCP server at `/api/mcp` for Claude, ChatGPT and other AI
+  clients. Every action and query the user may run is a tool (`page.create`
+  as `page_create`), with `readOnlyHint` for queries and `destructiveHint`
+  for actions a person should confirm. Signs in with a Bearer token, runs
+  on the channel `mcp` and names the entry for `action.undo` in each
+  result. Protocol 2026-07-28 and older clients with `initialize`, without
+  sessions, so it runs on ordinary web space.
+- Core: `#[AsAction(confirm: …)]` and `Descriptor::$confirm`, whether a
+  person confirms an action before an AI runs it; derived when not set.
+
 - Reference: the block schema, every key of `block.yaml` and of the
   header of a view, with its value and where it may stand.
 - Backend: the screen **Extensions** under Administration lists what is

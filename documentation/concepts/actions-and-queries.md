@@ -49,6 +49,10 @@ final readonly class CreateSpecial implements Action
   Composer package. Names without a slash belong to the core.
 - `undoable: false` marks an action that cannot be undone, e.g. one that
   sends a mail.
+- `confirm: true` or `false` says whether a person confirms the action
+  before an AI client runs it. Without it Frootbox derives it: publishing,
+  deleting, users, roles, settings, extensions, the system, preview links
+  and everything that cannot be undone. See [MCP](mcp.md).
 - `transactional: false` runs an action without a database transaction.
   Only core actions under `system.*` that cannot be undone may use it,
   e.g. `system.migrate`, whose changes to the schema end a transaction on

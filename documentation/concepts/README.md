@@ -17,3 +17,4 @@ go on.
 12. [Settings, secrets, jobs and events](settings-and-jobs.md)
 13. [Deployment](deployment.md): ordinary web space, no build on the server
 14. [The hub](hub.md): connecting to frootbox.de, and what it sees
+15. [MCP](mcp.md): Claude, ChatGPT and other AI clients use the same actions
