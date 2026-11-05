@@ -12,6 +12,7 @@ use Frootbox\Backend\BackendExtension;
 use Frootbox\Backend\Http\Extensions\ExtensionsHandler;
 use Frootbox\Backend\Tests\Support\BackendTestCase;
 use Frootbox\Core\Action\Context;
+use Frootbox\Core\Backup\BackupManager;
 use Frootbox\Core\Extension\ExtensionPackage;
 use Frootbox\Core\Extension\Extensions;
 use Frootbox\Core\Extension\OfficialModules;
@@ -111,8 +112,15 @@ final class ExtensionsScreenTest extends BackendTestCase
         self::assertStringContainsString('2 ausstehend', $html);
         self::assertStringContainsString('Creates the test table test_items', $html);
         self::assertStringContainsString('<code>acme/fixtures</code> · <code>Version20261030000000</code>', $html);
-        self::assertStringContainsString('Hier lässt sich vorher kein Backup anlegen', $html, 'The database is in memory.');
-        self::assertStringContainsString('<input type="hidden" name="withoutBackup" value="true" data-type="boolean">', $html);
+
+        // SQLite in memory cannot be backed up; MySQL and MariaDB can with mysqldump.
+        if ($this->get(BackupManager::class)->available()) {
+            self::assertStringContainsString('<fb-form action="system.migrate"', $html);
+            self::assertStringNotContainsString('Hier lässt sich vorher kein Backup anlegen', $html);
+        } else {
+            self::assertStringContainsString('Hier lässt sich vorher kein Backup anlegen', $html);
+            self::assertStringContainsString('<input type="hidden" name="withoutBackup" value="true" data-type="boolean">', $html);
+        }
 
         $dashboard = $this->html($this->request('GET', '/cms', session: $session));
         self::assertStringContainsString('2 Migrationen stehen aus', $dashboard);
