@@ -150,10 +150,13 @@
                 <span class="fb-list__main">
                     {% if usage.type == 'page' %}
                     <a class="fb-list__title fb-list__link" href="{{ path('backend.pages.show', {id: usage.id}) }}">{{ usage.title ?: t('Page without title') }}</a>
-                    {% else %}
+                    {% elseif usage.type == 'site' %}
                     <span class="fb-list__title">{{ t('Fields of the website') }}</span>
+                    {% else %}
+                    <span class="fb-list__title">{{ usage.title ?: t('Without title') }}</span>
                     {% endif %}
-                    {% if languages|length > 1 %}<span class="fb-list__meta">{{ (languages|filter(language => language.code == usage.language)|first).title ?? usage.language }}</span>{% endif %}
+                    {% if usage.kind %}<span class="fb-list__meta">{{ t(usage.kind) }}</span>
+                    {% elseif languages|length > 1 %}<span class="fb-list__meta">{{ (languages|filter(language => language.code == usage.language)|first).title ?? usage.language }}</span>{% endif %}
                 </span>
                 {{ usage.published ? ui.badge('published', t('Published')) : ui.badge('draft', t('Only in the draft')) }}
             </li>

@@ -9,14 +9,20 @@ declare(strict_types=1);
 namespace Frootbox\News\Tests;
 
 use DateTimeImmutable;
+use Frootbox\Core\Action\ConflictException;
 use Frootbox\Core\Action\InvalidInputException;
 use Frootbox\Core\Category\CreateCategory;
 use Frootbox\Core\Category\DeleteCategory;
 use Frootbox\Core\Category\ListCategories;
 use Frootbox\Core\Extension\Registry;
+use Frootbox\Core\Media\CreateMedium;
+use Frootbox\Core\Media\DeleteMedium;
+use Frootbox\Core\Media\ListMediumUsages;
+use Frootbox\Core\Media\Uploads;
 use Frootbox\Core\ObjectField\ObjectFields;
 use Frootbox\Core\ObjectField\ObjectFieldSet;
 use Frootbox\Core\Page\PublishPages;
+use Frootbox\Core\ProjectPaths;
 use Frootbox\Core\Schedule\Scheduler;
 use Frootbox\Core\Search\Search;
 use Frootbox\Core\Url\Urls;
@@ -208,6 +214,31 @@ final class ArticlesTest extends NewsTestCase
 
         $this->runner()->run(new UnpublishArticle($id));
         self::assertSame([$id => []], $this->get(ObjectFields::class)->of(ArticleStore::TYPE, [$id]));
+    }
+
+    public function testTheImageOfAPublishedArticleCannotBeDeleted(): void
+    {
+        $image = imagecreatetruecolor(32, 20);
+        $file = $this->get(ProjectPaths::class)->var('article-image.png');
+        @mkdir(\dirname($file), 0o775, true);
+        imagepng($image, $file);
+        $medium = $this->runner()->run(new CreateMedium($this->get(Uploads::class)->store($file, 'bohnen.png')));
+        $details = $this->runner()->run(new CreateArticle(['de' => ['title' => 'Neue Sorten']], new DateTimeImmutable('2026-11-02 09:00'), ['media' => $medium->id, 'alt' => 'Bohnen']));
+        $this->runner()->run(new PublishArticles([$details->id]));
+
+        $usages = $this->runner()->ask(new ListMediumUsages($medium->id));
+        self::assertCount(1, $usages);
+        self::assertSame(['News', 'Neue Sorten', true], [$usages[0]->kind, $usages[0]->title, $usages[0]->published]);
+
+        try {
+            $this->runner()->run(new DeleteMedium($medium->id));
+            self::fail('The image is live in the article (decision 0287).');
+        } catch (ConflictException) {
+        }
+
+        $this->runner()->run(new DeleteArticle($details->id));
+        self::assertSame([], $this->runner()->ask(new ListMediumUsages($medium->id)), 'Gone with the article.');
+        self::assertTrue($this->runner()->run(new DeleteMedium($medium->id)));
     }
 
     /**

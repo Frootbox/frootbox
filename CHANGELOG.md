@@ -138,6 +138,16 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Fixed
 
+- Core: images, files and videos in the objects of modules (articles,
+  events, people, locations, jobs, entries of collections, forms) count
+  as used. `media.delete` refuses a medium that a published object
+  shows, `media.usages` lists objects with their kind and title (new
+  field `kind`), and the filter "not used" in the media library leaves
+  them out. Before, an image could be deleted while a live article
+  showed it. Modules register nothing for this.
+- Backend: the licence of the Lucide icons ships as `LICENSE-lucide`
+  next to the icons of the backend and of every module whose `icon.svg`
+  reuses them, as `DESIGN.md` already said.
 - Forms: `entry.release` and `entry.delete` fail with 422 for an id
   without an entry and change nothing. Before, an empty id, e.g. from a
   dialog opened before its script, reported success for nothing.

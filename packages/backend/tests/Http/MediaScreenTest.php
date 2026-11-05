@@ -169,6 +169,24 @@ final class MediaScreenTest extends BackendTestCase
         $this->action('media.delete', ['id' => $id], $this->session);
     }
 
+    public function testNamesAnObjectOfAModuleThatShowsTheImage(): void
+    {
+        $id = $this->upload('hafen.jpg');
+        // As if a module without a plugin had published an object with the image (decision 0287).
+        $this->connection()->executeStatement(
+            "INSERT INTO revisions (type, entity_id, status, version, data, created_at, updated_at) VALUES ('acme/shop/product', '01J00000000000000000000002', 'published', 1, ?, '2026-11-05 10:00:00', '2026-11-05 10:00:00')",
+            [json_encode(['gallery' => [['image' => ['media' => $id]]]], \JSON_THROW_ON_ERROR)],
+        );
+
+        $detail = $this->html($this->request('GET', '/cms/media/' . $id, session: $this->session));
+        self::assertStringContainsString('Ohne Titel', $detail);
+        self::assertStringContainsString('<span class="fb-list__meta">Product</span>', $detail);
+        self::assertStringContainsString('Das Bild wird an 1 veröffentlichten Stelle genutzt.', $detail);
+
+        $response = $this->request('POST', '/cms/actions/media.delete', session: $this->session, headers: [Csrf::HEADER => $this->csrfFor($this->session)], json: ['id' => $id]);
+        self::assertSame(409, $response->getStatusCode());
+    }
+
     public function testShowsAVideoWithItsFurtherFiles(): void
     {
         $id = $this->upload('roestung.webm', file: VideoFiles::webm($this->path('webm'), 640, 360));
