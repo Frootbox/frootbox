@@ -106,6 +106,9 @@ backend's own templates, styles and scripts are not part of it.
   opens only once the script is in. Before, a click right after loading
   opened it empty, and a new category could land at the top instead of
   below the chosen one.
+- Workbench: names of builds and the time of a check use the time zone
+  of the computer. Before, PHP ran in UTC (MAMP sets it in `php.ini`),
+  and a build at 05:47 in Berlin was named `…-044714`.
 
 ## [0.1.0] - 2026-11-04
 
