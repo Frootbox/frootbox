@@ -21,7 +21,7 @@
                 {{ ui.avatar(user.name|split(' ')|map(part => part|first|upper)|slice(0, 2)|join) }}
                 <span class="fb-list__main">
                     <a class="fb-list__title fb-list__link" href="{{ path('backend.users.show', {id: user.id}) }}">{{ user.name }}</a>
-                    <span class="fb-list__meta">{{ user.email }}</span>
+                    <span class="fb-list__meta">{{ user.kind.value == 'service' ? t('Service account') : user.email }}</span>
                 </span>
                 {% if not user.active %}{{ ui.badge('neutral', t('Disabled')) }}{% endif %}
             </li>

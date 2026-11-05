@@ -205,6 +205,10 @@ Name: Name
 Disabled: Deaktiviert
 Details: Angaben
 May sign in: Darf sich anmelden
+Service account: Dienstkonto
+Active: Aktiv
+"A service account never signs in. Programs use it with API tokens, with the rights of its roles.": "Ein Dienstkonto meldet sich nie an. Programme nutzen es mit API-Tokens, mit den Rechten seiner Rollen."
+Without it the tokens of the service account stop working.: Ohne diesen Haken funktionieren die Tokens des Dienstkontos nicht mehr.
 Without it the user is signed out and cannot sign in.: Ohne Haken wird der Benutzer abgemeldet und kann sich nicht anmelden.
 The user signs in with it.: Damit meldet sich der Benutzer an.
 At least 10 characters. Pass it on in person or by phone, not by email.: Mindestens 10 Zeichen. Gib es persönlich oder am Telefon weiter, nicht per E-Mail.

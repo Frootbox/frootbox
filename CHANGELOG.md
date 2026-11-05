@@ -70,6 +70,16 @@ backend's own templates, styles and scripts are not part of it.
   `composer catalog` does so for the official modules in `var/catalog/`.
 - Modules: every official module has an icon, a homepage and links for
   issues, source and documentation.
+- Core: service accounts. `user.create` takes `kind: service` for a user
+  without email and password who never signs in; the new action
+  `user.create-token` (right `user.update`) gives such an account an API
+  token that acts with its roles. People still create their own tokens
+  with `account.create-token`, a service account cannot. `user.update`
+  takes `email: null` for a service account, `actions:log` marks what a
+  service account did, and the backend shows service accounts without
+  email and password.
+- Database: `->change()` on a column in `alterTable()` changes an
+  existing column, e.g. `$table->string('email')->nullable()->change()`.
 
 ### Changed
 

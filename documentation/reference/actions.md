@@ -1545,17 +1545,30 @@ Action · right `user.assign-role`
 
 ### `user.create`
 
-Creates a user who signs in with email and password
+Creates a user who signs in with email and password, or a service account that only uses API tokens
 
 Action · right `user.create`
 
 | Input | Type | Description |
 |---|---|---|
-| `email` | string (email) |  |
+| `email` | string or null (email) | Required for a person, none for a service account |
 | `name` | string |  |
 | `password` | string or null, optional | Without a password the user cannot sign in until one is set |
 | `roles` | array, optional | Role names, e.g. ["editor"] |
 | `active` | boolean, optional |  |
+| `kind` | mixed: `person`, `service`, optional | "service" for a service account: no email, no password, tokens only from user.create-token |
+
+### `user.create-token`
+
+Creates an API token for a service account, shown only once
+
+Action · right `user.update` · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `id` | integer | The service account |
+| `name` | string | What the token is for, e.g. "Status for monitoring" |
+| `days` | integer or null, optional | Valid for this many days, without it until revoked |
 
 ### `user.delete`
 
@@ -1619,14 +1632,14 @@ Query · right `user.show`
 
 ### `user.update`
 
-Changes the email, name or status of a user
+Changes the email, name or status of a user; a service account keeps having no email
 
 Action · right `user.update`
 
 | Input | Type | Description |
 |---|---|---|
 | `id` | integer |  |
-| `email` | string (email) |  |
+| `email` | string or null (email) | Required for a person, none for a service account |
 | `name` | string |  |
 | `active` | boolean |  |
 

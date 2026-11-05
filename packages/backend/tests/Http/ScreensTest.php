@@ -19,6 +19,8 @@ use Frootbox\Backend\View\Device;
 use Frootbox\Backend\View\TwigExtension;
 use Frootbox\Core\Action\Context;
 use Frootbox\Core\User\CreateRole;
+use Frootbox\Core\User\CreateUser;
+use Frootbox\Core\User\UserKind;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(AccountHandler::class)]
@@ -65,6 +67,23 @@ final class ScreensTest extends BackendTestCase
         self::assertStringNotContainsString('command="show-modal"', $this->html($this->request('GET', '/cms/roles/admin', session: $session)), 'The admin role stays.');
         self::assertSame(404, $this->request('GET', '/cms/roles/nothing', session: $session)->getStatusCode());
         self::assertSame(200, $this->request('GET', '/cms/roles/new', session: $session)->getStatusCode());
+    }
+
+    public function testAServiceAccountShowsNeitherEmailNorPassword(): void
+    {
+        $this->createUser('admin@example.org', ['admin']);
+        $service = $this->runner()->run(new CreateUser(null, 'Status robot', kind: UserKind::Service), Context::system())->user;
+        $session = $this->signIn('admin@example.org');
+
+        $list = $this->html($this->request('GET', '/cms/users', session: $session));
+        self::assertMatchesRegularExpression('/Status robot<\/a>\s*<span class="fb-list__meta">Service account<\/span>/', $list);
+
+        $edit = $this->html($this->request('GET', '/cms/users/' . $service->id, session: $session));
+        self::assertStringContainsString('<input type="hidden" name="email" value="" data-empty="null">', $edit);
+        self::assertStringNotContainsString('type="email"', $edit);
+        self::assertStringNotContainsString('user.set-password', $edit);
+        self::assertStringContainsString('never signs in', $edit);
+        self::assertStringContainsString('commandfor="fb-delete-user" command="show-modal"', $edit, 'It can be deleted like any user.');
     }
 
     public function testNobodyDeletesThemselves(): void

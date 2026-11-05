@@ -3,6 +3,7 @@
 {% import '@backend/ui.twig' as ui %}
 
 {% set user = profile.user %}
+{% set service = user.kind.value == 'service' %}
 {% block title %}{{ user.name }}{% endblock %}
 
 {% block content %}
@@ -12,8 +13,11 @@
             <p class="fb-muted"><a href="{{ path('backend.users') }}">{{ t('Users') }}</a></p>
             <h1 class="fb-heading-1">{{ user.name }}</h1>
         </div>
+        {% if service %}{{ ui.badge('neutral', t('Service account')) }}{% endif %}
         {% if not user.active %}{{ ui.badge('neutral', t('Disabled')) }}{% endif %}
     </header>
+
+    {% if service %}<p class="fb-muted">{{ t('A service account never signs in. Programs use it with API tokens, with the rights of its roles.') }}</p>{% endif %}
 
     {% set editable = can('user.update') %}
     <section class="fb-card" aria-labelledby="fb-details-title">
@@ -23,11 +27,15 @@
                 <form class="fb-stack" novalidate>
                     <input type="hidden" name="id" value="{{ user.id }}" data-type="number">
                     {{ ui.field({label: t('Name'), name: 'name', value: user.name, required: true, disabled: not editable}) }}
-                    {{ ui.field({label: t('Email'), name: 'email', type: 'email', value: user.email, required: true, disabled: not editable}) }}
+                    {% if service %}
+                        <input type="hidden" name="email" value="" data-empty="null">
+                    {% else %}
+                        {{ ui.field({label: t('Email'), name: 'email', type: 'email', value: user.email, required: true, disabled: not editable}) }}
+                    {% endif %}
                     {% if yourself %}
                         <input type="hidden" name="active" value="1" data-type="boolean">
                     {% else %}
-                        {{ ui.check({label: t('May sign in'), name: 'active', checked: user.active, disabled: not editable, hint: t('Without it the user is signed out and cannot sign in.')}) }}
+                        {{ ui.check({label: service ? t('Active') : t('May sign in'), name: 'active', checked: user.active, disabled: not editable, hint: service ? t('Without it the tokens of the service account stop working.') : t('Without it the user is signed out and cannot sign in.')}) }}
                     {% endif %}
                     {% if editable %}<div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}</div>{% endif %}
                 </form>
@@ -143,7 +151,7 @@
     </section>
     {% endif %}
 
-    {% if can('user.set-password') %}
+    {% if can('user.set-password') and not service %}
     <section class="fb-card" aria-labelledby="fb-set-password-title">
         <div class="fb-card__header"><h2 class="fb-heading-4" id="fb-set-password-title">{{ t('New password') }}</h2></div>
         <div class="fb-card__body">
