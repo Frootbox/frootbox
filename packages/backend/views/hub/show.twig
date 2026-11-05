@@ -1,0 +1,132 @@
+{#- The connection to the hub, frootbox.de (decision 0284). hub: HubDetails, hubName: e.g. "frootbox.de", complete: {code, request} after the return from the hub, status: what the hub reads. -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Connection') }}{% endblock %}
+
+{% block content %}
+{% set name = hubName ?? t('the hub') %}
+<div class="fb-stack fb-stack--lg" id="hub">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Connection') }}</h1>
+            <p class="fb-muted">{{ t('Connected with {hub}, the agency sees the state of this website in its account area: version, cron, backups. The website decides what {hub} may do.', {hub: name}) }}</p>
+        </div>
+    </header>
+
+    <section class="fb-card" aria-labelledby="hub-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="hub-title" tabindex="-1" data-fb-focus>{{ t('Connection with {hub}', {hub: name}) }}</h2>
+            {% if hub.state == 'connected' %}{{ ui.badge('published', t('Connected')) }}{% elseif hub.state == 'pending' %}{{ ui.badge('scheduled', t('Waiting for confirmation')) }}{% else %}{{ ui.badge('neutral', t('Not connected')) }}{% endif %}
+        </div>
+        <div class="fb-card__body fb-stack fb-stack--lg">
+        {% if hub.state == 'connected' %}
+            {{ ui.figures([
+                {label: t('Organization'), value: hub.organization ?? '–'},
+                {label: t('Connected since'), value: hub.connectedAt ? ui.time(hub.connectedAt) : '–'},
+                {label: t('Status last read'), value: hub.lastPoll ? ui.time(hub.lastPoll) : t('not yet'), note: hub.switches.status ? null : t('Off')},
+            ]) }}
+            {% if can('system.hub-switch') %}
+            <fb-form action="system.hub-switch" refresh="hub" done="{{ t('Saved.') }}">
+                <form class="fb-stack" novalidate>
+                    {{ ui.check({label: t('Let {hub} read the status', {hub: name}), name: 'status', id: 'hub-status', checked: hub.switches.status, hint: t('Off, the token of {hub} stops working at once.', {hub: name})}) }}
+                    <div class="fb-form__actions">
+                        {{ ui.button({label: t('Save'), type: 'submit', variant: 'tonal'}) }}
+                        {% if can('system.hub-disconnect') %}{{ ui.button({label: t('Disconnect'), variant: 'danger', attrs: {commandfor: 'hub-disconnect', command: 'show-modal'}}) }}{% endif %}
+                    </div>
+                </form>
+            </fb-form>
+            {% endif %}
+        {% elseif complete %}
+            {{ ui.alert({tone: 'success', title: t('{hub} confirmed the connection', {hub: name}), text: t('Complete it here. Only then does {hub} get access.', {hub: name})}) }}
+            {% if can('system.hub-complete') %}
+            <fb-form action="system.hub-complete" next="{{ path('backend.hub') }}" done="{{ t('The website is connected.') }}">
+                <form novalidate>
+                    <input type="hidden" name="code" value="{{ complete.code }}">
+                    <input type="hidden" name="request" value="{{ complete.request }}">
+                    <div class="fb-form__actions">{{ ui.button({label: t('Complete the connection'), type: 'submit'}) }}</div>
+                </form>
+            </fb-form>
+            {% endif %}
+        {% elseif hub.state == 'pending' %}
+            {% set until = t('A request waits for the confirmation on {hub} until {time}.', {hub: name})|split('{time}') %}
+            <p>{{ until[0] }}{{ ui.time(hub.requestExpiresAt ?? 'now') }}{{ until[1] ?? '' }}</p>
+            <div class="fb-form__actions">
+                {{ ui.button({label: t('Continue on {hub}', {hub: name}), href: hub.requestUrl, icon: 'external'}) }}
+                {% if can('system.hub-disconnect') %}
+                <fb-form action="system.hub-disconnect" refresh="hub" done="{{ t('The request is cancelled.') }}">
+                    <form novalidate><input type="hidden" name="notify" value="false" data-type="boolean">{{ ui.button({label: t('Cancel the request'), type: 'submit', variant: 'outline'}) }}</form>
+                </fb-form>
+                {% endif %}
+            </div>
+        {% elseif hub.hint %}
+            {% set hints = {
+                secret: t('Without APP_SECRET in .env the website cannot keep its key, so it cannot connect.'),
+                address: t('Set the address of the website as "app.url" in config/app.yaml first.'),
+                local: t('{site} is a local address. Connect the website live or on staging, where {hub} can reach it.', {site: hub.siteUrl, hub: name}),
+                'hub-url': t('"hub.url" in config/app.yaml is no valid address.'),
+            } %}
+            {{ ui.alert({tone: 'warning', title: t('Cannot connect yet'), text: hints[hub.hint] ?? hub.hint}) }}
+        {% elseif can('system.hub-connect') %}
+            <p>{{ t('You sign in on {hub}, choose the organization and confirm. {hub} then checks that the website is reachable at {site}.', {hub: name, site: hub.siteUrl}) }}</p>
+            <fb-form action="system.hub-connect" next="{{ hub.hubUrl }}/connect/{id}">
+                <form class="fb-stack" novalidate>
+                    <input type="hidden" name="return" value="{{ hub.siteUrl ~ path('backend.hub') }}">
+                    {{ ui.check({label: t('Let {hub} read the status', {hub: name}), name: 'status', id: 'hub-connect-status', checked: true, hint: t('What {hub} sees is shown below. You can turn it off at any time.', {hub: name})}) }}
+                    <div class="fb-form__actions">{{ ui.button({label: t('Connect with {hub}', {hub: name}), type: 'submit'}) }}</div>
+                </form>
+            </fb-form>
+        {% endif %}
+        </div>
+    </section>
+
+    <section class="fb-card" aria-labelledby="hub-sees-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="hub-sees-title">{{ t('What {hub} sees', {hub: name}) }}</h2>
+        </div>
+        <div class="fb-card__body">
+            {% if hub.state == 'connected' and not hub.switches.status %}
+                <p class="fb-muted">{{ t('The status is off: {hub} sees nothing but the connection.', {hub: name}) }}</p>
+            {% elseif hub.statusUrl %}
+                <p class="fb-muted">{{ t('Exactly this, as often as {hub} asks, from {url}. No names, emails, content or addresses of pages.', {hub: name, url: hub.statusUrl}) }}</p>
+            {% else %}
+                <p class="fb-muted">{{ t('With the status on, {hub} reads exactly this. No names, emails, content or addresses of pages.', {hub: name}) }}</p>
+            {% endif %}
+        </div>
+        {% if hub.state != 'connected' or hub.switches.status %}
+        <ul>
+            {%- for key, value in status %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title"><code>{{ key }}</code></span>
+                    <span class="fb-list__meta"><code>{{ value is null ? 'null' : value|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_UNESCAPED_UNICODE')) }}</code></span>
+                </span>
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+        {% if hub.publicKey %}
+        <div class="fb-card__body">
+            <p class="fb-muted">{{ t('Key of the website: {key}', {key: hub.publicKey}) }}</p>
+        </div>
+        {% endif %}
+    </section>
+</div>
+
+{% if hub.state == 'connected' and can('system.hub-disconnect') %}
+<dialog class="fb-dialog" id="hub-disconnect" aria-labelledby="hub-disconnect-title">
+    <fb-form action="system.hub-disconnect" refresh="hub" done="{{ t('The website is disconnected.') }}">
+        <form novalidate>
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="hub-disconnect-title">{{ t('Disconnect from {hub}?', {hub: name}) }}</h2>
+                <p>{{ t('The access of {hub} ends at once. The agency no longer sees this website until it connects again.', {hub: name}) }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Cancel'), variant: 'outline', attrs: {commandfor: 'hub-disconnect', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Disconnect'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+{% endblock %}

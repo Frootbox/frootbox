@@ -16,3 +16,4 @@ go on.
 11. [Media and files](media.md): originals, sizes, private files, buckets
 12. [Settings, secrets, jobs and events](settings-and-jobs.md)
 13. [Deployment](deployment.md): ordinary web space, no build on the server
+14. [The hub](hub.md): connecting to frootbox.de, and what it sees

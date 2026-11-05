@@ -37,7 +37,9 @@ Migrations only run forward. Read the Upgrade section of the
 The database is backed up automatically before the first action of each
 day and before every `migrate`, in `storage/backups/`. `backup:create`,
 `backup:list`, `backup:prune` and `backup:restore` (SQLite) manage them.
-A full backup is the database, `storage/` and `.env`.
+A full backup is the database, `storage/` and `.env`. Restored on
+another server, it brings the connection to the hub along; see
+[the hub](hub.md#local-websites).
 
 ## Mails
 

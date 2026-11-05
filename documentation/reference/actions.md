@@ -1397,6 +1397,66 @@ Lists the installed extensions with version, theme, and the blocks, layouts, act
 
 Query · right `system.extension-list`
 
+### `system.hub-complete`
+
+Connects the website to the hub with a one-time code from it
+
+Action · right `system.hub-complete` · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `code` | string | The one-time code from the hub |
+| `request` | string or null, optional | The request the code confirms; without it the code alone connects |
+| `status` | boolean, optional | Without request: let the hub read the status of the website |
+
+### `system.hub-connect`
+
+Opens a request to connect the website to the hub, to confirm there
+
+Action · right `system.hub-connect` · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `status` | boolean, optional | Let the hub read the status of the website |
+| `return` | string or null, optional | Where the hub sends the browser back with the code, an address of this website, e.g. the screen of the backend |
+
+### `system.hub-disconnect`
+
+Disconnects the website from the hub and deletes its access at once
+
+Action · right `system.hub-disconnect` · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `notify` | boolean, optional | Tell the hub; false when the hub itself disconnected |
+| `forgetKey` | boolean, optional | Also forget the key pair of the website, e.g. in a copy of it |
+
+### `system.hub-keys`
+
+Replaces the public keys of the hub the website trusts
+
+Action · right `system.hub-keys` · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `keys` | array | Public keys "whpk_…" of the hub, at least one |
+
+### `system.hub-show`
+
+Shows the connection of the website to the hub
+
+Query · right `system.hub-show`
+
+### `system.hub-switch`
+
+Turns on or off what the hub may do; for now reading the status
+
+Action · right `system.hub-switch` · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `status` | boolean | Let the hub read the status of the website |
+
 ### `system.job-delete`
 
 Removes a job from the queue without running it

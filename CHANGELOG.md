@@ -87,9 +87,31 @@ backend's own templates, styles and scripts are not part of it.
   change, without personal data or contents. It has a permission of its
   own, so a role for a service account can grant just this, e.g. for
   monitoring.
+- Core: the connection to the hub, frootbox.de ("frootbox.de Connect v1").
+  Under **Connection** in Administration a superuser connects the website
+  (`system.hub-connect`, then `system.hub-complete` with the code the
+  browser brings back), turns the status on or off (`system.hub-switch`)
+  and disconnects (`system.hub-disconnect`); `bin/frootbox hub:connect
+  <code>` connects with a code from the account area, e.g. in automatic
+  deployment. The website gets an Ed25519 key pair and signs every
+  request; the hub reads the status with a service account that may only
+  ask `status.show`, and the screen shows exactly what it sees. Nothing
+  is sent before a superuser connects. `hub.url` in `config/app.yaml`
+  points to another hub, e.g. one running locally. A local website does
+  not connect to the hub on the internet.
+- Core: `StandardWebhooks` signs and verifies asymmetric webhooks
+  (`v1a`, Ed25519) with `keyPair()`, `publicKey()`, `signContent()` and
+  `verifyContent()`; `verify()` takes a list of public keys.
+- Workbench: `build --with-content` leaves the connection to the hub
+  and the key of the website out of the copy
+  (`bin/frootbox hub:disconnect --local --forget-key`).
 
 ### Changed
 
+- Core: routes whose first segment starts with a dot or an underscore,
+  e.g. `/.well-known/frootbox/…` and `/_consent/proof`, count as routes
+  like `/api`: they check access themselves and pass the password of the
+  website.
 - Core: `Migrator` takes the connection and the migration sources and
   builds a fresh Doctrine factory for every run.
 - Core: the registry remembers which package added an item with

@@ -193,6 +193,32 @@ php bin/frootbox fb1:import [options] [--] <database>
 | `--out` | The folder for the seed, written anew |
 | `--publish` | Publish pages, navigations, forms and fields at the end, instead of leaving drafts |
 
+## `hub:connect`
+
+Connects the website to the hub with a code from it
+
+```
+php bin/frootbox hub:connect [options] [--] <code>
+```
+
+| Argument or option | Description |
+|---|---|
+| `code` | The one-time code from the account area of the hub |
+| `--no-status` | Do not let the hub read the status of the website |
+
+## `hub:disconnect`
+
+Disconnects the website from the hub
+
+```
+php bin/frootbox hub:disconnect [options]
+```
+
+| Argument or option | Description |
+|---|---|
+| `--local` | Only here, without telling the hub, e.g. in a copy |
+| `--forget-key` | Also forget the key pair of the website |
+
 ## `install`
 
 Sets up this installation: configuration, database and the first superuser

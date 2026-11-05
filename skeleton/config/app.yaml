@@ -39,6 +39,11 @@ languages:
 # mail:
 #   from: hello@example.com
 
+# The hub the website connects to in the backend under Connection, e.g.
+# a service running locally while developing it.
+# hub:
+#   url: https://account.frootbox.de
+
 # Sign-in: a session ends this long after its last use, with "stay
 # signed in" in days, else in hours.
 # auth:
