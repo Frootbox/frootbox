@@ -1518,7 +1518,7 @@ Database: Datenbank
 "The access of {hub} ends at once. The agency no longer sees this website until it connects again.": "Der Zugang von {hub} endet sofort. Die Agentur sieht diese Website erst wieder, wenn sie sich neu verbindet."
 "Without APP_SECRET in .env the key of the website cannot be stored, so it cannot connect.": "Ohne APP_SECRET in der .env lässt sich der Schlüssel der Website nicht speichern, deshalb kann sie sich nicht verbinden."
 "The address of the website is missing: set \"app.url\" in config/app.yaml.": "Die Adresse der Website fehlt: Trag „app.url“ in config/app.yaml ein."
-"\"hub.url\" in config/app.yaml must be an address like https://account.frootbox.de, not \"{url}\".": "„hub.url“ in config/app.yaml muss eine Adresse wie https://account.frootbox.de sein, nicht „{url}“."
+"\"hub.url\" in config/app.yaml must be an address like https://hub.frootbox.de, not \"{url}\".": "„hub.url“ in config/app.yaml muss eine Adresse wie https://hub.frootbox.de sein, nicht „{url}“."
 "The website is connected already. Disconnect it first.": "Die Website ist schon verbunden. Trenn sie zuerst."
 "The website is not connected.": "Die Website ist nicht verbunden."
 "No request waits for this confirmation, or it has expired. Connect again.": "Für diese Bestätigung wartet keine Anfrage, oder sie ist abgelaufen. Verbinde neu."

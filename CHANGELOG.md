@@ -96,8 +96,9 @@ backend's own templates, styles and scripts are not part of it.
   deployment. The website gets an Ed25519 key pair and signs every
   request; the hub reads the status with a service account that may only
   ask `status.show`, and the screen shows exactly what it sees. Nothing
-  is sent before a superuser connects. `hub.url` in `config/app.yaml`
-  points to another hub, e.g. one running locally. A local website does
+  is sent before a superuser connects. The hub is Frootbox Hub at
+  `https://hub.frootbox.de`; `hub.url` in `config/app.yaml` points to
+  another hub, e.g. one running locally. A local website does
   not connect to the hub on the internet.
 - Core: `StandardWebhooks` signs and verifies asymmetric webhooks
   (`v1a`, Ed25519) with `keyPair()`, `publicKey()`, `signContent()` and

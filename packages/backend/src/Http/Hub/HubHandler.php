@@ -44,8 +44,8 @@ final readonly class HubHandler implements RequestHandlerInterface
 
         return $this->view->render($request, '@backend/hub/show.twig', [
             'hub' => $hub,
-            // "account.frootbox.de" reads as "frootbox.de".
-            'hubName' => \is_string($host) ? (string) preg_replace('~^account\.~', '', $host) : null,
+            // "hub.frootbox.de" reads as "frootbox.de" (decision 0288).
+            'hubName' => \is_string($host) ? (string) preg_replace('~^hub\.~', '', $host) : null,
             // The browser came back from the hub with a code for the open request.
             'complete' => 'pending' === $hub->state && null !== $code && $requestId === $hub->requestId ? ['code' => $code, 'request' => $requestId] : null,
             // Exactly what the hub reads, also before connecting.

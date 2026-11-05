@@ -41,7 +41,7 @@ final class HubScreenTest extends BackendTestCase
 
         self::assertStringContainsString('<fb-form action="system.hub-connect" next="' . FakeHub::URL . '/connect/{id}">', $html);
         self::assertStringContainsString('<input type="hidden" name="return" value="https://www.bohnenglueck.de/cms/hub">', $html);
-        self::assertStringContainsString('Connect with hub.example.org', $html);
+        self::assertStringContainsString('Connect with example.org', $html);
         self::assertStringContainsString('<code>schema</code>', $html, 'What the hub would read, before connecting.');
         self::assertStringContainsString('<code>extensions</code>', $html);
     }

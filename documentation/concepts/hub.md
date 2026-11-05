@@ -1,7 +1,7 @@
 # The hub: connecting to frootbox.de
 
-A website can connect to the hub, the account area at
-`https://account.frootbox.de`. An agency then sees the state of all its
+A website can connect to the hub, Frootbox Hub at
+`https://hub.frootbox.de`. An agency then sees the state of all its
 websites in one place: versions, cron, backups, drafts. The website
 decides what the hub may do, and nothing is sent before a superuser
 connects.
