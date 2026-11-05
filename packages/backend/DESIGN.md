@@ -1426,7 +1426,10 @@ fb-icon--small')` for 18 px. Icons are `aria-hidden`; a button with only
 an icon has a label (`icon_only`). New icons come from
 [Lucide](https://lucide.dev) (ISC license, kept as `assets/icons/LICENSE-lucide`),
 one file per icon as needed, drawn by hand only if Lucide has none: 24×24
-viewBox, stroke 1.8, round caps and joins, no fill, `stroke="currentColor"`.
+viewBox, stroke 1.8, round caps and joins, no fill, `stroke="currentColor"`. The
+icons of the official modules (`icon.svg`) reuse these paths and keep a
+copy of `LICENSE-lucide` next to them, since every module is distributed
+on its own.
 
 Available: alert, arrow-down, arrow-up, briefcase, calendar, chart, check,
 chevron-down, clock, close, comment, copy, dashboard, external, file,
