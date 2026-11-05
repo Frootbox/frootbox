@@ -80,6 +80,13 @@ backend's own templates, styles and scripts are not part of it.
   email and password.
 - Database: `->change()` on a column in `alterTable()` changes an
   existing column, e.g. `$table->string('email')->nullable()->change()`.
+- Core: the query `status.show` returns the technical status of the
+  website as a versioned document: versions of Frootbox, PHP, the
+  database and each extension, the last run of cron, due and failed jobs,
+  the last backup, free disk space, drafts, open comments and the last
+  change, without personal data or contents. It has a permission of its
+  own, so a role for a service account can grant just this, e.g. for
+  monitoring.
 
 ### Changed
 

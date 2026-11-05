@@ -1352,6 +1352,12 @@ Action · right `space.update`
 | `title` | string |  |
 | `type` | string or null, optional | The type of the plugin, needed for the default space, e.g. "frootbox/collections/entry" |
 
+### `status.show`
+
+Returns the technical status of the website: versions, cron, queue, backup, disk space, drafts and last change, without personal data or contents
+
+Query · right `status.show`
+
 ### `system.backup-create`
 
 Makes a backup of the database by hand, which stays until someone deletes it
