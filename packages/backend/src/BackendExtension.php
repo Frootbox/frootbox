@@ -11,6 +11,7 @@ namespace Frootbox\Backend;
 use Frootbox\Backend\Http\Access\AccessHandler;
 use Frootbox\Backend\Http\AccountHandler;
 use Frootbox\Backend\Http\ActionHandler;
+use Frootbox\Backend\Http\Ai\AiHandler;
 use Frootbox\Backend\Http\BackendErrorPage;
 use Frootbox\Backend\Http\Categories\CategoriesHandler;
 use Frootbox\Backend\Http\Comments\CommentsHandler;
@@ -42,6 +43,7 @@ use Frootbox\Backend\Http\Users\UserHandler;
 use Frootbox\Backend\Http\Users\UsersHandler;
 use Frootbox\Backend\View\EditorBar;
 use Frootbox\Backend\View\PreviewNote;
+use Frootbox\Core\Ai\Provider;
 use Frootbox\Core\Api\ApiHandler;
 use Frootbox\Core\Extension\Extension;
 use Frootbox\Core\Extension\Registry;
@@ -103,6 +105,7 @@ final class BackendExtension implements Extension
             ->get('/settings', SettingsHandler::class, 'backend.settings')
             ->get('/jobs', JobsHandler::class, 'backend.jobs')
             ->get('/hub', HubHandler::class, 'backend.hub')
+            ->get('/ai', AiHandler::class, 'backend.ai')
             ->get('/extensions', ExtensionsHandler::class, 'backend.extensions');
 
         $registry->listen(BuildingHead::class, EditorBar::class);
@@ -128,6 +131,7 @@ final class BackendExtension implements Extension
         $registry->add(Screen::class, new Screen('Settings', 'backend.settings', Screen::ADMINISTRATION, 'settings', SettingsHandler::PERMISSION, order: 120));
         $registry->add(Screen::class, new Screen('Extensions', 'backend.extensions', Screen::ADMINISTRATION, 'layout-grid', ExtensionsHandler::PERMISSION, order: 125));
         $registry->add(Screen::class, new Screen('Connection', 'backend.hub', Screen::ADMINISTRATION, 'external', HubHandler::PERMISSION, order: 127));
+        $registry->add(Screen::class, new Screen('AI', 'backend.ai', Screen::ADMINISTRATION, 'sparkles', AiHandler::PERMISSION, order: 128, needs: Provider::class));
         $registry->add(Screen::class, new Screen('Background jobs', 'backend.jobs', Screen::ADMINISTRATION, 'clock', JobsHandler::PERMISSION, order: 130));
         $registry->add(Screen::class, new Screen('Design system', 'backend.design', Screen::ADMINISTRATION, 'palette', DesignHandler::PERMISSION, order: 900, development: true));
 

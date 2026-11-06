@@ -91,6 +91,10 @@ final readonly class Menu
             throw new ViewException(\sprintf('The screen "%s" has the group "%s". Groups: %s.', $screen->label, $screen->group, implode(', ', array_keys(Screen::GROUPS))));
         }
 
+        if (null !== $screen->needs && [] === $this->registry->items($screen->needs)) {
+            return false;
+        }
+
         return ($screen->development && $this->environment->isDevelopment()) || $this->permits($actor, $screen->permission);
     }
 

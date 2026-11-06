@@ -35,6 +35,9 @@
             {% if extension.package == 'frootbox/core.mail' and mail %}
                 {% include '@backend/settings/mail.twig' %}
             {% endif %}
+            {% if extension.package == 'frootbox/core.ai' %}
+                {{ ui.alert({tone: 'info', title: t('Privacy'), text: t('What a feature of the AI sends goes to its provider, e.g. a text you rewrite. Name the provider as a processor in your privacy policy.')}) }}
+            {% endif %}
             {% if values is not empty %}
             <fb-form action="settings.update" refresh="{{ key }}" done="{{ t('The settings are saved.') }}">
                 <form class="fb-stack" novalidate>

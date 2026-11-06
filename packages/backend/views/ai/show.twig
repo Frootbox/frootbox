@@ -1,0 +1,111 @@
+{#- The AI of the website (decision 0294). status: AiStatus, report: UsageReport, months: list of YYYY-MM, days: every day of the month with its requests. -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('AI') }}{% endblock %}
+
+{% macro dollars(value) -%}
+    {%- if value > 0 and value < 0.01 -%}
+        {{ t('less than {amount}', {amount: t('${amount}', {amount: 0.01|number_format(2, t('.'), t(','))})}) }}
+    {%- else -%}
+        {{ t('${amount}', {amount: value|number_format(2, t('.'), t(','))}) }}
+    {%- endif -%}
+{%- endmacro %}
+
+{% block content %}
+{%- set features = {test: t('Connection test')} -%}
+{%- set settings = path('backend.settings') ~ '#settings-frootbox-core-ai' -%}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('AI') }}</h1>
+            <p class="fb-muted">{{ t('The AI helps with texts and images. It costs per request; you pay the provider directly, and the monthly limit keeps the costs in check.') }}</p>
+        </div>
+        {% if can('settings.list') %}{{ ui.button({label: t('Settings'), href: settings, variant: 'outline', icon: 'settings'}) }}{% endif %}
+    </header>
+
+    <section class="fb-card" id="ai-provider" aria-labelledby="ai-provider-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="ai-provider-title" tabindex="-1" data-fb-focus>{{ t('Provider') }}</h2>
+            {% if status.available %}{{ ui.badge('published', t('Ready')) }}{% elseif status.reason == 'limit' %}{{ ui.badge('danger', t('Limit reached')) }}{% else %}{{ ui.badge('neutral', t('Not set up')) }}{% endif %}
+        </div>
+        <div class="fb-card__body fb-stack fb-stack--lg">
+            {{ ui.figures([
+                {label: t('Provider'), value: status.provider ?? '–'},
+                {label: t('Model'), value: status.model ?? '–'},
+            ]) }}
+            {% if status.reason == 'setup' %}
+                {{ ui.alert({tone: 'warning', title: t('Not set up yet'), text: t('Store the API key of {provider} in the settings first.', {provider: status.provider})}) }}
+            {% elseif status.reason == 'limit' %}
+                {{ ui.alert({tone: 'warning', title: t('The monthly limit is reached'), text: t('The AI goes on next month or with a higher limit in the settings.')}) }}
+            {% endif %}
+            {% if can('ai.test') and status.reason != 'setup' %}
+            <fb-form action="ai.test" show="ai-test-result" refresh="ai-usage">
+                <form novalidate>
+                    <p class="fb-muted">{{ t('Sends one short sentence to the AI and shows the answer. It costs a fraction of a cent.') }}</p>
+                    <div class="fb-form__actions">{{ ui.button({label: t('Test the connection'), type: 'submit', variant: 'tonal'}) }}</div>
+                </form>
+            </fb-form>
+            <div id="ai-test-result" class="fb-stack fb-stack--sm" hidden>
+                <h3 class="fb-heading-4">{{ t('The AI answers') }}</h3>
+                <p data-fb-value="text"></p>
+                <p class="fb-muted">{{ t('{model}, {input} tokens in, {output} out, {cost} US dollars, {seconds} seconds')|replace({
+                    '{model}': '<span data-fb-value="model"></span>',
+                    '{input}': '<span data-fb-value="inputTokens"></span>',
+                    '{output}': '<span data-fb-value="outputTokens"></span>',
+                    '{cost}': '<span data-fb-value="cost"></span>',
+                    '{seconds}': '<span data-fb-value="seconds"></span>',
+                })|raw }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <div class="fb-stack fb-stack--lg" id="ai-usage">
+        {{ ui.tabs(t('Month'), months|map(month => {
+            label: (month ~ '-01')|date(t('m/Y')),
+            href: path('backend.ai') ~ '?month=' ~ month,
+            current: month == report.month,
+        })) }}
+
+        {{ ui.figures([
+            {label: t('Costs'), value: _self.dollars(report.spent), note: t(['{count} request', '{count} requests'], {count: report.calls})},
+            {label: t('Monthly limit'), value: report.limit is null ? t('No limit') : _self.dollars(report.limit), note: report.limit is null ? t('Set one in the settings.') : null},
+            {label: t('Left'), value: report.remaining is null ? '–' : _self.dollars(report.remaining)},
+        ]) }}
+
+        {% if report.calls == 0 %}
+        <section class="fb-card fb-card--padded">
+            {{ ui.empty({icon: 'sparkles', title: t('No requests in this month'), text: t('Every request of the AI counts here with its costs, also the test.')}) }}
+        </section>
+        {% else %}
+        <section class="fb-card fb-card--padded">
+            {{ ui.chart({label: t('Requests per day'), items: days|map(day => {label: day.date|date(t('Y-m-d')), value: day.calls})}) }}
+        </section>
+
+        {% set lists = [
+            {id: 'ai-features', title: t('By feature'), items: report.features|map(row => {title: features[row.feature] ?? row.feature, calls: row.calls, cost: row.cost})},
+            {id: 'ai-people', title: t('By person'), items: report.people|map(row => {title: row.name, calls: row.calls, cost: row.cost})},
+            {id: 'ai-models', title: t('By model'), items: report.models|map(row => {title: row.model, calls: row.calls, cost: row.cost, meta: t('{input} tokens in, {output} out', {input: ui.number(row.inputTokens), output: ui.number(row.outputTokens)})})},
+        ] %}
+        {% for list in lists %}
+        <section class="fb-card" aria-labelledby="{{ list.id }}-title">
+            <div class="fb-card__header"><h2 class="fb-heading-4" id="{{ list.id }}-title">{{ list.title }}</h2></div>
+            {%- set most = max(list.items|map(item => item.calls)) -%}
+            <ul>
+                {%- for item in list.items %}
+                <li class="fb-list__item">
+                    <span class="fb-list__main">
+                        <span class="fb-list__title">{{ item.title }}</span>
+                        <span class="fb-list__meta">{{ _self.dollars(item.cost) }}{% if item.meta ?? null %} · {{ item.meta }}{% endif %}</span>
+                    </span>
+                    {{ ui.share(item.calls, most) }}
+                </li>
+                {%- endfor %}
+            </ul>
+        </section>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
