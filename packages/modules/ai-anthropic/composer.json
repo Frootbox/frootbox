@@ -1,0 +1,46 @@
+{
+    "name": "frootbox/ai-anthropic",
+    "description": "Claude by Anthropic as the AI provider of the Frootbox CMS, with the official SDK of Anthropic",
+    "type": "frootbox-extension",
+    "license": "MIT",
+    "keywords": [
+        "cms",
+        "frootbox",
+        "ai",
+        "anthropic",
+        "claude"
+    ],
+    "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/ai-anthropic",
+    "support": {
+        "issues": "https://github.com/Frootbox/frootbox/issues",
+        "source": "https://github.com/frootbox-packages/ai-anthropic",
+        "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+    },
+    "require": {
+        "php": ">=8.5",
+        "anthropic-ai/sdk": "^1.6",
+        "frootbox/core": "^0.1",
+        "nyholm/psr7": "^1.8",
+        "symfony/http-client": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Frootbox\\AiAnthropic\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Frootbox\\AiAnthropic\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": false
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    }
+}

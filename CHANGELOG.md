@@ -32,6 +32,25 @@ backend's own templates, styles and scripts are not part of it.
   sessions, so it runs on ordinary web space.
 - Core: `#[AsAction(confirm: …)]` and `Descriptor::$confirm`, whether a
   person confirms an action before an AI runs it; derived when not set.
+- Core: an interface for the AI. Providers are modules that register a
+  `Provider` with a `ProviderClient`; features ask the `Assistant` with a
+  `Request` (text, images, tools, effort, prompt cache) and get a
+  `Response`. Every request counts in the new table `ai_usage` with its
+  tokens and costs in US dollars, written also when the action fails
+  afterwards. The settings `frootbox/core.ai` choose the provider and a
+  monthly limit; once it is reached the AI answers `409` until the next
+  month. The right `ai.use` for features (admins have it), the queries
+  `ai.status` and `ai.usage`, and the action `ai.test` for a very small
+  request. `Ai\Tools` turns the actions a person may run into tools.
+- AI Anthropic: the new module `frootbox/ai-anthropic` brings Claude
+  through the official SDK of Anthropic, with the API key in its settings
+  or `ANTHROPIC_API_KEY` in `.env`, the models Opus 5.5 (standard),
+  Sonnet 5.5 and Haiku 5.5, adaptive thinking, the server-side fallback
+  for refused requests and errors of the API as messages for people.
+- Backend: the screen **AI** under Administration, once a provider is
+  installed, with provider, model, the costs of a month by day, feature,
+  person and model, the limit and **Test the connection**. A `Screen`
+  takes `needs:`, a type of the registry it is shown with.
 
 - Reference: the block schema, every key of `block.yaml` and of the
   header of a view, with its value and where it may stand.

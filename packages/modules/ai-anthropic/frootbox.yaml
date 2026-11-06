@@ -1,0 +1,5 @@
+title: Anthropic
+description: Claude by Anthropic as the AI provider of the website, with a monthly limit in the settings of the AI
+extension: Frootbox\AiAnthropic\AnthropicExtension
+# For the extension directory (decision 0282).
+icon: icon.svg

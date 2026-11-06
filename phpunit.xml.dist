@@ -67,6 +67,9 @@
         <testsuite name="storage-s3">
             <directory>packages/modules/storage-s3/tests</directory>
         </testsuite>
+        <testsuite name="ai-anthropic">
+            <directory>packages/modules/ai-anthropic/tests</directory>
+        </testsuite>
         <testsuite name="workbench">
             <directory>packages/tools/workbench/tests</directory>
         </testsuite>
@@ -104,6 +107,7 @@
             <directory>packages/modules/captcha-recaptcha/src</directory>
             <directory>packages/modules/webhooks/src</directory>
             <directory>packages/modules/storage-s3/src</directory>
+            <directory>packages/modules/ai-anthropic/src</directory>
             <directory>packages/tools/workbench/src</directory>
             <directory>packages/tools/migrate-frootbox1/src</directory>
             <directory>packages/rich-text/src</directory>

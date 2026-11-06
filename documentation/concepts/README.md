@@ -18,3 +18,4 @@ go on.
 13. [Deployment](deployment.md): ordinary web space, no build on the server
 14. [The hub](hub.md): connecting to frootbox.de, and what it sees
 15. [MCP](mcp.md): Claude, ChatGPT and other AI clients use the same actions
+16. [The AI](ai.md): providers as modules, a monthly limit, features over the same actions

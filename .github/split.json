@@ -2,6 +2,7 @@
     "packages/backend": "backend",
     "packages/core": "core",
     "packages/database": "database",
+    "packages/modules/ai-anthropic": "ai-anthropic",
     "packages/modules/captcha-recaptcha": "captcha-recaptcha",
     "packages/modules/collections": "collections",
     "packages/modules/events": "events",

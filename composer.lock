@@ -4,8 +4,73 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a14a6341439f1043fae92c769d0654d0",
+    "content-hash": "253639528202174111ef6c70e28fe81d",
     "packages": [
+        {
+            "name": "anthropic-ai/sdk",
+            "version": "v1.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/anthropics/anthropic-sdk-php.git",
+                "reference": "7f4ac63b8abdc24c9cdc248479c1ff653e9d584b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/anthropics/anthropic-sdk-php/zipball/7f4ac63b8abdc24c9cdc248479c1ff653e9d584b",
+                "reference": "7f4ac63b8abdc24c9cdc248479c1ff653e9d584b",
+                "shasum": ""
+            },
+            "require": {
+                "open-telemetry/api": "^1.0",
+                "php": "^8.1",
+                "php-http/discovery": "^1",
+                "psr/http-client": "^1",
+                "psr/http-client-implementation": "^1",
+                "psr/http-factory-implementation": "^1",
+                "psr/http-message": "^1|^2",
+                "standard-webhooks/standard-webhooks": "^1"
+            },
+            "require-dev": {
+                "aws/aws-sdk-php": "^3.368",
+                "friendsofphp/php-cs-fixer": "^3",
+                "google/auth": "^1.49",
+                "guzzlehttp/guzzle": "^7",
+                "mcp/sdk": "^0.7.1",
+                "nyholm/psr7": "^1",
+                "open-telemetry/sdk": "^1.0",
+                "pestphp/pest": "^3",
+                "php-http/mock-client": "^1",
+                "phpstan/extension-installer": "^1",
+                "phpstan/phpstan": "2.2.13",
+                "phpstan/phpstan-phpunit": "^2",
+                "phpunit/phpunit": "^11",
+                "symfony/http-client": "^7"
+            },
+            "suggest": {
+                "aws/aws-sdk-php": "Allows using the AWS Bedrock, AWS gateway, and Bedrock Mantle SDKs",
+                "google/auth": "Allows using the Google Vertex and Google Cloud gateway SDKs",
+                "mcp/sdk": "Required to use the BetaMcp helpers for integrating MCP servers with the Anthropic SDK"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Version.php"
+                ],
+                "psr-4": {
+                    "Anthropic\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Anthropic PHP SDK",
+            "support": {
+                "issues": "https://github.com/anthropics/anthropic-sdk-php/issues",
+                "source": "https://github.com/anthropics/anthropic-sdk-php/tree/v1.6.0"
+            },
+            "time": "2026-11-05T18:59:06+00:00"
+        },
         {
             "name": "doctrine/dbal",
             "version": "4.5.0",
@@ -497,6 +562,59 @@
             "time": "2025-03-06T22:45:56+00:00"
         },
         {
+            "name": "frootbox/ai-anthropic",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/modules/ai-anthropic",
+                "reference": "f07cd8eae9b3a90bee16a1810b003db8801f3d1b"
+            },
+            "require": {
+                "anthropic-ai/sdk": "^1.6",
+                "frootbox/core": "^0.1",
+                "nyholm/psr7": "^1.8",
+                "php": ">=8.5",
+                "symfony/http-client": "^8.1"
+            },
+            "type": "frootbox-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\AiAnthropic\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Frootbox\\AiAnthropic\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Claude by Anthropic as the AI provider of the Frootbox CMS, with the official SDK of Anthropic",
+            "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/ai-anthropic",
+            "keywords": [
+                "ai",
+                "anthropic",
+                "claude",
+                "cms",
+                "frootbox"
+            ],
+            "support": {
+                "issues": "https://github.com/Frootbox/frootbox/issues",
+                "source": "https://github.com/frootbox-packages/ai-anthropic",
+                "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+            },
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "frootbox/backend",
             "version": "dev-main",
             "dist": {
@@ -550,7 +668,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/modules/captcha-recaptcha",
-                "reference": "96af6057d52aaad9f2704c0c10fd2fa0673d81b3"
+                "reference": "57f03438803577374a9a0ba7ec35f827c38b6906"
             },
             "require": {
                 "frootbox/core": "^0.1",
@@ -578,6 +696,7 @@
                 "MIT"
             ],
             "description": "reCAPTCHA of Google for the forms of the Frootbox CMS: v2 with a box or v3 with a score, loaded only after consent",
+            "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/captcha-recaptcha",
             "keywords": [
                 "captcha",
                 "cms",
@@ -586,6 +705,11 @@
                 "recaptcha",
                 "spam"
             ],
+            "support": {
+                "issues": "https://github.com/Frootbox/frootbox/issues",
+                "source": "https://github.com/frootbox-packages/captcha-recaptcha",
+                "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+            },
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -597,7 +721,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/modules/collections",
-                "reference": "9d8ae19daac35dc7b4eb5ac77eb89b03c5e03110"
+                "reference": "f8f4b48f2f3fff9c519e369ce15aa134012e5a7c"
             },
             "require": {
                 "frootbox/core": "^0.1",
@@ -632,6 +756,7 @@
                 "MIT"
             ],
             "description": "Collections for the Frootbox CMS: entries of the same kind such as references, projects or show homes, each collection a space, with drafts, cards filtered by category and tag, an address for each entry and a form for requests",
+            "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/collections",
             "keywords": [
                 "cms",
                 "collections",
@@ -639,6 +764,11 @@
                 "portfolio",
                 "references"
             ],
+            "support": {
+                "issues": "https://github.com/Frootbox/frootbox/issues",
+                "source": "https://github.com/frootbox-packages/collections",
+                "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+            },
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -650,7 +780,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/core",
-                "reference": "3665d0bd8f1659fc593c7291a75764ad30d9f7a3"
+                "reference": "504e89e3aec1598160c8fde1a0ac0b70aa359d14"
             },
             "require": {
                 "doctrine/dbal": "^4.5",
@@ -675,6 +805,7 @@
                 "psr/log": "^3.0",
                 "symfony/console": "^8.1",
                 "symfony/dotenv": "^8.1",
+                "symfony/http-client": "^8.1",
                 "symfony/mailer": "^8.1",
                 "symfony/polyfill-intl-normalizer": "^1.33",
                 "symfony/yaml": "^8.1",
@@ -761,7 +892,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/modules/events",
-                "reference": "2e40d6601018a01186208782daa453c1203d4f30"
+                "reference": "c1e7eb9a305867716c0aa286ccca71c57dcd58df"
             },
             "require": {
                 "frootbox/core": "^0.1",
@@ -795,12 +926,18 @@
                 "MIT"
             ],
             "description": "Events for the Frootbox CMS: dates with place and drafts, categories, upcoming and past events with an address for each, the next events as teasers and a calendar file",
+            "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/events",
             "keywords": [
                 "calendar",
                 "cms",
                 "events",
                 "frootbox"
             ],
+            "support": {
+                "issues": "https://github.com/Frootbox/frootbox/issues",
+                "source": "https://github.com/frootbox-packages/events",
+                "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+            },
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -812,7 +949,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/modules/forms",
-                "reference": "e6d153eaecdae76cfc80db042c92026c5724f872"
+                "reference": "ed5ae0fe791697ceaf8982a35d67dc91ea111b70"
             },
             "require": {
                 "frootbox/core": "^0.1",
@@ -845,12 +982,18 @@
                 "MIT"
             ],
             "description": "Forms for the Frootbox CMS: build forms from field types, send entries by mail through the queue, keep them in the backend, spam protection with captchas of your choice and a spam folder",
+            "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/forms",
             "keywords": [
                 "cms",
                 "contact",
                 "forms",
                 "frootbox"
             ],
+            "support": {
+                "issues": "https://github.com/Frootbox/frootbox/issues",
+                "source": "https://github.com/frootbox-packages/forms",
+                "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+            },
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -862,7 +1005,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/modules/google-fonts",
-                "reference": "5648466bc33740c866e1406b242e102c0d0450cd"
+                "reference": "edf2bddb40fb34c88ff0cad0a20ae4bc54facbc7"
             },
             "require": {
                 "frootbox/core": "^0.1",
@@ -896,6 +1039,7 @@
                 "MIT"
             ],
             "description": "Google Fonts for the Frootbox CMS: search the catalog and import fonts once, so visitors load them from the own domain",
+            "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/google-fonts",
             "keywords": [
                 "cms",
                 "fonts",
@@ -903,6 +1047,11 @@
                 "google-fonts",
                 "privacy"
             ],
+            "support": {
+                "issues": "https://github.com/Frootbox/frootbox/issues",
+                "source": "https://github.com/frootbox-packages/google-fonts",
+                "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+            },
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -914,7 +1063,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/modules/jobs",
-                "reference": "5dde5cc1a678a1294c842645f8b0c59c676fec04"
+                "reference": "bde902e3968e2e3e0b4273263b75ad0de9b98b24"
             },
             "require": {
                 "frootbox/core": "^0.1",
@@ -950,12 +1099,18 @@
                 "MIT"
             ],
             "description": "Jobs for the Frootbox CMS: open positions with kind, start, salary and drafts, a list filtered by category, kind and location, an address for each job, structured data and the application through a form",
+            "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/jobs",
             "keywords": [
                 "careers",
                 "cms",
                 "frootbox",
                 "jobs"
             ],
+            "support": {
+                "issues": "https://github.com/Frootbox/frootbox/issues",
+                "source": "https://github.com/frootbox-packages/jobs",
+                "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+            },
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -967,7 +1122,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/modules/news",
-                "reference": "8b36f855a49d4271dc76ba4858e13fbe83e5d398"
+                "reference": "020e29fefadb3fd375b1703962b3fd1851979097"
             },
             "require": {
                 "frootbox/core": "^0.1",
@@ -1001,12 +1156,18 @@
                 "MIT"
             ],
             "description": "News for the Frootbox CMS: articles with drafts, categories, a list with an address for each article, the newest articles as teasers and an RSS feed",
+            "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/news",
             "keywords": [
                 "blog",
                 "cms",
                 "frootbox",
                 "news"
             ],
+            "support": {
+                "issues": "https://github.com/Frootbox/frootbox/issues",
+                "source": "https://github.com/frootbox-packages/news",
+                "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+            },
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -1018,7 +1179,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/modules/people",
-                "reference": "53ec3849a96ee4bc5c2873b62fea315bf809b55c"
+                "reference": "18be51f843995459e9fbb094d10b47d2f635f299"
             },
             "require": {
                 "frootbox/core": "^0.1",
@@ -1052,6 +1213,7 @@
                 "MIT"
             ],
             "description": "People and locations for the Frootbox CMS: a team, a contact person and a location with its address, opening hours and a map",
+            "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/people",
             "keywords": [
                 "cms",
                 "contact",
@@ -1059,6 +1221,11 @@
                 "locations",
                 "team"
             ],
+            "support": {
+                "issues": "https://github.com/Frootbox/frootbox/issues",
+                "source": "https://github.com/frootbox-packages/people",
+                "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+            },
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -1114,7 +1281,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/modules/search",
-                "reference": "b99c1fe600d41ed256b4f85c1849a367e9d1214b"
+                "reference": "160e549cedc515d429e32354532f9f5bbec2404a"
             },
             "require": {
                 "frootbox/core": "^0.1",
@@ -1142,12 +1309,18 @@
                 "MIT"
             ],
             "description": "Search for the Frootbox CMS: visitors find published pages, articles, events and more",
+            "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/search",
             "keywords": [
                 "cms",
                 "frootbox",
                 "search",
                 "site-search"
             ],
+            "support": {
+                "issues": "https://github.com/Frootbox/frootbox/issues",
+                "source": "https://github.com/frootbox-packages/search",
+                "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+            },
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -1159,7 +1332,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/modules/seo",
-                "reference": "b788ac10428855f4472b32695e16169ea23d64b0"
+                "reference": "5d798b7433017f34464342234e6e7cf9680c1674"
             },
             "require": {
                 "frootbox/core": "^0.1",
@@ -1194,6 +1367,7 @@
                 "MIT"
             ],
             "description": "SEO for the Frootbox CMS: sitemap, robots.txt, Open Graph, structured data and a check of every page",
+            "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/seo",
             "keywords": [
                 "cms",
                 "frootbox",
@@ -1201,6 +1375,11 @@
                 "seo",
                 "sitemap"
             ],
+            "support": {
+                "issues": "https://github.com/Frootbox/frootbox/issues",
+                "source": "https://github.com/frootbox-packages/seo",
+                "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+            },
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -1212,7 +1391,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/modules/statistics",
-                "reference": "8abfd6e0e5018d0aa992b53a94775b7aeeeb7b93"
+                "reference": "ea593db1680cb58266e964a66203ace779a5aa21"
             },
             "require": {
                 "doctrine/dbal": "^4.5",
@@ -1248,6 +1427,7 @@
                 "MIT"
             ],
             "description": "Statistics for the Frootbox CMS: visits and page views without cookies or personal data, the most visited pages, sources and devices",
+            "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/statistics",
             "keywords": [
                 "analytics",
                 "cms",
@@ -1255,6 +1435,11 @@
                 "privacy",
                 "statistics"
             ],
+            "support": {
+                "issues": "https://github.com/Frootbox/frootbox/issues",
+                "source": "https://github.com/frootbox-packages/statistics",
+                "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+            },
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -1266,7 +1451,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/modules/storage-s3",
-                "reference": "004b4693f51204f2477ae46ea296332761bb5f56"
+                "reference": "6d9952a911ac0bba41906294742fbb6fd31f087d"
             },
             "require": {
                 "ext-simplexml": "*",
@@ -1296,6 +1481,7 @@
                 "MIT"
             ],
             "description": "S3-compatible storage for the Frootbox CMS: media and files from forms in a bucket, public media delivered from there",
+            "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/storage-s3",
             "keywords": [
                 "cms",
                 "frootbox",
@@ -1303,6 +1489,11 @@
                 "s3",
                 "storage"
             ],
+            "support": {
+                "issues": "https://github.com/Frootbox/frootbox/issues",
+                "source": "https://github.com/frootbox-packages/storage-s3",
+                "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+            },
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -1378,7 +1569,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/modules/webhooks",
-                "reference": "a4edeedd4f3d87a6f7d04823bdf67d22972fc4a0"
+                "reference": "8e7b59daf1a66ba4f179afbae523ced501341c95"
             },
             "require": {
                 "frootbox/core": "^0.1",
@@ -1412,6 +1603,7 @@
                 "MIT"
             ],
             "description": "Webhooks for the Frootbox CMS: tell other services about changes, signed after Standard Webhooks and sent in the background",
+            "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/webhooks",
             "keywords": [
                 "cms",
                 "frootbox",
@@ -1419,6 +1611,11 @@
                 "standard-webhooks",
                 "webhooks"
             ],
+            "support": {
+                "issues": "https://github.com/Frootbox/frootbox/issues",
+                "source": "https://github.com/frootbox-packages/webhooks",
+                "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+            },
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -1929,6 +2126,141 @@
             "time": "2023-11-08T09:30:43+00:00"
         },
         {
+            "name": "open-telemetry/api",
+            "version": "1.11.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/opentelemetry-php/api.git",
+                "reference": "bc169d9ecd11858e941657770dc708c6a15fc5f4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/opentelemetry-php/api/zipball/bc169d9ecd11858e941657770dc708c6a15fc5f4",
+                "reference": "bc169d9ecd11858e941657770dc708c6a15fc5f4",
+                "shasum": ""
+            },
+            "require": {
+                "open-telemetry/context": "^1.4",
+                "php": "^8.2",
+                "psr/log": "^1.1|^2.0|^3.0"
+            },
+            "conflict": {
+                "open-telemetry/sdk": "<=1.11",
+                "open-telemetry/sdk-configuration": "<0.10"
+            },
+            "suggest": {
+                "symfony/config": "To implement a ComponentProvider for declarative configuration"
+            },
+            "type": "library",
+            "extra": {
+                "spi": {
+                    "OpenTelemetry\\API\\Configuration\\Config\\ComponentProvider": [
+                        "OpenTelemetry\\API\\Baggage\\Propagation\\Config\\TextMapPropagatorBaggage",
+                        "OpenTelemetry\\API\\Trace\\Propagation\\Config\\TextMapPropagatorTraceContext"
+                    ],
+                    "OpenTelemetry\\API\\Instrumentation\\AutoInstrumentation\\HookManagerInterface": [
+                        "OpenTelemetry\\API\\Instrumentation\\AutoInstrumentation\\ExtensionHookManager"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-main": "1.11.x-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "Trace/functions.php"
+                ],
+                "psr-4": {
+                    "OpenTelemetry\\API\\": "."
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "opentelemetry-php contributors",
+                    "homepage": "https://github.com/open-telemetry/opentelemetry-php/graphs/contributors"
+                }
+            ],
+            "description": "API for OpenTelemetry PHP.",
+            "keywords": [
+                "Metrics",
+                "api",
+                "apm",
+                "logging",
+                "opentelemetry",
+                "otel",
+                "tracing"
+            ],
+            "support": {
+                "chat": "https://app.slack.com/client/T08PSQ7BQ/C01NFPCV44V",
+                "docs": "https://opentelemetry.io/docs/languages/php",
+                "issues": "https://github.com/open-telemetry/opentelemetry-php/issues",
+                "source": "https://github.com/open-telemetry/opentelemetry-php"
+            },
+            "time": "2026-11-05T11:54:49+00:00"
+        },
+        {
+            "name": "open-telemetry/context",
+            "version": "1.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/opentelemetry-php/context.git",
+                "reference": "711e7291d9cf8a984c059c5afd926e45ab444b7f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/opentelemetry-php/context/zipball/711e7291d9cf8a984c059c5afd926e45ab444b7f",
+                "reference": "711e7291d9cf8a984c059c5afd926e45ab444b7f",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2"
+            },
+            "suggest": {
+                "ext-ffi": "To allow context switching in Fibers"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.6.x-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "fiber/initialize_fiber_handler.php"
+                ],
+                "psr-4": {
+                    "OpenTelemetry\\Context\\": "."
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "opentelemetry-php contributors",
+                    "homepage": "https://github.com/open-telemetry/opentelemetry-php/graphs/contributors"
+                }
+            ],
+            "description": "Context implementation for OpenTelemetry PHP.",
+            "keywords": [
+                "Context",
+                "opentelemetry",
+                "otel"
+            ],
+            "support": {
+                "chat": "https://app.slack.com/client/T08PSQ7BQ/C01NFPCV44V",
+                "docs": "https://opentelemetry.io/docs/languages/php",
+                "issues": "https://github.com/open-telemetry/opentelemetry-php/issues",
+                "source": "https://github.com/open-telemetry/opentelemetry-php"
+            },
+            "time": "2026-11-05T11:54:49+00:00"
+        },
+        {
             "name": "opis/json-schema",
             "version": "2.6.0",
             "source": {
@@ -2247,6 +2579,85 @@
             "time": "2025-08-16T11:10:48+00:00"
         },
         {
+            "name": "php-http/discovery",
+            "version": "1.20.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-http/discovery.git",
+                "reference": "82fe4c73ef3363caed49ff8dd1539ba06044910d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-http/discovery/zipball/82fe4c73ef3363caed49ff8dd1539ba06044910d",
+                "reference": "82fe4c73ef3363caed49ff8dd1539ba06044910d",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0|^2.0",
+                "php": "^7.1 || ^8.0"
+            },
+            "conflict": {
+                "nyholm/psr7": "<1.0",
+                "zendframework/zend-diactoros": "*"
+            },
+            "provide": {
+                "php-http/async-client-implementation": "*",
+                "php-http/client-implementation": "*",
+                "psr/http-client-implementation": "*",
+                "psr/http-factory-implementation": "*",
+                "psr/http-message-implementation": "*"
+            },
+            "require-dev": {
+                "composer/composer": "^1.0.2|^2.0",
+                "graham-campbell/phpspec-skip-example-extension": "^5.0",
+                "php-http/httplug": "^1.0 || ^2.0",
+                "php-http/message-factory": "^1.0",
+                "phpspec/phpspec": "^5.1 || ^6.1 || ^7.3",
+                "sebastian/comparator": "^3.0.5 || ^4.0.8",
+                "symfony/phpunit-bridge": "^6.4.4 || ^7.0.1"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Http\\Discovery\\Composer\\Plugin",
+                "plugin-optional": true
+            },
+            "autoload": {
+                "psr-4": {
+                    "Http\\Discovery\\": "src/"
+                },
+                "exclude-from-classmap": [
+                    "src/Composer/Plugin.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Márk Sági-Kazár",
+                    "email": "mark.sagikazar@gmail.com"
+                }
+            ],
+            "description": "Finds and installs PSR-7, PSR-17, PSR-18 and HTTPlug implementations",
+            "homepage": "http://php-http.org",
+            "keywords": [
+                "adapter",
+                "client",
+                "discovery",
+                "factory",
+                "http",
+                "message",
+                "psr17",
+                "psr7"
+            ],
+            "support": {
+                "issues": "https://github.com/php-http/discovery/issues",
+                "source": "https://github.com/php-http/discovery/tree/1.20.0"
+            },
+            "time": "2024-10-02T11:20:13+00:00"
+        },
+        {
             "name": "psr/cache",
             "version": "3.0.0",
             "source": {
@@ -2397,6 +2808,58 @@
                 "source": "https://github.com/php-fig/event-dispatcher/tree/1.0.0"
             },
             "time": "2019-01-08T18:20:26+00:00"
+        },
+        {
+            "name": "psr/http-client",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-client.git",
+                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-client/zipball/bb5906edc1c324c9a05aa0873d40117941e5fa90",
+                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0 || ^8.0",
+                "psr/http-message": "^1.0 || ^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Client\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for HTTP clients",
+            "homepage": "https://github.com/php-fig/http-client",
+            "keywords": [
+                "http",
+                "http-client",
+                "psr",
+                "psr-18"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/http-client"
+            },
+            "time": "2023-09-23T14:17:50+00:00"
         },
         {
             "name": "psr/http-factory",
@@ -2670,6 +3133,51 @@
             "time": "2024-09-11T13:17:53+00:00"
         },
         {
+            "name": "standard-webhooks/standard-webhooks",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/standard-webhooks/standard-webhooks.git",
+                "reference": "a1773d7ffc577d730e2bf4d4bd740a82a42aa904"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/standard-webhooks/standard-webhooks/zipball/a1773d7ffc577d730e2bf4d4bd740a82a42aa904",
+                "reference": "a1773d7ffc577d730e2bf4d4bd740a82a42aa904",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.0 || ^10.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "StandardWebhooks\\": "libraries/php/src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Standard Webhooks - Open source tools and guidelines for sending webhooks easily, securely, and reliably",
+            "homepage": "https://www.standardwebhooks.com",
+            "keywords": [
+                "hmac",
+                "signature",
+                "standard-webhooks",
+                "verification",
+                "webhooks"
+            ],
+            "support": {
+                "issues": "https://github.com/standard-webhooks/standard-webhooks/issues",
+                "source": "https://github.com/standard-webhooks/standard-webhooks/tree/v1.0.2"
+            },
+            "time": "2026-02-18T19:02:27+00:00"
+        },
+        {
             "name": "symfony/console",
             "version": "v8.1.10",
             "source": {
@@ -2771,16 +3279,16 @@
         },
         {
             "name": "symfony/deprecation-contracts",
-            "version": "v3.8.0",
+            "version": "v3.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/deprecation-contracts.git",
-                "reference": "f3202fa1b5097b0af062dc978b32ecf63404e31d"
+                "reference": "feb1edf4e546af3b85c5caebe8359a20db230ca3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/f3202fa1b5097b0af062dc978b32ecf63404e31d",
-                "reference": "f3202fa1b5097b0af062dc978b32ecf63404e31d",
+                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/feb1edf4e546af3b85c5caebe8359a20db230ca3",
+                "reference": "feb1edf4e546af3b85c5caebe8359a20db230ca3",
                 "shasum": ""
             },
             "require": {
@@ -2793,7 +3301,7 @@
                     "name": "symfony/contracts"
                 },
                 "branch-alias": {
-                    "dev-main": "3.7-dev"
+                    "dev-main": "3.8-dev"
                 }
             },
             "autoload": {
@@ -2818,7 +3326,7 @@
             "description": "A generic function and convention to trigger deprecation notices",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/deprecation-contracts/tree/v3.8.0"
+                "source": "https://github.com/symfony/deprecation-contracts/tree/v3.8.1"
             },
             "funding": [
                 {
@@ -2838,7 +3346,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-05T06:23:12+00:00"
+            "time": "2026-09-16T14:15:10+00:00"
         },
         {
             "name": "symfony/dotenv",
@@ -3082,16 +3590,16 @@
         },
         {
             "name": "symfony/http-client",
-            "version": "v8.1.10",
+            "version": "v8.1.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-client.git",
-                "reference": "1f6bd9bb0dddbbb1b88823e26c6d05fc3ba89219"
+                "reference": "1758b323ba9c5e88b42602b9c2cb27b640de4d36"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-client/zipball/1f6bd9bb0dddbbb1b88823e26c6d05fc3ba89219",
-                "reference": "1f6bd9bb0dddbbb1b88823e26c6d05fc3ba89219",
+                "url": "https://api.github.com/repos/symfony/http-client/zipball/1758b323ba9c5e88b42602b9c2cb27b640de4d36",
+                "reference": "1758b323ba9c5e88b42602b9c2cb27b640de4d36",
                 "shasum": ""
             },
             "require": {
@@ -3155,7 +3663,7 @@
                 "http"
             ],
             "support": {
-                "source": "https://github.com/symfony/http-client/tree/v8.1.10"
+                "source": "https://github.com/symfony/http-client/tree/v8.1.11"
             },
             "funding": [
                 {
@@ -3175,20 +3683,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-10-26T21:55:04+00:00"
+            "time": "2026-11-04T08:39:20+00:00"
         },
         {
             "name": "symfony/http-client-contracts",
-            "version": "v3.7.3",
+            "version": "v3.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-client-contracts.git",
-                "reference": "35be0019e2c2c9fba80f9dc033290a5240f7b44f"
+                "reference": "f9f94260f787446c6fd430b2ae1969fe41ae1ba8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-client-contracts/zipball/35be0019e2c2c9fba80f9dc033290a5240f7b44f",
-                "reference": "35be0019e2c2c9fba80f9dc033290a5240f7b44f",
+                "url": "https://api.github.com/repos/symfony/http-client-contracts/zipball/f9f94260f787446c6fd430b2ae1969fe41ae1ba8",
+                "reference": "f9f94260f787446c6fd430b2ae1969fe41ae1ba8",
                 "shasum": ""
             },
             "require": {
@@ -3201,7 +3709,7 @@
                     "name": "symfony/contracts"
                 },
                 "branch-alias": {
-                    "dev-main": "3.7-dev"
+                    "dev-main": "3.8-dev"
                 }
             },
             "autoload": {
@@ -3237,7 +3745,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/http-client-contracts/tree/v3.7.3"
+                "source": "https://github.com/symfony/http-client-contracts/tree/v3.8.1"
             },
             "funding": [
                 {
@@ -3257,7 +3765,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-04T08:41:16+00:00"
+            "time": "2026-10-04T15:04:25+00:00"
         },
         {
             "name": "symfony/mailer",
@@ -4016,16 +4524,16 @@
         },
         {
             "name": "symfony/service-contracts",
-            "version": "v3.8.0",
+            "version": "v3.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/service-contracts.git",
-                "reference": "15e6a07ec2a2c75ceb1b21dd98105ee8456d2257"
+                "reference": "052852a96fd5e5ebdb617dba22031e41a3300fb5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/15e6a07ec2a2c75ceb1b21dd98105ee8456d2257",
-                "reference": "15e6a07ec2a2c75ceb1b21dd98105ee8456d2257",
+                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/052852a96fd5e5ebdb617dba22031e41a3300fb5",
+                "reference": "052852a96fd5e5ebdb617dba22031e41a3300fb5",
                 "shasum": ""
             },
             "require": {
@@ -4043,7 +4551,7 @@
                     "name": "symfony/contracts"
                 },
                 "branch-alias": {
-                    "dev-main": "3.7-dev"
+                    "dev-main": "3.8-dev"
                 }
             },
             "autoload": {
@@ -4079,7 +4587,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/service-contracts/tree/v3.8.0"
+                "source": "https://github.com/symfony/service-contracts/tree/v3.8.1"
             },
             "funding": [
                 {
@@ -4099,7 +4607,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-07-27T15:39:01+00:00"
+            "time": "2026-10-20T17:38:25+00:00"
         },
         {
             "name": "symfony/stopwatch",
@@ -8299,6 +8807,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "frootbox/ai-anthropic": 20,
         "frootbox/backend": 20,
         "frootbox/captcha-recaptcha": 20,
         "frootbox/collections": 20,
