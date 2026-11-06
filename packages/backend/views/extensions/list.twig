@@ -89,6 +89,20 @@
         {% endif %}
     </section>
 
+    {% if can('system.cache-clear') %}
+    <section class="fb-card" id="extensions-cache" aria-labelledby="extensions-cache-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="extensions-cache-title" tabindex="-1" data-fb-focus>{{ t('Cache') }}</h2>
+        </div>
+        <div class="fb-card__body fb-stack fb-stack--sm">
+            <p class="fb-muted">{{ t('After uploading changed templates or code without a console: empties var/cache. Pages, templates and lists are rebuilt on the next visit, the first one takes a little longer.') }}</p>
+            <fb-form action="system.cache-clear" done="{{ t('The cache is empty.') }}">
+                <form novalidate>{{ ui.button({label: t('Clear the cache'), type: 'submit', variant: 'outline'}) }}</form>
+            </fb-form>
+        </div>
+    </section>
+    {% endif %}
+
     {% if missing is not empty %}
     <section class="fb-card" aria-labelledby="extensions-missing">
         <div class="fb-card__header">

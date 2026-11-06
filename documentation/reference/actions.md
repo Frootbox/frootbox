@@ -1380,6 +1380,12 @@ Lists the backups of the database, newest first, and whether they can be restore
 
 Query · right `system.backup-list`
 
+### `system.cache-clear`
+
+Empties var/cache: pages for guests, compiled templates and everything else there is rebuilt on the next request
+
+Action · right `system.cache-clear` · cannot be undone
+
 ### `system.component-usages`
 
 Lists the blocks and layouts used on pages, in drafts or published, with the pages and whether their extension is installed

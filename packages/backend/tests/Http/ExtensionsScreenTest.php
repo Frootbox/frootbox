@@ -44,7 +44,9 @@ final class ExtensionsScreenTest extends BackendTestCase
         self::assertMatchesRegularExpression('~<code>acme/base</code> · \d+ Blöcke · 1 Layout~', $html);
         self::assertSame(2, substr_count($html, 'Aktives Theme'), 'The theme and its parent.');
         self::assertStringContainsString('composer require frootbox/news', $html);
-        self::assertStringNotContainsString('<fb-form', $html, 'Read only.');
+        self::assertSame(1, substr_count($html, '<fb-form'), 'Read only, but for the cache.');
+        self::assertStringContainsString('<fb-form action="system.cache-clear"', $html, 'For webspace without a console.');
+        self::assertStringContainsString('Cache leeren', $html);
         self::assertMatchesRegularExpression('~<code>frootbox/backend</code> · 9\.9\.9 · \d+ Bildschirme \([^)]*Erweiterungen[^)]*\)~', $html, 'Screens by the package that added them.');
         self::assertStringContainsString('Weitere offizielle Module', $html);
         self::assertStringContainsString('<span class="fb-list__title">Personen und Standorte</span>', $html, 'Titles in the language of the backend.');

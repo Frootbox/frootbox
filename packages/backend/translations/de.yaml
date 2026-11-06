@@ -1468,6 +1468,10 @@ Database: Datenbank
 "Update now": "Jetzt aktualisieren"
 "No backup can be made here before, e.g. without mysqldump. Make one by hand first, then update without a backup.": "Hier lässt sich vorher kein Backup anlegen, etwa ohne mysqldump. Sichere die Datenbank zuerst selbst und aktualisiere dann ohne Backup."
 "Update without a backup": "Ohne Backup aktualisieren"
+Cache: Cache
+"After uploading changed templates or code without a console: empties var/cache. Pages, templates and lists are rebuilt on the next visit, the first one takes a little longer.": "Nach dem Hochladen geänderter Templates oder geänderten Codes ohne Konsole: leert var/cache. Seiten, Templates und Listen entstehen beim nächsten Aufruf neu, der erste dauert etwas länger."
+"Clear the cache": "Cache leeren"
+"The cache is empty.": "Der Cache ist leer."
 "Update the database without a backup?": "Datenbank ohne Backup aktualisieren?"
 "If a migration fails, there is no state from before to go back to.": "Scheitert eine Migration, gibt es keinen Stand von vorher, zu dem Du zurückkannst."
 "{count} migration is pending":

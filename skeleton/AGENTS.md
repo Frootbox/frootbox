@@ -65,7 +65,8 @@ change shows up directly. Set `theme: acme/site` in `config/app.yaml`.
 
 `APP_ENV=dev` in `.env` turns off every cache: change a file, reload the
 page. Live (`APP_ENV=prod`) guests get cached pages; run `cache:clear`
-after a deployment.
+after a deployment. Without a console, a superuser empties the cache
+under **Extensions** in the backend (action `system.cache-clear`).
 
 ## Modules
 

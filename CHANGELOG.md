@@ -20,6 +20,9 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core and Backend: the action `system.cache-clear` empties `var/cache`
+  like `bin/frootbox cache:clear`, for superusers. The backend offers it
+  under Extensions, for websites on webspace without a console.
 - Core: an MCP server at `/api/mcp` for Claude, ChatGPT and other AI
   clients. Every action and query the user may run is a tool (`page.create`
   as `page_create`), with `readOnlyHint` for queries and `destructiveHint`
