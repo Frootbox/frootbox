@@ -38,6 +38,21 @@ drafts, open comments and the time of the last change. No names, emails,
 content or addresses of pages. The screen **Connection** shows exactly
 this document and when the hub last read it.
 
+## The schedule without cron
+
+Webspace often has no cron job with a console. Without one, scheduled
+publishing, backups, statistics and the queue run only when visitors
+come. When the status of a connected website shows no own cron job
+(`cron.lastRun` missing or older than ten minutes), the hub asks it every
+five minutes to run its schedule, with a signed `POST
+/.well-known/frootbox/tick`. The website answers `202` at once and works
+after the response: what is due, then the queue for up to 20 seconds.
+The hub does not wait for that. Such a run is noted apart from cron, as
+`cron.lastTick` in the status, so the hub keeps asking. As soon as an
+own cron job runs, the website answers `{"accepted": false}` and the hub
+stops asking. Without the hub nothing changes: cron or visitors run the
+schedule as before.
+
 Turning the status off deletes the service account at once, its token
 stops working. **Disconnect** deletes the access too and forgets the
 keys of the hub, whether or not the hub can be told.
@@ -100,6 +115,7 @@ The browser goes to `{hub}/connect/<id>` and comes back to `return` with
 | `POST /.well-known/frootbox/verify` | `id` of the open request or the connection, `challenge` (16 to 128 characters of base64url) | `signature`: the `v1a` signature of `frootbox-connect-verify-v1:<id>:<challenge>` with the key of the website |
 | `POST /.well-known/frootbox/disconnect` | `connection` | 204 |
 | `POST /.well-known/frootbox/keys` | `keys`, the new list, signed with a current key | 204 |
+| `POST /.well-known/frootbox/tick` | `connection` | 202 with `accepted`: whether it runs the schedule after the response (not with an own cron job) |
 
 The text the website signs for `verify` has no dots, so it can never pass
 as a webhook. These routes run past the password of a protected website,

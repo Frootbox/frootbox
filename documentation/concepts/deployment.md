@@ -22,7 +22,11 @@ content of the live website).
 3. Set `app.url` in `config/app.yaml`, it is required live.
 4. The web server may write to `storage/` and `var/`.
 5. A cron job runs `php bin/frootbox schedule:run` every five minutes:
-   scheduled publishing, backups, the queue, statistics, mails.
+   scheduled publishing, backups, the queue, statistics, mails. Without
+   a console, connect the website to the hub with its status on: the
+   hub then asks it to run every five minutes (see
+   [the hub](hub.md#the-schedule-without-cron)). Otherwise visitors
+   run it.
 
 ## Updates
 

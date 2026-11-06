@@ -126,6 +126,12 @@ backend's own templates, styles and scripts are not part of it.
   diff, also when the earlier build had them. With `--latest` the
   diff is always `<project>-latest/`, for a fixed folder in an FTP
   client.
+- Core: the hub runs the schedule of a connected website without cron.
+  It calls `POST /.well-known/frootbox/tick`, signed like the other
+  callbacks; the website answers 202 at once and then runs what is due
+  and the queue for up to 20 seconds, unless an own cron job runs.
+  `status.show` reports such runs as `cron.lastTick`, apart from
+  `cron.lastRun`.
 - Workbench: every website in the workbench has a screen **Build**
   under Administration for superusers. It builds the website for upload
   in the background, with the diff since the build on the server in
