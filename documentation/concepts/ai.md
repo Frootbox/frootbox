@@ -76,6 +76,32 @@ ai:
         claude-opus-5-5: { input: 3.5, output: 17.5 }
 ```
 
+## Writing at a field
+
+Three actions suggest texts and change nothing. A person takes a
+suggestion with the action of the field, like an own input, so it lands
+in the draft and can be undone. All need `ai.use`; the costs count under
+the feature named below.
+
+| Action | Suggests | Takes it | Feature |
+|---|---|---|---|
+| `ai.field-write` | a headline, text or rich text of a page from its draft: `task` is `rephrase`, `shorten`, `expand`, `correct`, `translate` (with `from`, another language of the page) or `instruct` (with `instruction`, also for an empty field) | `page.update-field` with `value` | `field.<task>` |
+| `ai.alt-text` | an alternative text for an image, from a copy of at most 1568 pixels | `media.update` with `texts` | `media.alt-text` |
+| `ai.page-snippet` | a title and a description for search engines from the text of the draft | `page.update` with `seoTitle` and `description` | `page.snippet` |
+
+A rich text goes to the model as HTML and comes back as a document of
+the field: only what the field allows passes, a suggestion that does not
+fit is refused with `422`. Each request carries the name of the website,
+the title of the page, the language and the field with its limits, never
+more of the website than the feature needs. Every attempt costs, also
+one that is not taken.
+
+```bash
+curl -X POST https://example.org/api/v1/ai.field-write \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"id": "01J…", "language": "de", "path": "title", "block": "k3x9q2mf", "task": "shorten"}'
+```
+
 ## Using the AI in a feature
 
 A feature is an action with the right `ai.use`. It asks the `Assistant`,

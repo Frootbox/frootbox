@@ -98,6 +98,47 @@ Action · right `action.undo`
 |---|---|---|
 | `id` | integer | ID of the action in the action log |
 
+### `ai.alt-text`
+
+Suggests an alternative text for an image with the AI, which sees a smaller copy of it. Changes nothing; media.update saves the text
+
+Action · right `ai.use` · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `id` | string | Id of the medium |
+| `language` | string | Language of the text, e.g. "de" |
+| `page` | string or null, optional | The page the image is on, for its title as context |
+| `instruction` | string or null, optional | What to keep in mind, in the words of the person |
+
+### `ai.field-write`
+
+Suggests a new text for a headline, text or rich text field of a page with the AI: rephrase, shorten, expand, correct, translate from another language of the page or follow an own instruction, also to draft an empty field. Changes nothing; page.update-field saves the suggestion
+
+Action · right `ai.use` · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `id` | string |  |
+| `language` | string | Language of the translation, e.g. "de" |
+| `path` | string | Path of the field, e.g. "title" or "slides/0/title" |
+| `task` | mixed: `rephrase`, `shorten`, `expand`, `correct`, `translate`, `instruct` |  |
+| `block` | string or null, optional | Id of the block; left out for a field of the layout |
+| `instruction` | string or null, optional | What should change, in the words of the person; needed for "instruct", e.g. notes to draft an empty field from |
+| `from` | string or null, optional | For "translate": the language to translate from, e.g. "en" |
+
+### `ai.page-snippet`
+
+Suggests a title and a description for search engines from the draft of a page with the AI. Changes nothing; page.update saves them as seoTitle and description
+
+Action · right `ai.use` · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `id` | string |  |
+| `language` | string | Language of the translation, e.g. "de" |
+| `instruction` | string or null, optional | What to keep in mind, in the words of the person, e.g. a search term |
+
 ### `ai.status`
 
 Returns whether the AI is there for the signed-in person and, if not, why: no provider, provider not set up, no permission ai.use or the monthly limit reached; also where the prices of the model come from

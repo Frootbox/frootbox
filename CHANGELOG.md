@@ -48,6 +48,13 @@ backend's own templates, styles and scripts are not part of it.
   run of the schedule, only when it used the AI since its last list and
   that list is older than a day. `ai.status` says where the prices come
   from, the screen **AI** shows it.
+- Core: writing at a field with the AI. `ai.field-write` suggests a
+  headline, text or rich text of a page (rephrase, shorten, expand,
+  correct, translate from another language of the page, or an own
+  instruction), `ai.alt-text` an alternative text from the image and
+  `ai.page-snippet` a title and description for search engines. They
+  save nothing; the actions of the fields take the suggestions.
+  `Page\PageText` gives the plain text of a page.
 - AI Anthropic: the new module `frootbox/ai-anthropic` brings Claude
   through the official SDK of Anthropic, with the API key in its settings
   or `ANTHROPIC_API_KEY` in `.env`, the models Opus 5.5 (standard),
