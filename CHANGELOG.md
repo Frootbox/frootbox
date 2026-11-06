@@ -126,6 +126,15 @@ backend's own templates, styles and scripts are not part of it.
   diff, also when the earlier build had them. With `--latest` the
   diff is always `<project>-latest/`, for a fixed folder in an FTP
   client.
+- Workbench: every website in the workbench has a screen **Build**
+  under Administration for superusers. It builds the website for upload
+  in the background, with the diff since the build on the server in
+  `<project>-latest/`, and shows the result. A button **Uploaded**
+  notes the new build as the one on the server; until then every build
+  compares with the same base. The actions
+  `frootbox/workbench/build.start` and
+  `frootbox/workbench/build.mark-uploaded` and the query
+  `frootbox/workbench/build.show`, only in the workbench.
 
 ### Changed
 
