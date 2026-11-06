@@ -149,6 +149,10 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Fixed
 
+- Workbench: `workbench build` without `--with-content` no longer carries
+  the empty SQLite database the build leaves in `storage/`. Uploaded over
+  a running website, it replaced the database there. `var/` of a build is
+  empty, the caches of the building machine stay home.
 - Core: the page cache no longer loses a query parameter that a block
   declares when pages are cached at the same time. A lost `q` made every
   search get the cached search page without results.
