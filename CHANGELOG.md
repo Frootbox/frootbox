@@ -149,6 +149,10 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Fixed
 
+- Core: the status and the page "Connection" of the backend no longer
+  fail on webspace that disables `disk_total_space()` or
+  `disk_free_space()`; the status then has no disk space. Work after the
+  response no longer needs `ignore_user_abort()`.
 - Workbench: `workbench build` without `--with-content` no longer carries
   the empty SQLite database the build leaves in `storage/`. Uploaded over
   a running website, it replaced the database there. `var/` of a build is
