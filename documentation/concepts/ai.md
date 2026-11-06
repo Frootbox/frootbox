@@ -48,6 +48,34 @@ last request before may pass the limit by its own costs.
 The costs are written once the action that asked has ended, also when it
 fails afterwards: the provider was paid either way.
 
+### Where the prices come from
+
+A model counts with the first prices that are there:
+
+1. `ai.prices.<model>` in `config/app.yaml`, e.g. for an own contract:
+   `input`, `output` and optionally `cacheRead` and `cacheWrite` in US
+   dollars per million tokens. Without prices for the cache, reading and
+   writing it costs as much as the input.
+2. The list of the hub, for a website connected to frootbox.de.
+3. The prices the provider module brings.
+
+A connected website asks the hub for the list of its provider only when
+it used the AI since its last list and that list is older than a day,
+after a run of the schedule. It tells the hub only the name of the
+provider package, nothing about the use. The hub signs the answer; one
+without a valid signature is no list. The list lives in
+`var/hub/ai-prices.json` and may get lost with `var/`: the prices of the
+module count until the next one. A new list changes only the costs of
+new requests. `ai.status` says where the prices of the chosen model come
+from (`config`, `hub` or `module`).
+
+```yaml
+# config/app.yaml
+ai:
+    prices:
+        claude-opus-5-5: { input: 3.5, output: 17.5 }
+```
+
 ## Using the AI in a feature
 
 A feature is an action with the right `ai.use`. It asks the `Assistant`,

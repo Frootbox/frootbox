@@ -29,6 +29,10 @@ Jede Anfrage zählt mit ihren Tokens und den Preisen ihres Modells, nach
 Tag, Funktion, Person und Modell. Du bezahlst den Anbieter direkt; die
 Zahlen hier sind eine Schätzung nach seinen Listenpreisen.
 
+**Preise** zeigt, woher sie kommen: vom Hub bei einer Website, die mit
+frootbox.de verbunden ist, er hält sie aktuell, sonst aus dem Modul des
+Anbieters oder für einen eigenen Vertrag aus `config/app.yaml`.
+
 ## Datenschutz
 
 Zum Anbieter geht nur, was eine Funktion schickt, z. B. der Text, an dem

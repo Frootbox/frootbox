@@ -56,6 +56,7 @@ final class AiScreenTest extends BackendTestCase
 
         self::assertStringContainsString('href="/cms/ai"', $html, 'In the menu with a provider.');
         self::assertStringContainsString('Fake Large', $html);
+        self::assertStringContainsString('From the module', $html, 'Where the prices come from.');
         self::assertStringContainsString('<fb-form action="ai.test" show="ai-test-result" refresh="ai-usage">', $html);
         self::assertStringContainsString('$0.01', $html, '8,006 millionths of a dollar.');
         self::assertStringContainsString('Connection test', $html);

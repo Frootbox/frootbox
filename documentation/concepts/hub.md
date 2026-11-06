@@ -104,6 +104,7 @@ signs and verifies both forms.
 | `POST /connect/v1/codes/<code>` | as a request, and `status` | `connection`, `organization` |
 | `PATCH /connect/v1/connections/<id>` | `switches`, `status` | 204 |
 | `DELETE /connect/v1/connections/<id>` | | 204 |
+| `POST /connect/v1/connections/<id>/prices` | `provider`, the package of the AI provider | `provider`, `updatedAt`, `models` [{`id`, `input`, `output`, `cacheRead`, `cacheWrite`}] in US dollars per million tokens, signed with a key of the hub; empty for a provider the hub does not know |
 
 The browser goes to `{hub}/connect/<id>` and comes back to `return` with
 `?request=<id>&code=<code>`.

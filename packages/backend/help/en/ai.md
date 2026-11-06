@@ -30,6 +30,10 @@ Each request counts with its tokens and the prices of its model, by
 day, feature, person and model. You pay the provider directly; the
 figures here are an estimate from its list prices.
 
+**Prices** says where they come from: from the hub for a website
+connected to frootbox.de, which keeps them up to date, else from the
+module of the provider, or from `config/app.yaml` for an own contract.
+
 ## Privacy
 
 Only what a feature sends goes to the provider, e.g. the text you work

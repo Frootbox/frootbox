@@ -33,6 +33,7 @@
             {{ ui.figures([
                 {label: t('Provider'), value: status.provider ?? '–'},
                 {label: t('Model'), value: status.model ?? '–'},
+                {label: t('Prices'), value: {hub: t('From the hub'), config: t('From config/app.yaml'), module: t('From the module')}[status.prices] ?? '–', note: status.pricesSince ? ui.time(status.pricesSince) : null},
             ]) }}
             {% if status.reason == 'setup' %}
                 {{ ui.alert({tone: 'warning', title: t('Not set up yet'), text: t('Store the API key of {provider} in the settings first.', {provider: status.provider})}) }}

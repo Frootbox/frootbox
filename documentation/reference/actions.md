@@ -100,7 +100,7 @@ Action · right `action.undo`
 
 ### `ai.status`
 
-Returns whether the AI is there for the signed-in person and, if not, why: no provider, provider not set up, no permission ai.use or the monthly limit reached
+Returns whether the AI is there for the signed-in person and, if not, why: no provider, provider not set up, no permission ai.use or the monthly limit reached; also where the prices of the model come from
 
 Query · for the own account
 

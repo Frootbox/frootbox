@@ -44,6 +44,14 @@ languages:
 # hub:
 #   url: https://hub.frootbox.de
 
+# Own prices of the AI per model, e.g. for an own contract with the
+# provider, in US dollars per million tokens. Without them a website
+# connected to the hub takes the list of the hub, else the module's.
+# Without cacheRead and cacheWrite the cache costs as much as the input.
+# ai:
+#   prices:
+#     claude-opus-5-5: { input: 4, output: 20, cacheRead: 0.2, cacheWrite: 5 }
+
 # Sign-in: a session ends this long after its last use, with "stay
 # signed in" in days, else in hours.
 # auth:
