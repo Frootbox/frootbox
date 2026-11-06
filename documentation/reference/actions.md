@@ -98,6 +98,28 @@ Action · right `action.undo`
 |---|---|---|
 | `id` | integer | ID of the action in the action log |
 
+### `ai.status`
+
+Returns whether the AI is there for the signed-in person and, if not, why: no provider, provider not set up, no permission ai.use or the monthly limit reached
+
+Query · for the own account
+
+### `ai.test`
+
+Sends a very small request to the AI provider to check its key and model, and returns the answer, the tokens, the cost in US dollars and the time it took
+
+Action · right `settings.update` · cannot be undone
+
+### `ai.usage`
+
+Returns what the AI cost in a month in US dollars, with the monthly limit and what is left, by day, feature, person and model
+
+Query · right `ai.usage`
+
+| Input | Type | Description |
+|---|---|---|
+| `month` | string or null, optional | The month as YYYY-MM, empty for the current one |
+
 ### `block.groups`
 
 Lists the groups of the block picker in their order, the core first
