@@ -1,6 +1,11 @@
 {#- How mails leave the server and a test mail, on the card "Email" (decision 0269). -#}
 {% import '@backend/ui.twig' as ui %}
-{% if mail.source == 'environment' %}
+{% if mail.transport == 'native' %}
+    {#- mail() of PHP: often in spam or refused, and the website never learns of it. The hub warns as well (decision 0309). -#}
+    {{ ui.alert({tone: 'warning', title: t('Without an SMTP server'), text: mail.source == 'environment'
+        ? t('MAILER_DSN in .env sends mails with mail() of PHP over the web server. Whether they arrive, the website never learns, and they often land in spam or are refused. Set the SMTP server of your mailbox instead.')
+        : t('Mails go out with mail() of PHP over the web server. Whether they arrive, the website never learns, and they often land in spam or are refused. Enter the SMTP server of your mailbox here.')}) }}
+{% elseif mail.source == 'environment' %}
     {% set text = mail.transport == 'smtp'
         ? t('Mails go out over {host} as MAILER_DSN in .env says. It goes before the settings here.', {host: mail.host ?? '?'})
         : t('MAILER_DSN in .env decides how mails go out ({transport}). It goes before the settings here.', {transport: mail.transport}) %}
@@ -9,8 +14,6 @@
     {{ ui.alert({tone: 'success', title: t('Over SMTP'), text: t('Mails go out over the SMTP server {host}, port {port}.', {host: mail.host, port: mail.port})}) }}
 {% elseif mail.transport == 'log' %}
     {{ ui.alert({tone: 'warning', title: t('Development mode'), text: t('Mails go to the log and reach nobody, also with an SMTP server here. To try one, set MAILER_DSN in .env.')}) }}
-{% else %}
-    {{ ui.alert({tone: 'info', title: t('With mail() of PHP'), text: t('Mails go out over the web server. With the SMTP server of your mailbox they reach their recipients more reliably and less often land in spam.')}) }}
 {% endif %}
 <p class="fb-muted">{{ t('Sender: {from}', {from: mail.from}) }}</p>
 {% if can('mail.test') %}

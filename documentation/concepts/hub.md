@@ -34,8 +34,9 @@ whose role may only ask the query `status.show`, and gives the hub its
 token. The hub reads `GET /api/v1/status.show` as often as it likes:
 versions of Frootbox, PHP, the database and each extension, the last run
 of cron, waiting and failed jobs, the last backup, free disk space,
-drafts, open comments and the time of the last change. No names, emails,
-content or addresses of pages. The screen **Connection** shows exactly
+drafts, open comments, the time of the last change and how mails leave
+the server (`mail.transport` and `mail.source`, without server or
+account). No names, emails, content or addresses of pages. The screen **Connection** shows exactly
 this document and when the hub last read it.
 
 ## The schedule without cron

@@ -1450,7 +1450,7 @@ Action · right `space.update`
 
 ### `status.show`
 
-Returns the technical status of the website: versions, cron, queue, backup, disk space, drafts and last change, without personal data or contents
+Returns the technical status of the website: versions, cron, queue, backup, disk space, drafts, last change and how mails leave the server, without personal data or contents
 
 Query · right `status.show`
 

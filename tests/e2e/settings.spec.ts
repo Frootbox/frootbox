@@ -55,7 +55,7 @@ test('an admin sends a test mail over the SMTP server of the settings', async ({
     await signIn(page, '/cms/settings');
     const card = page.locator('#settings-frootbox-core-mail');
     await expect(card.getByRole('heading', { name: 'E-Mail' })).toBeVisible();
-    await expect(card.getByText('Mit mail() von PHP', { exact: true })).toBeVisible();
+    await expect(card.getByText('Ohne SMTP-Server', { exact: true })).toBeVisible();
 
     expect((await action(page, 'settings.update', { package: 'frootbox/core.mail', values: { host: '127.0.0.1', port: 1 } })).status).toBe(200);
     await page.reload();

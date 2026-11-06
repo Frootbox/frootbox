@@ -193,6 +193,13 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Changed
 
+- Core: `status.show` tells how mails leave the server, as `mail` with
+  `transport` (`smtp`, `native`, `log`, `null`, `memory`) and `source`
+  (`environment`, `settings`, `default`), without server, account or
+  sender. frootbox.de warns when mails go out without SMTP.
+- Backend: the card **Email** in the settings warns when mails go out
+  with `mail()` of PHP. Such mails often land in spam or are refused,
+  and the website never learns of it.
 - Core: routes whose first segment starts with a dot or an underscore,
   e.g. `/.well-known/frootbox/…` and `/_consent/proof`, count as routes
   like `/api`: they check access themselves and pass the password of the
