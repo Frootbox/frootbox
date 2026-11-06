@@ -120,7 +120,9 @@ backend's own templates, styles and scripts are not part of it.
   files that changed since the build on the server, and a list of the
   ones that are gone, for a small upload by FTP. Each build names itself
   in a file `BUILD`. Database, media and caches are never part of a
-  diff, also when the earlier build had them.
+  diff, also when the earlier build had them. With `--latest` the
+  diff is always `<project>-latest/`, for a fixed folder in an FTP
+  client.
 
 ### Changed
 
