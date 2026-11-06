@@ -6,11 +6,12 @@
 
 declare(strict_types=1);
 
-namespace Frootbox\Backend\View;
+namespace Frootbox\Core\Auth;
 
 /**
  * A short name for the device of a session from its user agent, e.g.
- * "Chrome · macOS". Null if neither browser nor system is known.
+ * "Chrome · macOS", kept at the token and in the log of actions
+ * (decision 0174). Null if neither browser nor system is known.
  */
 final class Device
 {

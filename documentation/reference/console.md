@@ -40,7 +40,7 @@ php bin/frootbox actions:log [options]
 
 ## `actions:prune`
 
-Deletes old undo data and old log entries
+Shortens old undo data and deletes old log entries
 
 ```
 php bin/frootbox actions:prune

@@ -95,6 +95,40 @@ superuser") is an `UndoCheck`, which refuses an undo that would break it.
 Listeners, jobs and scheduled work also change data only by running
 actions.
 
+## History and proof
+
+The log answers "who changed this?" for a year, without SQL.
+
+- Every entry in `action_log` keeps who ran the action, through which
+  channel and which token, and the device: for a session a short name
+  from the browser at sign-in, e.g. "Safari · iPhone", for an API token
+  its name. The address of the client is not kept.
+- For `actions.undo_days` (default 30) every change is complete and the
+  action can be undone. After that `actions:prune`, and once an hour the
+  scheduler, shortens the changes instead of deleting them: of an update
+  only what changed, a JSON column as the paths that changed with their
+  old and new value; of a delete the whole row, since it is the lost
+  content; of an insert only table and id. Everything goes with the
+  entry after `actions.log_days` (default 365).
+- Every migration leaves an entry `system.migrate` by the system with
+  package, version and description. A migration that rewrites content
+  changes each row with `updateRow()`, so the change shows in the history
+  like any other:
+
+  ```php
+  $this->updateRow('acme_shop_products', $id, ['body' => $old], ['body' => $new]);
+  ```
+
+- `page.history` lists the entries of one page, newest first, with each
+  change resolved to language, block and field and its old and new value,
+  publishing, discarding and the scheduler included. It needs `page.show`
+  and filters by block, path and language. `action.log` lists the whole
+  log with filters by user, action (`page.*`), channel, status and time,
+  for roles with the permission `action.log`.
+- A module offers the same for its objects with `Action\History`: it
+  collects the entries that changed a set of rows, also rows that are
+  deleted by now, and `Action\RowDiff` compares two states of a row.
+
 ## Errors
 
 An action throws, the API answers with `application/problem+json`:

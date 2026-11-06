@@ -14,6 +14,7 @@ use Frootbox\Core\Action\Catalog;
 use Frootbox\Core\Action\CurrentContext;
 use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Action\Schema\InputMapper;
+use Frootbox\Core\Auth\Device;
 use Frootbox\Core\Auth\Gate;
 use Frootbox\Core\Auth\Scope;
 use Frootbox\Core\Category\CategoryItem;

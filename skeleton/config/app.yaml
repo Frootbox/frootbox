@@ -58,9 +58,9 @@ languages:
 #   session_days: 14
 #   session_hours: 12
 
-# Changes can be undone for undo_days; the log of who changed what is
-# kept for log_days. Deleted media are kept as long as changes can be
-# undone.
+# Changes can be undone for undo_days, then they are shortened to what
+# changed; the log of who changed what is kept for log_days. Deleted
+# media are kept as long as changes can be undone.
 # actions:
 #   undo_days: 30
 #   log_days: 365

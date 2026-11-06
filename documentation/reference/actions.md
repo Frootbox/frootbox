@@ -88,6 +88,24 @@ Action · for the own account
 |---|---|---|
 | `language` | string or null, optional |  |
 
+### `action.log`
+
+Returns the log of actions, newest first: who ran which action when, through which channel and on which device, with input (secrets masked) and status. Filters by user, action (a trailing * for all of a prefix, e.g. page.*), channel, status and time; before pages through older entries
+
+Query · right `action.log`
+
+| Input | Type | Description |
+|---|---|---|
+| `user` | integer or null, optional | Only actions of this user |
+| `action` | string or null, optional | Only this action, or all starting with what comes before a trailing * |
+| `channel` | mixed: `web`, `api`, `app`, `mcp`, `ai`, `console`, `system`, optional |  |
+| `status` | mixed: `running`, `succeeded`, `failed`, `denied`, `invalid`, optional |  |
+| `from` | string or null (date-time), optional | Only entries from this time on |
+| `to` | string or null (date-time), optional | Only entries before this time |
+| `nested` | boolean, optional | Also the nested actions an action ran |
+| `limit` | integer, optional |  |
+| `before` | integer or null, optional | Only entries older than this one, the next of the previous page |
+
 ### `action.undo`
 
 Undoes an earlier action: restores the data it changed and runs its compensations. Fails if that data has changed since.
@@ -853,6 +871,21 @@ Action · right `page.discard`
 | Input | Type | Description |
 |---|---|---|
 | `id` | string |  |
+
+### `page.history`
+
+Returns who changed a page when, through which channel and on which device, newest first, with each change by language, block and field and its old and new value. Filters by block, path and language; before pages through older entries
+
+Query · right `page.show`
+
+| Input | Type | Description |
+|---|---|---|
+| `id` | string |  |
+| `block` | string or null, optional | Only changes in or of this block, by its id |
+| `path` | string or null, optional | Only changes at or below this path, e.g. "fields/title" |
+| `language` | string or null, optional | Only changes of this language and of the whole page |
+| `limit` | integer, optional |  |
+| `before` | integer or null, optional | Only entries older than this one, the next of the previous page |
 
 ### `page.lock`
 

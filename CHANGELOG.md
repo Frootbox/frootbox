@@ -20,6 +20,17 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core: history and proof of changes. The log of actions keeps the token
+  and the device of each run ("Safari · iPhone", or the name of an API
+  token), every migration leaves an entry `system.migrate`, and
+  migrations change content with `updateRow()` so it shows in the
+  history. After the undo period `actions:prune` shortens changes instead
+  of deleting them (only what changed, deleted rows whole) and the
+  scheduler does so once an hour. New queries `page.history` (who changed
+  which field of which block, with old and new value, filters by block,
+  path and language) and `action.log` (the whole log with filters, for
+  the permission `action.log`), and `Action\History` and
+  `Action\RowDiff` for the history of objects of modules.
 - Core and Backend: the action `system.cache-clear` empties `var/cache`
   like `bin/frootbox cache:clear`, for superusers. The backend offers it
   under Extensions, for websites on webspace without a console.
