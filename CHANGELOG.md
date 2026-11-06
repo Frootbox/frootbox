@@ -119,7 +119,8 @@ backend's own templates, styles and scripts are not part of it.
 - Workbench: `build --since <build>` also makes a folder with only the
   files that changed since the build on the server, and a list of the
   ones that are gone, for a small upload by FTP. Each build names itself
-  in a file `BUILD`.
+  in a file `BUILD`. Database, media and caches are never part of a
+  diff, also when the earlier build had them.
 
 ### Changed
 
