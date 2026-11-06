@@ -1,0 +1,57 @@
+{#- The log of all actions (decision 0174). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+{% import '@backend/history/macros.twig' as history %}
+
+{% block title %}{{ t('Log') }}{% endblock %}
+
+{% block content %}
+{% set self = path('backend.log') %}
+{% set names = history_names() %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Log') }}</h1>
+            <p class="fb-muted">{{ t('Every change on the website with who made it, when, through which channel and on which device. Also what was not allowed or failed.') }}</p>
+        </div>
+    </header>
+
+    <section class="fb-card" aria-labelledby="log-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="log-title" tabindex="-1" data-fb-focus>{{ before ? t('Older entries') : t('Latest entries') }}</h2>
+        </div>
+        <form class="fb-card__body fb-cluster" method="get" action="{{ self }}" role="search" aria-label="{{ t('Filter the log') }}">
+            {% if users is not empty %}{{ ui.select({label: t('Person'), name: 'user', id: 'log-user', value: filters.user ?? '', options: [{value: '', label: t('All')}]|merge(users)}) }}{% endif %}
+            {{ ui.field({label: t('Action'), name: 'action', id: 'log-action', value: filters.action, optional: true, placeholder: 'page.*', attrs: {dir: 'ltr', maxlength: 100}}) }}
+            {{ ui.select({label: t('Channel'), name: 'channel', id: 'log-channel', value: filters.channel.value ?? '', options: [{value: '', label: t('All')}]|merge(names.channels|map((label, value) => {value: value, label: label}))}) }}
+            {{ ui.select({label: t('Status'), name: 'status', id: 'log-status', value: filters.status.value ?? '', options: [{value: '', label: t('All')}]|merge(names.statuses|map((label, value) => {value: value, label: label}))}) }}
+            {{ ui.field({label: t('From'), name: 'from', id: 'log-from', type: 'date', optional: true, value: filters.from ? filters.from|date('Y-m-d') : ''}) }}
+            {{ ui.field({label: t('To'), name: 'to', id: 'log-to', type: 'date', optional: true, value: filters.to ? filters.to|date('Y-m-d') : ''}) }}
+            {{ ui.check({label: t('Also steps inside other actions'), name: 'nested', id: 'log-nested', value: '1', checked: filters.nested}) }}
+            {{ ui.button({label: t('Filter'), variant: 'outline', type: 'submit', icon: 'search'}) }}
+        </form>
+        {% if log.entries is empty %}
+            {{ ui.empty({icon: 'history', title: t('Nothing found'), text: keep ? t('Try other filters.') : t('Every action appears here.')}) }}
+        {% else %}
+        <ul>
+            {%- for entry in log.entries %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title">{{ history.action(entry.action) }}</span>
+                    <span class="fb-list__meta">{% if names.actions[entry.action] is defined %}<code>{{ entry.action }}</code> · {% endif %}{{ history.meta(entry) }}</span>
+                    {% if entry.error %}<span class="fb-list__meta">{{ entry.error }}</span>{% endif %}
+                </span>
+                {{ history.status(entry) }}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+        {% if log.next or before %}
+        <div class="fb-card__body fb-cluster">
+            {% if before %}{{ ui.button({label: t('Latest entries'), href: self ~ (keep ? '?' ~ keep : ''), variant: 'outline'}) }}{% endif %}
+            {% if log.next %}{{ ui.button({label: t('Older entries'), href: self ~ '?' ~ (keep ? keep ~ '&' : '') ~ 'before=' ~ log.next, variant: 'outline'}) }}{% endif %}
+        </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

@@ -19,6 +19,9 @@ const PANEL_FIELDS = ['headline', 'text', 'link', 'image', 'video', 'icon', 'fil
 /** Up to this many blocks the picker shows them without groups (decision 0148). */
 const FEW_BLOCKS = 8;
 
+/** Entries of the history in the panel; the backend shows all (decision 0174). */
+const HISTORY_ENTRIES = 20;
+
 /** Entries above the groups of the picker; group names never start with a hash (decision 0202). */
 const SITE_GROUP = '#site';
 const ALL_GROUP = '#all';
@@ -394,6 +397,23 @@ export const arrangingStyles = css`
     .entries .entry-head button:not(.entry-toggle) { min-inline-size: var(--fb-size-control-sm); justify-content: center; padding-inline: var(--fb-space-1); }
     .entries .entry-head button[disabled] { cursor: default; opacity: 0.4; }
     .panel .add { justify-self: start; border-color: var(--fb-border); }
+
+    /* The history of a block (decision 0174). */
+    .panel .history { display: grid; gap: var(--fb-space-4); margin: 0; padding: 0; list-style: none; }
+    .panel .history li { display: grid; gap: var(--fb-space-2); }
+    .panel .history p { margin: 0; }
+    .panel .history-title { font-weight: var(--fb-weight-semibold); }
+    .panel .history-badge { color: var(--fb-text-muted); font-size: var(--fb-text-xs); font-weight: var(--fb-weight-regular); }
+    .panel .change { display: grid; gap: var(--fb-space-1); }
+    .panel .change :is(.old, .new) {
+        padding-inline-start: var(--fb-space-2);
+        border-inline-start: calc(var(--fb-size-border) * 2) solid currentcolor;
+        white-space: pre-line;
+        overflow-wrap: anywhere;
+    }
+    .panel .change .old { color: var(--fb-danger-text); text-decoration: line-through; }
+    .panel .change .new { color: var(--fb-success-text); }
+    .panel .history-link { justify-self: start; border-color: var(--fb-border); }
 `;
 
 export class Arranging {
@@ -619,6 +639,7 @@ export class Arranging {
                 ${button('down', labels.moveDown, () => this.move(block, siblings, index + 1), index >= siblings.length - 1)}
                 ${missing ? nothing : button('copy', labels.copyBlock, () => this.copy(block))}
                 ${missing ? nothing : button('settings', labels.blockSettings, () => this.openPanel(block))}
+                ${this.bar.config.history ? button('history', labels.blockHistory, () => this.openHistory(block)) : nothing}
                 ${button('plus', labels.insertBelow, () => this.openPicker(this.targetBelow(block)))}
                 ${button('trash', labels.removeBlock, () => this.confirm(true), false, 'danger')}`;
 
@@ -1028,6 +1049,73 @@ export class Arranging {
         this.bar.renderRoot.querySelector('.panel h2')?.focus();
     }
 
+    /** The side panel with the history of a block (decision 0174), from page.history. */
+    async openHistory(element) {
+        const id = element.dataset.fbBlock;
+        this.bar.design?.hide();
+        this.bar.comments?.hide();
+        this.bar.outline?.hide();
+        this.panel = { id, title: element.dataset.fbTitle ?? '', mode: 'history', loading: true, busy: false };
+        this.bar.requestUpdate();
+
+        const history = await this.query('page.history', { id: this.bar.config.page?.id ?? '', block: id, language: this.bar.config.language, limit: String(HISTORY_ENTRIES) });
+
+        if (this.panel?.id !== id || this.panel.mode !== 'history') {
+            return;
+        }
+
+        this.panel = { ...this.panel, loading: false, entries: history?.entries ?? null, more: Boolean(history?.next) };
+        this.bar.requestUpdate();
+        await this.bar.updateComplete;
+        this.bar.renderRoot.querySelector('.panel h2')?.focus();
+    }
+
+    /** The entries of the history in the panel, each with what changed. */
+    historyView(panel) {
+        const labels = this.labels;
+
+        if (panel.loading) {
+            return html`<p class="hint">${labels.loading}</p>`;
+        }
+
+        if (!panel.entries) {
+            return html`<p class="hint">${labels.historyFailed}</p>`;
+        }
+
+        const names = this.bar.config.history.names;
+        const time = new Intl.DateTimeFormat(this.bar.config.ui?.language || undefined, { dateStyle: 'medium', timeStyle: 'short' });
+        const link = this.bar.config.history.screen + '?block=' + encodeURIComponent(panel.id);
+        const entries = panel.entries.length === 0
+            ? html`<p class="hint">${labels.noHistory}</p>`
+            : html`<ol class="history">${panel.entries.map((entry) => html`<li>
+                <p class="history-title">${names.actions[entry.action] ?? entry.action}${entry.undone ? html` <span class="history-badge">${labels.undone}</span>` : nothing}</p>
+                <p class="hint">${time.format(new Date(entry.createdAt))} · ${entry.actorType === 'system' ? labels.system : (entry.actorName ?? labels.unknown)} · ${names.channels[entry.channel] ?? entry.channel}${entry.device ? ` · ${entry.device}` : ''}</p>
+                ${entry.changes.filter((change) => change.block !== null || change.path !== '').map((change) => this.changeView(change, names))}
+            </li>`)}</ol>`;
+
+        return html`${entries}${panel.more ? html`<p class="hint">${labels.moreHistory}</p>` : nothing}
+            <a class="history-link" href=${link}>${labels.wholeHistory}</a>`;
+    }
+
+    /** One change: the field, the old value struck through and the new one. */
+    changeView(change, names) {
+        const labels = this.labels;
+        // The block of the panel itself needs no name; blocks inside it do.
+        const parts = [change.block === this.panel?.id ? null : change.blockTitle, change.field].filter(Boolean);
+
+        if (change.block !== null && change.path === '') {
+            parts.push(change.old === null ? labels.historyAdded : (change.new === null ? labels.historyRemoved : labels.historyChanged));
+        }
+
+        const state = names.states[change.state];
+
+        return html`<div class="change">
+            ${parts.length || state ? html`<p class="hint">${[...parts, state].filter(Boolean).join(' · ')}</p>` : nothing}
+            ${change.oldText ? html`<p class="old"><span class="visually-hidden">${labels.before} </span>${change.oldText}</p>` : nothing}
+            ${change.newText ? html`<p class="new"><span class="visually-hidden">${labels.after} </span>${change.newText}</p>` : nothing}
+        </div>`;
+    }
+
     closePanel() {
         const id = this.panel?.id;
         this.panel = null;
@@ -1047,7 +1135,9 @@ export class Arranging {
         const labels = this.labels;
         let body;
 
-        if (panel.loading) {
+        if (panel.mode === 'history') {
+            body = this.historyView(panel);
+        } else if (panel.loading) {
             body = html`<p class="hint">${labels.loading}</p>`;
         } else if (!panel.data || !panel.summary) {
             body = html`<p class="hint">${labels.blockGone}</p>`;
@@ -1058,7 +1148,7 @@ export class Arranging {
         return html`<section class="panel" role="region" aria-labelledby="fb-panel-title"
             @keydown=${(event) => { if (event.key === 'Escape') { event.preventDefault(); this.closePanel(); } }}>
             <header>
-                <h2 id="fb-panel-title" tabindex="-1">${labels.settingsOf.replace('{block}', panel.title)}</h2>
+                <h2 id="fb-panel-title" tabindex="-1">${(panel.mode === 'history' ? labels.historyOf : labels.settingsOf).replace('{block}', panel.title)}</h2>
                 <button type="button" aria-label=${labels.close} title=${labels.close} @click=${() => this.closePanel()}>${icon('close')}</button>
             </header>
             <form @submit=${(event) => event.preventDefault()}>

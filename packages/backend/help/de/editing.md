@@ -27,3 +27,9 @@ Wähl eine Überschrift groß oder klein. Die Ebene auf der Seite (H2, H3,
 **Rückgängig** nimmt die letzte Änderung zurück. Der Zustand in der
 Leiste sagt, ob Besucher sehen, was Du siehst; **Veröffentlichen**
 stellt die Seite online.
+
+## Verlauf eines Blocks
+
+Die Uhr an einem Block öffnet seinen Verlauf: wer welches Feld wann
+geändert hat, mit dem alten und dem neuen Text. Den ganzen Verlauf der
+Seite findest Du im Backend.

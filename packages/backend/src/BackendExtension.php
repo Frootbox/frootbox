@@ -22,12 +22,14 @@ use Frootbox\Backend\Http\Extensions\ExtensionsHandler;
 use Frootbox\Backend\Http\Help\HelpHandler;
 use Frootbox\Backend\Http\Hub\HubHandler;
 use Frootbox\Backend\Http\Jobs\JobsHandler;
+use Frootbox\Backend\Http\Log\LogHandler;
 use Frootbox\Backend\Http\LoginHandler;
 use Frootbox\Backend\Http\LogoutHandler;
 use Frootbox\Backend\Http\Media\MediaHandler;
 use Frootbox\Backend\Http\Media\UploadHandler;
 use Frootbox\Backend\Http\Navigations\NavigationsHandler;
 use Frootbox\Backend\Http\Pages\NewPageHandler;
+use Frootbox\Backend\Http\Pages\PageHistoryHandler;
 use Frootbox\Backend\Http\Pages\PagesHandler;
 use Frootbox\Backend\Http\PreviewActionHandler;
 use Frootbox\Backend\Http\QueryHandler;
@@ -84,6 +86,7 @@ final class BackendExtension implements Extension
             ->get('/pages', PagesHandler::class, 'backend.pages')
             ->get('/pages/new', NewPageHandler::class, 'backend.pages.new')
             ->get('/pages/{id:' . self::ULID . '}', PagesHandler::class, 'backend.pages.show')
+            ->get('/pages/{id:' . self::ULID . '}/history', PageHistoryHandler::class, 'backend.pages.history')
             ->get('/navigations', NavigationsHandler::class, 'backend.navigations')
             ->get('/navigations/{name:[a-z][a-z0-9-]{0,63}}', NavigationsHandler::class, 'backend.navigations.show')
             ->get('/media', MediaHandler::class, 'backend.media')
@@ -104,6 +107,7 @@ final class BackendExtension implements Extension
             ->get('/roles/{name:[a-z][a-z0-9-]*}', RoleHandler::class, 'backend.roles.show')
             ->get('/settings', SettingsHandler::class, 'backend.settings')
             ->get('/jobs', JobsHandler::class, 'backend.jobs')
+            ->get('/log', LogHandler::class, 'backend.log')
             ->get('/hub', HubHandler::class, 'backend.hub')
             ->get('/ai', AiHandler::class, 'backend.ai')
             ->get('/extensions', ExtensionsHandler::class, 'backend.extensions');
@@ -132,6 +136,7 @@ final class BackendExtension implements Extension
         $registry->add(Screen::class, new Screen('Extensions', 'backend.extensions', Screen::ADMINISTRATION, 'layout-grid', ExtensionsHandler::PERMISSION, order: 125));
         $registry->add(Screen::class, new Screen('Connection', 'backend.hub', Screen::ADMINISTRATION, 'external', HubHandler::PERMISSION, order: 127));
         $registry->add(Screen::class, new Screen('AI', 'backend.ai', Screen::ADMINISTRATION, 'sparkles', AiHandler::PERMISSION, order: 128, needs: Provider::class));
+        $registry->add(Screen::class, new Screen('Log', 'backend.log', Screen::ADMINISTRATION, 'history', LogHandler::PERMISSION, order: 129));
         $registry->add(Screen::class, new Screen('Background jobs', 'backend.jobs', Screen::ADMINISTRATION, 'clock', JobsHandler::PERMISSION, order: 130));
         $registry->add(Screen::class, new Screen('Design system', 'backend.design', Screen::ADMINISTRATION, 'palette', DesignHandler::PERMISSION, order: 900, development: true));
 

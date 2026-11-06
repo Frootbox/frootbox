@@ -30,3 +30,12 @@ keeps the published version.
 
 A locked page stays online for editors but visitors get a 404, e.g.
 for a page that is not ready yet.
+
+## History
+
+**History** shows who changed the page when, through which channel and
+on which device, with the old and the new text. Publishing, discarding
+and the scheduler are in it too, so a text that is gone can be traced:
+removed, never published or discarded. **Whole history** shows all
+changes of a year, by language, also after they can no longer be
+undone.

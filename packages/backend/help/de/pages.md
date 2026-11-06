@@ -27,3 +27,12 @@ wirft den Entwurf weg und behält die veröffentlichte Fassung.
 
 Eine gesperrte Seite bleibt für die Redaktion sichtbar, Besucher
 bekommen einen 404, etwa für eine Seite, die noch nicht fertig ist.
+
+## Verlauf
+
+**Verlauf** zeigt, wer die Seite wann, über welchen Kanal und auf
+welchem Gerät geändert hat, mit dem alten und dem neuen Text. Auch
+Veröffentlichen, Verwerfen und die Zeitsteuerung stehen darin. So lässt
+sich klären, wo ein Text geblieben ist: gelöscht, nie veröffentlicht
+oder verworfen. **Ganzer Verlauf** zeigt alle Änderungen eines Jahres,
+nach Sprache, auch wenn sie sich nicht mehr rückgängig machen lassen.

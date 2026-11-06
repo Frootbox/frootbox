@@ -29,3 +29,9 @@ in the bar shows the headings of the page.
 
 **Undo** takes back the last change. The state in the bar tells
 whether visitors see what you see; **Publish** puts the page online.
+
+## History of a block
+
+The clock at a block opens its history: who changed which field when,
+with the old and the new text. The whole history of the page is in the
+backend.

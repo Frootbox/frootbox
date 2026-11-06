@@ -1,0 +1,23 @@
+{#- Entries of a history (decision 0174): what happened, when, by whom, through which channel and on which device, and what changed.
+    entries: list of PageHistoryEntry or LogEntry; changes: show the changes; languages: name the language of a change. -#}
+{% import '@backend/ui.twig' as ui %}
+{% import '@backend/history/macros.twig' as history %}
+<ul>
+    {%- for entry in entries %}
+    <li class="fb-list__item">
+        <span class="fb-list__main">
+            <span class="fb-list__title">{{ history.action(entry.action) }}</span>
+            <span class="fb-list__meta">{{ history.meta(entry) }}</span>
+        </span>
+        {{ history.status(entry) }}
+        {% if (changes ?? true) and entry.changes is defined and entry.changes is not empty %}
+        <div class="fb-changes">
+            {%- for change in entry.changes|slice(0, 20) %}
+            {{ history.change(change, languages ?? false) }}
+            {%- endfor %}
+            {% if entry.changes|length > 20 %}<p class="fb-muted">{{ t(['And {count} more change', 'And {count} more changes'], {count: entry.changes|length - 20}) }}</p>{% endif %}
+        </div>
+        {% endif %}
+    </li>
+    {%- endfor %}
+</ul>

@@ -1,0 +1,38 @@
+/* What changed in a history (decision 0174): the part that changed, the
+   old value struck through and the new one, each marked at the start. */
+
+.fb-change {
+    display: grid;
+    gap: var(--fb-space-1);
+    min-width: 0;
+}
+
+.fb-change__what {
+    color: var(--fb-text-muted);
+    font-size: var(--fb-text-sm);
+}
+
+.fb-change__old,
+.fb-change__new {
+    padding-inline-start: var(--fb-space-2);
+    border-inline-start: calc(var(--fb-size-border) * 2) solid currentcolor;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.fb-change__old {
+    color: var(--fb-danger-text);
+    text-decoration: line-through;
+}
+
+.fb-change__new {
+    color: var(--fb-success-text);
+}
+
+/* The changes of one entry, below its meta line. */
+.fb-changes {
+    display: grid;
+    gap: var(--fb-space-3);
+    flex-basis: 100%;
+    min-width: 0;
+}

@@ -31,6 +31,12 @@ backend's own templates, styles and scripts are not part of it.
   path and language) and `action.log` (the whole log with filters, for
   the permission `action.log`), and `Action\History` and
   `Action\RowDiff` for the history of objects of modules.
+- Backend: the history of a page and the log. The details of a page show
+  its latest changes, **Whole history** all of them with old and new
+  text by language, the screen **Log** the whole log with filters for
+  the permission `action.log`, and in the edit mode the clock at a block
+  opens its history in the side panel. `page.history` names block and
+  field and gives the values as plain text (`Page\ChangeLabels`).
 - Core and Backend: the action `system.cache-clear` empties `var/cache`
   like `bin/frootbox cache:clear`, for superusers. The backend offers it
   under Extensions, for websites on webspace without a console.

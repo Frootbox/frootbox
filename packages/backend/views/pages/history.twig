@@ -1,0 +1,48 @@
+{#- The whole history of a page (decision 0174). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('History') }} · {{ row.title }} · {{ t('Pages') }}{% endblock %}
+
+{% block content %}
+{% set self = path('backend.pages.history', {id: id}) %}
+{% set filter = block ? '?block=' ~ block : '' %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('History of {page}', {page: row.title}) }}</h1>
+            <p class="fb-muted">{{ block ? t('Changes of one block, newest first.') : t('Who changed what and when, newest first. Kept for a year, also after the changes can no longer be undone.') }}</p>
+        </div>
+        {{ ui.button({label: t('Back to the page'), href: path('backend.pages.show', {id: id}), variant: 'outline', icon: 'parent'}) }}
+    </header>
+
+    <section class="fb-card" id="page-history" aria-labelledby="page-history-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="page-history-title" tabindex="-1" data-fb-focus>{{ before ? t('Older changes') : t('Latest changes') }}</h2>
+            {% if languages|length > 1 %}
+            {{ ui.segmented(t('Languages'), [{label: t('All'), href: self ~ filter, current: language is null}]|merge(languages|map(other => {
+                label: other.title,
+                href: self ~ (filter ? filter ~ '&' : '?') ~ 'language=' ~ other.code,
+                current: other.code == language,
+                attrs: {lang: other.code},
+            }))) }}
+            {% endif %}
+        </div>
+        {% if block %}
+        <div class="fb-card__body">{{ ui.alert({tone: 'info', text: t('Only one block.'), live: 'none'}) }} <a href="{{ self }}">{{ t('Show the whole page') }}</a></div>
+        {% endif %}
+        {% if history.entries is empty %}
+            {{ ui.empty({icon: 'history', title: before ? t('No older changes') : t('No changes yet'), text: t('Every change of the page appears here with who made it.')}) }}
+        {% else %}
+            {% include '@backend/history/entries.twig' with {entries: history.entries, languages: languages|length > 1 and language is null} only %}
+        {% endif %}
+        {% if history.next or before %}
+        <div class="fb-card__body fb-cluster">
+            {% set keep = (block ? '&block=' ~ block : '') ~ (language ? '&language=' ~ language : '') %}
+            {% if before %}{{ ui.button({label: t('Latest changes'), href: self ~ (keep ? '?' ~ keep|slice(1) : ''), variant: 'outline'}) }}{% endif %}
+            {% if history.next %}{{ ui.button({label: t('Older changes'), href: self ~ '?before=' ~ history.next ~ keep, variant: 'outline'}) }}{% endif %}
+        </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

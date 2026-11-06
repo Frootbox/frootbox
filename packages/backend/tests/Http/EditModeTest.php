@@ -108,6 +108,9 @@ final class EditModeTest extends BackendTestCase
         self::assertSame($this->csrfFor($this->session), $config['csrf']);
         self::assertSame('/cms/actions/', $config['actions']);
         self::assertSame('/cms/queries/', $config['queries']);
+        self::assertNotNull($config['history']);
+        self::assertSame('/cms/pages/' . $this->about . '/history', $config['history']['screen'], 'The history of a block (decision 0174).');
+        self::assertSame('Text geändert', $config['history']['names']['actions']['page.update-field'] ?? null);
         self::assertSame('de', $config['language']);
         self::assertSame('Redaktionsleiste', $config['labels']['bar'], 'Its name in docs and trainings (decision 0137).');
         self::assertSame('Bearbeiten', $config['labels']['edit']);
@@ -273,7 +276,7 @@ final class EditModeTest extends BackendTestCase
     }
 
     /**
-     * @return array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, designPage: bool, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null}
+     * @return array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, designPage: bool, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null, history: array{screen: string, names: array{actions: array<string, string>, channels: array<string, string>, statuses: array<string, string>, states: array<string, string>}}|null}
      */
     private function bar(string $html): array
     {
@@ -281,7 +284,7 @@ final class EditModeTest extends BackendTestCase
         $config = json_decode($match[1], true, flags: \JSON_THROW_ON_ERROR);
         self::assertIsArray($config);
 
-        /** @var array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, designPage: bool, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null} $config */
+        /** @var array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, designPage: bool, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null, history: array{screen: string, names: array{actions: array<string, string>, channels: array<string, string>, statuses: array<string, string>, states: array<string, string>}}|null} $config */
         return $config;
     }
 

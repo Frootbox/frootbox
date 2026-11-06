@@ -386,6 +386,25 @@
 </div>
 
 <div class="fb-design-sample">
+    <p class="fb-design-sample__title">{{ t('History') }}</p>
+    <ul>
+        <li class="fb-list__item">
+            <span class="fb-list__main">
+                <span class="fb-list__title">{{ t('Text changed') }}</span>
+                <span class="fb-list__meta">{{ ui.time(date('2026-11-01 10:15')) }} · Frau Müller · {{ t('Website and backend') }} · Safari · iPhone</span>
+            </span>
+            <div class="fb-changes">
+                <div class="fb-change">
+                    <p class="fb-change__what">Teaser · {{ t('Title') }}</p>
+                    <p class="fb-change__old"><span class="fb-visually-hidden">{{ t('Before:') }} </span>Frisch geröstet</p>
+                    <p class="fb-change__new"><span class="fb-visually-hidden">{{ t('After:') }} </span>Jeden Morgen frisch geröstet</p>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<div class="fb-design-sample">
     <p class="fb-design-sample__title">{{ t('Comments') }}</p>
     <div class="fb-stack">
         <div class="fb-comment">

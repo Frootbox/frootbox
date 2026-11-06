@@ -18,8 +18,10 @@ use Frootbox\Core\Language\Language;
 use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Page\ListPageVersions;
 use Frootbox\Core\Page\PageData;
+use Frootbox\Core\Page\PageHistory;
 use Frootbox\Core\Page\PageVersion;
 use Frootbox\Core\Page\ShowPage;
+use Frootbox\Core\Page\ShowPageHistory;
 use Frootbox\Core\Page\ShowPageTree;
 use Frootbox\Core\Page\TranslationData;
 use Frootbox\Core\Plugin\ListPlugins;
@@ -39,6 +41,9 @@ final readonly class PagesHandler implements RequestHandlerInterface
     public const string PERMISSION = 'page.tree';
 
     public const string DETAIL = 'page-detail';
+
+    /** Entries of the history in the details, the rest on its own screen. */
+    public const int RECENT = 5;
 
     public function __construct(
         private BackendView $view,
@@ -127,6 +132,7 @@ final readonly class PagesHandler implements RequestHandlerInterface
                 'siteSearch' => $above($visibility->excludedFromSiteSearchBy),
             ],
             'versions' => $this->versions($id),
+            'history' => $this->history($id),
             'plugin' => $this->plugins($tree, $id, $data, $layout->plugin ?? false),
         ];
     }
@@ -211,6 +217,18 @@ final readonly class PagesHandler implements RequestHandlerInterface
             'version' => $version,
             'author' => null === $version->authorId ? null : $names[$version->authorId] ?? null,
         ], $versions);
+    }
+
+    /**
+     * The latest changes (decision 0174), null without the right to see them.
+     */
+    private function history(string $id): ?PageHistory
+    {
+        try {
+            return $this->runner->ask(new ShowPageHistory($id, limit: self::RECENT));
+        } catch (AccessDeniedException) {
+            return null;
+        }
     }
 
     /**

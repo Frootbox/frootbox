@@ -76,6 +76,7 @@ final class TwigExtension extends AbstractExtension
             new TwigFunction('tag_choices', $this->tagChoices(...)),
             new TwigFunction('object_fields', $this->objectFields(...)),
             new TwigFunction('space_choices', $this->spaceChoices(...)),
+            new TwigFunction('history_names', fn(): array => HistoryNames::translated($this->translator->get(...))),
         ];
     }
 

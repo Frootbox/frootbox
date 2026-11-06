@@ -1159,6 +1159,20 @@ screen "Comments" shows each thread as a card with the page as title,
 the excerpt muted, a badge Open/Done, the comments, a reply form and
 "Mark as done" / "Open again" and "Delete thread" (with a dialog).
 
+### Change
+
+`.fb-change` for one change of a history: the part that changed
+(`.fb-change__what`, 14 px muted, e.g. "Teaser · Title · on the
+website"), then the old value (`.fb-change__old`, danger text, struck
+through) and the new one (`.fb-change__new`, success text), each with a
+2 px line at the start and a hidden "Before:" or "After:" for screen
+readers. Values are plain text, kept with line breaks. `.fb-changes`
+holds the changes of one entry of a list, below its title and meta line.
+The partials `@backend/history/entries.twig` and
+`@backend/history/macros.twig` build entries from the queries
+`page.history` and `action.log`; the edit mode draws the same in the
+side panel of a block.
+
 ### Appearance switch
 
 `<fb-theme-switch>` (web component from `@frootbox/ui`) on

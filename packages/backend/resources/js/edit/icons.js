@@ -9,6 +9,7 @@ const ICONS = {
     collapse: svg`<path d="m6 9 6 6 6-6"/>`,
     expand: svg`<path d="m9 6 6 6-6 6"/>`,
     lock: svg`<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>`,
+    history: svg`<path d="M3.5 12a8.5 8.5 0 1 0 2.5-6"/><path d="M3.5 4v4.5H8"/><path d="M12 8v4l3 2"/>`,
     undo: svg`<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>`,
     bold: svg`<path d="M7 5h6a3.5 3.5 0 0 1 0 7H7z"/><path d="M7 12h7a3.5 3.5 0 0 1 0 7H7z"/>`,
     italic: svg`<path d="M19 4h-9"/><path d="M14 20H5"/><path d="M15 4 9 20"/>`,

@@ -116,6 +116,11 @@ final readonly class EditorBar
             // Comments of the page (decision 0156).
             'comments' => $this->permissions->can('comment.list') ? ['resolve' => $this->permissions->can('comment.resolve'), 'delete' => $this->permissions->can('comment.delete')] : null,
             'page' => $page,
+            // The history of a block (decision 0174).
+            'history' => null === $id || null === $page ? null : [
+                'screen' => $this->router->path('backend.pages.history', ['id' => $id]),
+                'names' => HistoryNames::translated($this->translator->get(...)),
+            ],
             // The design page of the core is no page one changes (decision 0207).
             'designPage' => true === $event->request->getAttribute(DesignPage::class),
             'media' => null === $id || null === $page ? null : $this->media($id),
@@ -525,6 +530,20 @@ final readonly class EditorBar
             'blockSettings' => $t('Settings of the block'),
             'insertBelow' => $t('Insert a block below'),
             'removeBlock' => $t('Delete the block'),
+            'blockHistory' => $t('History of the block'),
+            'historyOf' => $t('History: {block}'),
+            'noHistory' => $t('No changes yet.'),
+            'historyFailed' => $t('The history cannot be loaded.'),
+            'wholeHistory' => $t('Whole history in the backend'),
+            'moreHistory' => $t('Older changes are in the backend.'),
+            'before' => $t('Before:'),
+            'after' => $t('After:'),
+            'undone' => $t('Undone'),
+            'system' => $t('System'),
+            'unknown' => $t('Unknown'),
+            'historyAdded' => $t('added'),
+            'historyRemoved' => $t('removed'),
+            'historyChanged' => $t('changed'),
             'removeConfirm' => $t('Delete "{block}"?'),
             'removeYes' => $t('Delete'),
             'addBlock' => $t('Insert a block'),

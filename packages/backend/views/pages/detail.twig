@@ -1,4 +1,4 @@
-{#- The details of a page: status, publishing, title and address by language, times, visibility, versions (decisions 0116 and 0117). -#}
+{#- The details of a page: status, publishing, title and address by language, times, visibility, versions and the latest changes (decisions 0116, 0117 and 0174). -#}
 {% import '@backend/ui.twig' as ui %}
 {% set details = page.details %}
 {% set row = page.row %}
@@ -226,6 +226,20 @@
             </li>
             {%- endfor %}
         </ul>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    {% if page.history is not null %}
+    <section class="fb-section fb-section--flush" aria-labelledby="page-history-title">
+        <div class="fb-section__header">
+            <h3 class="fb-heading-4" id="page-history-title">{{ t('History') }}</h3>
+            {% if page.history.entries is not empty %}{{ ui.button({label: t('Whole history'), href: path('backend.pages.history', {id: page.id}), variant: 'ghost', small: true, icon: 'history'}) }}{% endif %}
+        </div>
+        {% if page.history.entries is empty %}
+        <p class="fb-muted">{{ t('No changes yet.') }}</p>
+        {% else %}
+        {% include '@backend/history/entries.twig' with {entries: page.history.entries, changes: false} only %}
         {% endif %}
     </section>
     {% endif %}

@@ -1,0 +1,51 @@
+{#- Parts of a history (decision 0174), for @backend/history/entries.twig and the log. -#}
+
+{# What an action did, in words; actions without a name of their own show their name. #}
+{% macro action(name) -%}
+    {%- set names = history_names().actions -%}
+    {%- if names[name] is defined %}{{ names[name] }}{% else %}<code>{{ name }}</code>{% endif -%}
+{%- endmacro %}
+
+{# When, who, how and where from. #}
+{% macro meta(entry) -%}
+    {%- import '@backend/ui.twig' as ui -%}
+    {%- set channels = history_names().channels -%}
+    {{ ui.time(entry.createdAt) }}
+    · {% if entry.actorType == 'system' %}{{ t('System') }}{% else %}{{ entry.actorName ?? t('Unknown') }}{% endif %}
+    · {{ channels[entry.channel] ?? entry.channel }}
+    {%- if entry.device %} · {{ entry.device }}{% endif -%}
+{%- endmacro %}
+
+{# A badge when the action did not go through or was undone. #}
+{% macro status(entry) -%}
+    {%- import '@backend/ui.twig' as ui -%}
+    {%- set status = entry.status.value ?? entry.status -%}
+    {%- set statuses = history_names().statuses -%}
+    {%- if status in ['failed', 'denied'] %}{{ ui.badge('danger', statuses[status]) }}
+    {%- elseif status in ['invalid', 'running'] %}{{ ui.badge('changed', statuses[status]) }}
+    {%- elseif entry.undone ?? (entry.undoneBy is not null) %}{{ ui.badge('neutral', t('Undone')) }}{% endif -%}
+{%- endmacro %}
+
+{# One change: the part, the old value and the new one. A draft or row that appears or goes as a whole says nothing more than its entry. #}
+{% macro change(change, languages) -%}
+    {%- if change.block is not null or change.path != '' -%}
+    {%- set states = history_names().states -%}
+    {%- set parts = [change.blockTitle, change.field]|filter(part => part is not null and part != '') -%}
+    {%- if change.block is not null and change.path == '' -%}
+        {%- set parts = parts|merge([change.old is null ? t('added') : (change.new is null ? t('removed') : t('changed'))]) -%}
+    {%- endif -%}
+    <div class="fb-change">
+        <p class="fb-change__what">
+            {{- parts|join(' · ') -}}
+            {%- if languages and change.language %} · <span lang="{{ change.language }}">{{ change.language|upper }}</span>{% endif -%}
+            {%- if states[change.state] is defined %} · {{ states[change.state] }}{% endif -%}
+        </p>
+        {%- if change.oldText is not null and change.oldText != '' %}
+        <p class="fb-change__old"><span class="fb-visually-hidden">{{ t('Before:') }} </span>{{ change.oldText }}</p>
+        {%- endif %}
+        {%- if change.newText is not null and change.newText != '' %}
+        <p class="fb-change__new"><span class="fb-visually-hidden">{{ t('After:') }} </span>{{ change.newText }}</p>
+        {%- endif %}
+    </div>
+    {%- endif -%}
+{%- endmacro %}
