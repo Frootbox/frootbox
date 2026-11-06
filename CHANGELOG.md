@@ -149,6 +149,9 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Fixed
 
+- Core: the page cache no longer loses a query parameter that a block
+  declares when pages are cached at the same time. A lost `q` made every
+  search get the cached search page without results.
 - Core: images, files and videos in the objects of modules (articles,
   events, people, locations, jobs, entries of collections, forms) count
   as used. `media.delete` refuses a medium that a published object
