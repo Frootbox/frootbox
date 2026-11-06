@@ -116,6 +116,10 @@ backend's own templates, styles and scripts are not part of it.
 - Workbench: `build --with-content` leaves the connection to the hub
   and the key of the website out of the copy
   (`bin/frootbox hub:disconnect --local --forget-key`).
+- Workbench: `build --since <build>` also makes a folder with only the
+  files that changed since the build on the server, and a list of the
+  ones that are gone, for a small upload by FTP. Each build names itself
+  in a file `BUILD`.
 
 ### Changed
 
