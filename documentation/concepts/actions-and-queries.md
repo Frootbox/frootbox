@@ -122,9 +122,15 @@ The log answers "who changed this?" for a year, without SQL.
 - `page.history` lists the entries of one page, newest first, with each
   change resolved to language, block and field and its old and new value,
   publishing, discarding and the scheduler included. It needs `page.show`
-  and filters by block, path and language. `action.log` lists the whole
-  log with filters by user, action (`page.*`), channel, status and time,
-  for roles with the permission `action.log`.
+  and filters by block, path and language. Each change also carries
+  `blockTitle` and `field` in the language of the person asking (e.g.
+  "Teaser" and "Slides › Title") and `oldText` and `newText` as short
+  plain text, so an app or the AI can show it as it is. `action.log`
+  lists the whole log with filters by user, action (`page.*`), channel,
+  status and time, for roles with the permission `action.log`.
+- The backend shows the latest changes on the page, the whole history
+  under **History** and the log under **Log**; in the edit mode the clock
+  at a block opens its history.
 - A module offers the same for its objects with `Action\History`: it
   collects the entries that changed a set of rows, also rows that are
   deleted by now, and `Action\RowDiff` compares two states of a row.
