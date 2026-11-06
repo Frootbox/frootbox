@@ -153,6 +153,11 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Fixed
 
+- Core: access tokens reach the website on Apache with PHP as FastCGI,
+  usual on webspace. `public/.htaccess` of the skeleton passes the header
+  `Authorization` on, and the core reads it from there. Without it the
+  REST API, MCP and the hub got no token. Websites made before need the
+  two lines in their `public/.htaccess`.
 - Core: the status and the page "Connection" of the backend no longer
   fail on webspace that disables `disk_total_space()` or
   `disk_free_space()`; the status then has no disk space. Work after the

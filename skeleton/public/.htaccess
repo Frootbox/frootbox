@@ -1,6 +1,10 @@
 # Every request that is not an existing file goes to index.php.
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    # PHP as FastCGI does not see the header Authorization without this,
+    # then the REST API and the hub get no access token.
+    RewriteCond %{HTTP:Authorization} .+
+    RewriteRule ^ - [E=HTTP_AUTHORIZATION:%0]
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [QSA,L]
 </IfModule>

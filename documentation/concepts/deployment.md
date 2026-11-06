@@ -14,6 +14,9 @@ content of the live website).
    the project folder: it holds `.env` and the database.
    `https://<address>/.env` must give 403 or 404. A `.htaccess` in the
    project folder locks it on Apache when the document root is wrong.
+   The `.htaccess` in `public/` also passes the header `Authorization`
+   on to PHP, which Apache with PHP as FastCGI drops otherwise: without
+   it, API tokens and the connection to the hub do not work.
 2. Create `.env` on the server: `APP_ENV=prod`, `DATABASE_URL`,
    `APP_SECRET`. A new website runs `php bin/frootbox install` once.
 3. Set `app.url` in `config/app.yaml`, it is required live.
