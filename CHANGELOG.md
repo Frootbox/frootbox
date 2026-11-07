@@ -239,6 +239,8 @@ backend's own templates, styles and scripts are not part of it.
 - Migrate: of several files in one field the import takes the one
   Frootbox 1 shows (highest order), and files of contact persons no
   longer land on the object with the same id.
+- Migrate: navigations keep the order of Frootbox 1, highest `orderId`
+  first; the import had them the other way round.
 - Core: access tokens reach the website on Apache with PHP as FastCGI,
   usual on webspace. `public/.htaccess` of the skeleton passes the header
   `Authorization` on, and the core reads it from there. Without it the
