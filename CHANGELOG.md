@@ -20,6 +20,9 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Migrate Frootbox 1: a rule of the mapping can make several blocks of one
+  block or plugin with `then`, each with the same texts and configuration.
+
 - Core: a block can keep its page in the page cache for a limited time
   with `Delivery::cacheFor(seconds)`, e.g. for a calendar of bookings
   from another system. The shortest time of the blocks on a page counts.
