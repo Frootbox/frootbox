@@ -243,6 +243,9 @@ backend's own templates, styles and scripts are not part of it.
   longer land on the object with the same id.
 - Migrate: navigations keep the order of Frootbox 1, highest `orderId`
   first; the import had them the other way round.
+- Base theme: the page grid no longer overflows when a theme makes
+  `--width` narrower than `--width-narrow` (e.g. fixed content widths
+  per breakpoint); the narrow column stays within the content.
 - Google Fonts: a variable font whose weights go up to 1000 (such as
   Nunito) keeps its range. The import read it as weight 400, so browsers
   faked bold text. Import such a font again to get the right files.

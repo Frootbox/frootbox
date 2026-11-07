@@ -54,12 +54,17 @@
 }
 .base-more a:hover { text-decoration: underline; text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
 
-/* Narrow, content, wide and full by named lines; each width as wide as it can be, the gutters shrink last. */
+/*
+ * Narrow, content, wide and full by named lines; each width as wide as it
+ * can be, the gutters shrink last. Narrow never exceeds the content and
+ * wide never falls below it, even when a theme makes the content narrower
+ * than the narrow width.
+ */
 .base-page {
   --base-room: (100% - 2 * var(--gutter));
-  --base-narrow: min(var(--width-narrow), var(--base-room));
   --base-content: min(var(--width), var(--base-room));
-  --base-wide: min(var(--width-wide), var(--base-room));
+  --base-narrow: min(var(--width-narrow), var(--base-content));
+  --base-wide: max(min(var(--width-wide), var(--base-room)), var(--base-content));
   display: grid;
   grid-template-columns:
     [full-start] minmax(var(--gutter), 1fr)
