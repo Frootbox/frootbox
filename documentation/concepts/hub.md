@@ -27,6 +27,31 @@ php bin/frootbox hub:connect K7Q2-M9XD
 
 The hub confirms the address later, once it can reach the website.
 
+## A new installation
+
+After a migration from Frootbox 1, or when a website is set up again
+with a fresh database, the new installation has a key of its own.
+Connect it as usual. When the hub already knows a website at the same
+host and port in one of your organizations, the confirmation page offers
+to continue that entry instead of adding a second one. The entry keeps
+its id, customer, carers, log and status history; key, system, address
+and the access to the status are new. The old installation is not told,
+since the new one answers at its address now, and it can change nothing
+at the hub afterwards.
+
+For a new address, or to connect from the console, open the website in
+the hub and choose **Connect a new installation**. The code continues
+this entry:
+
+```bash
+php bin/frootbox hub:connect K7Q2-M9XD
+```
+
+For a migration: build the new website, switch the domain, then connect
+from the new backend and continue the entry. In between, the hub cannot
+read the status and reports the website as unreachable. Turn off the
+status of the old installation first if you want to avoid those mails.
+
 ## What the hub sees
 
 With the switch **status** on, the website creates a service account
