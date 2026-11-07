@@ -175,6 +175,14 @@ backend's own templates, styles and scripts are not part of it.
   menu element. Rules under `plugins:` can name one element by its ID,
   `widgets: { Core/Video/Video: true }` takes a widget without a file,
   and teasers link to aliases and other websites too.
+- Migrate: a plugin of Frootbox 1 marked "Inherited" comes onto every
+  page below too, `{page}` in the name of a field is the page it shows on
+  (`files-{page}` for images by page), and `needs: items` leaves a block
+  out where that field stays empty. `children` lists the pages below as
+  objects of type `Page`, a gallery widget fills a list with all its
+  images (`widgets: { Core/Images/Gallery: images.#.image }`), and a
+  plugin without a heading of its own gets its title, as Frootbox 1
+  showed it.
 - Core: history and proof of changes. The log of actions keeps the token
   and the device of each run ("Safari · iPhone", or the name of an API
   token), every migration leaves an entry `system.migrate`, and
