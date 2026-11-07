@@ -76,9 +76,10 @@ theme:
 The core makes `/favicon.ico` (16, 32 and 48 pixels),
 `/apple-touch-icon.png`, `/icon-192.png`, `/icon-512.png` and
 `/manifest.webmanifest` from it, caches them in `var/cache/icon/` and
-puts the tags into the head of every page. A child's icon replaces the
-parent's. Without an icon there are no tags and these addresses answer
-404.
+puts the tags into the head of every page. The icon for Apple devices
+gets the background colour of the theme, since they show transparency
+black. A child's icon replaces the parent's. Without an icon there are
+no tags and these addresses answer 404.
 
 ## CSS
 

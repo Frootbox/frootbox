@@ -40,7 +40,8 @@ backend's own templates, styles and scripts are not part of it.
   `theme: { icon: assets/icon.png }`; the core makes `/favicon.ico`,
   `/apple-touch-icon.png`, `/icon-192.png`, `/icon-512.png` and
   `/manifest.webmanifest` from it and puts the tags into the head of
-  every page. A child's icon replaces the parent's.
+  every page. The icon for Apple devices gets the background colour of
+  the theme. A child's icon replaces the parent's.
 - Core: functions of extensions for templates. An extension adds one
   with `$registry->add(TemplateFunction::class, new TemplateFunction('acme_cart', Cart::class, 'summary'))`;
   the name needs a prefix and never replaces one of the core.
