@@ -340,6 +340,18 @@ php bin/frootbox seed <file>
 |---|---|
 | `file` | Path of the file, or vendor/package:path in an extension |
 
+## `shop:sync`
+
+Brings the catalog of the shop up to date with the provider
+
+```
+php bin/frootbox shop:sync [options]
+```
+
+| Argument or option | Description |
+|---|---|
+| `--full` | The whole catalog instead of the changes since the last sync |
+
 ## `storage:check`
 
 Tries writing, reading and deleting in both stores

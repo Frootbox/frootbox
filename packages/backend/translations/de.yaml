@@ -1235,6 +1235,8 @@ Add or remove: Hinzufügen oder entfernen
 "Keep media and files from forms in an S3-compatible bucket and deliver public media from there": "Medien und Dateien aus Formularen in einem S3-kompatiblen Bucket ablegen und öffentliche Medien von dort ausliefern"
 "Webhooks": "Webhooks"
 "Tell other services about changes, signed after Standard Webhooks and sent in the background": "Andere Dienste über Änderungen informieren, signiert nach Standard Webhooks und im Hintergrund verschickt"
+"Online shop": "Onlineshop"
+"The catalog of a shop provider with categories and images, cart, sign-in of customers, checkout and their orders and invoices": "Der Katalog eines Shop-Anbieters mit Kategorien und Bildern, Warenkorb, Anmeldung der Kunden, Kasse und ihre Bestellungen und Rechnungen"
 "Base": "Basis"
 "The base theme: layouts, tokens, building blocks and blocks that themes build on": "Das Basis-Theme: Layouts, Tokens, Bausteine und Blöcke, auf denen Themes aufbauen"
 "Demo theme: the website of a small coffee roastery": "Demo-Theme: die Website einer kleinen Kaffeerösterei"

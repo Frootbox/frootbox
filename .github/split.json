@@ -11,6 +11,7 @@
     "packages/modules/jobs": "jobs",
     "packages/modules/news": "news",
     "packages/modules/people": "people",
+    "packages/modules/shop": "shop",
     "packages/modules/search": "search",
     "packages/modules/seo": "seo",
     "packages/modules/statistics": "statistics",

@@ -2866,6 +2866,164 @@ Query · right `frootbox/seo/page.check`
 | `id` | string or null, optional | Only this page; left out for all pages |
 | `language` | string or null, optional | Only this language; left out for all languages |
 
+## frootbox/shop
+
+### `frootbox/shop/cart.add`
+
+Puts pieces of a product into the cart of the visitor; returns the pieces of it now in the cart
+
+Action · public · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `product` | string | The id of the product |
+| `quantity` | integer, optional |  |
+
+### `frootbox/shop/cart.show`
+
+The cart of the visitor; for a signed-in customer with prices, shipping and totals from the shop
+
+Query · public
+
+| Input | Type | Description |
+|---|---|---|
+| `shippingMethod` | string or null, optional |  |
+| `deliveryAddressId` | string or null, optional |  |
+
+### `frootbox/shop/cart.update`
+
+Sets the pieces of products in the cart of the visitor, 0 removes one; returns the pieces in the cart
+
+Action · public · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `quantities` | object | Pieces by id of the product, e.g. {"01J…": 12} |
+
+### `frootbox/shop/catalog.sync`
+
+Brings products, categories and images of the shop up to date with the provider; with full the whole catalog again
+
+Action · right `frootbox/shop/catalog.sync` · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `full` | boolean, optional | The whole catalog instead of the changes since the last sync |
+
+### `frootbox/shop/customer.change-password`
+
+Changes the password of the signed-in customer of the shop
+
+Action · public · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `currentPassword` | string |  |
+| `password` | string |  |
+
+### `frootbox/shop/customer.request-reset`
+
+Sends a customer of the shop a link to set a new password; says nothing about whether the address is known
+
+Action · public · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `email` | string |  |
+| `returnUrl` | string | The address of the page with the form for the new password |
+
+### `frootbox/shop/customer.reset-password`
+
+Sets a new password for a customer of the shop with the token of the link from the mail
+
+Action · public · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `email` | string |  |
+| `token` | string |  |
+| `password` | string |  |
+
+### `frootbox/shop/customer.show`
+
+The signed-in customer of the shop with addresses
+
+Query · public
+
+### `frootbox/shop/customer.sign-in`
+
+Signs a customer of the shop in for the visitor of the website
+
+Action · public · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `email` | string |  |
+| `password` | string |  |
+
+### `frootbox/shop/customer.sign-out`
+
+Signs the customer of the shop out; the cart stays
+
+Action · public · cannot be undone
+
+### `frootbox/shop/invoice.list`
+
+The invoices of the signed-in customer of the shop, newest first
+
+Query · public
+
+| Input | Type | Description |
+|---|---|---|
+| `cursor` | string or null, optional |  |
+
+### `frootbox/shop/invoice.pdf`
+
+The PDF of an invoice of the signed-in customer of the shop, base64
+
+Query · public
+
+| Input | Type | Description |
+|---|---|---|
+| `id` | string |  |
+
+### `frootbox/shop/order.list`
+
+The orders of the signed-in customer of the shop, newest first
+
+Query · public
+
+| Input | Type | Description |
+|---|---|---|
+| `cursor` | string or null, optional |  |
+
+### `frootbox/shop/order.place`
+
+Orders the cart of the signed-in customer at the shop; the same key again gives the same order
+
+Action · public · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `shippingMethod` | string |  |
+| `paymentMethod` | string |  |
+| `expectedGross` | integer | The total gross in cents the customer saw; if it changed meanwhile, nothing is ordered |
+| `key` | string | A key of the checkout, so sending twice orders once |
+| `deliveryAddressId` | string or null, optional |  |
+| `reference` | string or null, optional |  |
+| `comment` | string or null, optional |  |
+| `consents` | array, optional | Keys of the legal texts the customer agreed to |
+
+### `frootbox/shop/order.show`
+
+An order of the signed-in customer of the shop with its lines
+
+Query · public
+
+| Input | Type | Description |
+|---|---|---|
+| `id` | string |  |
+
 ## frootbox/statistics
 
 ### `frootbox/statistics/report.show`

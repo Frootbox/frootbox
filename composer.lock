@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "253639528202174111ef6c70e28fe81d",
+    "content-hash": "8ed1914b718a9d171d05357b01a25a34",
     "packages": [
         {
             "name": "anthropic-ai/sdk",
@@ -1378,6 +1378,67 @@
             "support": {
                 "issues": "https://github.com/Frootbox/frootbox/issues",
                 "source": "https://github.com/frootbox-packages/seo",
+                "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
+            },
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "frootbox/shop",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/modules/shop",
+                "reference": "8df5f04caf8b100d7aa90cda0f4a88fc64ca39ea"
+            },
+            "require": {
+                "frootbox/core": "^0.1",
+                "frootbox/database": "^0.1",
+                "frootbox/rich-text": "^0.1",
+                "php": ">=8.5",
+                "psr/container": "^2.0",
+                "psr/http-message": "^2.0",
+                "psr/http-server-handler": "^1.0",
+                "psr/log": "^3.0",
+                "symfony/console": "^8.1"
+            },
+            "suggest": {
+                "avaro/shop": "Avaro as the shop behind the website"
+            },
+            "type": "frootbox-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frootbox\\Shop\\": "src/",
+                    "Frootbox\\Shop\\Migrations\\": "migrations/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Frootbox\\Shop\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A neutral shop for the Frootbox CMS: the catalog of a shop provider mirrored with categories and images, cart, sign-in of customers, checkout and their account",
+            "homepage": "https://github.com/Frootbox/frootbox/tree/main/packages/modules/shop",
+            "keywords": [
+                "catalog",
+                "cms",
+                "ecommerce",
+                "frootbox",
+                "shop"
+            ],
+            "support": {
+                "issues": "https://github.com/Frootbox/frootbox/issues",
+                "source": "https://github.com/frootbox-packages/shop",
                 "docs": "https://github.com/Frootbox/frootbox/tree/main/documentation"
             },
             "transport-options": {
@@ -8823,6 +8884,7 @@
         "frootbox/rich-text": 20,
         "frootbox/search": 20,
         "frootbox/seo": 20,
+        "frootbox/shop": 20,
         "frootbox/statistics": 20,
         "frootbox/storage-s3": 20,
         "frootbox/theme-base": 20,

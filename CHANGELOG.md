@@ -30,6 +30,20 @@ backend's own templates, styles and scripts are not part of it.
 - Core: functions of extensions for templates. An extension adds one
   with `$registry->add(TemplateFunction::class, new TemplateFunction('acme_cart', Cart::class, 'summary'))`;
   the name needs a prefix and never replaces one of the core.
+- Shop: new module `frootbox/shop`, a neutral shop on the website for
+  any shop provider. A provider implements `Provider\ShopProvider` and
+  adds itself with `$registry->add(ShopProviderEntry::class, …)`. The
+  catalog is mirrored into the tables `frootbox_shop_*` (products,
+  categories of the core in the group `frootbox/shop/catalog`, images as
+  public media in the folder "Shop"), with the action
+  `frootbox/shop/catalog.sync`, every five minutes by the scheduler, on a
+  webhook at `POST /_shop/webhook` and with `shop:sync --full`. Blocks
+  "Product catalog" (a plugin with category and product pages), "Cart",
+  "Checkout", "Sign-in to the shop" and "Customer account" work without
+  JavaScript through forms at `POST /_shop/<form>`; prices, orders and
+  invoices come live from the provider for the signed-in customer, the
+  cart lives in the visitor session. Template functions `shop_customer()`
+  and `shop_cart()`.
 - Core: history and proof of changes. The log of actions keeps the token
   and the device of each run ("Safari · iPhone", or the name of an API
   token), every migration leaves an entry `system.migrate`, and

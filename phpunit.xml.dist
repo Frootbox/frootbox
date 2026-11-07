@@ -34,6 +34,9 @@
         <testsuite name="people">
             <directory>packages/modules/people/tests</directory>
         </testsuite>
+        <testsuite name="shop">
+            <directory>packages/modules/shop/tests</directory>
+        </testsuite>
         <testsuite name="events">
             <directory>packages/modules/events/tests</directory>
         </testsuite>
@@ -96,6 +99,7 @@
             <directory>packages/database/src</directory>
             <directory>packages/modules/forms/src</directory>
             <directory>packages/modules/people/src</directory>
+            <directory>packages/modules/shop/src</directory>
             <directory>packages/modules/events/src</directory>
             <directory>packages/modules/collections/src</directory>
             <directory>packages/modules/jobs/src</directory>
