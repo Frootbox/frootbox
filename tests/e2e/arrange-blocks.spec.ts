@@ -79,8 +79,11 @@ test('adds, moves and sets up blocks on the website', async ({ page, browser }, 
     await expect(picker.getByRole('button', { name: /^Abschnitt/ })).toHaveCount(0);
     await picker.getByLabel('Suchen').fill('');
 
+    // The page is swapped, not loaded again: what the window holds stays.
+    await page.evaluate(() => { (window as unknown as { kept: boolean }).kept = true; });
     await picker.getByRole('button', { name: /^Abschnitt/ }).click();
     await expect(section).toBeFocused();
+    expect(await page.evaluate(() => (window as unknown as { kept?: boolean }).kept)).toBe(true);
     await expect(bar.locator('.state .visually-hidden')).toHaveText('Status: Änderungen offen');
 
     // Two columns from the panel, which stays open after loading again.
@@ -140,6 +143,56 @@ test('adds, moves and sets up blocks on the website', async ({ page, browser }, 
         expect(await guest.locator('[data-fb-block]').count()).toBe(0);
         await guest.close();
     }
+
+    await removePage(page, id);
+});
+
+test('inserts a block at the very top of a filled area', async ({ page }) => {
+    const id = await openPage(page, `oben-${unique()}`, [
+        { block: 'frootbox/theme-base/TextWithHeading', fields: { title: 'Erster', body: text('Bisher oben.') } },
+        { block: 'frootbox/theme-base/TextWithHeading', fields: { title: 'Zweiter', body: text('Darunter.') } },
+    ]);
+    const bar = page.locator('fb-editor-bar');
+    const blocks = page.locator('[data-fb-block][data-fb-area="main"]');
+    const picker = bar.getByRole('dialog', { name: 'Block einfügen' });
+
+    // Only the first block of an area offers the top; below the others is enough.
+    await blocks.nth(1).focus();
+    await expect(bar.getByRole('toolbar', { name: 'Block Text mit Überschrift' }).getByRole('button', { name: 'Block darunter einfügen' })).toBeVisible();
+    await expect(bar.getByRole('button', { name: 'Block ganz oben einfügen' })).toHaveCount(0);
+
+    await blocks.first().focus();
+    await bar.getByRole('toolbar', { name: 'Block Text mit Überschrift' }).getByRole('button', { name: 'Block ganz oben einfügen' }).click();
+    await picker.getByLabel('Suchen').fill('Hero');
+    await picker.getByRole('button', { name: /^Hero/ }).click();
+    await expect(blocks).toHaveCount(3);
+    await expect(blocks.first()).toHaveAttribute('data-fb-name', 'frootbox/theme-base/Hero');
+    await expect(blocks.first()).toBeFocused();
+    await expect(blocks.nth(1)).toContainText('Erster');
+
+    await removePage(page, id);
+});
+
+test('holds the place of an empty list and adds its first entry', async ({ page }) => {
+    const slug = `leer-${unique()}`;
+    const id = await openPage(page, slug, [
+        { block: 'frootbox/theme-base/Features', fields: { title: 'Warum wir', items: [{ title: 'Frisch' }] } },
+    ]);
+    const features = page.locator('[data-fb-name="frootbox/theme-base/Features"]');
+    // A draft may be unfinished: the last entry gone, e.g. through the API.
+    const block = await features.getAttribute('data-fb-block');
+    await page.goto(`/cms/pages/${id}`);
+    expect((await action(page, 'page.remove-list-entry', { id, language: 'de', block, path: 'items/0' })).status).toBe(200);
+    await page.goto(`/${slug}`);
+    await ready(page);
+    const holder = features.getByRole('button', { name: 'Vorteile: Eintrag hinzufügen' });
+
+    await expect(holder).toBeVisible();
+    await holder.click();
+    await expect(features.locator('.base-features__item')).toHaveCount(1);
+    await expect(holder).toHaveCount(0);
+    // The focus on the first field of the new entry, its symbol.
+    await expect(features.locator('[data-fb-field^="items/0/"]').first()).toBeFocused();
 
     await removePage(page, id);
 });

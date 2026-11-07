@@ -22,7 +22,20 @@
             <fb-tree-filter class="fb-tree-filter" for="page-tree" found="{{ t('{count} pages found') }}" one="{{ t('One page found') }}" empty="{{ t('No page found') }}">
                 <label class="fb-visually-hidden" for="page-tree-filter">{{ t('Find a page') }}</label>
                 <span class="fb-tree-filter__icon" aria-hidden="true">{{ icon('search', 'fb-icon fb-icon--small') }}</span>
-                <input class="fb-input fb-tree-filter__input" id="page-tree-filter" type="search" placeholder="{{ t('Find by title or address') }}" autocomplete="off" spellcheck="false" aria-controls="page-tree" aria-describedby="page-tree-filter-status" aria-keyshortcuts="/">
+                <div class="fb-tree-filter__fields">
+                    <input class="fb-input fb-tree-filter__input" id="page-tree-filter" type="search" placeholder="{{ t('Find by title or address') }}" autocomplete="off" spellcheck="false" aria-controls="page-tree" aria-describedby="page-tree-filter-status" aria-keyshortcuts="/">
+                    <div class="fb-select">
+                        <label class="fb-visually-hidden" for="page-tree-status">{{ t('Status') }}</label>
+                        <select class="fb-input fb-tree-filter__select" id="page-tree-status" aria-controls="page-tree">
+                            <option value="">{{ t('Every status') }}</option>
+                            <option value="draft">{{ t('Draft') }}</option>
+                            <option value="changed">{{ t('Pending changes') }}</option>
+                            <option value="scheduled">{{ t('Scheduled') }}</option>
+                            <option value="published">{{ t('Published') }}</option>
+                        </select>
+                        {{ icon('chevron-down', 'fb-icon fb-icon--small') }}
+                    </div>
+                </div>
                 <p class="fb-tree-filter__status" id="page-tree-filter-status" role="status"></p>
             </fb-tree-filter>
             {% include '@backend/pages/tree.twig' %}

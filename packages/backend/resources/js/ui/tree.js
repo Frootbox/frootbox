@@ -50,6 +50,7 @@ function inlineKey(key, element) {
  * - remember: a name under which this browser keeps which branches were
  *   opened or closed; the way to the current link always stays open
  * - data-terms: what <fb-tree-filter> finds an item by, else its title
+ * - data-status: what its choice of status picks, e.g. "draft"
  *
  * Keys on a link: arrow up and down go to the next link, Home and End to
  * the first and last. Arrow right opens a branch or goes into it, arrow
@@ -113,7 +114,7 @@ export class Tree extends LitElement {
         // Loaded again while a search is on, e.g. after saving.
         const filter = document.querySelector(`fb-tree-filter[for="${CSS.escape(this.id || ' ')}"]`);
 
-        if (filter?.query()) {
+        if (filter?.active()) {
             filter.apply();
         } else {
             requestAnimationFrame(() => this.scrollBack());
@@ -158,16 +159,17 @@ export class Tree extends LitElement {
     }
 
     /**
-     * Shows only the items whose terms hold every word of the query, with
-     * the way to them (decision 0136). Moving is off meanwhile. Returns
-     * the number of items found, null for an empty query, which shows the
-     * tree as before.
+     * Shows only the items whose terms hold every word of the query and
+     * that have the status, if one is chosen, with the way to them
+     * (decision 0136). Moving is off meanwhile. Returns the number of
+     * items found, null for an empty query without a status, which shows
+     * the tree as before.
      */
-    filter(query) {
+    filter(query, status = '') {
         const words = fold(query).split(/\s+/).filter((word) => word !== '');
         const items = this.items();
 
-        if (words.length === 0) {
+        if (words.length === 0 && status === '') {
             if (this.hasAttribute('data-filtering')) {
                 for (const item of items) {
                     item.hidden = false;
@@ -192,7 +194,8 @@ export class Tree extends LitElement {
 
         // Children first, so a parent knows whether one of them is shown.
         for (const item of items.reverse()) {
-            const match = words.every((word) => fold(item.dataset.terms ?? item.dataset.title ?? '').includes(word));
+            const match = words.every((word) => fold(item.dataset.terms ?? item.dataset.title ?? '').includes(word))
+                && (status === '' || item.dataset.status === status);
             const below = Tree.children(item.querySelector(':scope > .fb-tree__group')).some((child) => !child.hidden);
             item.hidden = !match && !below;
             item.toggleAttribute('data-match', match);
@@ -700,18 +703,21 @@ export class Tree extends LitElement {
 export class TreeFilter extends HTMLElement {
     connectedCallback() {
         this.input = this.querySelector('input');
+        this.select = this.querySelector('select');
         this.status = this.querySelector('[role="status"]');
         this.onInput = () => this.apply();
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onShortcut = this.onShortcut.bind(this);
         this.input?.addEventListener('input', this.onInput);
         this.input?.addEventListener('keydown', this.onKeyDown);
+        this.select?.addEventListener('change', this.onInput);
         document.addEventListener('keydown', this.onShortcut);
     }
 
     disconnectedCallback() {
         this.input?.removeEventListener('input', this.onInput);
         this.input?.removeEventListener('keydown', this.onKeyDown);
+        this.select?.removeEventListener('change', this.onInput);
         document.removeEventListener('keydown', this.onShortcut);
     }
 
@@ -723,8 +729,18 @@ export class TreeFilter extends HTMLElement {
         return this.input?.value.trim() ?? '';
     }
 
+    /** The chosen status, empty for every one. */
+    chosen() {
+        return this.select?.value ?? '';
+    }
+
+    /** Whether a search or a status narrows the tree. */
+    active() {
+        return this.query() !== '' || this.chosen() !== '';
+    }
+
     apply() {
-        const found = this.tree()?.filter?.(this.query()) ?? null;
+        const found = this.tree()?.filter?.(this.query(), this.chosen()) ?? null;
 
         if (this.status) {
             this.status.textContent = found === null ? '' : found === 0

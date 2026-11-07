@@ -353,6 +353,7 @@ The role is deleted.: Die Rolle ist gelöscht.
 "The page leaves the tree and the website. Visitors no longer find it.": "Die Seite verschwindet aus dem Baum und von der Website. Besucher finden sie nicht mehr."
 "Sitemap": "Sitemap"
 "Find a page": "Seite finden"
+"Every status": "Jeder Status"
 "Find by title or address": "Titel oder Adresse suchen"
 "{count} pages found": "{count} Seiten gefunden"
 "One page found": "Eine Seite gefunden"
@@ -587,6 +588,7 @@ There is nothing for the scope "{scope}".: „{scope}“ gibt es nicht.
 'Copy the block': 'Block kopieren'
 'Settings of the block': 'Einstellungen des Blocks'
 'Insert a block below': 'Block darunter einfügen'
+'Insert a block at the top': 'Block ganz oben einfügen'
 'Delete the block': 'Block löschen'
 'Delete "{block}"?': '„{block}“ löschen?'
 'Insert a block': 'Block einfügen'
@@ -616,6 +618,7 @@ Options: Optionen
 'No link': 'Kein Link'
 'Entry {number}': 'Eintrag {number}'
 'Add an entry': 'Eintrag hinzufügen'
+'{list}: add an entry': '{list}: Eintrag hinzufügen'
 'Remove the entry': 'Eintrag entfernen'
 'Entry {number} of "{list}"': 'Eintrag {number} von „{list}“'
 'Move forward': 'Nach vorne'

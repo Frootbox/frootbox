@@ -330,6 +330,16 @@ fb-tree > .fb-alert {
     pointer-events: none;
 }
 
+/* The status below the search: side by side the column is too narrow for both. */
+.fb-tree-filter__fields {
+    display: grid;
+    gap: var(--fb-space-2);
+}
+
+.fb-tree-filter__select {
+    min-height: var(--fb-size-control-sm);
+}
+
 .fb-tree-filter__input {
     min-height: var(--fb-size-control-sm);
     padding-inline-start: calc(var(--fb-space-3) * 2 + var(--fb-size-icon-sm));

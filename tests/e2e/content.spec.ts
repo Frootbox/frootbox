@@ -257,6 +257,19 @@ test('finds a page in the sitemap', async ({ page }) => {
     await expect(search).toHaveValue('');
     await expect(tree.locator('.fb-tree__item[hidden]')).toHaveCount(0);
     await expect(tree.locator(`[data-id="${child.id}"] > .fb-tree__row a`)).toBeVisible();
+
+    // The status narrows the tree as well, alone or with words.
+    const status = page.getByLabel('Status', { exact: true });
+    await search.fill(word.toLowerCase());
+    await status.selectOption({ label: 'Veröffentlicht' });
+    await expect(page.locator('#page-tree-filter-status')).toHaveText('Keine Seite gefunden');
+    await status.selectOption({ label: 'Entwurf' });
+    await expect(page.locator('#page-tree-filter-status')).toHaveText('Eine Seite gefunden');
+    await search.fill('');
+    await expect(tree.locator(`[data-id="${child.id}"] > .fb-tree__row a`)).toBeVisible();
+    await expect(tree.locator('.fb-tree__item[data-match][data-status="published"]')).toHaveCount(0);
+    await status.selectOption({ label: 'Jeder Status' });
+    await expect(tree.locator('.fb-tree__item[hidden]')).toHaveCount(0);
 });
 
 test('marks unsaved changes and asks before they get lost', async ({ page }) => {

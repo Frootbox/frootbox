@@ -12,6 +12,7 @@ import { IconPicker, iconPickerStyles } from './icon-picker.js';
 import { MediaPicker, mediaStyles } from './media.js';
 import { OutlinePanel, outlineStyles } from './outline.js';
 import { placesOf } from './problems.js';
+import { refreshPage, unmoved } from './refresh.js';
 import { SharePreview, shareStyles } from './share.js';
 
 const COLLAPSED = 'fb-editor-bar-collapsed';
@@ -48,7 +49,7 @@ function otherDirection(editor) {
 }
 
 /** What the bar marks: fields, blocks and empty areas (decision 0119). */
-const MARKED = '[data-fb-field], [data-fb-block], fb-area[data-fb-area]';
+const MARKED = '[data-fb-field], [data-fb-block], fb-area[data-fb-area], fb-list[data-fb-list]';
 
 function read(key) {
     try {
@@ -727,7 +728,14 @@ export class EditorBar extends LitElement {
                 });
             }
         };
-        this.onPoint = (event) => this.point(event.target);
+        this.onPoint = (event) => {
+            if (unmoved(event, this.held ?? null)) {
+                return;
+            }
+
+            this.held = null;
+            this.point(event.target);
+        };
         this.onLeave = (event) => {
             if (!event.relatedTarget) {
                 this.current = null;
@@ -1665,7 +1673,12 @@ export class EditorBar extends LitElement {
         }
 
         writeSession(this.undoKey, this.undo.slice(0, -1));
-        location.reload();
+        await this.refresh();
+    }
+
+    /** The page again without loading it: the content is swapped, and a new bar takes over (decision 0336). */
+    refresh() {
+        return refreshPage(this);
     }
 
     /** Publishing or discarding leaves nothing to undo here. */

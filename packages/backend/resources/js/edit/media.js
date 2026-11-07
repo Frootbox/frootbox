@@ -391,9 +391,9 @@ export class MediaPicker {
         const saving = then?.();
         state?.done?.();
 
-        // A new file for every place: the page shows it once loaded again, like after undo.
+        // A new file for every place: the page shows it once shown again, like after undo.
         if (state?.replaced) {
-            Promise.resolve(saving).finally(() => location.reload());
+            Promise.resolve(saving).finally(() => this.bar.refresh());
         }
     }
 

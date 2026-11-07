@@ -5,7 +5,7 @@
     {%- set branch = row.children is not empty -%}
     {%- set expanded = row.depth < levels or row.id in open -%}
     {%- set status = labels[row.status] ?? row.status -%}
-    <li class="fb-tree__item" data-id="{{ row.id }}" data-title="{{ row.title }}"{% if row.fixed or row.outside %} data-fixed{% endif %}{% if row.outside %} data-leaf data-outside{% endif %} data-path="{{ row.path }}" data-terms="{{ row.terms }}"{% if branch and not expanded %} data-collapsed{% endif %}>
+    <li class="fb-tree__item" data-id="{{ row.id }}" data-title="{{ row.title }}"{% if row.fixed or row.outside %} data-fixed{% endif %}{% if row.outside %} data-leaf data-outside{% endif %} data-path="{{ row.path }}" data-terms="{{ row.terms }}"{% if not row.outside %} data-status="{{ row.status }}"{% endif %}{% if branch and not expanded %} data-collapsed{% endif %}>
         <div class="fb-tree__row" data-depth="{{ min(row.depth, 9) }}">
             <span class="fb-tree__handle" aria-hidden="true">{{ icon('grip', 'fb-icon fb-icon--small') }}</span>
             {% if branch %}

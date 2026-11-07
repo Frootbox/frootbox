@@ -13,7 +13,9 @@ and the app use only these. There is no second way to change data.
   change of rows inside an action is recorded and can be undone with
   `action.undo`.
 - **An API for free.** An action is `POST /api/v1/<name>`, a query
-  `GET /api/v1/<name>?…`, described in `/api/v1/openapi.json`.
+  `GET /api/v1/<name>?…`, described in `/api/v1/openapi.json`. The
+  answer is `{"data": …}`; for an action that can be undone it also
+  holds `"entry"`, the id to pass to `action.undo`.
 - **AI without special cases.** The AI gets the same actions with the
   same rights as the user it works for, and its changes land in drafts.
 

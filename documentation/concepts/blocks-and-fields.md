@@ -106,6 +106,18 @@ like the folder in the namespace `<extension>\Blocks`, implementing
 for the template. It reads in `$context->contentLanguage`, which differs
 from the language of the page when a page shows a fallback.
 
+## Scripts
+
+A block with behaviour, e.g. a slider or tabs, brings its script in
+`assets/` as a custom element (`customElements.define('acme-tabs', …)`)
+and wraps its markup in that element. While editing, the editor bar
+swaps the content of the page after each change instead of loading it
+again; a custom element starts by itself as soon as it is on the page.
+A script that looks for its elements once at load
+(`document.querySelectorAll(…)`) misses the swapped ones. A script that
+cannot be an element listens to the event `frootbox:refresh` on
+`document`, which follows every swap.
+
 ## Layouts
 
 Layouts are the frames of pages (`layouts/<Name>/`), with the same

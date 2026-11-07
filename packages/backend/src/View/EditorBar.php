@@ -51,10 +51,10 @@ final readonly class EditorBar
      * Without a layer, so it counts above all layers of the theme. The
      * outlines and labels are drawn by the bar, not here.
      */
-    private const string PAGE_CSS = 'fb-field,fb-area,[data-fb-field]{outline:none}'
-        . 'fb-field[data-fb-type="richtext"],fb-field[data-fb-type="table"],fb-area{display:block}'
-        . 'fb-area[data-fb-empty]{display:grid;place-items:center;min-block-size:4rem;cursor:pointer}'
-        . 'fb-area[data-fb-empty]::before{content:attr(data-fb-hint);opacity:.6;font:inherit}'
+    private const string PAGE_CSS = 'fb-field,fb-area,fb-list,[data-fb-field]{outline:none}'
+        . 'fb-field[data-fb-type="richtext"],fb-field[data-fb-type="table"],fb-area,fb-list{display:block}'
+        . 'fb-area[data-fb-empty],fb-list[data-fb-empty]{display:grid;place-items:center;min-block-size:4rem;cursor:pointer}'
+        . 'fb-area[data-fb-empty]::before,fb-list[data-fb-empty]::before{content:attr(data-fb-hint);opacity:.6;font:inherit}'
         . 'fb-missing{display:block;padding:1rem;border:1px dashed currentColor;opacity:.7}'
         . '[data-fb-field][contenteditable]{cursor:text}'
         . '[data-fb-field]:empty::before{content:attr(data-fb-label);opacity:.5}'
@@ -538,6 +538,7 @@ final readonly class EditorBar
             'moveDown' => $t('Move down'),
             'copyBlock' => $t('Copy the block'),
             'blockSettings' => $t('Settings of the block'),
+            'insertAbove' => $t('Insert a block at the top'),
             'insertBelow' => $t('Insert a block below'),
             'removeBlock' => $t('Delete the block'),
             'blockHistory' => $t('History of the block'),
@@ -587,6 +588,7 @@ final readonly class EditorBar
             'noLink' => $t('No link'),
             'entry' => $t('Entry {number}'),
             'addEntry' => $t('Add an entry'),
+            'emptyList' => $t('{list}: add an entry'),
             'removeEntry' => $t('Remove the entry'),
             'entryTools' => $t('Entry {number} of "{list}"'),
             'moveEarlier' => $t('Move forward'),

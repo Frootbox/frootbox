@@ -34,6 +34,19 @@ backend's own templates, styles and scripts are not part of it.
   seconds per product and the shares of the shop, loading images,
   preparing images and the rest.
 
+- Backend: after arranging blocks, undo or replacing a file the editor
+  bar swaps the content of the page instead of loading it again, so it
+  no longer flashes or jumps. Scripts of blocks should be custom
+  elements; others can listen to `frootbox:refresh` on `document`.
+- Backend: the first block of an area offers **Insert a block at the
+  top**. A list without entries holds its place in its block with
+  "<list>: add an entry".
+- Backend: the sitemap filters by status as well, alone or with the
+  search.
+- Core: the REST API answers an action that can be undone with
+  `"entry"`, the id for `action.undo`, like the backend (also in
+  OpenAPI).
+- Backend: all icons now come from Lucide, under the names they had.
 - Backend: an empty area in the edit mode names itself and says
   "Insert a block". Without a theme, **New page** explains where layouts
   come from instead of a form that cannot be sent.

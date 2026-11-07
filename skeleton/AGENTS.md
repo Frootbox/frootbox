@@ -119,6 +119,10 @@ custom properties such as `var(--color-primary)`.
 - Own blocks go to `blocks/<Name>/` (PascalCase): `views/Default.twig`
   with the schema in its header, `assets/` for CSS and JS,
   `preview.svg` or `preview.webp` (16:10) for the block picker.
+- JS of a block is a custom element around its markup: while editing,
+  the page content is swapped after each change, and a script that
+  queries its elements once at load misses the new ones (otherwise
+  listen to `frootbox:refresh` on `document`).
 - Site fields are declared under `theme: fields:` and printed with
   `site_field('name')`, read with `site_value('name')`.
 - The favicon comes from `theme: icon: assets/icon.png`, one square PNG

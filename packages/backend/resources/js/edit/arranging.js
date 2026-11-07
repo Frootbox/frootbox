@@ -452,9 +452,49 @@ export class Arranging {
         }
 
         markEntries();
+        this.holdEmptyLists();
         document.addEventListener('keydown', this.onKey, true);
         document.addEventListener('click', this.onClick, true);
         this.restore();
+    }
+
+    /**
+     * A list without entries shows nothing on the page; a placeholder at
+     * the end of its block adds the first one (decision 0336).
+     */
+    holdEmptyLists() {
+        for (const block of document.querySelectorAll(`${BLOCK}[data-fb-empty-lists]`)) {
+            let lists = {};
+
+            try {
+                lists = JSON.parse(block.dataset.fbEmptyLists ?? '{}');
+            } catch {
+                continue;
+            }
+
+            for (const [name, label] of Object.entries(lists)) {
+                if (block.querySelector(`:scope > fb-list[data-fb-list="${CSS.escape(name)}"]`)) {
+                    continue;
+                }
+
+                const holder = document.createElement('fb-list');
+                holder.dataset.fbList = name;
+                holder.dataset.fbLabel = label;
+                holder.dataset.fbHint = this.labels.emptyList.replace('{list}', label);
+                holder.dataset.fbEmpty = '';
+                holder.tabIndex = 0;
+                holder.setAttribute('role', 'button');
+                holder.setAttribute('aria-label', holder.dataset.fbHint);
+                block.append(holder);
+            }
+        }
+    }
+
+    /** The first entry of an empty list, from its placeholder. */
+    addFirstEntry(holder) {
+        const block = holder.closest(BLOCK);
+
+        return this.change('page.add-list-entry', { block: block?.dataset.fbBlock, path: holder.dataset.fbList }, () => block?.dataset.fbBlock ?? null, false, `${holder.dataset.fbList}/0/`);
     }
 
     stop() {
@@ -467,8 +507,10 @@ export class Arranging {
         const state = readRestore(this.restoreKey);
         const block = state?.block ? document.querySelector(`${BLOCK}[data-fb-block="${CSS.escape(state.block)}"]`) : null;
         // After a change of a list: the field of the entry in question.
+        // A path ending in "/" means the first field of that entry.
+        const match = state?.field?.endsWith('/') ? '^=' : '=';
         const field = state?.field
-            ? [...(block ?? document).querySelectorAll(`[data-fb-field="${CSS.escape(state.field)}"]:not([data-fb-site]):not([data-fb-object])`)].find((item) => ownerOf(item) === block)
+            ? [...(block ?? document).querySelectorAll(`[data-fb-field${match}"${CSS.escape(state.field)}"]:not([data-fb-site]):not([data-fb-object])`)].find((item) => ownerOf(item) === block)
             : null;
         const element = field ?? block;
 
@@ -537,6 +579,13 @@ export class Arranging {
             return;
         }
 
+        if (target.matches('fb-list[data-fb-list]') && (event.key === 'Enter' || event.key === ' ')) {
+            event.preventDefault();
+            this.addFirstEntry(target);
+
+            return;
+        }
+
         const area = target.matches('fb-area[data-fb-area]') ? target : null;
 
         if (area && (event.key === 'Enter' || event.key === ' ')) {
@@ -573,6 +622,15 @@ export class Arranging {
     }
 
     click(event) {
+        const holder = event.target instanceof Element ? event.target.closest('fb-list[data-fb-list]') : null;
+
+        if (holder) {
+            event.preventDefault();
+            this.addFirstEntry(holder);
+
+            return;
+        }
+
         const area = event.target instanceof Element ? event.target.closest('fb-area[data-fb-area]') : null;
 
         if (area) {
@@ -586,6 +644,11 @@ export class Arranging {
         const parent = parentOf(area);
 
         return { parent: parent?.dataset.fbBlock ?? null, parentName: parent?.dataset.fbName ?? null, area: area.dataset.fbArea, after: null };
+    }
+
+    /** Where a block goes at the start of the area of another one. */
+    targetAbove(block) {
+        return { ...this.targetBelow(block), after: null };
     }
 
     /** Where a block goes below another one. */
@@ -640,6 +703,7 @@ export class Arranging {
                 ${missing ? nothing : button('copy', labels.copyBlock, () => this.copy(block))}
                 ${missing ? nothing : button('settings', labels.blockSettings, () => this.openPanel(block))}
                 ${this.bar.config.history ? button('history', labels.blockHistory, () => this.openHistory(block)) : nothing}
+                ${index === 0 ? button('insertAbove', labels.insertAbove, () => this.openPicker(this.targetAbove(block))) : nothing}
                 ${button('plus', labels.insertBelow, () => this.openPicker(this.targetBelow(block)))}
                 ${button('trash', labels.removeBlock, () => this.confirm(true), false, 'danger')}`;
 
@@ -820,7 +884,7 @@ export class Arranging {
     }
 
     /**
-     * Runs an action that changes the structure and loads the page again,
+     * Runs an action that changes the structure and shows the page again (decision 0336),
      * with the focus on the block it names and the panel open if it was.
      */
     async change(name, input, focus, panel = false, field = null) {
@@ -844,7 +908,7 @@ export class Arranging {
 
         this.bar.changed(result.data?.entry ?? null);
         writeRestore(this.restoreKey, { block: focus(result.data ?? {}), panel, field });
-        location.reload();
+        await this.bar.refresh();
 
         return true;
     }
