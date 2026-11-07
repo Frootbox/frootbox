@@ -32,6 +32,7 @@ use Frootbox\Backend\Http\OidcHandler;
 use Frootbox\Backend\Http\Pages\NewPageHandler;
 use Frootbox\Backend\Http\Pages\PageHistoryHandler;
 use Frootbox\Backend\Http\Pages\PagesHandler;
+use Frootbox\Backend\Http\PasswordHandler;
 use Frootbox\Backend\Http\PreviewActionHandler;
 use Frootbox\Backend\Http\QueryHandler;
 use Frootbox\Backend\Http\Redirects\RedirectsHandler;
@@ -76,6 +77,9 @@ final class BackendExtension implements Extension
             ->get('/', DashboardHandler::class, 'backend.dashboard')
             ->route(['GET', 'POST'], '/login', LoginHandler::class, 'backend.login')
             ->post('/logout', LogoutHandler::class, 'backend.logout')
+            // A forgotten password (decision 0326).
+            ->route(['GET', 'POST'], '/password', PasswordHandler::class, 'backend.password')
+            ->route(['GET', 'POST'], '/password/{token:' . PasswordHandler::TOKEN . '}', PasswordHandler::class, 'backend.password.reset')
             // Signing in through a provider such as the hub (decision 0322).
             ->get('/login/oidc/{provider:' . self::PROVIDER . '}', OidcHandler::class, 'backend.oidc')
             ->get('/login/oidc/{provider:' . self::PROVIDER . '}/start', OidcHandler::class, 'backend.oidc.start')

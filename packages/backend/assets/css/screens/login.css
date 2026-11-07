@@ -38,7 +38,8 @@
     gap: var(--fb-space-1);
 }
 
-.fb-login__back {
+.fb-login__back,
+.fb-login__forgot {
     font-size: var(--fb-text-md);
     text-align: center;
 }

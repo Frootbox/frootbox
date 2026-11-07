@@ -21,3 +21,12 @@ nothing to another space.
 ## Disable instead of delete
 
 A disabled user can no longer sign in; what they did stays known.
+
+## Forgotten password
+
+Under the sign-in, "Forgot your password?" mails a link to the email of
+the account. It works for an hour and once, and after setting the new
+password you are signed in, even after too many failed tries. Without
+the address of the website in `app.url`, a secret in `APP_SECRET` or a
+way for mails the link is missing; then an administrator sets a new
+password under **Users**.

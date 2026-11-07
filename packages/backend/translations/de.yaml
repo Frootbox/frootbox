@@ -29,6 +29,27 @@ Too many failed attempts. Try again in a minute.: Zu viele Fehlversuche. Versuch
 Too many failed attempts. Try again in {minutes} minutes.: Zu viele Fehlversuche. Versuch es in {minutes} Minuten noch einmal.
 Go to the website: Zur Website
 
+# A forgotten password (decision 0326)
+"Forgot your password?": "Passwort vergessen?"
+"Enter the email of your account. We send you a link to set a new password.": "Gib die E-Mail Deines Kontos ein. Wir schicken Dir einen Link, mit dem Du ein neues Passwort festlegst."
+"Send the link": "Link schicken"
+"If there is an account with {email}, a mail with a link is on its way. The link works for {minutes} minutes.": "Wenn es ein Konto mit {email} gibt, ist eine Mail mit einem Link unterwegs. Der Link gilt {minutes} Minuten."
+"No mail? Look in the spam folder or ask the person who manages this website.": "Keine Mail? Schau im Spam-Ordner nach oder frag die Person, die diese Website betreut."
+"Choose a new password for {email}.": "Wähl ein neues Passwort für {email}."
+"At least {min} characters.": "Mindestens {min} Zeichen."
+"Save and sign in": "Speichern und anmelden"
+"This link does not work any more. It is older than {minutes} minutes or was used already.": "Dieser Link gilt nicht mehr. Er ist älter als {minutes} Minuten oder wurde schon benutzt."
+"Ask for a new link": "Neuen Link anfordern"
+"This website sends no links for a forgotten password. Ask the person who manages it for a new password.": "Diese Website verschickt keine Links für ein vergessenes Passwort. Frag die Person, die sie betreut, nach einem neuen Passwort."
+"This website sends no links for a forgotten password.": "Diese Website verschickt keine Links für ein vergessenes Passwort."
+"Back to sign in": "Zurück zur Anmeldung"
+"Enter a valid email.": "Gib eine gültige E-Mail an."
+"The password needs at least {min} characters.": "Das Passwort braucht mindestens {min} Zeichen."
+"Too many requests. Try again in {minutes} minutes.": "Zu viele Anfragen. Versuch es in {minutes} Minuten noch einmal."
+"is invalid or expired.": "ist ungültig oder abgelaufen."
+"New password for {site}": "Neues Passwort für {site}"
+"Hello {name},\n\nsomeone asked for a new password for your account on {site}. Set it with this link within {minutes} minutes:\n\n{link}\n\nIf it was not you, ignore this mail. Your password stays as it is.\n": "Hallo {name},\n\njemand hat für Dein Konto auf {site} ein neues Passwort angefordert. Leg es innerhalb von {minutes} Minuten mit diesem Link fest:\n\n{link}\n\nWenn Du das nicht warst, ignoriere diese Mail. Dein Passwort bleibt dann, wie es ist.\n"
+
 # Forms and messages of the core (decision 0115)
 Check the marked fields.: Prüf die markierten Felder.
 Sign in first.: Melde Dich zuerst an.

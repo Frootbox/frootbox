@@ -19,3 +19,12 @@ und veröffentlicht sie, verschiebt aber nichts in eine andere.
 
 Ein deaktivierter Benutzer kann sich nicht mehr anmelden; was er getan
 hat, bleibt nachvollziehbar.
+
+## Passwort vergessen
+
+Unter der Anmeldung schickt „Passwort vergessen?“ einen Link an die
+E-Mail des Kontos. Er gilt eine Stunde und nur einmal, nach dem neuen
+Passwort bist Du angemeldet, auch nach zu vielen Fehlversuchen. Ohne die
+Adresse der Website in `app.url`, ein Geheimnis in `APP_SECRET` oder
+einen Weg für Mails fehlt der Link, dann setzt ein Administrator unter
+**Benutzer** ein neues Passwort.

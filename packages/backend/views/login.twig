@@ -33,6 +33,9 @@
                 {{ ui.check({label: t('Stay signed in'), name: 'remember', checked: remember, hint: t('Only on a device of your own.')}) }}
                 {{ ui.button({label: t('Sign in'), type: 'submit', block: true, variant: (providers ?? []) is empty ? 'primary' : 'outline'}) }}
             </form>
+            {%- if password_reset ?? false %}
+            <p class="fb-login__forgot"><a href="{{ path('backend.password') }}">{{ t('Forgot your password?') }}</a></p>
+            {%- endif %}
         </div>
         <p class="fb-login__back"><a href="/">{{ t('Go to the website') }}</a></p>
     </div>

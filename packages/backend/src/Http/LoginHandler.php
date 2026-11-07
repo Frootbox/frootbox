@@ -11,6 +11,7 @@ namespace Frootbox\Backend\Http;
 use Frootbox\Backend\Security\Csrf;
 use Frootbox\Backend\Security\SessionCookie;
 use Frootbox\Backend\View\BackendView;
+use Frootbox\Core\Account\ShowPasswordReset;
 use Frootbox\Core\Account\SignedIn;
 use Frootbox\Core\Action\InvalidInputException;
 use Frootbox\Core\Action\Runner;
@@ -99,6 +100,7 @@ final readonly class LoginHandler implements RequestHandlerInterface
             'next' => $next === $this->router->path('backend.dashboard') ? null : $next,
             'providers' => $this->providers(),
             'provider' => \is_string($request->getQueryParams()['provider'] ?? null) ? $request->getQueryParams()['provider'] : null,
+            'password_reset' => $this->passwordReset(),
         ], $status);
     }
 
@@ -108,6 +110,14 @@ final readonly class LoginHandler implements RequestHandlerInterface
     public static function isBackendPath(string $next, string $home): bool
     {
         return 1 === preg_match('~^/[^/\\\\]~', $next . 'x') && str_starts_with($next, $home);
+    }
+
+    /**
+     * Whether the website mails links for a forgotten password (decision 0326).
+     */
+    private function passwordReset(): bool
+    {
+        return $this->runner->ask(new ShowPasswordReset())->available;
     }
 
     /**
