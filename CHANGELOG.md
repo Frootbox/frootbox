@@ -155,6 +155,13 @@ backend's own templates, styles and scripts are not part of it.
   banner that stays on the pages of a plugin's objects, and gives pages
   a new title by their ID in Frootbox 1 with `pages: { 12: { title: … } }`;
   the address stays.
+- Migrate: `content: [1, 5]` in the mapping of `fb1:import` takes the
+  content of these pages only, the others come without blocks, and a
+  navigation can be a list of pages and entries of `navigation.update`
+  (`navigations: { main: [1, {page: 2, children: …}] }`) instead of a
+  menu element. Rules under `plugins:` can name one element by its ID,
+  `widgets: { Core/Video/Video: true }` takes a widget without a file,
+  and teasers link to aliases and other websites too.
 - Core: history and proof of changes. The log of actions keeps the token
   and the device of each run ("Safari · iPhone", or the name of an API
   token), every migration leaves an entry `system.migrate`, and
@@ -443,6 +450,10 @@ backend's own templates, styles and scripts are not part of it.
   longer land on the object with the same id.
 - Migrate: navigations keep the order of Frootbox 1, highest `orderId`
   first; the import had them the other way round.
+- Migrate: the blocks of a page keep the order of Frootbox 1, highest
+  `orderId` first, as navigations already did.
+- Migrate: file names with umlauts (e.g. `fähre.png`) find their alt
+  text in the mapping however the file system spells them.
 - Base theme: the page grid no longer overflows when a theme makes
   `--width` narrower than `--width-narrow` (e.g. fixed content widths
   per breakpoint); the narrow column stays within the content.
