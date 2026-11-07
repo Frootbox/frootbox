@@ -38,4 +38,15 @@ php bin/frootbox user:create jane@example.com --role editor
 php bin/frootbox user:token jane@example.com --name "Deploy"
 ```
 
+A forgotten password is mailed as a link from the sign-in page
+(`<backend.path>/password`). `account.request-password-reset {email}`
+answers the same whether the account exists or not and sends at most
+three mails to an address within 15 minutes. The link works for 60
+minutes and only once: it is signed over the current password hash, so
+any change of the password voids it. `account.reset-password {token,
+password}` sets the new password, ends all sessions and forgets failed
+sign-ins. The link takes its address from `app.url`, never from the
+request, so a website without `app.url`, `APP_SECRET` or a way for mails
+offers no link (`account.password-reset-show`).
+
 The AI acts with the rights of the user it works for.

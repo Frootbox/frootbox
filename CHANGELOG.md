@@ -20,6 +20,14 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core, Backend: a forgotten password by mail. The sign-in page links to
+  `<backend.path>/password`, which mails a link through the queue
+  (`account.request-password-reset`, the same answer for unknown
+  addresses, at most three mails to an address and ten requests from one
+  address within 15 minutes). The link works for 60 minutes and once; it
+  sets the new password, ends all sessions, forgets failed sign-ins and
+  signs in (`account.reset-password`, `account.password-reset-show`).
+  It needs `app.url`, `APP_SECRET` and a way for mails.
 - Core, Backend: signing in through OpenID Connect, with the hub as the
   first provider. The switch "Let people sign in through the hub" on the
   page Connection tells the hub the addresses of the website and the
@@ -321,6 +329,10 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Fixed
 
+- Core: longer names of actions, queries, blocks and field types with
+  dashes, such as `account.request-password-reset`, no longer fail the
+  check of the name: the pattern of package names ran out of PCRE
+  backtracking.
 - Shop: Enter in a quantity field of the cart updates the cart instead
   of removing the first product; the form starts with a hidden button
   to update.
@@ -331,13 +343,18 @@ backend's own templates, styles and scripts are not part of it.
   instead of waiting for changes that never come. The first sync after
   the update takes the whole catalog once (migration
   `frootbox_shop_sync.source`).
+- Core: without cron, a page request runs the queue only where the
+  server sends the response first (PHP-FPM, now also LiteSpeed). With
+  Apache and mod_fcgid the visitor waited for the jobs, and after 40
+  seconds Apache answered with a 500; there the ticks of the hub run
+  the queue.
 - Shop: the catalog sync runs in short steps, each its own transaction,
   and goes on where the last one stopped. A whole catalog of a thousand
   products no longer holds the database for minutes, which on SQLite
   made other writes such as carts and sign-ins fail with "database is
   locked". The categories come first. `frootbox/shop/catalog.sync` does
   one step and says with `done` whether the sync is through; the job
-  steps for up to 20 seconds and queues the next one, `shop:sync` steps
+  steps for up to 10 seconds and queues the next one, `shop:sync` steps
   to the end. Only one process syncs at a time, and the scheduler and
   webhook queue a sync only when none waits (new `Queue::pushOnce()`).
 - Migrate: the old address of an object of Frootbox 1, such as a contact

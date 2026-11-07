@@ -77,7 +77,9 @@ The hub does not wait for that. Such a run is noted apart from cron, as
 `cron.lastTick` in the status, so the hub keeps asking. As soon as an
 own cron job runs, the website answers `{"accepted": false}` and the hub
 stops asking. Without the hub nothing changes: cron or visitors run the
-schedule as before.
+schedule as before. Visitors run the queue only where the server sends
+the response first (PHP-FPM, LiteSpeed); with Apache and mod_fcgid they
+would wait for it, so there only cron or the hub run the queue.
 
 Turning the status off deletes the service account at once, its token
 stops working. **Disconnect** deletes the access too and forgets the

@@ -107,6 +107,37 @@ Action · for the own account
 |---|---|---|
 | `provider` | string |  |
 
+### `account.password-reset-show`
+
+Tells whether the website mails links for a forgotten password and whether a link still works
+
+Query · public
+
+| Input | Type | Description |
+|---|---|---|
+| `token` | string or null, optional | The token from the link, empty to only ask whether the website offers links |
+
+### `account.request-password-reset`
+
+Mails a link for a new password to the email of an account; answers the same for unknown addresses
+
+Action · public · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `email` | string (email) |  |
+
+### `account.reset-password`
+
+Sets a new password with the link from the mail and signs out everywhere
+
+Action · public · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `token` | string |  |
+| `password` | string |  |
+
 ### `account.revoke-token`
 
 Ends one of the own sessions or API tokens
