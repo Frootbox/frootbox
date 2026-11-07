@@ -44,6 +44,13 @@ backend's own templates, styles and scripts are not part of it.
   invoices come live from the provider for the signed-in customer, the
   cart lives in the visitor session. Template functions `shop_customer()`
   and `shop_cart()`.
+  The sync removes copies of images that no product uses any more. The
+  sign-in has an optional text above the form, new passwords need at
+  least ten characters.
+- Migrate: a rule under `plugins:` in the mapping of `fb1:import` takes
+  `plugin: <type>`, and the page then shows that plugin of Frootbox 2 in
+  its default space (`plugin.assign` after the content). Without
+  `block:` the plugin becomes no block in the area.
 - Core: history and proof of changes. The log of actions keeps the token
   and the device of each run ("Safari · iPhone", or the name of an API
   token), every migration leaves an entry `system.migrate`, and
