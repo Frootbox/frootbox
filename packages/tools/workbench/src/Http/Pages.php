@@ -162,7 +162,7 @@ final readonly class Pages
         ];
         $newer = array_filter($files, static fn(string $file): bool => (int) filemtime($file) > $updated);
 
-        return [] === $newer ? '' : '<p class="note">A package of the monorepo changed its dependencies. Run <code>bin/workbench update</code>.</p>';
+        return [] === $newer ? '' : '<p class="note">A package of the monorepo changed its dependencies. Run <code>vendor/bin/workbench update</code>.</p>';
     }
 
     /**
