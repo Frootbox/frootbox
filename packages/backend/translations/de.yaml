@@ -75,7 +75,37 @@ must be an object.: muss ein Objekt sein.
 has the wrong type.: hat den falschen Typ.
 is invalid.: ist ungültig.
 "Unknown fields: {fields}": "Unbekannte Felder: {fields}"
+
+# Messages of the content check of pages and blocks
+"is not a day, e.g. \"2026-05-01\".": "ist kein Tag, z. B. „2026-05-01“."
+"is not one of the options.": "ist keine der Auswahlmöglichkeiten."
+"\"{id}\" is used by another block of this content.": "„{id}“ hat schon ein anderer Block dieses Inhalts."
+"Unknown keys: {keys}. Allowed: {allowed}.": "Unbekannte Schlüssel: {keys}. Erlaubt: {allowed}."
+"is not an option of this variant. Options: {options}.": "ist keine Option dieser Variante. Optionen: {options}."
+"is not an option, this variant has none.": "ist keine Option, diese Variante hat keine."
+"may contain at most {max} blocks.": "darf höchstens {max} Blöcke enthalten."
+"needs at least {min} blocks.": "braucht mindestens {min} Blöcke."
+"may have at most {decimals} decimal places.": "darf höchstens {decimals} Nachkommastellen haben."
+"must be a valid {type}.": "muss ein gültiger Wert vom Typ {type} sein."
+"must be one of {choices}.": "muss eins von {choices} sein."
+"there is no block \"{block}\".": "den Block „{block}“ gibt es nicht."
+"{block} is a widget and only goes into areas that allow it by name, e.g. the columns of a section.": "{block} ist ein Widget und passt nur in Bereiche, die es ausdrücklich erlauben, z. B. die Spalten eines Abschnitts."
+"{block} is not allowed in the area \"{area}\". Allowed: {allowed}.": "{block} ist im Bereich „{area}“ nicht erlaubt. Erlaubt: {allowed}."
+"{block} is the view of a plugin. It goes into no area, the page shows it when it shows a space of the plugin.": "{block} ist die Ansicht eines Plugins. Sie gehört in keinen Bereich, die Seite zeigt sie, wenn sie eine Verwaltung des Plugins zeigt."
+"{component} has no area \"{area}\". Areas: {areas}.": "{component} hat keinen Bereich „{area}“. Bereiche: {areas}."
+"{component} has no areas.": "{component} hat keine Bereiche."
+"{component} has no variant \"{variant}\". Variants: {variants}.": "{component} hat keine Variante „{variant}“. Varianten: {variants}."
+"must be an object with a list of blocks per area.": "muss ein Objekt mit einer Liste von Blöcken je Bereich sein."
+"must be a list of blocks.": "muss eine Liste von Blöcken sein."
+"must be a block like {\"block\": \"acme/website/Teaser\", \"fields\": {}}.": "muss ein Block sein wie {\"block\": \"acme/website/Teaser\", \"fields\": {}}."
+"is required: the full name of the block, e.g. \"acme/website/Teaser\".": "fehlt: der volle Name des Blocks, z. B. „acme/website/Teaser“."
+"must be the name of a variant.": "muss der Name einer Variante sein."
+"must be the view of a plugin, e.g. {\"block\": \"acme/news/ArticleList\"}.": "muss die Ansicht eines Plugins sein, z. B. {\"block\": \"acme/news/ArticleList\"}."
+"must be 8 characters a-z and 0-9, or be left out for a new block.": "muss aus 8 Zeichen a–z und 0–9 bestehen oder bei einem neuen Block fehlen."
+"must be an object with \"options\", \"fields\" and \"areas\".": "muss ein Objekt mit „options“, „fields“ und „areas“ sein."
+
 is already in use.: wird schon verwendet.
+is reserved. Choose another name.: ist reserviert. Wähl einen anderen Namen.
 is wrong.: stimmt nicht.
 "grants permissions you do not have: {permissions}": "vergibt Rechte, die Du selbst nicht hast: {permissions}"
 '"{rule}" is not a rule. Use "*", "page.*", "page.create" or "-page.delete".': "„{rule}“ ist keine Regel. Möglich sind „*“, „page.*“, „page.create“ oder „-page.delete“."
@@ -175,6 +205,7 @@ Visitors see the page at once.: Besucher sehen die Seite sofort.
 Only you and your team see it.: Nur Du und Dein Team sehen sie.
 The page has a draft with changes.: Die Seite hat einen Entwurf mit Änderungen.
 The page is published.: Die Seite ist veröffentlicht.
+The changes are published.: Die Änderungen sind veröffentlicht.
 Not translated yet: Noch nicht übersetzt
 Visitors see the German text.: Besucher sehen den deutschen Text.
 Discard the draft?: Entwurf verwerfen?
@@ -449,6 +480,7 @@ Lock: Sperren
 "already has a redirect (#{id}).": "hat schon eine Weiterleitung (#{id})."
 "is the address of {target}. A page always wins over a redirect.": "ist die Adresse von {target}. Eine Seite geht einer Weiterleitung immer vor."
 "needs either \"target\" (e.g. \"page:01J…\") or \"location\" (a URL).": "braucht entweder eine Seite oder eine Adresse."
+"needs either \"target\" (e.g. \"page:01J…\") or \"url\".": "braucht entweder eine Seite oder eine Adresse."
 "must be a page, e.g. \"page:01J…\".": "muss eine Seite sein."
 "There is no page {id}.": "Die Seite {id} gibt es nicht."
 "must be a path like \"/new-page\" or a URL with http or https, at most {max} characters.": "muss ein Pfad wie „/neue-seite“ oder eine URL mit http oder https sein, höchstens {max} Zeichen."
@@ -1746,3 +1778,5 @@ Cache: Cache
 "Hub": "Hub"
 "Unlink": "Verknüpfung lösen"
 "Managed through {provider}: role and lock come from there. A change here lasts until the next sign-in or change there.": "Verwaltet über {provider}: Rolle und Sperre kommen von dort. Eine Änderung hier gilt bis zur nächsten Anmeldung oder Änderung dort."
+"There is no layout for a page yet.": "Für eine Seite gibt es noch kein Layout."
+"Layouts come from the theme. Name an installed theme under “theme” in config/app.yaml.": "Layouts kommen aus dem Theme. Trag ein installiertes Theme unter „theme“ in config/app.yaml ein."

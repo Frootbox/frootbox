@@ -143,6 +143,16 @@ function directionOf(element) {
     return getComputedStyle(element).direction === 'rtl' ? 'rtl' : 'ltr';
 }
 
+/** Room a tab takes at the start corner of its outline, roughly. */
+const TAB = { block: 28, inline: 240 };
+
+/** Whether the tab of a field lies where the tab of the block around it does. */
+function crowds(field, frame, rtl) {
+    const start = rtl ? frame.right - field.right : field.left - frame.left;
+
+    return Math.abs(field.top - frame.top) < TAB.block && start < TAB.inline;
+}
+
 /**
  * <fb-editor-bar>: the editor bar of the editing mode on the website
  * (decisions 0119, 0137). It floats at the bottom over the theme, lives
@@ -1273,16 +1283,23 @@ export class EditorBar extends LitElement {
         // A field with a problem has its own outline.
         const marked = new Set(this.problems.map((problem) => problem.element));
 
-        return html`${this.showAll ? this.outline.badges() : nothing}${this.problemOutlines()}${elements.filter((element) => !marked.has(element)).map((element) => {
+        const shown = elements.filter((element) => !marked.has(element));
+        // Blocks and areas shown, whose tabs a field at their top corner would cover.
+        const frames = shown.filter((element) => kindOf(element) !== 'field' && kindOf(element) !== 'entry')
+            .map((element) => ({ element, rect: element.getBoundingClientRect() }));
+
+        return html`${this.showAll ? this.outline.badges() : nothing}${this.problemOutlines()}${shown.map((element) => {
             const rect = element.getBoundingClientRect();
 
             if (rect.width === 0 && rect.height === 0) {
                 return nothing;
             }
 
-            const below = rect.top < 24;
+            const kind = kindOf(element);
+            // A field at the top corner of its block shows its tab below, so both stay readable.
+            const below = rect.top < 24 || (kind === 'field' && frames.some((frame) => frame.element !== element && frame.element.contains(element) && crowds(rect, frame.rect, directionOf(element) === 'rtl')));
 
-            return html`<div class="outline ${below ? 'below' : ''}" data-kind=${kindOf(element)}
+            return html`<div class="outline ${below ? 'below' : ''}" data-kind=${kind}
                 dir=${directionOf(element)} style="top: ${rect.top}px; left: ${rect.left}px; width: ${rect.width}px; height: ${rect.height}px">
                 ${this.fieldTab(element, labelOf(element))}
             </div>`;
@@ -1461,6 +1478,8 @@ export class EditorBar extends LitElement {
         this.busy = true;
         this.problems = [];
         await this.editing?.flushAll();
+        // Only the footer or an image may have changed: then the page itself was published before.
+        const pagePublished = page.canPublish;
 
         if (page.canPublish) {
             const response = await this.action('page.publish', { ids: page.publish });
@@ -1529,7 +1548,7 @@ export class EditorBar extends LitElement {
             ? { tone: 'info', text: this.labels.mediaStayOpen.replace('{images}', this.imageNames(this.mediaDrafts)) }
             : this.objectDrafts.length > 0
                 ? { tone: 'info', text: this.labels.objectsStayOpen.replace('{objects}', this.imageNames(this.objectDrafts)) }
-                : { tone: 'info', text: this.labels.publishDone };
+                : { tone: 'info', text: pagePublished ? this.labels.publishDone : this.labels.changesPublished };
     }
 
     /** Discards the drafts of the page, of the fields of the website and of the media the page uses. */

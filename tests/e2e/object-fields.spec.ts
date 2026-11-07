@@ -68,11 +68,11 @@ test('edits a further field of an article on its page', async ({ page, request }
     await expect(subtitle).toHaveText('Holzbau am Kanal');
     expect(await (await request.get(address)).text()).not.toContain('Holzbau am Kanal');
 
-    // The bar publishes the article along with the page.
+    // The bar publishes the article; the page was published before, so it names the changes.
     const published = page.waitForResponse((response) => response.url().endsWith('/frootbox/news/article.publish') && response.ok());
     await bar.getByRole('button', { name: 'Veröffentlichen' }).click();
     await published;
-    await expect(bar.getByRole('status')).toHaveText('Die Seite ist veröffentlicht.');
+    await expect(bar.getByRole('status')).toHaveText('Die Änderungen sind veröffentlicht.');
     const html = await (await request.get(address)).text();
     expect(html).toContain('<p class="agency-article__subtitle">Holzbau am Kanal</p>');
     expect(html).not.toContain('data-fb-');

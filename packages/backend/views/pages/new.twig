@@ -14,6 +14,10 @@
         </div>
     </header>
 
+    {%- if layouts is empty %}
+    {#- Without a theme there is no layout to choose; a form would only say "layout is required". -#}
+    {{ ui.empty({icon: 'layout-grid', title: t('There is no layout for a page yet.'), text: t('Layouts come from the theme. Name an installed theme under “theme” in config/app.yaml.')}) }}
+    {%- else %}
     <fb-form action="page.create" next="{{ path('backend.pages') }}/{id}" done="{{ t('The page is created as a draft.') }}">
             <form class="fb-card fb-card--padded fb-stack" novalidate>
                 {% set code = language.code %}
@@ -39,5 +43,6 @@
                 </div>
             </form>
     </fb-form>
+    {%- endif %}
 </div>
 {% endblock %}

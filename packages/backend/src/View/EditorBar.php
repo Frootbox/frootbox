@@ -53,7 +53,8 @@ final readonly class EditorBar
      */
     private const string PAGE_CSS = 'fb-field,fb-area,[data-fb-field]{outline:none}'
         . 'fb-field[data-fb-type="richtext"],fb-field[data-fb-type="table"],fb-area{display:block}'
-        . 'fb-area[data-fb-empty]{min-block-size:4rem}'
+        . 'fb-area[data-fb-empty]{display:grid;place-items:center;min-block-size:4rem;cursor:pointer}'
+        . 'fb-area[data-fb-empty]::before{content:attr(data-fb-hint);opacity:.6;font:inherit}'
         . 'fb-missing{display:block;padding:1rem;border:1px dashed currentColor;opacity:.7}'
         . '[data-fb-field][contenteditable]{cursor:text}'
         . '[data-fb-field]:empty::before{content:attr(data-fb-label);opacity:.5}'
@@ -348,6 +349,7 @@ final readonly class EditorBar
             'designPage' => $t('Every element of the website, in the draft.'),
             'publish' => $t('Publish'),
             'publishDone' => $t('The page is published.'),
+            'changesPublished' => $t('The changes are published.'),
             'mediaElsewhere' => $t('Also changes {images} on other published pages.'),
             'mediaStayOpen' => $t('The page is published. The changes to {images} stay open: you may not publish images.'),
             'objectsStayOpen' => $t('The page is published. The changes to {objects} stay open: you may not publish them.'),

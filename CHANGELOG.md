@@ -20,6 +20,9 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Backend: an empty area in the edit mode names itself and says
+  "Insert a block". Without a theme, **New page** explains where layouts
+  come from instead of a form that cannot be sent.
 - Backend: the editor keeps every change of a field in the browser until
   the server confirms it. After a dropped connection, an expired session
   or a crash, the status offers the changes again on the next load of
@@ -318,6 +321,16 @@ backend's own templates, styles and scripts are not part of it.
   a text with `{widget.align}` or `{widget.width}`.
 
 ### Changed
+
+- Core: messages of the content check and of field types are templates
+  with placeholders, so the backend shows them translated, e.g. when
+  publishing finds an option a variant does not have.
+  `FieldType::validate()` may return a `Support\Message`.
+- Core: `role.create` refuses the name `new`, the backend uses it for
+  the form of a new role.
+- Backend: after publishing only the footer, images or objects, the bar
+  says "The changes are published." instead of naming the page. A field
+  label that would cover the label of its block shows below the field.
 
 - Shop: the sync copies the images of the shop at most 2000 pixels on
   the longer side instead of in the size the shop delivers, which saves

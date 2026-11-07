@@ -10,6 +10,7 @@ namespace Frootbox\Backend\Tests\I18n;
 
 use Frootbox\Backend\BackendExtension;
 use Frootbox\Core\Action\CurrentContext;
+use Frootbox\Core\Component\ContentValidator;
 use Frootbox\Core\Config\Config;
 use Frootbox\Core\Config\Environment;
 use Frootbox\Core\Extension\ExtensionPackage;
@@ -109,6 +110,34 @@ final class TranslatorTest extends TestCase
         }
 
         self::assertSame([], array_values(array_unique($missing)), 'Add these texts to translations/de.yaml.');
+    }
+
+    /**
+     * Every message of the content check and the field types reaches a
+     * person in the backend, e.g. when publishing, so each has a German
+     * text, as a template with its placeholders.
+     */
+    public function testEveryMessageOfTheContentCheckIsTranslated(): void
+    {
+        $german = Yaml::parseFile(BackendExtension::ROOT . '/translations/de.yaml');
+        self::assertIsArray($german);
+        $core = \dirname((string) new \ReflectionClass(ContentValidator::class)->getFileName(), 2);
+        $types = glob($core . '/Field/Types/*.php');
+        $files = [$core . '/Component/ContentValidator.php', $core . '/ObjectField/ObjectFields.php', ...(false === $types ? [] : $types)];
+        $missing = [];
+
+        foreach ($files as $file) {
+            // Messages end with a full stop: new Message('…'), $errors[…] = '…', '' => '…' and both sides of ?:.
+            preg_match_all('/(?:new Message\(|\$errors\[[^\]]+\] = |=> |\? |: )\'((?:[^\'\\\\]|\\\\.)+\.)\'/', (string) file_get_contents($file), $matches);
+
+            foreach ($matches[1] as $text) {
+                if (str_contains($text, ' ') && !\array_key_exists(stripslashes($text), $german)) {
+                    $missing[] = $text;
+                }
+            }
+        }
+
+        self::assertSame([], array_values(array_unique($missing)), 'Add these messages to translations/de.yaml.');
     }
 
     /**
