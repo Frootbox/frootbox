@@ -166,6 +166,58 @@ test('tells when someone else changed the field', async ({ page }) => {
     await removePage(page, id);
 });
 
+test('keeps a change the server never got and offers it again', async ({ page }) => {
+    const slug = `ungespeichert-${unique()}`;
+    // Short, so it stays on one line and End reaches its end.
+    const heading = `Offen ${Math.floor(Math.random() * 1000)}`;
+    const id = await openPage(page, slug, heading);
+    const bar = page.locator('fb-editor-bar');
+    const title = page.locator('h1[data-fb-field="title"]');
+    const details = bar.locator('#fb-state-details');
+
+    // The connection drops: the change stays in the browser (decision 0330).
+    await page.route('**/page.update-field', (route) => route.abort());
+    await title.click();
+    await page.keyboard.press('End');
+    await page.keyboard.type(' offline');
+    await page.keyboard.press('Enter');
+    await expect(bar.getByRole('status')).toContainText('Dieser Browser behält Deine Änderung');
+    await page.unroute('**/page.update-field');
+
+    // After loading again the status offers it, with the explanation open.
+    await page.reload();
+    await expect(details).toContainText('Eine Änderung von Deinem letzten Besuch ist nicht gespeichert.');
+    await expect(title).toHaveText(heading);
+    const save = saved(page);
+    await details.getByRole('button', { name: 'Jetzt speichern' }).click();
+    await save;
+    await expect(title).toHaveText(`${heading} offline`);
+    await expect(bar.getByRole('button', { name: 'Status: Fehler' })).toHaveCount(0);
+
+    // Saved once, nothing is offered again.
+    await page.reload();
+    await expect(title).toHaveText(`${heading} offline`);
+    await expect(details).toHaveCount(0);
+
+    // Discarded, it is gone for good.
+    await page.route('**/page.update-field', (route) => route.abort());
+    const intro = page.locator('[data-fb-field="intro"]');
+    await intro.click();
+    await page.keyboard.press('End');
+    await page.keyboard.type(' Weg');
+    await title.click();
+    await expect(bar.getByRole('status')).toContainText('Dieser Browser behält Deine Änderung');
+    await page.unroute('**/page.update-field');
+    await page.reload();
+    await details.getByRole('button', { name: 'Verwerfen' }).click();
+    await expect(details).toHaveCount(0);
+    await page.reload();
+    await expect(intro).toHaveText('Klein und langsam.');
+    await expect(bar.getByRole('button', { name: 'Status: Fehler' })).toHaveCount(0);
+
+    await removePage(page, id);
+});
+
 test('offers the buttons of a field on its label', async ({ page, context }) => {
     const slug = `knoepfe-${unique()}`;
     const id = await openPage(page, slug, `Knöpfe ${Math.floor(Math.random() * 1000)}`);

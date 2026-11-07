@@ -20,6 +20,16 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Backend: the editor keeps every change of a field in the browser until
+  the server confirms it. After a dropped connection, an expired session
+  or a crash, the status offers the changes again on the next load of
+  the page, with **Save them now** and **Discard**. They expire after 7
+  days.
+- Core: `actions:prune` keeps of a new draft the paths it changed from
+  the revision published before, so the history of a page still shows
+  the first change after each publish once the changes are shortened.
+  New service `Revision\Baseline`.
+
 - Workbench: **Sign in** next to each project on the start page opens its
   backend as the superuser without a password, only on this computer,
   with a ticket that works once. New action

@@ -8,7 +8,10 @@ title: Auf der Website bearbeiten
 
 Klick auf einen Text, um ihn zu ändern. Formatierter Text hat eine
 Werkzeugleiste für fett, kursiv, Listen, Links und Überschriften.
-Änderungen werden beim Tippen gespeichert und landen im Entwurf.
+Änderungen werden beim Tippen gespeichert und landen im Entwurf. Lässt
+sich eine Änderung nicht speichern, etwa ohne Verbindung, behält sie
+dieser Browser. Beim nächsten Öffnen der Seite bietet der Status sie
+wieder an: **Jetzt speichern** oder **Verwerfen**.
 
 ## Blöcke anordnen
 

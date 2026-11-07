@@ -3,10 +3,12 @@
  * right in the element, rich text with Tiptap, links and images with a
  * dialog of the bar (decision 0126). Every change is saved on its own with page.update-field,
  * or site.update-field for fields of the website (decision 0128), a second after the last
- * input and when the field is left.
+ * input and when the field is left. Until the server confirms a value, it stays in the
+ * browser and is offered again after loading the page (decision 0330).
  */
 
 import { follow, linkOf } from './field-tools.js';
+import { Unsaved } from './unsaved.js';
 
 const PLAIN = ['headline', 'text'];
 const DELAY = 1000;
@@ -63,6 +65,7 @@ export class Editing {
         this.contents = new WeakMap();
         this.loading = null;
         this.pointer = null;
+        this.unsaved = new Unsaved(bar.config.user ?? null);
 
         this.onFocus = (event) => this.focus(event);
         this.onBlur = (event) => this.blur(event);
@@ -87,6 +90,7 @@ export class Editing {
         document.addEventListener('click', this.onClick, true);
         document.addEventListener('pointerdown', this.onPointer, true);
         addEventListener('beforeunload', this.onLeave);
+        this.offer();
     }
 
     stop() {
@@ -118,6 +122,60 @@ export class Editing {
                 : item.dataset.fbObject === undefined && (item.dataset.fbSite !== undefined) === site && (site || item.closest('[data-fb-block]') === block));
 
         return all.includes(element) ? all : [element, ...all];
+    }
+
+    /** Which field an element is, the same on every load of the page. */
+    fieldKey(element) {
+        const object = element.dataset.fbObject;
+        const site = element.dataset.fbSite !== undefined;
+        const kind = object ? `object:${object}` : site ? 'site' : `page:${this.bar.config.page?.id ?? ''}`;
+        const language = object ? element.dataset.fbLanguage ?? this.bar.config.language : this.bar.config.language;
+        const block = object || site ? '' : element.closest('[data-fb-block]')?.dataset.fbBlock ?? '';
+
+        return [kind, language, block, element.dataset.fbField].join('|');
+    }
+
+    /**
+     * Changes of fields on this page the server never confirmed, offered
+     * again; those it saved after all go without a word.
+     */
+    offer() {
+        const entries = this.unsaved.all();
+        const found = new Map();
+
+        for (const element of document.querySelectorAll('[data-fb-field]')) {
+            const key = this.fieldKey(element);
+            const entry = entries[key];
+
+            if (!entry || element.dataset.fbPart !== undefined || found.has(key)) {
+                continue;
+            }
+
+            const stored = storedValue(element);
+
+            if (same(stored, entry.value)) {
+                this.unsaved.forget(key);
+                continue;
+            }
+
+            found.set(key, { key, element, value: entry.value, changed: !same(stored, entry.previous) });
+        }
+
+        if (found.size > 0) {
+            this.bar.offerUnsaved([...found.values()]);
+        }
+    }
+
+    /** Saves a change from before as if it was typed now. */
+    restore(item) {
+        return this.save(item.element, item.value, true);
+    }
+
+    /** Forgets changes from before. */
+    forgetUnsaved(items) {
+        for (const item of items) {
+            this.unsaved.forget(item.key);
+        }
     }
 
     /** The value saved last, at first the one the page came with. */
@@ -244,6 +302,7 @@ export class Editing {
     later(element, read) {
         clearTimeout(this.timers.get(element)?.timer);
         this.timers.set(element, { read, timer: setTimeout(() => this.flush(element), DELAY) });
+        this.unsaved.keep(this.fieldKey(element), read(), this.savedValue(element));
     }
 
     /** Saves a pending change right away. */
@@ -263,20 +322,28 @@ export class Editing {
     cancel(element) {
         clearTimeout(this.timers.get(element)?.timer);
         this.timers.delete(element);
+        this.unsaved.forget(this.fieldKey(element));
     }
 
-    /** One save after the other per field, each with the value saved before. */
-    save(element, value) {
-        const queue = (this.queues.get(element) ?? Promise.resolve()).then(() => this.send(element, value));
+    /**
+     * One save after the other per field, each with the value saved
+     * before; a restored change also shows in the field.
+     */
+    save(element, value, restored = false) {
+        this.unsaved.keep(this.fieldKey(element), value, this.savedValue(element));
+        const queue = (this.queues.get(element) ?? Promise.resolve()).then(() => this.send(element, value, restored));
         this.queues.set(element, queue.catch(() => {}));
 
         return queue;
     }
 
-    async send(element, value) {
+    async send(element, value, restored = false) {
         const previous = this.savedValue(element);
+        const key = this.fieldKey(element);
 
         if (same(previous, value)) {
+            this.unsaved.saved(key, value, same);
+
             return true;
         }
 
@@ -309,10 +376,13 @@ export class Editing {
             });
 
         if (!result.ok) {
+            this.bar.keptUnsaved();
+
             return false;
         }
 
         const data = result.data;
+        this.unsaved.saved(key, value, same);
 
         // The field itself and its parts, e.g. the caption of an image (decision 0203).
         for (const twin of this.twins(element)) {
@@ -328,6 +398,8 @@ export class Editing {
                 twin.innerHTML = data.parts?.[twin.dataset.fbPart] ?? '';
             } else if (['link', 'image', 'video', 'icon', 'file'].includes(twin.dataset.fbType)) {
                 twin.innerHTML = data.html;
+            } else if (restored) {
+                this.show(twin, data);
             }
         }
 
@@ -339,6 +411,19 @@ export class Editing {
         }
 
         return true;
+    }
+
+    /** A restored value in a text or rich text field. */
+    show(element, data) {
+        const editor = this.editors.get(element);
+
+        if (PLAIN.includes(element.dataset.fbType)) {
+            element.innerText = data.value ?? '';
+        } else if (editor) {
+            editor.commands.setContent(this.contents.get(element)(data.value), { emitUpdate: false });
+        } else {
+            element.innerHTML = data.html;
+        }
     }
 
     editLink(element) {

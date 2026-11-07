@@ -173,6 +173,7 @@ export class EditorBar extends LitElement {
         flash: { state: true },
         details: { state: true },
         problems: { state: true },
+        unsaved: { state: true },
     };
 
     // Rules of the theme for the host win over normal ones in :host, but
@@ -390,6 +391,7 @@ export class EditorBar extends LitElement {
         .details p, .details ul { margin: 0; }
         .details ul { padding-inline-start: var(--fb-space-4); }
         .details button { justify-self: start; color: var(--fb-text); }
+        .details .choices { display: flex; flex-wrap: wrap; gap: var(--fb-space-2); }
 
         [aria-disabled="true"] { cursor: default; opacity: 0.5; }
         [aria-disabled="true"]:hover { background: transparent; }
@@ -683,6 +685,8 @@ export class EditorBar extends LitElement {
         // What publishing found missing, with the places to mark (decision 0143).
         this.problems = [];
         this.problemsText = '';
+        // Changes from before the server never confirmed (decision 0330).
+        this.unsaved = [];
         this.onOutside = (event) => {
             const path = event.composedPath();
 
@@ -893,7 +897,7 @@ export class EditorBar extends LitElement {
     get state() {
         const page = this.config.editing ? this.config.page : null;
 
-        if (this.message?.tone === 'danger' || this.problems.length > 0) {
+        if (this.message?.tone === 'danger' || this.problems.length > 0 || this.unsaved.length > 0) {
             return 'error';
         }
 
@@ -942,6 +946,10 @@ export class EditorBar extends LitElement {
     explanation(state, locked) {
         const labels = this.labels;
 
+        if (state === 'error' && this.unsaved.length > 0 && this.message?.tone !== 'danger') {
+            return this.unsavedView();
+        }
+
         if (state === 'error' && this.problems.length > 0) {
             return this.problemsView();
         }
@@ -974,6 +982,52 @@ export class EditorBar extends LitElement {
             <p>${count === 1 ? labels.oneProblem : labels.problems.replace('{count}', count)}</p>
             ${hidden.length > 0 ? html`<ul>${hidden.map((problem) => html`<li>${where(problem) ? `${where(problem)}: ` : ''}${problem.message}</li>`)}</ul>` : nothing}
             ${shown.length > 0 ? html`<button type="button" data-fb-first-problem @click=${() => this.showProblem(shown[0].element)}>${labels.firstProblem}</button>` : nothing}`;
+    }
+
+    /**
+     * Changes from the last visit that never reached the server, by block
+     * and field, to save now or to drop (decision 0330).
+     */
+    unsavedView() {
+        const labels = this.labels;
+        const count = this.unsaved.length;
+        const name = (item) => [item.element.closest('[data-fb-block]')?.dataset.fbTitle, item.element.dataset.fbLabel].filter(Boolean).join(' · ') || item.element.dataset.fbField;
+
+        return html`<p>${count === 1 ? labels.oneUnsaved : labels.unsaved.replace('{count}', count)}</p>
+            <ul>${this.unsaved.map((item) => html`<li>${name(item)}${item.changed ? ` (${labels.unsavedChanged})` : ''}</li>`)}</ul>
+            <div class="choices">
+                <button type="button" data-fb-restore @click=${() => this.restoreUnsaved()}>${labels.restoreUnsaved}</button>
+                <button type="button" data-fb-forget @click=${() => this.forgetUnsaved()}>${labels.forgetUnsaved}</button>
+            </div>`;
+    }
+
+    /** Offers changes from before, with the explanation open. */
+    offerUnsaved(items) {
+        this.unsaved = items;
+        this.details = true;
+    }
+
+    async restoreUnsaved() {
+        const items = this.unsaved;
+        this.unsaved = [];
+        this.details = false;
+
+        for (const item of items) {
+            await this.editing.restore(item);
+        }
+    }
+
+    forgetUnsaved() {
+        this.editing.forgetUnsaved(this.unsaved);
+        this.unsaved = [];
+        this.details = false;
+    }
+
+    /** A field did not save: the error says the browser keeps the change. */
+    keptUnsaved() {
+        if (this.message?.tone === 'danger' && this.editing?.unsaved.key) {
+            this.message = { ...this.message, text: `${this.message.text} ${this.labels.keptUnsaved}` };
+        }
     }
 
     /** Scrolls to a marked field and puts the focus into it. */

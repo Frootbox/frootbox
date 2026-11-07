@@ -11,7 +11,9 @@ at the bottom switches the editing on and off.
 
 Click a text to change it. Rich text has a toolbar for bold, italic,
 lists, links and headings. Changes are saved as you type and land in
-the draft.
+the draft. If a change cannot be saved, for example without a
+connection, this browser keeps it. The next time you open the page,
+the status offers it again: **Save them now** or **Discard**.
 
 ## Arrange blocks
 
