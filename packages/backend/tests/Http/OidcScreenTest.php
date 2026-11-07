@@ -58,6 +58,16 @@ final class OidcScreenTest extends BackendTestCase
         self::assertStringContainsString('through example.org', $account, 'The session shows its provider.');
     }
 
+    public function testTheListOfUsersShowsWhoTheHubManages(): void
+    {
+        $this->throughTheHub('/cms/login/oidc/hub/start', '/cms');
+        $this->createUser('root@example.org', ['superuser']);
+
+        $list = $this->html($this->request('GET', '/cms/users', session: $this->signIn('root@example.org')));
+        self::assertMatchesRegularExpression('#Anna Hub</a>.*?through example\.org#s', $list);
+        self::assertSame(1, substr_count($list, 'through example.org'), 'The local account has no badge.');
+    }
+
     public function testGoesBackSilentlyOnceAndNotAfterSigningOut(): void
     {
         $response = $this->request('GET', '/cms/login?next=/cms/media', cookies: [OidcHandler::PROVIDER_COOKIE => 'hub']);

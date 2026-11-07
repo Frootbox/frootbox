@@ -216,8 +216,9 @@ Signing in is general: `Auth\Oidc\` holds the client, the hub is only its
 first provider (`Hub\HubLogin`). The actions `account.oidc-start`,
 `account.oidc-complete`, `account.oidc-link`, `account.oidc-unlink` and
 `account.oidc-logout`, `user.grant-access` and `user.revoke-access`, the
-queries `account.oidc-providers`, `account.oidc-identities` and
-`user.identities`. Links live in the table `user_identities`. An
+queries `account.oidc-providers`, `account.oidc-identities`,
+`user.identities` and `user.managed-list` (who the hub manages, for the
+badge in the list of users). Links live in the table `user_identities`. An
 extension adds providers with
 `$registry->add(OidcProviders::class, new OidcProviders(Source::class))`
 and a `ProviderSource`. See

@@ -23,6 +23,7 @@
                     <a class="fb-list__title fb-list__link" href="{{ path('backend.users.show', {id: user.id}) }}">{{ user.name }}</a>
                     <span class="fb-list__meta">{{ user.kind.value == 'service' ? t('Service account') : user.email }}</span>
                 </span>
+                {%- for identity in managed|filter(m => m.userId == user.id) %}{{ ui.badge('neutral', t('through {provider}', {provider: identity.title})) }}{% endfor %}
                 {% if not user.active %}{{ ui.badge('neutral', t('Disabled')) }}{% endif %}
             </li>
             {%- endfor %}

@@ -20,6 +20,8 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core, Backend: the list of users shows "through the hub" at accounts
+  the hub manages. New query `user.managed-list`.
 - Shop: the checkout block also hands its view the link to the catalog
   (`catalog`), e.g. to continue shopping after the order.
 - Shop: the screen "Shop sync" in the backend shows where the sync of

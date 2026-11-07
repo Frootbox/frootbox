@@ -10,6 +10,7 @@ namespace Frootbox\Backend\Http\Users;
 
 use Frootbox\Backend\View\BackendView;
 use Frootbox\Core\Action\Runner;
+use Frootbox\Core\Auth\Oidc\ListManagedUsers;
 use Frootbox\Core\User\ListUsers;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -35,6 +36,7 @@ final readonly class UsersHandler implements RequestHandlerInterface
 
         return $this->view->render($request, '@backend/users/list.twig', [
             'users' => $this->runner->ask(new ListUsers())->all(),
+            'managed' => $this->runner->ask(new ListManagedUsers()),
         ]);
     }
 }

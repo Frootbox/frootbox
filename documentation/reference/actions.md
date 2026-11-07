@@ -1887,6 +1887,12 @@ Lists all users by name
 
 Query · right `user.list`
 
+### `user.managed-list`
+
+Lists the users whose role and lock come from a provider such as the hub
+
+Query · right `user.list`
+
 ### `user.remove-role`
 
 Takes a role away from a user
