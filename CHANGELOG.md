@@ -27,6 +27,12 @@ backend's own templates, styles and scripts are not part of it.
   value, `regenerate()` gives it a new cookie. A visitor with a session
   gets pages without the page cache; requests with an access token have
   none.
+- Core: a formal form of address for visitors, e.g. German "Sie". A
+  package puts the texts that differ into
+  `translations/<language>.formal.yaml`; the setting "Form of address"
+  chooses the default of the website and `I18n\VisitorFormality` the one
+  of a visitor, which `t()` follows. The shop addresses a signed-in
+  customer as the shop provider says, for Avaro as set at the contact.
 - Core: functions of extensions for templates. An extension adds one
   with `$registry->add(TemplateFunction::class, new TemplateFunction('acme_cart', Cart::class, 'summary'))`;
   the name needs a prefix and never replaces one of the core.

@@ -23,6 +23,17 @@ help/<language>/   pages of the help in the backend
 translations/      texts of the backend and the website
 ```
 
+Texts are in `translations/<language>.yaml` with the English text as
+key. Texts only visitors see, in a language the backend does not speak,
+go to `translations/website/<language>.yaml`. In languages with two
+forms of address, such as German "Du" and "Sie", `<language>.yaml` uses
+the informal one and `translations/<language>.formal.yaml` holds only
+the texts that differ in the formal one. The website chooses a default
+under the settings "Form of address"; an extension can choose for one
+visitor with `I18n\VisitorFormality::remember()`, as the shop does for a
+signed-in customer. `t()` in templates follows it; in PHP pass
+`VisitorFormality::current()` to `Translator::in()`.
+
 ## The class
 
 ```yaml

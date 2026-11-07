@@ -1431,6 +1431,11 @@ Generated or edited with AI.: Mit KI erzeugt oder bearbeitet.
 "Keeps each choice of a visitor with a random ID, without address or browser, so you can show it later.": "Bewahrt jede Wahl eines Besuchers mit einer zufälligen ID auf, ohne Adresse und Browser, damit Du sie später nachweisen kannst."
 "Keep proofs": "Nachweise aufbewahren"
 "Days a proof of consent is kept.": "Tage, die ein Nachweis der Einwilligung aufbewahrt wird."
+# The settings of the core about the form of address (decision 0316).
+"Form of address": "Anrede"
+"How texts of the website address visitors, in languages that tell the two apart, e.g. German \"Du\" or \"Sie\".": "Wie Texte der Website Besucher ansprechen, in Sprachen, die beides unterscheiden, im Deutschen mit „Du“ oder „Sie“."
+"Address visitors formally": "Besucher siezen"
+"E.g. \"Sie\" instead of \"Du\" in German. An extension may choose for a visitor, such as the shop for a signed-in customer.": "„Sie“ statt „Du“. Eine Erweiterung kann für einen Besucher selbst wählen, etwa der Shop für einen angemeldeten Kunden."
 # The settings of the core about mail and the test mail (decision 0269).
 "How the website sends mails, e.g. from forms. Without an SMTP server they go out with mail() of PHP.": "Wie die Website Mails verschickt, z. B. aus Formularen. Ohne SMTP-Server gehen sie mit mail() von PHP hinaus."
 "Sender": "Absender"
