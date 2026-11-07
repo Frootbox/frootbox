@@ -191,6 +191,12 @@ backend's own templates, styles and scripts are not part of it.
   `frootbox/workbench/build.mark-uploaded` and the query
   `frootbox/workbench/build.show`, only in the workbench.
 
+- Migrate: the mapping of `fb1:import` takes the page itself (`page:`,
+  e.g. the header image and banner style as a block on top), translates
+  values with `{ value: '{config.x}', map: { old: new } }`, reads the
+  contact persons of a plugin as the list `persons` and plain values of
+  objects such as `position` or `phone`.
+
 ### Changed
 
 - Core: `status.show` tells how mails leave the server, as `mail` with
@@ -230,6 +236,9 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Fixed
 
+- Migrate: of several files in one field the import takes the one
+  Frootbox 1 shows (highest order), and files of contact persons no
+  longer land on the object with the same id.
 - Core: access tokens reach the website on Apache with PHP as FastCGI,
   usual on webspace. `public/.htaccess` of the skeleton passes the header
   `Authorization` on, and the core reads it from there. Without it the
