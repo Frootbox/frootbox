@@ -20,6 +20,16 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core: sessions for visitors of the website. `Visitor\VisitorSession`
+  keeps values per package, e.g. a cart, in the new table
+  `visitor_sessions`. The cookie `fb_visitor` only comes with the first
+  value; a session ends 30 days after the last request or with its last
+  value, `regenerate()` gives it a new cookie. A visitor with a session
+  gets pages without the page cache; requests with an access token have
+  none.
+- Core: functions of extensions for templates. An extension adds one
+  with `$registry->add(TemplateFunction::class, new TemplateFunction('acme_cart', Cart::class, 'summary'))`;
+  the name needs a prefix and never replaces one of the core.
 - Core: history and proof of changes. The log of actions keeps the token
   and the device of each run ("Safari · iPhone", or the name of an API
   token), every migration leaves an entry `system.migrate`, and

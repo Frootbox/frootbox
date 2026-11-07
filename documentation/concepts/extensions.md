@@ -51,6 +51,14 @@ The [extension points](../reference/registry.md) list everything
 types, block groups, settings, jobs, search sources, plugins and more.
 Services are wired by the container; constructors get what they need.
 
+A function for templates, e.g. for a cart in the head of every page,
+comes with a `View\TemplateFunction`. Its name starts with a prefix and
+an underscore and never replaces one of the core:
+
+```php
+$registry->add(TemplateFunction::class, new TemplateFunction('acme_specials', SpecialsTemplates::class, 'today'));
+```
+
 ## Names
 
 Everything an extension registers is named after its package, so two

@@ -21,6 +21,25 @@ Visitors never cause writes to the database. A module that records
 something per visit, like statistics, appends lines to files in `var/`
 and counts them into its tables on the next scheduled run.
 
+## Visitors with a session
+
+A cart or a signed-in customer needs a session. `Visitor\VisitorSession`
+keeps values per package for the visitor of the current request:
+
+```php
+$session->set('acme/shop', 'cart', ['p1' => 2]);
+$session->get('acme/shop', 'cart');
+$session->regenerate(); // a new cookie on sign-in and sign-out
+```
+
+The cookie `fb_visitor` (HttpOnly, SameSite=Lax) only comes with the
+first value, after something the visitor did, never from just looking at
+a page. A session ends 30 days after the last request or when its last
+value is removed. A visitor with a session gets every page without the
+cache, marked `private, no-store`. Requests with an access token (REST
+API, MCP) have no session. Encrypt secrets yourself with
+`Security\Secrets` before you store them.
+
 ## Live for editors
 
 Signed-in users with the right to edit get the page without the cache,
