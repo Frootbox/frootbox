@@ -1716,6 +1716,16 @@ Lists the migrations of the core and the extensions that have not run yet, with 
 
 Query · right `system.migration-list`
 
+### `system.php-info`
+
+Shows how PHP is set up: versions, SAPI, ini files, OPcache, the most important directives and every loaded extension with its directives, without environment variables and with secrets masked. Search filters extensions and directives by name
+
+Query · right `system.php-info`
+
+| Input | Type | Description |
+|---|---|---|
+| `search` | string or null, optional | Only extensions and directives whose name contains this |
+
 ### `system.prune-previews`
 
 Deletes preview links 30 days after they expired or were revoked and returns how many

@@ -1,0 +1,112 @@
+{#- How PHP is set up on the server, for superusers (decision 0335). -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% macro value(value) -%}
+    {%- if value is null -%}<span class="fb-muted">{{ t('not set') }}</span>
+    {%- elseif value == '' -%}<span class="fb-muted">{{ t('empty') }}</span>
+    {#- Lists such as disable_functions may break after each comma. -#}
+    {%- else -%}<code>{{ value|e|replace({',': ',<wbr>'})|raw }}</code>{%- endif -%}
+{%- endmacro %}
+
+{% macro setting(setting) -%}
+    {% import _self as php %}
+    <li class="fb-list__item">
+        <span class="fb-list__main">
+            <code class="fb-list__title">{{ setting.name }}</code>
+            <span class="fb-list__meta">{{ php.value(setting.value) }}{% if setting.changed %} · php.ini: {{ php.value(setting.global) }}{% endif %}</span>
+        </span>
+        {% if setting.changed %}{{ ui.badge('changed', t('Changed')) }}{% endif %}
+    </li>
+{%- endmacro %}
+
+{% macro size(bytes) -%}
+    {{ t('{size} MB', {size: (bytes / 1048576)|number_format(1, t('.'), t(','))}) }}
+{%- endmacro %}
+
+{% block title %}PHP{% endblock %}
+
+{% block content %}
+{% import _self as php %}
+{% set essential = info.essentials|filter(s => s.name == 'memory_limit')|first %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">PHP</h1>
+            <p class="fb-muted">{{ t('How PHP is set up on the server: version, extensions and the settings of the php.ini. Environment variables and secrets stay hidden.') }}</p>
+        </div>
+    </header>
+
+    <section class="fb-card" aria-labelledby="php-overview-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="php-overview-title">{{ t('Overview') }}</h2>
+        </div>
+        <div class="fb-card__body">
+            {{ ui.figures([
+                {label: t('Version'), value: info.version},
+                {label: t('Interface'), value: info.sapi},
+                {label: 'memory_limit', value: essential ? essential.value : '–'},
+                {label: 'OPcache', value: info.opcache.enabled ? t('On') : t('Off'), note: info.opcache.hitRate is not null ? t('{rate} % hits', {rate: info.opcache.hitRate|number_format(1, t('.'), t(','))}) : null},
+            ]) }}
+        </div>
+        <ul>
+            <li class="fb-list__item"><span class="fb-list__main"><span class="fb-list__title">{{ t('Operating system') }}</span><span class="fb-list__meta">{{ info.os ?? '–' }}</span></span></li>
+            {% if info.server %}<li class="fb-list__item"><span class="fb-list__main"><span class="fb-list__title">{{ t('Web server') }}</span><span class="fb-list__meta">{{ info.server }}</span></span></li>{% endif %}
+            <li class="fb-list__item"><span class="fb-list__main"><span class="fb-list__title">Zend Engine</span><span class="fb-list__meta">{{ info.zendVersion }}</span></span></li>
+            <li class="fb-list__item"><span class="fb-list__main"><span class="fb-list__title">php.ini</span><span class="fb-list__meta">{% if info.iniFile %}<code>{{ info.iniFile }}</code>{% else %}{{ t('none loaded') }}{% endif %}</span></span></li>
+            {% if info.scannedFiles is not empty %}
+            <li class="fb-list__item"><span class="fb-list__main"><span class="fb-list__title">{{ t('Further ini files') }}</span>{% for file in info.scannedFiles %}<span class="fb-list__meta"><code>{{ file }}</code></span>{% endfor %}</span></li>
+            {% endif %}
+            {% if info.opcache.enabled and info.opcache.memoryUsed is not null %}
+            <li class="fb-list__item"><span class="fb-list__main"><span class="fb-list__title">{{ t('OPcache memory') }}</span><span class="fb-list__meta">{{ t('{used} used, {free} free', {used: php.size(info.opcache.memoryUsed), free: php.size(info.opcache.memoryFree ?? 0)}) }}{% if info.opcache.jit %} · JIT{% endif %}</span></span></li>
+            {% endif %}
+        </ul>
+    </section>
+
+    <section class="fb-card" aria-labelledby="php-essentials-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="php-essentials-title">{{ t('Important settings') }}</h2>
+        </div>
+        <ul>
+            {%- for setting in info.essentials %}{{ php.setting(setting) }}{% endfor %}
+        </ul>
+    </section>
+
+    <section class="fb-stack" aria-labelledby="php-extensions-title">
+        <div class="fb-card">
+            <div class="fb-card__header">
+                <h2 class="fb-heading-4" id="php-extensions-title" tabindex="-1" data-fb-focus>{{ t('PHP extensions') }}</h2>
+                {{ ui.badge('neutral', info.extensions|length) }}
+            </div>
+            <form class="fb-card__body fb-cluster" method="get" action="{{ path('backend.php') }}" role="search" aria-label="{{ t('Search extensions and settings') }}">
+                {{ ui.field({label: t('Name'), name: 'search', id: 'php-search', type: 'search', value: info.search, placeholder: 'upload', attrs: {dir: 'ltr', maxlength: 100}}) }}
+                {{ ui.button({label: t('Search'), variant: 'outline', type: 'submit', icon: 'search'}) }}
+                {% if info.search %}{{ ui.button({label: t('Show all'), href: path('backend.php'), variant: 'ghost'}) }}{% endif %}
+            </form>
+            {% if info.extensions is empty %}
+                {{ ui.empty({icon: 'search', title: t('Nothing found'), text: t('No extension or setting has {search} in its name.', {search: info.search})}) }}
+            {% else %}
+            <ul>
+                {%- for extension in info.extensions %}
+                <li class="fb-list__item">
+                    <span class="fb-list__main">
+                        <span class="fb-list__title">{{ extension.name == 'Other' ? t('Other') : extension.name }}</span>
+                        <span class="fb-list__meta">{{ extension.version ?? '–' }} · {{ t(['{count} setting', '{count} settings'], {count: extension.settings|length}) }}</span>
+                    </span>
+                </li>
+                {%- endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        {%- for extension in info.extensions|filter(e => e.settings is not empty) %}
+        <details class="fb-card fb-disclosure"{% if info.search %} open{% endif %}>
+            <summary class="fb-disclosure__summary">{{ extension.name == 'Other' ? t('Other') : extension.name }} {{ ui.badge('neutral', extension.settings|length) }}</summary>
+            <ul class="fb-disclosure__body">
+                {%- for setting in extension.settings %}{{ php.setting(setting) }}{% endfor %}
+            </ul>
+        </details>
+        {%- endfor %}
+    </section>
+</div>
+{% endblock %}

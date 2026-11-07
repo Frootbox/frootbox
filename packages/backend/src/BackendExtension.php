@@ -33,6 +33,7 @@ use Frootbox\Backend\Http\Pages\NewPageHandler;
 use Frootbox\Backend\Http\Pages\PageHistoryHandler;
 use Frootbox\Backend\Http\Pages\PagesHandler;
 use Frootbox\Backend\Http\PasswordHandler;
+use Frootbox\Backend\Http\Php\PhpHandler;
 use Frootbox\Backend\Http\PreviewActionHandler;
 use Frootbox\Backend\Http\QueryHandler;
 use Frootbox\Backend\Http\Redirects\RedirectsHandler;
@@ -120,6 +121,7 @@ final class BackendExtension implements Extension
             ->get('/settings', SettingsHandler::class, 'backend.settings')
             ->get('/jobs', JobsHandler::class, 'backend.jobs')
             ->get('/log', LogHandler::class, 'backend.log')
+            ->get('/php', PhpHandler::class, 'backend.php')
             ->get('/hub', HubHandler::class, 'backend.hub')
             ->get('/ai', AiHandler::class, 'backend.ai')
             ->get('/extensions', ExtensionsHandler::class, 'backend.extensions');
@@ -150,6 +152,7 @@ final class BackendExtension implements Extension
         $registry->add(Screen::class, new Screen('AI', 'backend.ai', Screen::ADMINISTRATION, 'sparkles', AiHandler::PERMISSION, order: 128, needs: Provider::class));
         $registry->add(Screen::class, new Screen('Log', 'backend.log', Screen::ADMINISTRATION, 'history', LogHandler::PERMISSION, order: 129));
         $registry->add(Screen::class, new Screen('Background jobs', 'backend.jobs', Screen::ADMINISTRATION, 'clock', JobsHandler::PERMISSION, order: 130));
+        $registry->add(Screen::class, new Screen('PHP', 'backend.php', Screen::ADMINISTRATION, 'info', PhpHandler::PERMISSION, order: 140));
         $registry->add(Screen::class, new Screen('Design system', 'backend.design', Screen::ADMINISTRATION, 'palette', DesignHandler::PERMISSION, order: 900, development: true));
 
         // Where hits of the search open, and what it offers to do (decision 0217).

@@ -20,6 +20,13 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core, Backend: the screen "PHP" under Administration shows how PHP is
+  set up, like `phpinfo()`: versions, interface, ini files, OPcache, the
+  most important settings and every extension with its settings, marked
+  where they differ from the php.ini, with a search by name. It reads the
+  new query `system.php-info` (superusers only), which leaves out
+  environment variables and masks secrets in settings.
+
 - Core, Shop: `bin/frootbox about` and the screen "Shop sync" name what
   writes the images (`Images::describe()`, e.g. "GD 2.3.3" or "Imagick
   (ImageMagick 7.1.1-43)"). The sync measures its steps: the screen
