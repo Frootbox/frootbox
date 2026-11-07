@@ -27,8 +27,9 @@ final readonly class Pages
 
     /**
      * @param string $origin E.g. "http://" and ":8300" around the host, as "http://%s:8300"
+     * @param bool   $local  The request comes from this computer: buttons to sign in (decision 0329)
      */
-    public function start(string $origin): ResponseInterface
+    public function start(string $origin, bool $local = false): ResponseInterface
     {
         $results = new CheckResults($this->workbench->config)->all();
         $projects = $this->workbench->projects;
@@ -39,20 +40,21 @@ final readonly class Pages
             $badges = $this->badges($project, $results[$project->name] ?? null);
             $long = $projects->unique($project) ? \sprintf('<br><span class="muted">also <a href="%s">%s</a></span>', self::e(\sprintf($origin, $project->name . '.' . $this->workbench->config->domain)), self::e($project->name)) : '';
             $rows .= \sprintf(
-                '<tr><th scope="row"><a href="%s">%s</a>%s</th><td><code>%s</code></td><td>%s</td><td>%s</td></tr>',
+                '<tr><th scope="row"><a href="%s">%s</a>%s</th><td><code>%s</code></td><td>%s</td><td>%s</td><td>%s</td></tr>',
                 self::e($url),
                 self::e($projects->host($project)),
                 $long,
                 self::e($project->folder()),
                 self::e($this->theme($project)),
                 $badges,
+                $local && $project->installed() ? self::signIn($project) : '',
             );
         }
 
         $hints = $this->hints();
         $body = '' === $rows
             ? '<p>No projects yet. Create one with <code>bin/workbench new Vendor/Site</code>.</p>'
-            : '<table><thead><tr><th scope="col">Address</th><th scope="col">Folder</th><th scope="col">Theme</th><th scope="col">Status</th></tr></thead><tbody>' . $rows . '</tbody></table>';
+            : '<table><thead><tr><th scope="col">Address</th><th scope="col">Folder</th><th scope="col">Theme</th><th scope="col">Status</th><th scope="col"><span class="visually-hidden">Backend</span></th></tr></thead><tbody>' . $rows . '</tbody></table>';
 
         return self::page(200, 'Workbench', \sprintf(
             '<h1>Workbench</h1><p class="muted">%d projects in <code>%s</code>. Check all with <code>bin/workbench check</code>.</p>%s%s',
@@ -175,12 +177,21 @@ final readonly class Pages
         return false === $files ? [] : $files;
     }
 
+    private static function signIn(Project $project): string
+    {
+        return \sprintf(
+            '<form method="post" action="/_workbench/sign-in"><input type="hidden" name="project" value="%s"><button type="submit" class="small" aria-label="Sign in to %s">Sign in</button></form>',
+            self::e($project->name),
+            self::e($project->title()),
+        );
+    }
+
     private static function badge(string $tone, string $label, string $detail): string
     {
         return \sprintf('<span class="badge badge--%s" title="%s">%s</span>', $tone, self::e($detail), self::e($label));
     }
 
-    private static function page(int $status, string $title, string $content): ResponseInterface
+    public static function page(int $status, string $title, string $content): ResponseInterface
     {
         $title = self::e($title);
         $html = <<<HTML
@@ -213,6 +224,10 @@ final readonly class Pages
             .badge--warning { background: var(--warning-bg); color: var(--warning); }
             .badge--error { background: var(--error-bg); color: var(--error); }
             button { padding: .6rem 1.1rem; border: 0; border-radius: .5rem; background: var(--accent); color: var(--accent-text); font: inherit; font-weight: 600; cursor: pointer; }
+            th, td { overflow-wrap: anywhere; }
+            button.small { padding: .3rem .8rem; font-size: .85rem; white-space: nowrap; }
+            form { margin: 0; }
+            .visually-hidden { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
             button:focus-visible, a:focus-visible { outline: 3px solid var(--link); outline-offset: 2px; }
             @media (max-width: 40rem) { table, thead, tbody, tr, th, td { display: block; } thead { display: none; } tr { border-block-end: 1px solid var(--line); } th, td { border: 0; padding-block: .25rem; } }
             </style>

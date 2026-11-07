@@ -1,7 +1,7 @@
 # German texts of the build from the backend of a website in the workbench (decision 0291).
 # "Done", "Failed" and "Running" come from the backend.
 "Workbench": "Werkbank"
-"Builds this website for upload from the backend, only in the workbench": "Baut diese Website im Backend zum Hochladen, nur in der Werkbank"
+"Builds this website for upload from the backend and signs in from the start page, only in the workbench": "Baut diese Website im Backend zum Hochladen und meldet von der Startseite aus an, nur in der Werkbank"
 "Build": "Build"
 "Builds this website as a folder to upload by FTP, with its own vendor/. Only in the workbench, the website on the server has no such screen.": "Baut diese Website als Ordner zum Hochladen per FTP, mit eigenem vendor/. Nur in der Werkbank, auf dem Server gibt es diesen Bildschirm nicht."
 "New build": "Neuer Build"
@@ -31,3 +31,8 @@
 "Noted as on the server. The next build makes its diff from it.": "Als hochgeladen vermerkt. Der nächste Build vergleicht mit diesem Stand."
 "Noted. The next build makes its diff from {build}.": "Vermerkt. Der nächste Build vergleicht mit {build}."
 "After the upload: the next build then makes its diff from this one. Until then every build starts from {build}, so building again loses nothing.": "Nach dem Hochladen klicken: Der nächste Build vergleicht dann mit diesem Stand. Bis dahin vergleicht jeder Build mit {build}, mehrfaches Bauen verliert also nichts."
+# Sign-in from the start page of the workbench (decision 0329).
+"Signs in as the superuser with a one-time ticket from the start page of the workbench. Only in the workbench and from this computer": "Meldet mit einem Einmal-Ticket von der Startseite der Werkbank als Superuser an. Nur in der Werkbank und von diesem Rechner aus"
+"Signing in from the workbench works only on this computer.": "Die Anmeldung aus der Werkbank klappt nur auf diesem Rechner."
+"The link is used or expired. Start again on the start page of the workbench.": "Der Link ist verbraucht oder abgelaufen. Starte noch einmal auf der Startseite der Werkbank."
+"This website has no active superuser to sign in as.": "Diese Website hat keinen aktiven Superuser für die Anmeldung."

@@ -12,6 +12,7 @@ use Frootbox\Core\Application;
 use Frootbox\Core\Config\ConfigException;
 use Frootbox\Workbench\Project\Project;
 use Frootbox\Workbench\Project\ProjectMigrations;
+use Frootbox\Workbench\SignIn\SignInTickets;
 use Frootbox\Workbench\Workbench;
 use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
@@ -27,6 +28,9 @@ final readonly class Front
 {
     public const string MIGRATE = '/_workbench/migrate';
 
+    /** On the start page: a ticket to sign in to a project (decision 0329). */
+    public const string SIGN_IN = '/_workbench/sign-in';
+
     public function __construct(private Workbench $workbench) {}
 
     /**
@@ -40,7 +44,11 @@ final readonly class Front
         $origin = self::origin($request);
 
         if ($projects->isStart($host)) {
-            return $pages->start($origin);
+            if (self::SIGN_IN === $request->getUri()->getPath()) {
+                return $this->signIn($request, $origin, $pages);
+            }
+
+            return $pages->start($origin, self::isLocal($request));
         }
 
         $project = $projects->byHost($host);
@@ -111,6 +119,41 @@ final readonly class Front
     }
 
     /**
+     * The button "Sign in" of the start page: a one-time ticket and on to
+     * the project, only from the start page and from this computer.
+     */
+    private function signIn(ServerRequestInterface $request, string $origin, Pages $pages): ResponseInterface
+    {
+        if ('POST' !== $request->getMethod()) {
+            return new Response(303, ['Location' => '/']);
+        }
+
+        if (!self::sameOrigin($request) || !self::isLocal($request)) {
+            return $pages->problem(403, 'Not allowed', 'Signing in starts only from the start page of the workbench on this computer.');
+        }
+
+        $body = $request->getParsedBody();
+        $name = \is_array($body) && \is_string($body['project'] ?? null) ? $body['project'] : '';
+        $project = $this->workbench->projects->get($name);
+
+        if (null === $project || !$project->installed()) {
+            return $pages->problem(404, 'No such project', 'The workbench has no project set up under this name.');
+        }
+
+        $ticket = new SignInTickets($this->workbench->config)->create($project->name);
+        $url = \sprintf($origin, $this->workbench->projects->host($project)) . self::SIGN_IN . '?ticket=' . $ticket;
+
+        return new Response(303, ['Location' => $url, 'Cache-Control' => 'no-store', 'Referrer-Policy' => 'no-referrer']);
+    }
+
+    private static function isLocal(ServerRequestInterface $request): bool
+    {
+        $address = $request->getServerParams()['REMOTE_ADDR'] ?? null;
+
+        return SignInTickets::isLocal(\is_string($address) ? $address : null);
+    }
+
+    /**
      * A form of the page itself, not of another website.
      */
     private static function sameOrigin(ServerRequestInterface $request): bool
@@ -132,7 +175,7 @@ final readonly class Front
      * The address of another host with scheme and port of this request,
      * e.g. "http://%s:8300".
      */
-    private static function origin(ServerRequestInterface $request): string
+    public static function origin(ServerRequestInterface $request): string
     {
         $uri = $request->getUri();
         $port = $uri->getPort();

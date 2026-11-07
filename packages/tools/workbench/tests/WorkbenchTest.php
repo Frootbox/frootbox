@@ -15,9 +15,11 @@ use Frootbox\Workbench\Console\Environment;
 use Frootbox\Workbench\Console\NewCommand;
 use Frootbox\Workbench\Http\Front;
 use Frootbox\Workbench\Http\Pages;
+use Frootbox\Workbench\Http\SignInHandler;
 use Frootbox\Workbench\Http\StaticFile;
 use Frootbox\Workbench\Project\Project;
 use Frootbox\Workbench\Project\ProjectMigrations;
+use Frootbox\Workbench\SignIn\SignInWithTicket;
 use Frootbox\Workbench\Workbench;
 use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -37,6 +39,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 #[CoversClass(ProjectCheck::class)]
 #[CoversClass(NewCommand::class)]
 #[CoversClass(Environment::class)]
+#[CoversClass(SignInHandler::class)]
+#[CoversClass(SignInWithTicket::class)]
 final class WorkbenchTest extends TestCase
 {
     private const array ADMIN = ['FROOTBOX_ADMIN_EMAIL' => 'admin@example.test', 'FROOTBOX_ADMIN_NAME' => 'Admin', 'FROOTBOX_ADMIN_PASSWORD' => 'workbench-test-password-1'];
@@ -205,6 +209,37 @@ final class WorkbenchTest extends TestCase
         self::assertSame(['HOME' => '/home/jane', BuildRuns::ROOT => self::$root, BuildRuns::PROJECT => 'demo.acme'], $environment);
     }
 
+    public function testTheStartPageSignsInWithoutPassword(): void
+    {
+        $local = ['REMOTE_ADDR' => '127.0.0.1'];
+        self::assertStringContainsString('name="project" value="demo.acme"', (string) $this->send('GET', 'http://fb.localhost/', [], $local)->getBody());
+        self::assertStringNotContainsString('name="project"', (string) $this->send('GET', 'http://fb.localhost/', [], ['REMOTE_ADDR' => '192.0.2.1'])->getBody(), 'No button for other computers.');
+
+        self::assertSame(403, $this->send('POST', 'http://fb.localhost/_workbench/sign-in', ['Sec-Fetch-Site' => 'cross-site'], $local, ['project' => 'demo.acme'])->getStatusCode());
+        self::assertSame(403, $this->send('POST', 'http://fb.localhost/_workbench/sign-in', ['Sec-Fetch-Site' => 'same-origin'], ['REMOTE_ADDR' => '192.0.2.1'], ['project' => 'demo.acme'])->getStatusCode(), 'Not from the network.');
+        self::assertSame(404, $this->send('POST', 'http://fb.localhost/_workbench/sign-in', ['Sec-Fetch-Site' => 'same-origin'], $local, ['project' => 'nope'])->getStatusCode());
+
+        $link = $this->ticket();
+        $response = $this->send('GET', $link, ['User-Agent' => 'Mozilla/5.0 (Macintosh) Firefox/140.0'], $local);
+        self::assertSame(303, $response->getStatusCode(), (string) $response->getBody());
+        self::assertSame('/cms', $response->getHeaderLine('Location'));
+        self::assertSame(1, preg_match('/^frootbox_session=([^;]+);.*Max-Age=/', $response->getHeaderLine('Set-Cookie'), $match), 'Stays signed in.');
+
+        $dashboard = new ServerRequest('GET', 'http://demo.fb.localhost/cms')->withCookieParams(['frootbox_session' => rawurldecode($match[1])]);
+        $answer = new Front(Workbench::fromRoot(self::$root))->dispatch($dashboard);
+        $page = $answer instanceof Application ? $answer->handle($dashboard) : $answer;
+        self::assertSame(200, $page->getStatusCode());
+        self::assertStringContainsString(self::ADMIN['FROOTBOX_ADMIN_NAME'], (string) $page->getBody());
+
+        $again = $this->send('GET', $link, [], $local);
+        self::assertSame(403, $again->getStatusCode(), 'A ticket works once.');
+        self::assertSame('', $again->getHeaderLine('Set-Cookie'));
+        self::assertStringContainsString('href="http://fb.localhost/"', (string) $again->getBody());
+
+        self::assertSame(403, $this->send('GET', $this->ticket(), [], ['REMOTE_ADDR' => '192.0.2.1'])->getStatusCode(), 'Redeemed only on this computer.');
+        self::assertSame(403, $this->send('GET', 'http://demo.fb.localhost/_workbench/sign-in', [], $local)->getStatusCode(), 'Not without a ticket.');
+    }
+
     private function project(): Project
     {
         $project = Workbench::fromRoot(self::$root)->projects->get('demo');
@@ -221,6 +256,33 @@ final class WorkbenchTest extends TestCase
         $answer = new Front(Workbench::fromRoot(self::$root))->dispatch(new ServerRequest($method, $url, $headers));
 
         return $answer instanceof Application ? $answer->handle(new ServerRequest($method, $url, $headers)) : $answer;
+    }
+
+    /**
+     * The address of a new ticket for the project demo, from the start page.
+     */
+    private function ticket(): string
+    {
+        $response = $this->send('POST', 'http://fb.localhost/_workbench/sign-in', ['Origin' => 'http://fb.localhost'], ['REMOTE_ADDR' => '127.0.0.1'], ['project' => 'demo.acme']);
+        self::assertSame(303, $response->getStatusCode(), (string) $response->getBody());
+        self::assertMatchesRegularExpression('~^http://demo\.fb\.localhost/_workbench/sign-in\?ticket=[0-9a-f]{64}$~', $response->getHeaderLine('Location'));
+
+        return $response->getHeaderLine('Location');
+    }
+
+    /**
+     * @param array<string, string> $headers
+     * @param array<string, string> $server
+     * @param array<string, string> $body
+     */
+    private function send(string $method, string $url, array $headers, array $server, array $body = []): ResponseInterface
+    {
+        $request = new ServerRequest($method, $url, $headers, null, '1.1', $server)->withParsedBody($body);
+        parse_str((string) parse_url($url, \PHP_URL_QUERY), $query);
+        $request = $request->withQueryParams($query);
+        $answer = new Front(Workbench::fromRoot(self::$root))->dispatch($request);
+
+        return $answer instanceof Application ? $answer->handle($request) : $answer;
     }
 
     /**

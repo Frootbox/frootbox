@@ -16,10 +16,13 @@ use Frootbox\Workbench\Build\MarkUploaded;
 use Frootbox\Workbench\Build\ShowBuild;
 use Frootbox\Workbench\Build\StartBuild;
 use Frootbox\Workbench\Http\BuildHandler;
+use Frootbox\Workbench\Http\SignInHandler;
+use Frootbox\Workbench\SignIn\SignInWithTicket;
 
 /**
- * What the workbench adds to each of its websites (decision 0291): the
- * build for upload from the backend. The package has no frootbox.yaml, so
+ * What the workbench adds to each of its websites: the build for upload
+ * from the backend (decision 0291) and the sign-in from its start page
+ * (decision 0329). The package has no frootbox.yaml, so
  * it exists only in the workbench, never on a server or in a build.
  */
 final class WorkbenchExtension implements Extension
@@ -28,7 +31,7 @@ final class WorkbenchExtension implements Extension
 
     public static function package(): ExtensionPackage
     {
-        return new ExtensionPackage(self::PACKAGE, \dirname(__DIR__, 2), 'Workbench', 'Builds this website for upload from the backend, only in the workbench', self::class);
+        return new ExtensionPackage(self::PACKAGE, \dirname(__DIR__, 2), 'Workbench', 'Builds this website for upload from the backend and signs in from the start page, only in the workbench', self::class);
     }
 
     public function register(Registry $registry): void
@@ -36,9 +39,11 @@ final class WorkbenchExtension implements Extension
         $registry->action(StartBuild::class);
         $registry->action(MarkUploaded::class);
         $registry->query(ShowBuild::class);
+        $registry->action(SignInWithTicket::class);
 
         if (class_exists(Screen::class)) {
             $registry->mount('backend.path', '/cms')->get('/workbench', BuildHandler::class, 'frootbox.workbench.build');
+            $registry->get(SignInHandler::PATH, SignInHandler::class, 'frootbox.workbench.sign-in');
             $registry->add(Screen::class, new Screen('Build', 'frootbox.workbench.build', Screen::ADMINISTRATION, 'arrow-up', StartBuild::PERMISSION, order: 126));
         }
     }

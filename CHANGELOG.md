@@ -20,6 +20,11 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Workbench: **Sign in** next to each project on the start page opens its
+  backend as the superuser without a password, only on this computer,
+  with a ticket that works once. New action
+  `frootbox/workbench/account.sign-in`, only in the workbench.
+
 - Core, Backend: the list of users shows "through the hub" at accounts
   the hub manages. New query `user.managed-list`.
 - Shop: the checkout block also hands its view the link to the catalog

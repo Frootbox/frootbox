@@ -144,6 +144,23 @@ The web server must show `public/`, never the folder itself: it holds
 when the document root is wrong (from `skeleton/`, else the build adds
 one). After the upload, `https://<address>/.env` must give 403 or 404.
 
+## Signing in without a password
+
+After a reset the database is new and every session gone. **Sign in** next
+to a project on the start page opens its backend as the oldest active
+superuser, without a password, and keeps the session like "Stay signed
+in". The button shows only on this computer: the start page accepts it
+only from itself and from `127.0.0.1` or `::1`, so neither another
+website in the browser nor another device in the network can use it.
+
+The button makes a ticket that works once and for 60 seconds. Only its
+SHA-256 lies in `var/workbench/sign-in/` of the workbench, never in a
+project. The project redeems it at `/_workbench/sign-in?ticket=…` through
+the action `frootbox/workbench/account.sign-in {ticket, device?}`, which
+the package adds to each website of the workbench and which refuses
+anywhere else. With open migrations the notice of the workbench comes
+first; sign in again after migrating.
+
 ## Source and issues
 
 This package is developed in the [Frootbox monorepo](https://github.com/Frootbox/frootbox)
