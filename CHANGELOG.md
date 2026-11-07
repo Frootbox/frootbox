@@ -20,6 +20,8 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Shop: the checkout block also hands its view the link to the catalog
+  (`catalog`), e.g. to continue shopping after the order.
 - Shop: the screen "Shop sync" in the backend shows where the sync of
   the catalog stands: the one going on with its progress, what the last
   one changed, products without an image, images the shop did not hand
@@ -300,6 +302,13 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Changed
 
+- Shop: the sync copies the images of the shop at most 2000 pixels on
+  the longer side instead of in the size the shop delivers, which saves
+  a lot of space with many products. The new settings `shrinkImages`
+  and `imageSize` of `frootbox/shop` turn this off or change the size.
+  Run "Sync the whole catalog" once to bring the images copied before to
+  the new size. `MediaEditor::create()`, `MediaEditor::replace()` and
+  `Images::prepare()` of the core take a `maxEdge` for this.
 - Shop: the checkout asks for consent only to the legal texts the
   provider requires; the others, e.g. the privacy policy, are a notice
   with a link and no longer go out with the order.
