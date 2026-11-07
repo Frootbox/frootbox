@@ -196,7 +196,8 @@ backend's own templates, styles and scripts are not part of it.
   values with `{ value: '{config.x}', map: { old: new } }`, reads the
   contact persons of a plugin as the list `persons` and plain values of
   objects such as `position` or `phone`. The images of a gallery go into
-  a list one by one (`images: items.#.image`).
+  a list one by one (`images: items.#.image`). Options read the image in
+  a text with `{widget.align}` or `{widget.width}`.
 
 ### Changed
 
