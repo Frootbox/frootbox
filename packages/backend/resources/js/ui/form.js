@@ -4,6 +4,9 @@ import { showToast } from './toast.js';
 
 const ALERT = '<svg class="fb-icon fb-icon--small" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6"/><path d="M12 16.5v.5"/></svg>';
 const TOAST_KEY = 'fb-toast';
+// A step of until that finds the server busy waits 2, 4, 6, then 8 seconds each, ten times (decision 0331).
+const BUSY_PAUSE = 2000;
+const BUSY_ATTEMPTS = 10;
 
 /**
  * The field of an error: "/translations/en/slug" is the field named
@@ -204,7 +207,8 @@ export function formInput(form) {
  *   again. again is JSON that replaces parts of the input from the
  *   second step on, e.g. {"full": false}. A button with data-fb-stop
  *   in the form shows while it runs and stops after the current step;
- *   leaving the page asks first.
+ *   leaving the page asks first. A step the server answers with 503
+ *   (busy) is sent again after a pause, for about a minute.
  * - base: a JSON pointer whose errors belong to the fields of this form,
  *   e.g. "/items/de/2" when the form edits one item of a list
  *
@@ -505,14 +509,14 @@ export class Form extends LitElement {
         window.addEventListener('beforeunload', this.onLeave);
 
         try {
-            let result = await runAction(this.action, input, this.failed);
+            let result = await this.step(input);
 
             while (result.ok && valueAt(result.data, this.until) !== true && !this.stopped) {
                 if (ids.length) {
                     await refreshParts(ids, { active });
                 }
 
-                result = await runAction(this.action, { ...input, ...again }, this.failed);
+                result = await this.step({ ...input, ...again });
             }
 
             if (result.ok && this.stopped && ids.length) {
@@ -523,6 +527,22 @@ export class Form extends LitElement {
         } finally {
             window.removeEventListener('beforeunload', this.onLeave);
         }
+    }
+
+    /**
+     * One step of repeat(). A busy server (503, e.g. another step holds
+     * the database) gets the same step again after a pause instead of
+     * ending the run (decision 0331), for about a minute.
+     */
+    async step(input) {
+        let result = await runAction(this.action, input, this.failed);
+
+        for (let attempt = 1; !result.ok && result.problem?.status === 503 && attempt <= BUSY_ATTEMPTS && !this.stopped; attempt++) {
+            await new Promise((resolve) => setTimeout(resolve, BUSY_PAUSE * Math.min(attempt, 4)));
+            result = await runAction(this.action, input, this.failed);
+        }
+
+        return result;
     }
 
     onStop(event) {

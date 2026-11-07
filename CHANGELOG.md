@@ -356,6 +356,15 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Fixed
 
+- Core, Backend, Shop: a full sync of the catalog in the browser no
+  longer stops with "Internal Server Error" when the queue syncs at the
+  same time. A locked database (SQLite "database is locked") answers
+  503 with code `busy` and `Retry-After` instead of 500, as does the new
+  `BusyException`; `<fb-form until>` sends a busy step again for about a
+  minute, and the job of the queue steps back while someone syncs in
+  the browser. A sync that waits for another one now answers 503
+  instead of 409.
+
 - Core: signing in works on a website that was updated but not migrated
   yet, so the superuser can start the migrations in the backend; before,
   every sign-in failed with 500 because sessions wrote columns the

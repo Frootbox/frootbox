@@ -140,7 +140,10 @@ The log answers "who changed this?" for a year, without SQL.
 An action throws, the API answers with `application/problem+json`:
 `422` for invalid input with a pointer to each field, `401` without
 sign-in, `403` without the right, `404` for something missing, `409`
-for a conflict.
+for a conflict. `503` with the code `busy` and `Retry-After` means that
+something else holds what the action needs right now, e.g. a locked
+database or another step of a sync: the same call a moment later
+works. Throw `Action\BusyException` for that.
 
 See the [reference of all actions and queries](../reference/actions.md)
 and [your first module](../tutorials/first-module.md).
