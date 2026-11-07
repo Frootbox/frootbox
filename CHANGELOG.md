@@ -59,6 +59,11 @@ backend's own templates, styles and scripts are not part of it.
   `plugin: <type>`, and the page then shows that plugin of Frootbox 2 in
   its default space (`plugin.assign` after the content). Without
   `block:` the plugin becomes no block in the area.
+- Migrate: the mapping of `fb1:import` puts the block from the page
+  itself into an area of its own with `page: { area: head }`, e.g. a
+  banner that stays on the pages of a plugin's objects, and gives pages
+  a new title by their ID in Frootbox 1 with `pages: { 12: { title: … } }`;
+  the address stays.
 - Core: history and proof of changes. The log of actions keeps the token
   and the device of each run ("Safari · iPhone", or the name of an API
   token), every migration leaves an entry `system.migrate`, and
@@ -240,6 +245,9 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Changed
 
+- Shop: the checkout asks for consent only to the legal texts the
+  provider requires; the others, e.g. the privacy policy, are a notice
+  with a link and no longer go out with the order.
 - Core: `status.show` tells how mails leave the server, as `mail` with
   `transport` (`smtp`, `native`, `log`, `null`, `memory`) and `source`
   (`environment`, `settings`, `default`), without server, account or
