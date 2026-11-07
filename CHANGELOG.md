@@ -195,7 +195,8 @@ backend's own templates, styles and scripts are not part of it.
   e.g. the header image and banner style as a block on top), translates
   values with `{ value: '{config.x}', map: { old: new } }`, reads the
   contact persons of a plugin as the list `persons` and plain values of
-  objects such as `position` or `phone`.
+  objects such as `position` or `phone`. The images of a gallery go into
+  a list one by one (`images: items.#.image`).
 
 ### Changed
 
