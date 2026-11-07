@@ -3015,13 +3015,14 @@ Action · public · cannot be undone
 
 ### `frootbox/shop/catalog.sync`
 
-Brings products, categories and images of the shop up to date with the provider; with full the whole catalog again
+Brings products, categories and images of the shop up to date with the provider, one step at a time: until done is true, the next call goes on; with full the whole catalog again
 
 Action · right `frootbox/shop/catalog.sync` · cannot be undone
 
 | Input | Type | Description |
 |---|---|---|
-| `full` | boolean, optional | The whole catalog instead of the changes since the last sync |
+| `full` | boolean, optional | The whole catalog instead of the changes since the last sync; starts anew |
+| `seconds` | integer, optional | How long the step may take, about; at least one product is done |
 
 ### `frootbox/shop/customer.change-password`
 

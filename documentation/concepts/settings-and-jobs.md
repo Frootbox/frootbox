@@ -43,8 +43,12 @@ final readonly class SyncTill { … }
 ```
 
 A job is built like an action, registered with `$registry->job()` and
-pushed with `Queue::push()`. It runs with the rights of whoever pushed
-it, and changes data only through actions. `schedule:run` works the
+pushed with `Queue::push()`, or with `Queue::pushOnce()` unless one of
+the same name waits already. It runs with the rights of whoever pushed
+it, and changes data only through actions. Long work runs in short
+steps, each its own action: a job steps for some seconds and pushes the
+next one, so a request without a cron is not held up and the database
+is never locked for long. `schedule:run` works the
 queue after the scheduled tasks; `queue:run` works it alone.
 
 ## Events

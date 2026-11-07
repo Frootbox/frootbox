@@ -331,6 +331,15 @@ backend's own templates, styles and scripts are not part of it.
   instead of waiting for changes that never come. The first sync after
   the update takes the whole catalog once (migration
   `frootbox_shop_sync.source`).
+- Shop: the catalog sync runs in short steps, each its own transaction,
+  and goes on where the last one stopped. A whole catalog of a thousand
+  products no longer holds the database for minutes, which on SQLite
+  made other writes such as carts and sign-ins fail with "database is
+  locked". The categories come first. `frootbox/shop/catalog.sync` does
+  one step and says with `done` whether the sync is through; the job
+  steps for up to 20 seconds and queues the next one, `shop:sync` steps
+  to the end. Only one process syncs at a time, and the scheduler and
+  webhook queue a sync only when none waits (new `Queue::pushOnce()`).
 - Migrate: the old address of an object of Frootbox 1, such as a contact
   person, leads to the page that showed it, no longer to the page that
   happens to have the id of the object.
