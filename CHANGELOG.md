@@ -307,6 +307,16 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Fixed
 
+- Shop: Enter in a quantity field of the cart updates the cart instead
+  of removing the first product; the form starts with a hidden button
+  to update.
+- Shop: the position of the catalog sync belongs to the catalog it came
+  from. A provider names it with the new `ShopProvider::source()`; when
+  it differs, e.g. in a copy of the website connected to another
+  installation of the shop, the next sync takes the whole catalog
+  instead of waiting for changes that never come. The first sync after
+  the update takes the whole catalog once (migration
+  `frootbox_shop_sync.source`).
 - Migrate: the old address of an object of Frootbox 1, such as a contact
   person, leads to the page that showed it, no longer to the page that
   happens to have the id of the object.
