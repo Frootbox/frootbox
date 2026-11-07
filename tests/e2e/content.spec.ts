@@ -189,7 +189,8 @@ test('locks a page for visitors right away', async ({ page }) => {
     await page.locator('#page-lock').getByRole('button', { name: 'Sperren' }).click();
 
     await expect(page.locator('.fb-toast').last()).toHaveText('Die Seite ist gesperrt.');
-    await expect(detail(page).getByText('Für Besucher gesperrt')).toBeVisible();
+    // The history below names the action the same way.
+    await expect(detail(page).locator('.fb-alert').getByText('Für Besucher gesperrt')).toBeVisible();
     const locked = await page.request.get(`/${slug}`);
     expect(locked.status()).toBe(503);
     expect(locked.headers()['x-robots-tag']).toBe('noindex');
