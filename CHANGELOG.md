@@ -294,6 +294,9 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Fixed
 
+- Migrate: the old address of an object of Frootbox 1, such as a contact
+  person, leads to the page that showed it, no longer to the page that
+  happens to have the id of the object.
 - Migrate: of several files in one field the import takes the one
   Frootbox 1 shows (highest order), and files of contact persons no
   longer land on the object with the same id.
