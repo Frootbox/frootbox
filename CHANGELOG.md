@@ -64,6 +64,8 @@ backend's own templates, styles and scripts are not part of it.
   least ten characters. Orders and invoices have fixed states
   (`OrderStatus`, `InvoiceStatus`) that the provider maps to and the
   account shows translated, with dates in the time zone of the website.
+  A product without an image shows a neutral placeholder in the catalog,
+  on its page and in the cart.
 - Migrate: a rule under `plugins:` in the mapping of `fb1:import` takes
   `plugin: <type>`, and the page then shows that plugin of Frootbox 2 in
   its default space (`plugin.assign` after the content). Without
