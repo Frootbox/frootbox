@@ -1493,6 +1493,12 @@ Query · right `system.component-usages`
 | `package` | string or null, optional | Only the blocks and layouts of this extension, e.g. "frootbox/news" |
 | `missing` | boolean, optional | Only those whose extension is not installed |
 
+### `system.end-sessions`
+
+Ends the sessions of all users and visitors and returns how many; API tokens stay
+
+Action · right `system.end-sessions` · cannot be undone
+
 ### `system.extension-list`
 
 Lists the installed extensions with version, theme, and the blocks, layouts, actions, queries, field types, jobs, search sources and commands they bring, and the official modules that are not installed

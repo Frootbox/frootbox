@@ -20,6 +20,11 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core: `system.end-sessions` and `php bin/frootbox sessions:end` end
+  the sessions of all users and visitors, e.g. in a copy of a website;
+  API tokens stay.
+- Workbench: a build with content ends the sessions of users and
+  visitors and leaves out the backup made while building.
 - Core: sessions for visitors of the website. `Visitor\VisitorSession`
   keeps values per package, e.g. a cart, in the new table
   `visitor_sessions`. The cookie `fb_visitor` only comes with the first

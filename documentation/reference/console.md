@@ -340,6 +340,14 @@ php bin/frootbox seed <file>
 |---|---|
 | `file` | Path of the file, or vendor/package:path in an extension |
 
+## `sessions:end`
+
+Ends the sessions of all users and visitors; API tokens stay
+
+```
+php bin/frootbox sessions:end
+```
+
 ## `shop:sync`
 
 Brings the catalog of the shop up to date with the provider
