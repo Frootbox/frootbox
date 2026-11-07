@@ -1,0 +1,6 @@
+# German texts for visitors addressed formally ("Sie"), only those that
+# differ from de.yaml (decision 0316).
+"Please load reCAPTCHA first and confirm that you are not a robot.": "Bitte laden Sie zuerst reCAPTCHA und bestätigen Sie, dass Sie kein Roboter sind."
+"Please load reCAPTCHA first, then send the form.": "Bitte laden Sie zuerst reCAPTCHA und senden Sie das Formular dann."
+"Please confirm reCAPTCHA again.": "Bitte bestätigen Sie reCAPTCHA noch einmal."
+"reCAPTCHA could not check the form. Please send it again.": "reCAPTCHA konnte das Formular nicht prüfen. Bitte senden Sie es noch einmal."

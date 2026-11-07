@@ -16,6 +16,7 @@ use Frootbox\Core\Navigation\PublishNavigations;
 use Frootbox\Core\Navigation\UpdateNavigation;
 use Frootbox\Core\Page\CreatePage;
 use Frootbox\Core\Page\PublishPages;
+use Frootbox\Core\Settings\UpdateSettings;
 use Frootbox\Core\Site\PublishSite;
 use Frootbox\Core\Site\UpdateSite;
 use Frootbox\Core\Tests\Support\NotesTestCase;
@@ -88,6 +89,14 @@ final class ErrorPageTest extends NotesTestCase
         self::assertStringContainsString('<p class="fb-error-details__message">The roaster is cold.</p>', $html);
 
         self::assertStringContainsString('<h1 class="base-error__title">Vorübergehend nicht erreichbar</h1>', $this->page('/gesperrt', HttpException::locked('/gesperrt'), 503));
+    }
+
+    public function testAddressesTheVisitorAsTheWebsiteSays(): void
+    {
+        $this->runner()->run(new UpdateSettings('frootbox/core.formality', ['formal' => true]));
+
+        self::assertStringContainsString('Das liegt an uns, nicht an Ihnen. Bitte versuchen Sie es gleich noch einmal.', $this->page('/kaputt', new RuntimeException('Cold.'), 500));
+        self::assertStringContainsString('An dieser Seite wird gerade gearbeitet. Bitte versuchen Sie es später noch einmal.', $this->page('/gesperrt', HttpException::locked('/gesperrt'), 503));
     }
 
     public function testLeavesTheAccessToTheWebsiteToTheCore(): void

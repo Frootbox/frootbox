@@ -33,6 +33,9 @@ backend's own templates, styles and scripts are not part of it.
   chooses the default of the website and `I18n\VisitorFormality` the one
   of a visitor, which `t()` follows. The shop addresses a signed-in
   customer as the shop provider says, for Avaro as set at the contact.
+  The texts for visitors of the base theme (banner and privacy settings,
+  error pages), forms, reCAPTCHA, search, people and jobs come formally
+  as well.
 - Core: functions of extensions for templates. An extension adds one
   with `$registry->add(TemplateFunction::class, new TemplateFunction('acme_cart', Cart::class, 'summary'))`;
   the name needs a prefix and never replaces one of the core.

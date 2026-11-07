@@ -1,0 +1,10 @@
+# German texts for visitors addressed formally ("Sie"), only those that
+# differ from de.yaml (decision 0316).
+"That is our fault, not yours. Please try again in a moment.": "Das liegt an uns, nicht an Ihnen. Bitte versuchen Sie es gleich noch einmal."
+"You may not see this page.": "Diese Seite dürfen Sie nicht sehen."
+# The banner and the privacy settings (decision 0264).
+"This website would like to use these services. They load only if you agree, and you can change your choice at any time in the privacy settings.": "Diese Website möchte diese Dienste nutzen. Sie laden erst, wenn Sie zustimmen, und Sie können Ihre Wahl jederzeit in den Datenschutz-Einstellungen ändern."
+"Content of these services loads only if you agree. Ticked services load by themselves. A change applies to the next page you open.": "Inhalte dieser Dienste laden erst, wenn Sie zustimmen. Angehakte Dienste laden von selbst. Eine Änderung gilt ab der nächsten Seite, die Sie öffnen."
+"Your consent ID": "Ihre Einwilligungs-ID"
+"This content comes from {service}. When it loads, your browser sends data to {provider}.": "Dieser Inhalt kommt von {service}. Beim Laden sendet Ihr Browser Daten an {provider}."
+"This page is being worked on. Please try again later.": "An dieser Seite wird gerade gearbeitet. Bitte versuchen Sie es später noch einmal."
