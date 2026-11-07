@@ -108,7 +108,9 @@ The log answers "who changed this?" for a year, without SQL.
   scheduler, shortens the changes instead of deleting them: of an update
   only what changed, a JSON column as the paths that changed with their
   old and new value; of a delete the whole row, since it is the lost
-  content; of an insert only table and id. Everything goes with the
+  content; of an insert only table and id. A new draft is the exception:
+  it is a copy of what was published then, so it keeps the paths it
+  changed from that revision, like an update. Everything goes with the
   entry after `actions.log_days` (default 365).
 - Every migration leaves an entry `system.migrate` by the system with
   package, version and description. A migration that rewrites content
