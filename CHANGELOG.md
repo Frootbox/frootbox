@@ -20,6 +20,17 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Shop: the screen "Shop sync" in the backend shows where the sync of
+  the catalog stands: the one going on with its progress, what the last
+  one changed, products without an image, images the shop did not hand
+  out with the last reason, and a failed job of the queue. "Sync
+  changes" and "Sync the whole catalog" run the sync step by step in
+  the browser, without cron or queue, and can be stopped. New query
+  `frootbox/shop/catalog.status`; a step waits for another one instead
+  of running beside it.
+- Backend: `<fb-form until="done">` sends its action again until that
+  value of the result is true, with `again` for the input of the later
+  steps and a stop button `data-fb-stop`.
 - Core, Backend: a forgotten password by mail. The sign-in page links to
   `<backend.path>/password`, which mails a link through the queue
   (`account.request-password-reset`, the same answer for unknown
@@ -329,6 +340,11 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Fixed
 
+- Core: signing in works on a website that was updated but not migrated
+  yet, so the superuser can start the migrations in the backend; before,
+  every sign-in failed with 500 because sessions wrote columns the
+  database did not have yet. Shortening the action log waits for the
+  migration on SQLite too.
 - Core: longer names of actions, queries, blocks and field types with
   dashes, such as `account.request-password-reset`, no longer fail the
   check of the name: the pattern of package names ran out of PCRE

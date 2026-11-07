@@ -3044,6 +3044,12 @@ Action · public · cannot be undone
 |---|---|---|
 | `quantities` | object | Pieces by id of the product, e.g. {"01J…": 12} |
 
+### `frootbox/shop/catalog.status`
+
+Where the sync of the catalog stands: the one going on, the last one, products without image and jobs of the queue
+
+Query · right `frootbox/shop/catalog.status`
+
 ### `frootbox/shop/catalog.sync`
 
 Brings products, categories and images of the shop up to date with the provider, one step at a time: until done is true, the next call goes on; with full the whole catalog again

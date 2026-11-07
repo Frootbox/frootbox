@@ -198,6 +198,13 @@ export function formInput(form) {
  *   the <fb-form> around such a field is hidden
  * - refresh: ids of elements to load again after success, separated by
  *   spaces (decision 0116); the page stays
+ * - until: the name of a value of the result; while it is not true, the
+ *   form sends the action again (decision 0326), e.g. one step of a sync
+ *   after the other. After each step it loads the elements of refresh
+ *   again. again is JSON that replaces parts of the input from the
+ *   second step on, e.g. {"full": false}. A button with data-fb-stop
+ *   in the form shows while it runs and stops after the current step;
+ *   leaving the page asks first.
  * - base: a JSON pointer whose errors belong to the fields of this form,
  *   e.g. "/items/de/2" when the form edits one item of a list
  *
@@ -233,6 +240,8 @@ export class Form extends LitElement {
         reset: { type: Boolean },
         show: {},
         refresh: {},
+        until: {},
+        again: {},
         base: {},
         busy: { type: Boolean, reflect: true },
         dirty: { type: Boolean, reflect: true },
@@ -247,6 +256,9 @@ export class Form extends LitElement {
         this.reset = false;
         this.show = null;
         this.refresh = null;
+        this.until = null;
+        this.again = null;
+        this.stopped = false;
         this.base = '';
         this.busy = false;
         this.dirty = false;
@@ -254,6 +266,8 @@ export class Form extends LitElement {
         this.values = new Map();
         this.onSubmit = this.onSubmit.bind(this);
         this.onChange = this.onChange.bind(this);
+        this.onStop = this.onStop.bind(this);
+        this.onLeave = this.onLeave.bind(this);
     }
 
     createRenderRoot() {
@@ -269,6 +283,7 @@ export class Form extends LitElement {
         this.addEventListener('submit', this.onSubmit);
         this.addEventListener('input', this.onChange);
         this.addEventListener('change', this.onChange);
+        this.addEventListener('click', this.onStop);
 
         for (const field of this.querySelectorAll('input[data-type="datetime"][data-value]')) {
             field.value = localTime(field.dataset.value);
@@ -289,6 +304,8 @@ export class Form extends LitElement {
         this.removeEventListener('submit', this.onSubmit);
         this.removeEventListener('input', this.onChange);
         this.removeEventListener('change', this.onChange);
+        this.removeEventListener('click', this.onStop);
+        window.removeEventListener('beforeunload', this.onLeave);
         super.disconnectedCallback();
     }
 
@@ -395,8 +412,12 @@ export class Form extends LitElement {
 
         const prepared = new CustomEvent('fb-form-input', { detail: { input: formInput(form) }, bubbles: true });
         this.dispatchEvent(prepared);
-        const result = await runAction(this.action, prepared.detail.input, this.failed);
+        const result = this.until ? await this.repeat(prepared.detail.input, active) : await runAction(this.action, prepared.detail.input, this.failed);
         this.setBusy(false);
+
+        if (result.ok && this.stopped) {
+            return;
+        }
 
         if (!result.ok) {
             this.showProblem(result.problem);
@@ -473,8 +494,54 @@ export class Form extends LitElement {
         }
     }
 
+    /**
+     * Sends the action until the value named by until is true, the user
+     * stops or a step fails; the result of the last step.
+     */
+    async repeat(input, active) {
+        const again = this.again ? JSON.parse(this.again) : {};
+        const ids = (this.refresh ?? '').split(/\s+/).filter((id) => id !== '');
+        this.stopped = false;
+        window.addEventListener('beforeunload', this.onLeave);
+
+        try {
+            let result = await runAction(this.action, input, this.failed);
+
+            while (result.ok && valueAt(result.data, this.until) !== true && !this.stopped) {
+                if (ids.length) {
+                    await refreshParts(ids, { active });
+                }
+
+                result = await runAction(this.action, { ...input, ...again }, this.failed);
+            }
+
+            if (result.ok && this.stopped && ids.length) {
+                await refreshParts(ids, { active });
+            }
+
+            return result;
+        } finally {
+            window.removeEventListener('beforeunload', this.onLeave);
+        }
+    }
+
+    onStop(event) {
+        if (event.target instanceof Element && event.target.closest('[data-fb-stop]') && event.target.closest('fb-form') === this) {
+            event.preventDefault();
+            this.stopped = true;
+        }
+    }
+
+    onLeave(event) {
+        event.preventDefault();
+    }
+
     setBusy(busy) {
         this.busy = busy;
+
+        for (const button of this.form?.querySelectorAll('[data-fb-stop]') ?? []) {
+            button.hidden = !busy;
+        }
 
         for (const button of this.form?.querySelectorAll('[type="submit"]') ?? []) {
             button.disabled = busy;

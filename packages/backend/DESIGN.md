@@ -691,6 +691,13 @@ answer:
   element and fills its `[data-fb-value="token"]` from the result (for
   something shown only once, like a new API token).
 - While it waits, the submit buttons are disabled and `busy` is set.
+- Work in steps, e.g. the sync of a shop: `until="done"` sends the
+  action again while that value of the result is not `true`, loads the
+  elements of `refresh` after each step and from the second step on
+  sends the input with `again` (JSON) over it, e.g. `again='{"full":
+  false}'`. A button with `data-fb-stop` (hidden at rest) shows while it
+  runs and stops after the current step; leaving the page asks first.
+  Keep the refreshed elements outside the form.
 - The input follows the fields: a checkbox is `true`/`false`, with a
   name ending in `[]` a list of the checked values; `type="number"` and
   `data-type="number"` are numbers (empty is `null`);
