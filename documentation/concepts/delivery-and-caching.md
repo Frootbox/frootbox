@@ -17,6 +17,12 @@ A block whose output depends on the request, e.g. search results, tells
 the core not to cache the page (`Delivery::withoutCache()`), otherwise
 every query would fill the cache.
 
+A block that shows data from another system, which changes without an
+action in Frootbox (a calendar of bookings, stock), keeps the page in the
+cache for a while only: `Delivery::cacheFor(300)`. The shortest time of
+all blocks on the page counts; after it the next visitor gets a fresh
+page.
+
 Visitors never cause writes to the database. A module that records
 something per visit, like statistics, appends lines to files in `var/`
 and counts them into its tables on the next scheduled run.

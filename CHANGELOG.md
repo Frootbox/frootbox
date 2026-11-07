@@ -20,6 +20,10 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core: a block can keep its page in the page cache for a limited time
+  with `Delivery::cacheFor(seconds)`, e.g. for a calendar of bookings
+  from another system. The shortest time of the blocks on a page counts.
+
 - Core, Backend: the screen "PHP" under Administration shows how PHP is
   set up, like `phpinfo()`: versions, interface, ini files, OPcache, the
   most important settings and every extension with its settings, marked
