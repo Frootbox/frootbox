@@ -20,6 +20,13 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core, Shop: `bin/frootbox about` and the screen "Shop sync" name what
+  writes the images (`Images::describe()`, e.g. "GD 2.3.3" or "Imagick
+  (ImageMagick 7.1.1-43)"). The sync measures its steps: the screen
+  shows the working time of the run going on or the last one, the
+  seconds per product and the shares of the shop, loading images,
+  preparing images and the rest.
+
 - Backend: an empty area in the edit mode names itself and says
   "Insert a block". Without a theme, **New page** explains where layouts
   come from instead of a form that cannot be sent.
