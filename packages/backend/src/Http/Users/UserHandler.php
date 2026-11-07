@@ -13,6 +13,7 @@ use Frootbox\Backend\View\BackendView;
 use Frootbox\Core\Action\AccessDeniedException;
 use Frootbox\Core\Action\CurrentContext;
 use Frootbox\Core\Action\Runner;
+use Frootbox\Core\Auth\Oidc\ListUserIdentities;
 use Frootbox\Core\Auth\Scope;
 use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Page\ShowPageTree;
@@ -84,6 +85,8 @@ final readonly class UserHandler implements RequestHandlerInterface
 
         return $this->view->render($request, '@backend/users/edit.twig', [
             'profile' => $profile,
+            // Links to providers such as the hub (decision 0322).
+            'identities' => $this->runner->ask(new ListUserIdentities($profile->user->id)),
             'roles' => $roles,
             'titles' => RoleTitles::of($roles),
             'assigned' => $global,

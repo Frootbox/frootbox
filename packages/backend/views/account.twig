@@ -1,4 +1,4 @@
-{#- The own account: language, password, sessions and API tokens (decisions 0115, 0161). -#}
+{#- The own account: language, password, links to providers, sessions and API tokens (decisions 0115, 0161, 0322). -#}
 {% extends '@backend/layout.twig' %}
 {% import '@backend/ui.twig' as ui %}
 
@@ -41,6 +41,52 @@
         </div>
     </section>
 
+    {%- set linkable = providers|filter(p => p.key not in identities|map(i => i.provider)) %}
+    {% if identities is not empty or linkable is not empty %}
+    <section class="fb-card" aria-labelledby="fb-identities-title">
+        <div class="fb-card__header">
+            <div class="fb-stack fb-stack--sm">
+                <h2 class="fb-heading-4" id="fb-identities-title">{{ t('Sign in with another account') }}</h2>
+                <p class="fb-muted">{{ t('Linked, you sign in here with your account there. Your password stays.') }}</p>
+            </div>
+        </div>
+        {% if oidcError %}<div class="fb-card__body">{{ ui.alert({tone: 'danger', text: oidcError}) }}</div>{% endif %}
+        <ul>
+            {%- for identity in identities %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title">{{ identity.title }}</span>
+                    <span class="fb-list__meta">
+                        {{- identity.managed ? t('Managed through {provider}: your role comes from there.', {provider: identity.title}) : t('Linked {date}', {date: identity.createdAt|date(t('Y-m-d'))}) -}}
+                        {%- if identity.lastUsedAt %} · {{ t('Last used {date}', {date: identity.lastUsedAt|date(t('Y-m-d H:i'))}) }}{% endif -%}
+                    </span>
+                </span>
+                {% if not identity.managed %}
+                <fb-form action="account.oidc-unlink" next="{{ path('backend.account') }}" done="{{ t('The link is removed.') }}">
+                    <form novalidate>
+                        <input type="hidden" name="provider" value="{{ identity.provider }}">
+                        {{ ui.button({label: t('Unlink'), variant: 'outline', small: true, type: 'submit', attrs: {'aria-label': t('Remove the link to {provider}', {provider: identity.title})}}) }}
+                    </form>
+                </fb-form>
+                {% endif %}
+            </li>
+            {%- endfor %}
+            {%- for provider in linkable %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title">{{ provider.title }}</span>
+                    <span class="fb-list__meta">{{ t('Not linked') }}</span>
+                </span>
+                <form method="post" action="{{ path('backend.oidc.link', {provider: provider.key}) }}">
+                    <input type="hidden" name="_csrf" value="{{ fb.csrf }}">
+                    {{ ui.button({label: t('Link with {provider}', {provider: provider.title}), variant: 'outline', small: true, type: 'submit', icon: 'external'}) }}
+                </form>
+            </li>
+            {%- endfor %}
+        </ul>
+    </section>
+    {% endif %}
+
     <section class="fb-card" aria-labelledby="fb-sessions-title">
         <div class="fb-card__header">
             <h2 class="fb-heading-4" id="fb-sessions-title">{{ t('Where you are signed in') }}</h2>
@@ -50,7 +96,8 @@
             <li class="fb-list__item">
                 <span class="fb-list__main">
                     <span class="fb-list__title" title="{{ session.name }}">{{ device(session.name) ?? t('Unknown device') }}</span>
-                    <span class="fb-list__meta">{{ t('Last used {date}', {date: (session.lastUsedAt ?? session.createdAt)|date(t('Y-m-d H:i'))}) }}</span>
+                    <span class="fb-list__meta">{{ t('Last used {date}', {date: (session.lastUsedAt ?? session.createdAt)|date(t('Y-m-d H:i'))}) }}
+                        {%- if session.provider %} · {{ t('through {provider}', {provider: (providers|filter(p => p.key == session.provider)|first).title ?? session.provider}) }}{% endif %}</span>
                 </span>
                 {% if session.id == current %}
                     {{ ui.badge('neutral', t('This device')) }}

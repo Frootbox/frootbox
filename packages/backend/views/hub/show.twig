@@ -1,4 +1,4 @@
-{#- The connection to the hub, frootbox.de (decision 0284). hub: HubDetails, hubName: e.g. "frootbox.de", complete: {code, request} after the return from the hub, status: what the hub reads. -#}
+{#- The connection to the hub, frootbox.de (decision 0284). hub: HubDetails, hubName: e.g. "frootbox.de", complete: {code, request} after the return from the hub, status: what the hub reads, linked: whether the own account is linked for signing in (decision 0322), oidcError: why linking failed. -#}
 {% extends '@backend/layout.twig' %}
 {% import '@backend/ui.twig' as ui %}
 
@@ -79,6 +79,43 @@
         {% endif %}
         </div>
     </section>
+
+    {% if hub.state == 'connected' %}
+    <section class="fb-card" aria-labelledby="hub-login-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="hub-login-title">{{ t('Sign-in through {hub}', {hub: name}) }}</h2>
+            {% if hub.switches.login %}{{ ui.badge('published', t('On')) }}{% else %}{{ ui.badge('neutral', t('Off')) }}{% endif %}
+        </div>
+        <div class="fb-card__body fb-stack fb-stack--lg">
+            <p class="fb-muted">{{ t('People sign in here with their account at {hub}. The agency gives and takes access there, this website caps the role. Passwords keep working.', {hub: name}) }}</p>
+            {{ ui.alert({tone: 'warning', text: t('While {hub} is in its test phase, turn this on only for your own websites, not for websites of customers.', {hub: name})}) }}
+            {% if oidcError %}{{ ui.alert({tone: 'danger', text: oidcError}) }}{% endif %}
+            {% if can('system.hub-switch') %}
+            <fb-form action="system.hub-switch" refresh="hub" done="{{ t('Saved.') }}">
+                <form class="fb-stack" novalidate>
+                    {{ ui.check({label: t('Let people sign in through {hub}', {hub: name}), name: 'login', id: 'hub-login', checked: hub.switches.login, hint: t('Off, all sessions through {hub} end at once.', {hub: name})}) }}
+                    {{ ui.select({label: t('Highest role through {hub}', {hub: name}), name: 'maxRole', id: 'hub-max-role', value: hub.loginMaxRole ?? 'admin',
+                        hint: t('Superuser only on purpose: whoever takes over your account at {hub} is then superuser of this website.', {hub: name}),
+                        options: [{value: 'editor', label: t('Editor')}, {value: 'admin', label: t('Administrator')}, {value: 'superuser', label: t('Superuser')}]}) }}
+                    <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', variant: 'tonal'}) }}</div>
+                </form>
+            </fb-form>
+            {% endif %}
+            {% if hub.switches.login and not linked %}
+            {%- set link -%}
+                <form method="post" action="{{ path('backend.oidc.link', {provider: 'hub'}) }}">
+                    <input type="hidden" name="_csrf" value="{{ fb.csrf }}">
+                    <input type="hidden" name="next" value="{{ path('backend.hub') }}">
+                    {{ ui.button({label: t('Link with {hub}', {hub: name}), type: 'submit', icon: 'external'}) }}
+                </form>
+            {%- endset -%}
+            {{ ui.alert({tone: 'info', title: t('Link your account once'), text: t('Sign in at {hub} once from here. Then this website knows you, and the access you give in {hub} works here.', {hub: name}), action: link}) }}
+            {% elseif hub.switches.login %}
+            <p class="fb-muted">{{ t('Your account is linked with {hub}.', {hub: name}) }}</p>
+            {% endif %}
+        </div>
+    </section>
+    {% endif %}
 
     <section class="fb-card" aria-labelledby="hub-sees-title">
         <div class="fb-card__header">

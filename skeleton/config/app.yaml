@@ -53,10 +53,12 @@ languages:
 #     claude-opus-5-5: { input: 4, output: 20, cacheRead: 0.2, cacheWrite: 5 }
 
 # Sign-in: a session ends this long after its last use, with "stay
-# signed in" in days, else in hours.
+# signed in" in days, else in hours. A session through a provider such as
+# the hub ends provider_session_hours after signing in, used or not.
 # auth:
 #   session_days: 14
 #   session_hours: 12
+#   provider_session_hours: 12
 
 # Changes can be undone for undo_days, then they are shortened to what
 # changed; the log of who changed what is kept for log_days. Deleted

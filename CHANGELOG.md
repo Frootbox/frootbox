@@ -20,6 +20,20 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core, Backend: signing in through OpenID Connect, with the hub as the
+  first provider. The switch "Let people sign in through the hub" on the
+  page Connection tells the hub the addresses of the website and the
+  highest role it may give (`admin` unless chosen otherwise); the sign-in
+  page then shows a button for it, the password stays. The hub creates,
+  links and locks accounts on behalf of a person with that person's
+  rights (`POST /.well-known/frootbox/access`, `user.grant-access`,
+  `user.revoke-access`); a local account with the same email is never
+  opened by signing in, its owner links it under Your account. Sessions
+  through a provider end after 12 hours with a silent sign-in, the
+  provider ends them at once over `POST /_oidc/{provider}/logout`. The
+  client in `Auth\Oidc\` is general (PKCE, `private_key_jwt`, ID and
+  logout tokens checked with `firebase/php-jwt`), links live in
+  `user_identities`.
 - Core: `system.end-sessions` and `php bin/frootbox sessions:end` end
   the sessions of all users and visitors, e.g. in a copy of a website;
   API tokens stay.

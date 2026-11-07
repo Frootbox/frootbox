@@ -15,7 +15,11 @@
         </div>
         {% if service %}{{ ui.badge('neutral', t('Service account')) }}{% endif %}
         {% if not user.active %}{{ ui.badge('neutral', t('Disabled')) }}{% endif %}
+        {%- for identity in identities|filter(i => i.managed) %}{{ ui.badge('neutral', t('through {provider}', {provider: identity.title})) }}{% endfor %}
     </header>
+    {%- for identity in identities|filter(i => i.managed) %}
+    {{ ui.alert({tone: 'info', text: t('Managed through {provider}: role and lock come from there. A change here lasts until the next sign-in or change there.', {provider: identity.title})}) }}
+    {%- endfor %}
 
     {% if service %}<p class="fb-muted">{{ t('A service account never signs in. Programs use it with API tokens, with the rights of its roles.') }}</p>{% endif %}
 

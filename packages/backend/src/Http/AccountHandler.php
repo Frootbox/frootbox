@@ -15,6 +15,8 @@ use Frootbox\Core\Account\ShowAccount;
 use Frootbox\Core\Action\CurrentContext;
 use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Auth\AccessToken;
+use Frootbox\Core\Auth\Oidc\ListIdentities;
+use Frootbox\Core\Auth\Oidc\ListProviders;
 use Frootbox\Core\Auth\TokenType;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -48,6 +50,10 @@ final readonly class AccountHandler implements RequestHandlerInterface
             'sessions' => array_values(array_filter($tokens, static fn(AccessToken $token): bool => TokenType::Session === $token->type)),
             'tokens' => array_values(array_filter($tokens, static fn(AccessToken $token): bool => TokenType::Api === $token->type)),
             'current' => $current,
+            // Links to providers such as the hub (decision 0322).
+            'identities' => $this->runner->ask(new ListIdentities()),
+            'providers' => $this->runner->ask(new ListProviders()),
+            'oidcError' => \is_string($request->getQueryParams()['oidc-error'] ?? null) ? mb_substr($request->getQueryParams()['oidc-error'], 0, 300) : null,
         ]);
     }
 }

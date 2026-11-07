@@ -28,6 +28,7 @@ use Frootbox\Backend\Http\LogoutHandler;
 use Frootbox\Backend\Http\Media\MediaHandler;
 use Frootbox\Backend\Http\Media\UploadHandler;
 use Frootbox\Backend\Http\Navigations\NavigationsHandler;
+use Frootbox\Backend\Http\OidcHandler;
 use Frootbox\Backend\Http\Pages\NewPageHandler;
 use Frootbox\Backend\Http\Pages\PageHistoryHandler;
 use Frootbox\Backend\Http\Pages\PagesHandler;
@@ -63,6 +64,9 @@ final class BackendExtension implements Extension
     /** An id of a page or another record, e.g. in /cms/pages/{id} */
     private const string ULID = '[0-7][0-9A-HJKMNP-TV-Z]{25}';
 
+    /** The key of a provider of OpenID Connect, e.g. hub */
+    private const string PROVIDER = '[a-z][a-z0-9-]{0,49}';
+
     public function register(Registry $registry): void
     {
         // Errors below backend.path show inside the backend (decision 0132).
@@ -72,6 +76,10 @@ final class BackendExtension implements Extension
             ->get('/', DashboardHandler::class, 'backend.dashboard')
             ->route(['GET', 'POST'], '/login', LoginHandler::class, 'backend.login')
             ->post('/logout', LogoutHandler::class, 'backend.logout')
+            // Signing in through a provider such as the hub (decision 0322).
+            ->get('/login/oidc/{provider:' . self::PROVIDER . '}', OidcHandler::class, 'backend.oidc')
+            ->get('/login/oidc/{provider:' . self::PROVIDER . '}/start', OidcHandler::class, 'backend.oidc.start')
+            ->post('/login/oidc/{provider:' . self::PROVIDER . '}/link', OidcHandler::class, 'backend.oidc.link')
             ->post('/actions/' . ApiHandler::NAME, ActionHandler::class, 'backend.action')
             ->get('/queries/' . ApiHandler::NAME, QueryHandler::class, 'backend.query')
             // For the note of a preview, e.g. comments (decision 0156).

@@ -15,12 +15,23 @@
             </div>
             {% if error %}{{ ui.alert({tone: 'danger', text: error}) }}{% endif %}
             {% if signed_out %}{{ ui.alert({tone: 'info', text: t('You are signed out.')}) }}{% endif %}
+            {%- set chosen = (providers ?? [])|filter(p => p.key == (provider ?? null))|first %}
+            {% if chosen %}{{ ui.alert({tone: 'info', text: t('Your session has ended. Sign in again with {provider}.', {provider: chosen.title})}) }}{% endif %}
+            {%- if (providers ?? []) is not empty %}
+            {#- The password stays: the website never depends on a provider (decision 0322). -#}
+            <div class="fb-stack">
+                {%- for p in providers %}
+                {{ ui.button({label: t('Sign in with {provider}', {provider: p.title}), href: path('backend.oidc.start', {provider: p.key}|merge(next ? {next: next} : {})), block: true, icon: 'external'}) }}
+                {%- endfor %}
+                <p class="fb-muted">{{ t('Or with your email and password:') }}</p>
+            </div>
+            {%- endif %}
             <form class="fb-stack" method="post" action="{{ path('backend.login') }}">
                 {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
                 {{ ui.field({label: t('Email'), name: 'email', type: 'email', value: email, autocomplete: 'username', required: true, autofocus: email is empty}) }}
                 {{ ui.field({label: t('Password'), name: 'password', type: 'password', autocomplete: 'current-password', required: true, autofocus: email is not empty}) }}
                 {{ ui.check({label: t('Stay signed in'), name: 'remember', checked: remember, hint: t('Only on a device of your own.')}) }}
-                {{ ui.button({label: t('Sign in'), type: 'submit', block: true}) }}
+                {{ ui.button({label: t('Sign in'), type: 'submit', block: true, variant: (providers ?? []) is empty ? 'primary' : 'outline'}) }}
             </form>
         </div>
         <p class="fb-login__back"><a href="/">{{ t('Go to the website') }}</a></p>

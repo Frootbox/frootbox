@@ -10,6 +10,10 @@ namespace Frootbox\Backend\Http\Hub;
 
 use Frootbox\Backend\View\BackendView;
 use Frootbox\Core\Action\Runner;
+use Frootbox\Core\Auth\Oidc\IdentityInfo;
+use Frootbox\Core\Auth\Oidc\ListIdentities;
+use Frootbox\Core\Hub\Hub;
+use Frootbox\Core\Hub\HubLogin;
 use Frootbox\Core\Hub\ShowHub;
 use Frootbox\Core\Status\ShowStatus;
 use Psr\Http\Message\ResponseInterface;
@@ -40,12 +44,14 @@ final readonly class HubHandler implements RequestHandlerInterface
         $query = $request->getQueryParams();
         $code = \is_string($query['code'] ?? null) ? $query['code'] : null;
         $requestId = \is_string($query['request'] ?? null) ? $query['request'] : null;
-        $host = null === $hub->hubUrl ? null : parse_url($hub->hubUrl, \PHP_URL_HOST);
 
         return $this->view->render($request, '@backend/hub/show.twig', [
             'hub' => $hub,
             // "hub.frootbox.de" reads as "frootbox.de" (decision 0288).
-            'hubName' => \is_string($host) ? (string) preg_replace('~^hub\.~', '', $host) : null,
+            'hubName' => null === $hub->hubUrl ? null : Hub::name($hub->hubUrl),
+            // Whether the own account is linked to the hub, for signing in (decision 0322).
+            'linked' => \in_array(HubLogin::PROVIDER, array_map(static fn(IdentityInfo $identity): string => $identity->provider, $this->runner->ask(new ListIdentities())), true),
+            'oidcError' => \is_string($query['oidc-error'] ?? null) ? mb_substr($query['oidc-error'], 0, 300) : null,
             // The browser came back from the hub with a code for the open request.
             'complete' => 'pending' === $hub->state && null !== $code && $requestId === $hub->requestId ? ['code' => $code, 'request' => $requestId] : null,
             // Exactly what the hub reads, also before connecting.

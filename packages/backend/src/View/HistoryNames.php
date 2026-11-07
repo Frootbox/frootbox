@@ -51,6 +51,7 @@ final class HistoryNames
         'ai' => 'AI',
         'console' => 'Console',
         'system' => 'Scheduler',
+        'hub' => 'Hub',
     ];
 
     /** The states of an entry by their value. */

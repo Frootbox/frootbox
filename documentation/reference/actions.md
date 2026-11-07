@@ -37,6 +37,76 @@ Lists the languages of the backend, the chosen one and the one without a choice
 
 Query · for the own account
 
+### `account.oidc-complete`
+
+Completes signing in through a provider of OpenID Connect and starts a session
+
+Action · public · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `provider` | string |  |
+| `code` | string |  |
+| `state` | string |  |
+| `stored` | string |  |
+| `device` | string or null, optional |  |
+
+### `account.oidc-identities`
+
+Lists the links of the own account to providers such as the hub
+
+Query · for the own account
+
+### `account.oidc-link`
+
+Starts linking the own account to a provider such as the hub and returns the address for the browser
+
+Action · for the own account · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `provider` | string |  |
+| `next` | string or null, optional |  |
+
+### `account.oidc-logout`
+
+Ends sessions through a provider on its logout token and returns how many
+
+Action · public · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `provider` | string |  |
+| `logoutToken` | string |  |
+
+### `account.oidc-providers`
+
+Lists the providers of OpenID Connect one can sign in with, such as the hub
+
+Query · public
+
+### `account.oidc-start`
+
+Starts signing in through a provider of OpenID Connect such as the hub and returns the address for the browser
+
+Action · public · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `provider` | string | The key of the provider, e.g. "hub" |
+| `next` | string or null, optional | Where to go after signing in, a path of the backend |
+| `prompt` | string or null, optional | "none" for a silent sign-in, "login" to ask again |
+
+### `account.oidc-unlink`
+
+Removes the link of the own account to a provider such as the hub
+
+Action · for the own account
+
+| Input | Type | Description |
+|---|---|---|
+| `provider` | string |  |
+
 ### `account.revoke-token`
 
 Ends one of the own sessions or API tokens
@@ -98,7 +168,7 @@ Query · right `action.log`
 |---|---|---|
 | `user` | integer or null, optional | Only actions of this user |
 | `action` | string or null, optional | Only this action, or all starting with what comes before a trailing * |
-| `channel` | mixed: `web`, `api`, `app`, `mcp`, `ai`, `console`, `system`, optional |  |
+| `channel` | mixed: `web`, `api`, `app`, `mcp`, `ai`, `console`, `system`, `hub`, optional |  |
 | `status` | mixed: `running`, `succeeded`, `failed`, `denied`, `invalid`, optional |  |
 | `from` | string or null (date-time), optional | Only entries from this time on |
 | `to` | string or null (date-time), optional | Only entries before this time |
@@ -1557,13 +1627,15 @@ Query · right `system.hub-show`
 
 ### `system.hub-switch`
 
-Turns on or off what the hub may do; for now reading the status
+Turns on or off what the hub may do: read the status, let people sign in
 
 Action · right `system.hub-switch` · cannot be undone
 
 | Input | Type | Description |
 |---|---|---|
-| `status` | boolean | Let the hub read the status of the website |
+| `status` | boolean or null, optional | Let the hub read the status of the website; unchanged if left out |
+| `login` | boolean or null, optional | Let people sign in through the hub; unchanged if left out |
+| `maxRole` | string or null, optional | The highest role the hub may give: editor, admin (default) or superuser |
 
 ### `system.job-delete`
 
@@ -1754,6 +1826,30 @@ Action · right `user.delete`
 |---|---|---|
 | `id` | integer |  |
 
+### `user.grant-access`
+
+Gives a person of a provider such as the hub an account with one standard role, or links the account with the same email
+
+Action · right `user.grant-access`
+
+| Input | Type | Description |
+|---|---|---|
+| `provider` | string |  |
+| `subject` | string |  |
+| `email` | string (email) |  |
+| `name` | string |  |
+| `role` | string |  |
+
+### `user.identities`
+
+Lists the links of a user to providers such as the hub
+
+Query · right `user.show`
+
+| Input | Type | Description |
+|---|---|---|
+| `userId` | integer |  |
+
 ### `user.list`
 
 Lists all users by name
@@ -1771,6 +1867,17 @@ Action · right `user.remove-role`
 | `userId` | integer |  |
 | `role` | string |  |
 | `scope` | string or null, optional |  |
+
+### `user.revoke-access`
+
+Locks the account a provider such as the hub manages, or removes the link of a linked one, and ends its sessions
+
+Action · right `user.revoke-access`
+
+| Input | Type | Description |
+|---|---|---|
+| `provider` | string |  |
+| `subject` | string |  |
 
 ### `user.set-password`
 

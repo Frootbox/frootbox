@@ -39,6 +39,9 @@ final readonly class LogoutHandler implements RequestHandlerInterface
             $this->runner->run(new SignOut());
         }
 
-        return $this->cookie->clear($this->view->redirect($this->router->path('backend.login', ['signed-out' => 1])), $request);
+        // No silent sign-in through a provider after signing out (decision 0322).
+        $forget = OidcHandler::PROVIDER_COOKIE . '=; Path=' . $this->router->path('backend.dashboard') . '; Max-Age=0; HttpOnly; SameSite=Lax';
+
+        return $this->cookie->clear($this->view->redirect($this->router->path('backend.login', ['signed-out' => 1])), $request)->withAddedHeader('Set-Cookie', $forget);
     }
 }

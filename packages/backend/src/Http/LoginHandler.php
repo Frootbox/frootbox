@@ -15,6 +15,8 @@ use Frootbox\Core\Account\SignedIn;
 use Frootbox\Core\Action\InvalidInputException;
 use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Auth\AuthenticationException;
+use Frootbox\Core\Auth\Oidc\ListProviders;
+use Frootbox\Core\Auth\Oidc\ProviderInfo;
 use Frootbox\Core\Auth\TooManyAttemptsException;
 use Frootbox\Core\I18n\Translator;
 use Frootbox\Core\Routing\Router;
@@ -25,7 +27,9 @@ use UnexpectedValueException;
 
 /**
  * The sign-in at <backend.path>/login (decision 0112). It only calls
- * account.sign-in and puts the session into the cookie.
+ * account.sign-in and puts the session into the cookie. With a provider
+ * such as the hub its button comes first (decision 0322); after a
+ * session through it ended, the page goes there silently once.
  */
 final readonly class LoginHandler implements RequestHandlerInterface
 {
@@ -47,7 +51,16 @@ final readonly class LoginHandler implements RequestHandlerInterface
         }
 
         if ('POST' !== $request->getMethod()) {
-            return $this->form($request, $next, '', signedOut: isset($request->getQueryParams()['signed-out']));
+            $query = $request->getQueryParams();
+            $signedOut = isset($query['signed-out']);
+            $last = $request->getCookieParams()[OidcHandler::PROVIDER_COOKIE] ?? null;
+
+            // Signed in through a provider before: try it once without asking.
+            if (!$signedOut && !isset($query['provider']) && \is_string($last) && \in_array($last, array_column($this->providers(), 'key'), true)) {
+                return $this->view->redirect($this->router->path('backend.oidc.start', array_filter(['provider' => $last, 'prompt' => 'none', 'next' => $next === $this->router->path('backend.dashboard') ? null : $next], static fn(?string $value): bool => null !== $value)), 302);
+            }
+
+            return $this->form($request, $next, '', signedOut: $signedOut);
         }
 
         $this->csrf->verifyOrigin($request);
@@ -84,7 +97,25 @@ final readonly class LoginHandler implements RequestHandlerInterface
             'error' => $error,
             'signed_out' => $signedOut,
             'next' => $next === $this->router->path('backend.dashboard') ? null : $next,
+            'providers' => $this->providers(),
+            'provider' => \is_string($request->getQueryParams()['provider'] ?? null) ? $request->getQueryParams()['provider'] : null,
         ], $status);
+    }
+
+    /**
+     * Whether a link is a path in the backend: never another host.
+     */
+    public static function isBackendPath(string $next, string $home): bool
+    {
+        return 1 === preg_match('~^/[^/\\\\]~', $next . 'x') && str_starts_with($next, $home);
+    }
+
+    /**
+     * @return list<ProviderInfo>
+     */
+    private function providers(): array
+    {
+        return $this->runner->ask(new ListProviders());
     }
 
     /**
@@ -97,8 +128,6 @@ final readonly class LoginHandler implements RequestHandlerInterface
         $next = (\is_array($body) ? $body['next'] ?? null : null) ?? $request->getQueryParams()['next'] ?? null;
         $home = $this->router->path('backend.dashboard');
 
-        return \is_string($next) && 1 === preg_match('~^/[^/\\\\]~', $next . 'x') && str_starts_with($next, $home)
-            ? $next
-            : $home;
+        return \is_string($next) && self::isBackendPath($next, $home) ? $next : $home;
     }
 }

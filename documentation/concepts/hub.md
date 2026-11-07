@@ -83,6 +83,42 @@ Turning the status off deletes the service account at once, its token
 stops working. **Disconnect** deletes the access too and forgets the
 keys of the hub, whether or not the hub can be told.
 
+## Signing in through the hub
+
+With the switch **Let people sign in through the hub** on the page
+Connection, people sign in to the backend with their account at the hub,
+by OpenID Connect. The sign-in page then shows **Sign in with
+frootbox.de** above email and password. The password always stays, so
+the website never depends on the hub: if it cannot be reached, a local
+superuser signs in as before.
+
+- **Roles stay local.** The hub says which standard role a person has on
+  this website (`editor`, `admin` or `superuser`); the website takes at
+  most the **highest role** chosen with the switch, `admin` unless chosen
+  otherwise. `superuser` only on purpose: whoever takes over your account
+  at the hub is then superuser of this website.
+- **Accounts managed by the hub** are made at the first sign-in, or as
+  soon as someone gives access in the hub. Their role follows the hub on
+  every sign-in and message; taking access away locks the account and
+  ends its sessions, it is never deleted. A local account with the same
+  email is never opened by signing in: an admin links it in the hub, or
+  its owner links it under **Your account**. A linked account keeps its
+  roles and its password; it cannot sign in through the hub with more
+  rights than the hub may give.
+- **The first step stays on the website.** After switching on, link your
+  own account once from the page Connection. Then the website knows you,
+  and what you give in the hub works here, with your rights on the
+  website.
+- **Sessions** through the hub end 12 hours after signing in
+  (`auth.provider_session_hours`), even while used. The backend then goes
+  to the hub once without asking (`prompt=none`) and comes back to the
+  same place; signing out on the website stops that. The hub ends
+  sessions at once over the back channel, e.g. when someone leaves the
+  team.
+- Switching off or disconnecting ends all sessions through the hub at
+  once. The links stay, so switching on again creates nobody anew. A copy
+  of the website has no connection and so no sign-in through the hub.
+
 ## Local websites
 
 A website at a local address (`localhost`, names ending in `.localhost`
@@ -128,7 +164,7 @@ signs and verifies both forms.
 | `POST /connect/v1/requests` | `url`, `name`, `system` {`name`, `version`}, `publicKey`, `switches` {`status`, `packages`, `login`}, `return` | `id` of the request, valid 15 minutes |
 | `POST /connect/v1/requests/<id>/complete` | `code`, `status` {`url`, `token`} or null | `connection`, `organization` |
 | `POST /connect/v1/codes/<code>` | as a request, and `status` | `connection`, `organization` |
-| `PATCH /connect/v1/connections/<id>` | `switches`, `status` | 204 |
+| `PATCH /connect/v1/connections/<id>` | `switches`, and only what changed: `status`, `login` {`redirectUri`, `logoutUri`, `initiateUri`, `maxRole`} or null | 204 |
 | `DELETE /connect/v1/connections/<id>` | | 204 |
 | `POST /connect/v1/connections/<id>/prices` | `provider`, the package of the AI provider | `provider`, `updatedAt`, `models` [{`id`, `input`, `output`, `cacheRead`, `cacheWrite`}] in US dollars per million tokens, signed with a key of the hub; empty for a provider the hub does not know |
 
@@ -143,16 +179,46 @@ The browser goes to `{hub}/connect/<id>` and comes back to `return` with
 | `POST /.well-known/frootbox/disconnect` | `connection` | 204 |
 | `POST /.well-known/frootbox/keys` | `keys`, the new list, signed with a current key | 204 |
 | `POST /.well-known/frootbox/tick` | `connection` | 202 with `accepted`: whether it runs the schedule after the response (not with an own cron job) |
+| `POST /.well-known/frootbox/access` | `connection`, `actor` {`sub`, `role`}, `person` {`sub`, `email`, `email_verified`, `name`}, `role` or null | 200 with `result` (`created`, `linked`, `updated`; `blocked`, `unlinked`, `none` for null), 404 if the website does not know the actor, 403 without the rights, 409 if the actor ranks above what the hub may give |
 
 The text the website signs for `verify` has no dots, so it can never pass
 as a webhook. These routes run past the password of a protected website,
 like the REST API.
 
+**Signing in** is OpenID Connect with the hub as issuer, its discovery at
+`{hub}/.well-known/openid-configuration`. The client id is the id of the
+connection; the website authenticates at the token endpoint with
+`private_key_jwt`, an assertion signed with `EdDSA` and the key of the
+connection, so there is no client secret. Authorization Code with PKCE
+(`S256`), `state` and `nonce`; the ID token brings `sub`, `email`,
+`email_verified`, `name`, `sid` and `hub_access` {`role`, `organization`}.
+Nothing else is kept: no access token, no refresh token, no UserInfo.
+
+| Address on the website | For |
+|---|---|
+| `{backend.path}/login/oidc/hub` | the way back (`redirectUri`) |
+| `{backend.path}/login/oidc/hub/start` | the start from the hub, with `iss` (`initiateUri`) |
+| `POST /_oidc/hub/logout` | Back-Channel Logout 1.0 with `logout_token`, 200 or 400 (`logoutUri`) |
+
+Logout tokens carry `sid` (the sessions of one sign-in) or `sub` (all
+sessions of the person through the hub), are at most five minutes old and
+count once. Sessions with a password stay.
+
 ## In code
 
 Actions `system.hub-connect`, `system.hub-complete`, `system.hub-switch`,
 `system.hub-disconnect` and `system.hub-keys`, the query
-`system.hub-show`, for superusers only; the classes are in `Hub\`. See
+`system.hub-show`, for superusers only; the classes are in `Hub\`.
+
+Signing in is general: `Auth\Oidc\` holds the client, the hub is only its
+first provider (`Hub\HubLogin`). The actions `account.oidc-start`,
+`account.oidc-complete`, `account.oidc-link`, `account.oidc-unlink` and
+`account.oidc-logout`, `user.grant-access` and `user.revoke-access`, the
+queries `account.oidc-providers`, `account.oidc-identities` and
+`user.identities`. Links live in the table `user_identities`. An
+extension adds providers with
+`$registry->add(OidcProviders::class, new OidcProviders(Source::class))`
+and a `ProviderSource`. See
 the [reference of actions](../reference/actions.md).
 
 Go on with [deployment](deployment.md).
