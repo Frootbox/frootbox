@@ -70,11 +70,17 @@ backend's own templates, styles and scripts are not part of it.
   (`OrderStatus`, `InvoiceStatus`) that the provider maps to and the
   account shows translated, with dates in the time zone of the website.
   A product without an image shows a neutral placeholder in the catalog,
-  on its page and in the cart.
+  on its page and in the cart. Tags of a product at the provider become
+  tags of the core. The catalog searches with `?q=`, its option `tag`
+  shows only products with that tag on the start page (fields `intro`
+  and `productsTitle`), and every view gets `navigation`, `search` and
+  `start` for a sidebar in the theme.
 - Migrate: a rule under `plugins:` in the mapping of `fb1:import` takes
   `plugin: <type>`, and the page then shows that plugin of Frootbox 2 in
   its default space (`plugin.assign` after the content). Without
-  `block:` the plugin becomes no block in the area.
+  `block:` the plugin becomes no block in the area. With `block:` naming
+  the block of the plugin itself, its fields and options become the
+  view of the plugin instead of a second block.
 - Migrate: the mapping of `fb1:import` puts the block from the page
   itself into an area of its own with `page: { area: head }`, e.g. a
   banner that stays on the pages of a plugin's objects, and gives pages
