@@ -121,6 +121,9 @@ custom properties such as `var(--color-primary)`.
   `preview.svg` or `preview.webp` (16:10) for the block picker.
 - Site fields are declared under `theme: fields:` and printed with
   `site_field('name')`, read with `site_value('name')`.
+- The favicon comes from `theme: icon: assets/icon.png`, one square PNG
+  of 512 pixels; the core makes every size and the tags. No favicon
+  files or `<link rel="icon">` in templates.
 
 A block:
 

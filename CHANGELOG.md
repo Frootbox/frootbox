@@ -36,6 +36,11 @@ backend's own templates, styles and scripts are not part of it.
   The texts for visitors of the base theme (banner and privacy settings,
   error pages), forms, reCAPTCHA, search, people and jobs come formally
   as well.
+- Core: the icon of the website. A theme names a square PNG with
+  `theme: { icon: assets/icon.png }`; the core makes `/favicon.ico`,
+  `/apple-touch-icon.png`, `/icon-192.png`, `/icon-512.png` and
+  `/manifest.webmanifest` from it and puts the tags into the head of
+  every page. A child's icon replaces the parent's.
 - Core: functions of extensions for templates. An extension adds one
   with `$registry->add(TemplateFunction::class, new TemplateFunction('acme_cart', Cart::class, 'summary'))`;
   the name needs a prefix and never replaces one of the core.
