@@ -45,7 +45,7 @@ final class FontsTest extends GoogleFontsTestCase
     {
         $families = self::families(...);
 
-        self::assertSame(['Roboto', 'Inter', 'Lato', 'Lora', 'Noto Kufi Arabic', 'Fake Mono'], $families($this->runner()->ask(new SearchCatalog())), 'The most used first.');
+        self::assertSame(['Roboto', 'Inter', 'Lato', 'Lora', 'Noto Kufi Arabic', 'Nunito', 'Fake Mono'], $families($this->runner()->ask(new SearchCatalog())), 'The most used first.');
         self::assertSame(['Lato', 'Lora'], $families($this->runner()->ask(new SearchCatalog('L'))));
         self::assertSame(['Lora'], $families($this->runner()->ask(new SearchCatalog(category: 'serif'))));
         self::assertSame(['Roboto', 'Inter'], $families($this->runner()->ask(new SearchCatalog(limit: 2))));
@@ -93,6 +93,14 @@ final class FontsTest extends GoogleFontsTestCase
             [['italic', '400', false], ['normal', '400', true], ['normal', '700', false]],
             array_map(static fn($file): array => [$file->style, $file->weight, $file->preload], $this->get(GoogleFontSource::class)->fonts()[0]->files),
         );
+    }
+
+    public function testAVariableFontUpToWeight1000KeepsItsRange(): void
+    {
+        $this->runner()->run(new ImportFont('Nunito'));
+
+        self::assertSame([['normal', '200 1000']], array_map(static fn($file): array => [$file->style, $file->weight], $this->get(GoogleFontSource::class)->fonts()[0]->files), 'Bold text uses the font, not a faked bold.');
+        self::assertFileExists($this->get(ProjectPaths::class)->storage('fonts/frootbox/google-fonts/nunito-latin-normal-200-1000.woff2'));
     }
 
     public function testAnImportAgainReplacesTheFiles(): void

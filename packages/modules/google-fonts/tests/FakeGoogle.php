@@ -75,6 +75,7 @@ final class FakeGoogle
             ['family' => 'Inter', 'category' => 'Sans Serif', 'subsets' => ['cyrillic', 'latin', 'latin-ext', 'vietnamese'], 'fonts' => ['100' => [], '400' => [], '900' => [], '400i' => []], 'axes' => [['tag' => 'opsz', 'min' => 14.0, 'max' => 32.0], ['tag' => 'wght', 'min' => 100.0, 'max' => 900.0]], 'popularity' => 2],
             ['family' => 'Lora', 'category' => 'Serif', 'subsets' => ['latin', 'latin-ext'], 'fonts' => ['400' => [], '700' => []], 'axes' => [['tag' => 'wght', 'min' => 400, 'max' => 700]], 'popularity' => 40],
             ['family' => 'Noto Kufi Arabic', 'category' => 'Sans Serif', 'subsets' => ['arabic', 'latin', 'latin-ext'], 'fonts' => ['400' => []], 'axes' => [['tag' => 'wght', 'min' => 100, 'max' => 900]], 'popularity' => 300],
+            ['family' => 'Nunito', 'category' => 'Sans Serif', 'subsets' => ['latin'], 'fonts' => ['200' => [], '400' => [], '1000' => []], 'axes' => [['tag' => 'wght', 'min' => 200, 'max' => 1000]], 'popularity' => 800],
             ['family' => 'Fake Mono', 'category' => 'Monospace', 'subsets' => ['latin'], 'fonts' => ['400' => []], 'axes' => [], 'popularity' => 900],
         ];
     }
@@ -96,6 +97,7 @@ final class FakeGoogle
                 . $face('latin', 'Lato', 'normal', '700', $gstatic . 'lato/v24/700.woff2'),
             'Noto Kufi Arabic:wght@100..900' => $face('arabic', 'Noto Kufi Arabic', 'normal', '100 900', $gstatic . 'notokufiarabic/v21/arabic.woff2', 'U+0600-06FF')
                 . $face('latin', 'Noto Kufi Arabic', 'normal', '100 900', $gstatic . 'notokufiarabic/v21/latin.woff2'),
+            'Nunito:wght@200..1000' => $face('latin', 'Nunito', 'normal', '200 1000', $gstatic . 'nunito/v26/latin.woff2'),
             'Fake Mono:wght@400' => $face('latin', 'Fake Mono', 'normal', '400', 'https://fonts.example.com/fake.woff2'),
         ];
     }

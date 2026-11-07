@@ -187,7 +187,8 @@ final readonly class FontLibrary
             }
 
             $style = 1 === preg_match('/font-style:\s*italic/', $rule) ? 'italic' : 'normal';
-            $weight = 1 === preg_match('/font-weight:\s*(\d{3}(?: \d{3})?)\s*;/', $rule, $match) ? $match[1] : '400';
+            // One weight or the range of a variable font, up to "1000" (Nunito).
+            $weight = 1 === preg_match('/font-weight:\s*(\d{1,4}(?: \d{1,4})?)\s*;/', $rule, $match) ? $match[1] : '400';
             $range = 1 === preg_match('/unicode-range:\s*([^;]+);/', $rule, $match) ? trim($match[1]) : null;
             $faces[] = ['subset' => $subset, 'style' => $style, 'weight' => $weight, 'range' => $range, 'url' => trim($src[1], '\'"')];
         }
