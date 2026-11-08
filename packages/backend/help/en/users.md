@@ -30,3 +30,16 @@ password you are signed in, even after too many failed tries. Without
 the address of the website in `app.url`, a secret in `APP_SECRET` or a
 way for mails the link is missing; then an administrator sets a new
 password under **Users**.
+
+## Invitation
+
+A new user can get an **invitation by mail** instead of a password from
+you: they choose their password with the link, which works for 7 days.
+As long as someone has no password, their page offers **Send an
+invitation** again. The choice needs the same as a forgotten password.
+
+## Your name and email
+
+Under **Your account** everyone changes their own name and email. A new
+email needs the current password and holds once you open the link in
+the mail to it; the old address gets a note.

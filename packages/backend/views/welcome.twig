@@ -1,0 +1,34 @@
+{#- An invitation at <backend.path>/welcome/<token> (decision 0342). -#}
+{% extends '@backend/frame.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Welcome') }}{% endblock %}
+
+{% block body %}
+<main class="fb-login">
+    <div class="fb-login__inner">
+        <div class="fb-login__brand">{{ ui.brand(fb) }}</div>
+        <div class="fb-card fb-login__card">
+            <div class="fb-login__header">
+                <h1 class="fb-heading-2">{{ step == 'choose' ? t('Welcome, {name}', {name: person.name}) : t('Welcome') }}</h1>
+                {% if fb.site %}<p class="fb-muted">{{ fb.site }}</p>{% endif %}
+            </div>
+            {% if error %}{{ ui.alert({tone: 'danger', text: error}) }}{% endif %}
+            {%- if step == 'choose' %}
+            <form class="fb-stack" method="post" action="{{ path('backend.welcome', {token: token}) }}">
+                {#- For a password manager: the account the password belongs to. -#}
+                <input type="email" name="username" value="{{ person.email }}" autocomplete="username" hidden>
+                <p>{{ t('Choose your password. You sign in with {email} and this password from now on.', {email: person.email}) }}</p>
+                {{ ui.field({label: t('Password'), name: 'password', type: 'password', autocomplete: 'new-password', required: true, autofocus: true, hint: t('At least {min} characters. A few words in a row are easy to remember.', {min: min}), attrs: {minlength: min}}) }}
+                {{ ui.button({label: t('Save and sign in'), type: 'submit', block: true, variant: 'primary'}) }}
+            </form>
+            {%- else %}
+            {{ ui.alert({tone: 'warning', text: t('This invitation does not work any more. It is older than {days} days, or a password is set already.', {days: days})}) }}
+            <p class="fb-muted">{{ t('Ask the person who invited you for a new invitation, or ask for a link for a new password.') }}</p>
+            {{ ui.button({label: t('Ask for a new link'), href: path('backend.password'), block: true}) }}
+            {%- endif %}
+        </div>
+        <p class="fb-login__back"><a href="{{ path('backend.login') }}">{{ t('Back to sign in') }}</a></p>
+    </div>
+</main>
+{% endblock %}

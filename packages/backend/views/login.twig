@@ -15,6 +15,7 @@
             </div>
             {% if error %}{{ ui.alert({tone: 'danger', text: error}) }}{% endif %}
             {% if signed_out %}{{ ui.alert({tone: 'info', text: t('You are signed out.')}) }}{% endif %}
+            {% if email_changed ?? false %}{{ ui.alert({tone: 'success', text: t('Your email is changed. Sign in with it from now on.')}) }}{% endif %}
             {%- set chosen = (providers ?? [])|filter(p => p.key == (provider ?? null))|first %}
             {% if chosen %}{{ ui.alert({tone: 'info', text: t('Your session has ended. Sign in again with {provider}.', {provider: chosen.title})}) }}{% endif %}
             {%- if (providers ?? []) is not empty %}

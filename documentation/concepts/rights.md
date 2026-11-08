@@ -49,4 +49,18 @@ sign-ins. The link takes its address from `app.url`, never from the
 request, so a website without `app.url`, `APP_SECRET` or a way for mails
 offers no link (`account.password-reset-show`).
 
+New people can get an invitation instead of a password:
+`user.create` with `invite: true`, or `user.invite {id}` later and again,
+mails a link to `<backend.path>/welcome/<token>`. It works for 7 days
+and only while the person has no password; `account.accept-invitation
+{token, password}` sets it. `user.show` and `account.show` tell
+`hasPassword`.
+
+Everyone changes their own name with `account.update {name}` and their
+email with `account.request-email-change {email, password}`: after the
+current password, a link goes to the new address (24 hours, once) and a
+note to the old one. Only `account.confirm-email-change {token}` with
+that link changes it, on any device. A website that sends no such mails
+changes the email at once.
+
 The AI acts with the rights of the user it works for.

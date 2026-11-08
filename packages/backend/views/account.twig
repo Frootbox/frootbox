@@ -1,4 +1,4 @@
-{#- The own account: language, password, links to providers, sessions and API tokens (decisions 0115, 0161, 0322). -#}
+{#- The own account: name and email, language, password, links to providers, sessions and API tokens (decisions 0115, 0161, 0322, 0341). -#}
 {% extends '@backend/layout.twig' %}
 {% import '@backend/ui.twig' as ui %}
 
@@ -12,6 +12,28 @@
             <p class="fb-muted">{{ profile.user.name }} · {{ profile.user.email }}</p>
         </div>
     </header>
+
+    {% if emailChanged %}{{ ui.alert({tone: 'success', text: t('Your email is changed. Sign in with it from now on.')}) }}{% endif %}
+
+    <section class="fb-card" aria-labelledby="fb-profile-title">
+        <div class="fb-card__header"><h2 class="fb-heading-4" id="fb-profile-title">{{ t('Name and email') }}</h2></div>
+        <div class="fb-card__body fb-stack fb-stack--lg">
+            <fb-form action="account.update" next="{{ path('backend.account') }}" done="{{ t('Your name is changed.') }}">
+                <form class="fb-stack" novalidate>
+                    {{ ui.field({label: t('Name'), name: 'name', id: 'account-name', value: profile.user.name, required: true, autocomplete: 'name'}) }}
+                    <div class="fb-form__actions">{{ ui.button({label: t('Save the name'), type: 'submit'}) }}</div>
+                </form>
+            </fb-form>
+            {#- With the password and a link to the new address (decision 0341). -#}
+            <fb-form action="account.request-email-change" {% if mailLinks %}reset{% else %}next="{{ path('backend.account') }}"{% endif %} done="{{ mailLinks ? t('A mail with a link is on its way to the new email. It changes once you open the link.') : t('Your email is changed. Sign in with it from now on.') }}">
+                <form class="fb-stack" novalidate>
+                    {{ ui.field({label: t('New email'), name: 'email', id: 'account-email', type: 'email', required: true, autocomplete: 'email', hint: mailLinks ? t('You sign in with it once you confirm it with the link in a mail to it.') : t('You sign in with it from now on.')}) }}
+                    {{ ui.field({label: t('Current password'), name: 'password', id: 'account-email-password', type: 'password', required: true, autocomplete: 'current-password'}) }}
+                    <div class="fb-form__actions">{{ ui.button({label: t('Change the email'), type: 'submit'}) }}</div>
+                </form>
+            </fb-form>
+        </div>
+    </section>
 
     <section class="fb-card" aria-labelledby="fb-language-title">
         <div class="fb-card__header"><h2 class="fb-heading-4" id="fb-language-title">{{ t('Language') }}</h2></div>

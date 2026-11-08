@@ -61,7 +61,10 @@ final readonly class LoginHandler implements RequestHandlerInterface
                 return $this->view->redirect($this->router->path('backend.oidc.start', array_filter(['provider' => $last, 'prompt' => 'none', 'next' => $next === $this->router->path('backend.dashboard') ? null : $next], static fn(?string $value): bool => null !== $value)), 302);
             }
 
-            return $this->form($request, $next, '', signedOut: $signedOut);
+            // After confirming a new email (decision 0341): the form starts with it.
+            $changed = 'email' === ($query['changed'] ?? null) && \is_string($query['email'] ?? null) ? mb_substr(trim($query['email']), 0, 255) : '';
+
+            return $this->form($request, $next, $changed, signedOut: $signedOut, emailChanged: '' !== $changed);
         }
 
         $this->csrf->verifyOrigin($request);
@@ -90,10 +93,11 @@ final readonly class LoginHandler implements RequestHandlerInterface
         return $this->cookie->set($this->view->redirect($next), $request, $signedIn->token, $remember);
     }
 
-    private function form(ServerRequestInterface $request, string $next, string $email, bool $remember = false, ?string $error = null, int $status = 200, bool $signedOut = false): ResponseInterface
+    private function form(ServerRequestInterface $request, string $next, string $email, bool $remember = false, ?string $error = null, int $status = 200, bool $signedOut = false, bool $emailChanged = false): ResponseInterface
     {
         return $this->view->render($request, '@backend/login.twig', [
             'email' => $email,
+            'email_changed' => $emailChanged,
             'remember' => $remember,
             'error' => $error,
             'signed_out' => $signedOut,

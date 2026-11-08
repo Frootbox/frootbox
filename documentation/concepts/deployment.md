@@ -52,3 +52,23 @@ another server, it brings the connection to the hub along; see
 
 Set the SMTP server of your mailbox in the backend under **Settings,
 Email**, or `MAILER_DSN` in `.env`, and send a test mail there.
+
+## Behind a proxy
+
+Behind a load balancer, a CDN such as Cloudflare or a hoster's proxy,
+PHP sees the proxy as the visitor, and plain `http` when HTTPS ends at
+the proxy. Then every visitor shares one limit for signing in, the log
+shows one address, and cookies miss `Secure`. List the proxies in
+`config/app.yaml`:
+
+```yaml
+http:
+  trusted_proxies: [10.0.0.0/8, 2001:db8::/32]
+```
+
+Only for requests from these addresses the core reads the visitor from
+`X-Forwarded-For` (from the right, the first address that is not a
+proxy of the list) and the scheme and port from `X-Forwarded-Proto` and
+`X-Forwarded-Port`. The host never comes from a header: links and mails
+use `app.url`. List only the proxies themselves; a network others can
+send from lets anyone choose their address.

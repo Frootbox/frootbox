@@ -1585,8 +1585,11 @@ export class EditorBar extends LitElement {
         this.forget();
 
         // A page that was never published is gone then.
-        if (page.published || !page.canDiscard) {
-            location.reload();
+        if (page.published && page.visitorUrl && new URL(page.visitorUrl, location.href).pathname !== location.pathname) {
+            // The draft had another address; the published page lives at the old one.
+            location.assign(page.visitorUrl);
+        } else if (page.published || !page.canDiscard) {
+            await this.refresh();
         } else {
             location.assign(this.config.pages);
         }

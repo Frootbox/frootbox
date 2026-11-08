@@ -28,3 +28,16 @@ Passwort bist Du angemeldet, auch nach zu vielen Fehlversuchen. Ohne die
 Adresse der Website in `app.url`, ein Geheimnis in `APP_SECRET` oder
 einen Weg für Mails fehlt der Link, dann setzt ein Administrator unter
 **Benutzer** ein neues Passwort.
+
+## Einladung
+
+Ein neuer Benutzer kann statt eines Passworts von Dir eine **Einladung
+per Mail** bekommen: Mit dem Link wählt er sein Passwort, er gilt 7 Tage.
+Solange jemand kein Passwort hat, bietet seine Seite **Einladung senden**
+erneut an. Die Auswahl braucht dasselbe wie „Passwort vergessen“.
+
+## Dein Name und Deine E-Mail
+
+Unter **Dein Konto** ändert jeder seinen Namen und seine E-Mail. Eine
+neue E-Mail braucht das aktuelle Passwort und gilt, sobald Du den Link in
+der Mail an sie öffnest; die alte Adresse bekommt einen Hinweis.

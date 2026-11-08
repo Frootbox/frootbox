@@ -24,7 +24,7 @@ final class ActionHandlerTest extends BackendTestCase
         $body = $this->action('user.create', ['name' => 'Erika', 'email' => 'erika@example.org', 'password' => 'a long password', 'roles' => ['editor']], $session);
 
         self::assertIsArray($body['data']);
-        self::assertSame(['user', 'roles'], array_keys($body['data']));
+        self::assertSame(['user', 'roles', 'hasPassword'], array_keys($body['data']));
         self::assertSame([['role' => 'editor', 'scope' => null]], $body['data']['roles']);
     }
 

@@ -18,9 +18,11 @@ use Frootbox\Backend\Http\Comments\CommentsHandler;
 use Frootbox\Backend\Http\DashboardHandler;
 use Frootbox\Backend\Http\DesignHandler;
 use Frootbox\Backend\Http\EditModeHandler;
+use Frootbox\Backend\Http\EmailChangeHandler;
 use Frootbox\Backend\Http\Extensions\ExtensionsHandler;
 use Frootbox\Backend\Http\Help\HelpHandler;
 use Frootbox\Backend\Http\Hub\HubHandler;
+use Frootbox\Backend\Http\InvitationHandler;
 use Frootbox\Backend\Http\Jobs\JobsHandler;
 use Frootbox\Backend\Http\Log\LogHandler;
 use Frootbox\Backend\Http\LoginHandler;
@@ -81,6 +83,9 @@ final class BackendExtension implements Extension
             // A forgotten password (decision 0326).
             ->route(['GET', 'POST'], '/password', PasswordHandler::class, 'backend.password')
             ->route(['GET', 'POST'], '/password/{token:' . PasswordHandler::TOKEN . '}', PasswordHandler::class, 'backend.password.reset')
+            // A new email and an invitation by mail (decisions 0341, 0342).
+            ->route(['GET', 'POST'], '/email/{token:[0-9]+\\.[0-9]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+}', EmailChangeHandler::class, 'backend.email')
+            ->route(['GET', 'POST'], '/welcome/{token:' . PasswordHandler::TOKEN . '}', InvitationHandler::class, 'backend.welcome')
             // Signing in through a provider such as the hub (decision 0322).
             ->get('/login/oidc/{provider:' . self::PROVIDER . '}', OidcHandler::class, 'backend.oidc')
             ->get('/login/oidc/{provider:' . self::PROVIDER . '}/start', OidcHandler::class, 'backend.oidc.start')

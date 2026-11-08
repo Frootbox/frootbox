@@ -39,7 +39,7 @@ test('lets each user choose the language of the backend', async ({ page, browser
 
     // English, for this user only.
     await select.selectOption('en');
-    await own.getByRole('button', { name: 'Speichern' }).first().click();
+    await own.getByRole('button', { name: 'Speichern', exact: true }).click();
     await expect(own.getByRole('heading', { level: 1 })).toHaveText('Your account');
     await expect(own.locator('html')).toHaveAttribute('lang', 'en');
     await expect(own.getByLabel('Language of the backend')).toHaveValue('en');
@@ -52,7 +52,7 @@ test('lets each user choose the language of the backend', async ({ page, browser
 
     // Back to automatic.
     await own.getByLabel('Language of the backend').selectOption('');
-    await own.getByRole('button', { name: 'Save' }).first().click();
+    await own.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(own.getByRole('heading', { level: 1 })).toHaveText('Dein Konto');
     await context.close();
 

@@ -12,6 +12,7 @@ use Frootbox\Backend\View\BackendView;
 use Frootbox\Core\Account\ListLanguages;
 use Frootbox\Core\Account\ListTokens;
 use Frootbox\Core\Account\ShowAccount;
+use Frootbox\Core\Account\ShowPasswordReset;
 use Frootbox\Core\Action\CurrentContext;
 use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Auth\AccessToken;
@@ -23,7 +24,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * The own account (decision 0115): name and email, the language of the
+ * The own account (decisions 0115, 0341): name and email, the language of the
  * backend (decision 0161), the password, the sessions and API tokens.
  * For everyone signed in.
  */
@@ -53,6 +54,9 @@ final readonly class AccountHandler implements RequestHandlerInterface
             // Links to providers such as the hub (decision 0322).
             'identities' => $this->runner->ask(new ListIdentities()),
             'providers' => $this->runner->ask(new ListProviders()),
+            // Whether a new email goes through a link in a mail (decision 0341).
+            'mailLinks' => $this->runner->ask(new ShowPasswordReset())->available,
+            'emailChanged' => isset($request->getQueryParams()['email-changed']),
             'oidcError' => \is_string($request->getQueryParams()['oidc-error'] ?? null) ? mb_substr($request->getQueryParams()['oidc-error'], 0, 300) : null,
         ]);
     }

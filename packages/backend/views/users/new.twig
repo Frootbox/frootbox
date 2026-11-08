@@ -1,4 +1,4 @@
-{#- A new user with a password from the one who creates it (decision 0115). -#}
+{#- A new user with an invitation by mail or a password from the one who creates it (decisions 0115, 0342). -#}
 {% extends '@backend/layout.twig' %}
 {% import '@backend/ui.twig' as ui %}
 
@@ -17,7 +17,16 @@
         <form class="fb-card fb-card--padded fb-stack" novalidate>
             {{ ui.field({label: t('Name'), name: 'name', required: true, autocomplete: 'off'}) }}
             {{ ui.field({label: t('Email'), name: 'email', type: 'email', required: true, autocomplete: 'off', hint: t('The user signs in with it.')}) }}
-            <div class="fb-stack fb-stack--sm">
+            {%- if invitations %}
+            {#- An invitation by mail, or a password from the one who creates the user (decision 0342). -#}
+            <fieldset class="fb-fieldset fb-stack fb-stack--sm">
+                <legend class="fb-fieldset__legend">{{ t('How the user signs in') }}</legend>
+                {{ ui.choice({name: '_access', value: 'invite', checked: true, title: t('Invitation by mail'), text: t('The user gets a link to choose a password, valid for {days} days.', {days: days})}) }}
+                {{ ui.choice({name: '_access', value: 'password', title: t('Give a password'), text: t('You choose it and pass it on yourself.')}) }}
+            </fieldset>
+            <div data-fb-when="_access=invite" hidden><input type="hidden" name="invite" value="1" data-type="boolean"></div>
+            {%- endif %}
+            <div class="fb-stack fb-stack--sm"{% if invitations %} data-fb-when="_access=password" hidden{% endif %}>
                 {{ ui.field({label: t('Password'), name: 'password', type: 'password', required: true, autocomplete: 'new-password', hint: t('At least 10 characters. Pass it on in person or by phone, not by email.')}) }}
                 <div>{{ ui.button({label: t('Make a password'), variant: 'ghost', small: true, attrs: {'data-fb-generate': 'field-password'}}) }}</div>
             </div>

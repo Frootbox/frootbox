@@ -20,6 +20,29 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core, Backend: everyone changes their own name with `account.update`
+  and their email with `account.request-email-change {email, password}`
+  under "Your account". After the current password, a link goes to the
+  new address (24 hours, once) and a note to the old one; only
+  `account.confirm-email-change` with that link changes it, on any device
+  (page `<backend.path>/email/<token>`). A website that sends no such
+  mails changes the email at once.
+
+- Core, Backend: invitations by mail. `user.invite {id}` mails a person
+  without a password a link to choose one, valid for 7 days, again too;
+  `user.create` takes `invite: true`. The link leads to
+  `<backend.path>/welcome/<token>`, where `account.accept-invitation`
+  sets the password and the backend signs in. "New user" offers the
+  invitation first when the website sends mails with links, and the page
+  of a user without a password offers to send one. `user.show`,
+  `account.show` and `user.create` tell `hasPassword`.
+
+- Core: trusted proxies. `http.trusted_proxies` in `config/app.yaml` lists
+  addresses or networks; only for requests from them the visitor comes
+  from `X-Forwarded-For` and scheme and port from `X-Forwarded-Proto` and
+  `X-Forwarded-Port`, so throttling, the log and `Secure` cookies work
+  behind a load balancer. `Http\ClientAddress::of()` reads the address.
+
 - Migrate Frootbox 1: a rule of the mapping can make several blocks of one
   block or plugin with `then`, each with the same texts and configuration.
 

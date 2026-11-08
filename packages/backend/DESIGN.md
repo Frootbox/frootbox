@@ -964,7 +964,14 @@ focus, in the step to the left.
 <fb-tree-filter class="fb-tree-filter" for="page-tree" found="{count} pages found" one="One page found" empty="No page found">
     <label class="fb-visually-hidden" for="page-tree-filter">Find a page</label>
     <span class="fb-tree-filter__icon" aria-hidden="true">…search…</span>
-    <input class="fb-input fb-tree-filter__input" id="page-tree-filter" type="search" placeholder="Find by title or address" aria-controls="page-tree" aria-describedby="page-tree-filter-status" aria-keyshortcuts="/">
+    <div class="fb-tree-filter__fields">
+        <input class="fb-input fb-tree-filter__input" id="page-tree-filter" type="search" placeholder="Find by title or address" aria-controls="page-tree" aria-describedby="page-tree-filter-status" aria-keyshortcuts="/">
+        <div class="fb-select">
+            <label class="fb-visually-hidden" for="page-tree-status">Status</label>
+            <select class="fb-input fb-tree-filter__select" id="page-tree-status" aria-controls="page-tree">…</select>
+            …chevron-down…
+        </div>
+    </div>
     <p class="fb-tree-filter__status" id="page-tree-filter-status" role="status"></p>
 </fb-tree-filter>
 ```
@@ -976,6 +983,8 @@ ignoring case and accents, and the way to them: hits show their
 (`--fb-warning-bg`), rows on the way are muted. Moving is off meanwhile.
 "/" anywhere puts the focus in the field, arrow down goes to the first
 hit, Enter opens it, Escape empties the field and brings the tree back.
+The optional `.fb-tree-filter__select` below the field keeps only items
+whose `data-status` matches, alone or together with the words.
 
 ### Navigation
 

@@ -88,3 +88,9 @@ languages:
 #   stages: { all: 7 days, week: 5 weeks, month: 6 months }
 #   max_months: 12
 #   keep_migrate: 3
+
+# Proxies in front of the website, e.g. a load balancer: addresses or
+# networks. Only from them X-Forwarded-For names the visitor and
+# X-Forwarded-Proto the scheme. Never list a network others can use.
+# http:
+#   trusted_proxies: [10.0.0.0/8]

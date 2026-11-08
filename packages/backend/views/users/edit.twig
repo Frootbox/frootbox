@@ -1,4 +1,4 @@
-{#- A user: details, roles, password and deleting, each a form of its own (decision 0115). -#}
+{#- A user: details, roles, invitation, password and deleting, each a form of its own (decisions 0115, 0342). -#}
 {% extends '@backend/layout.twig' %}
 {% import '@backend/ui.twig' as ui %}
 
@@ -15,6 +15,7 @@
         </div>
         {% if service %}{{ ui.badge('neutral', t('Service account')) }}{% endif %}
         {% if not user.active %}{{ ui.badge('neutral', t('Disabled')) }}{% endif %}
+        {% if not service and profile.hasPassword is same as(false) %}{{ ui.badge('draft', t('No password yet')) }}{% endif %}
         {%- for identity in identities|filter(i => i.managed) %}{{ ui.badge('neutral', t('through {provider}', {provider: identity.title})) }}{% endfor %}
     </header>
     {%- for identity in identities|filter(i => i.managed) %}
@@ -152,6 +153,26 @@
             </fb-form>
         </div>
         {% endif %}
+    </section>
+    {% endif %}
+
+    {#- Someone without a password gets an invitation, again too (decision 0342). -#}
+    {% if can('user.invite') and invitations and not service and user.active and profile.hasPassword is same as(false) %}
+    <section class="fb-card" aria-labelledby="fb-invite-title">
+        <div class="fb-card__header">
+            <div class="fb-stack fb-stack--sm">
+                <h2 class="fb-heading-4" id="fb-invite-title">{{ t('Invitation') }}</h2>
+                <p class="fb-muted">{{ t('{name} has no password yet. An invitation mails a link to choose one, valid for {days} days.', {name: user.name, days: days}) }}</p>
+            </div>
+        </div>
+        <div class="fb-card__body">
+            <fb-form action="user.invite" done="{{ t('The invitation is on its way to {email}.', {email: user.email}) }}">
+                <form novalidate>
+                    <input type="hidden" name="id" value="{{ user.id }}" data-type="number">
+                    <div class="fb-form__actions">{{ ui.button({label: t('Send an invitation'), icon: 'mail', type: 'submit'}) }}</div>
+                </form>
+            </fb-form>
+        </div>
     </section>
     {% endif %}
 

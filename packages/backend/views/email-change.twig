@@ -1,0 +1,32 @@
+{#- The link to confirm a new email at <backend.path>/email/<token> (decision 0341). -#}
+{% extends '@backend/frame.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Confirm your new email') }}{% endblock %}
+
+{% block body %}
+<main class="fb-login">
+    <div class="fb-login__inner">
+        <div class="fb-login__brand">{{ ui.brand(fb) }}</div>
+        <div class="fb-card fb-login__card">
+            <div class="fb-login__header">
+                <h1 class="fb-heading-2">{{ t('Confirm your new email') }}</h1>
+                {% if fb.site %}<p class="fb-muted">{{ fb.site }}</p>{% endif %}
+            </div>
+            {%- if step == 'confirm' %}
+            {#- A button, not the link itself: some mail programs open links ahead. -#}
+            <form class="fb-stack" method="post" action="{{ path('backend.email', {token: token}) }}">
+                <p>{{ t('From now on you sign in with {email}.', {email: email}) }}</p>
+                {{ ui.button({label: t('Confirm'), type: 'submit', block: true, variant: 'primary'}) }}
+            </form>
+            {%- elseif step == 'taken' %}
+            {{ ui.alert({tone: 'warning', text: t('{email} belongs to another account by now. Your email stays as it is.', {email: email})}) }}
+            {%- else %}
+            {{ ui.alert({tone: 'warning', text: t('This link does not work any more. It is older than {hours} hours or was used already.', {hours: hours})}) }}
+            <p class="fb-muted">{{ t('Change the email again in your account to get a new link.') }}</p>
+            {%- endif %}
+        </div>
+        <p class="fb-login__back"><a href="{{ path('backend.dashboard') }}">{{ t('To the backend') }}</a></p>
+    </div>
+</main>
+{% endblock %}

@@ -9,6 +9,17 @@ with `action.undo` unless they say otherwise.
 
 ## frootbox/core
 
+### `account.accept-invitation`
+
+Sets the first password of an account with the link of an invitation
+
+Action · public · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `token` | string |  |
+| `password` | string |  |
+
 ### `account.change-password`
 
 Changes the own password and signs out everywhere else
@@ -20,6 +31,16 @@ Action · for the own account · cannot be undone
 | `currentPassword` | string |  |
 | `newPassword` | string |  |
 
+### `account.confirm-email-change`
+
+Sets the new email of an account with the link from the mail
+
+Action · public · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `token` | string |  |
+
 ### `account.create-token`
 
 Creates an API token for the own account
@@ -30,6 +51,26 @@ Action · for the own account · cannot be undone
 |---|---|---|
 | `name` | string | What the token is for, e.g. "Deploy script" |
 | `days` | integer or null, optional | Valid for this many days, without it until revoked |
+
+### `account.email-change-show`
+
+Returns the new email a confirmation link is for, null if it does not work any more
+
+Query · public
+
+| Input | Type | Description |
+|---|---|---|
+| `token` | string |  |
+
+### `account.invitation-show`
+
+Returns name and email of the person an invitation link is for, null if it does not work any more
+
+Query · public
+
+| Input | Type | Description |
+|---|---|---|
+| `token` | string |  |
 
 ### `account.languages`
 
@@ -117,6 +158,17 @@ Query · public
 |---|---|---|
 | `token` | string or null, optional | The token from the link, empty to only ask whether the website offers links |
 
+### `account.request-email-change`
+
+Changes the email of the own account after the current password: mails a link to the new address to confirm it, or changes it at once when the website sends no mails
+
+Action · for the own account · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `email` | string (email) |  |
+| `password` | string |  |
+
 ### `account.request-password-reset`
 
 Mails a link for a new password to the email of an account; answers the same for unknown addresses
@@ -178,6 +230,16 @@ Action · for the own account · cannot be undone
 Lists the own sessions and API tokens
 
 Query · for the own account
+
+### `account.update`
+
+Changes the name of the own account; the email changes with account.request-email-change
+
+Action · for the own account
+
+| Input | Type | Description |
+|---|---|---|
+| `name` | string |  |
 
 ### `account.update-language`
 
@@ -1844,6 +1906,7 @@ Action · right `user.create`
 | `roles` | array, optional | Role names, e.g. ["editor"] |
 | `active` | boolean, optional |  |
 | `kind` | mixed: `person`, `service`, optional | "service" for a service account: no email, no password, tokens only from user.create-token |
+| `invite` | boolean, optional | Mails the person a link to choose a password, instead of one given here |
 
 ### `user.create-token`
 
@@ -1890,6 +1953,16 @@ Query · right `user.show`
 | Input | Type | Description |
 |---|---|---|
 | `userId` | integer |  |
+
+### `user.invite`
+
+Mails a person without a password an invitation with a link to set one; works again until they have
+
+Action · right `user.invite` · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `id` | integer |  |
 
 ### `user.list`
 

@@ -10,6 +10,8 @@ namespace Frootbox\Backend\Http\Users;
 
 use Frootbox\Backend\Http\Pages\PageTree;
 use Frootbox\Backend\View\BackendView;
+use Frootbox\Core\Account\PasswordResets;
+use Frootbox\Core\Account\ShowPasswordReset;
 use Frootbox\Core\Action\AccessDeniedException;
 use Frootbox\Core\Action\CurrentContext;
 use Frootbox\Core\Action\Runner;
@@ -50,7 +52,12 @@ final readonly class UserHandler implements RequestHandlerInterface
         $roles = $this->runner->ask(new ListRoles())->all();
 
         if (null === $id) {
-            return $this->view->render($request, '@backend/users/new.twig', ['roles' => $roles]);
+            return $this->view->render($request, '@backend/users/new.twig', [
+                'roles' => $roles,
+                // An invitation by mail needs links in mails (decision 0342).
+                'invitations' => $this->runner->ask(new ShowPasswordReset())->available,
+                'days' => PasswordResets::INVITATION_DAYS,
+            ]);
         }
 
         $profile = $this->runner->ask(new ShowUser(is_numeric($id) ? (int) $id : 0));
@@ -85,6 +92,8 @@ final readonly class UserHandler implements RequestHandlerInterface
 
         return $this->view->render($request, '@backend/users/edit.twig', [
             'profile' => $profile,
+            'invitations' => $this->runner->ask(new ShowPasswordReset())->available,
+            'days' => PasswordResets::INVITATION_DAYS,
             // Links to providers such as the hub (decision 0322).
             'identities' => $this->runner->ask(new ListUserIdentities($profile->user->id)),
             'roles' => $roles,

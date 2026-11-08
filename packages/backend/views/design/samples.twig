@@ -236,7 +236,20 @@
             <div class="fb-tree-filter">
                 <label class="fb-visually-hidden" for="{{ id }}-tree-filter">{{ t('Find a page') }}</label>
                 <span class="fb-tree-filter__icon" aria-hidden="true">{{ icon('search', 'fb-icon fb-icon--small') }}</span>
-                <input class="fb-input fb-tree-filter__input" id="{{ id }}-tree-filter" type="search" placeholder="{{ t('Find by title or address') }}" autocomplete="off">
+                <div class="fb-tree-filter__fields">
+                    <input class="fb-input fb-tree-filter__input" id="{{ id }}-tree-filter" type="search" placeholder="{{ t('Find by title or address') }}" autocomplete="off">
+                    <div class="fb-select">
+                        <label class="fb-visually-hidden" for="{{ id }}-tree-status">{{ t('Status') }}</label>
+                        <select class="fb-input fb-tree-filter__select" id="{{ id }}-tree-status">
+                            <option value="">{{ t('Every status') }}</option>
+                            <option value="draft">{{ t('Draft') }}</option>
+                            <option value="changed">{{ t('Pending changes') }}</option>
+                            <option value="scheduled">{{ t('Scheduled') }}</option>
+                            <option value="published">{{ t('Published') }}</option>
+                        </select>
+                        {{ icon('chevron-down', 'fb-icon fb-icon--small') }}
+                    </div>
+                </div>
             </div>
             <fb-tree>
                 <ul class="fb-tree fb-tree--compact" aria-labelledby="{{ id }}-tree-title">
