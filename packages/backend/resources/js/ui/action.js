@@ -85,6 +85,7 @@ export async function refresh(ids, { url = window.location.href, active = docume
     if (focus) {
         if (!focus.matches('a[href], button, input, select, textarea, [tabindex]')) {
             focus.tabIndex = -1;
+            focus.dataset.fbReading = '';
         }
 
         focus.focus();

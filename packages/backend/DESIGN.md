@@ -688,8 +688,8 @@ answer:
 - Afterwards it goes to `next` (`{path}` takes a value of the result,
   e.g. `{user.id}`) and shows `done` as a toast there. Without `next` the
   page stays: `reset` empties the form, `show="<id>"` reveals a hidden
-  element and fills its `[data-fb-value="token"]` from the result (for
-  something shown only once, like a new API token).
+  element, fills its `[data-fb-value="token"]` from the result (for
+  something shown only once, like a new API token) and focuses it.
 - While it waits, the submit buttons are disabled and `busy` is set.
 - Work in steps, e.g. the sync of a shop: `until="done"` sends the
   action again while that value of the result is not `true`, loads the
@@ -708,7 +708,9 @@ answer:
   are left out.
 - `refresh="page-tree page-detail"` loads the current address again
   after success and replaces only the elements with these ids; focus
-  goes to the element with the same id or to `[data-fb-focus]` in it. `base="/items/de/2"` takes errors below that JSON
+  goes to the element with the same id or to `[data-fb-focus]` in it.
+  Such a heading or revealed element only marks the reading position
+  and shows no focus ring (`data-fb-reading` when set by the script). `base="/items/de/2"` takes errors below that JSON
   pointer to the fields of the form, e.g. `/items/de/2/label` to `label`.
   An error without a field names the last part of its pointer.
 - `data-type="datetime"` on a `datetime-local` field sends the time with

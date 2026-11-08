@@ -22,6 +22,14 @@ a:hover {
     outline-offset: var(--fb-size-focus-offset);
 }
 
+/* Headings and messages that a script focuses only to move the reading
+   position there, e.g. after saving: nothing to operate, so no ring.
+   Safari would show one after a click, since it does not focus buttons. */
+[data-fb-focus]:focus-visible,
+[data-fb-reading]:focus-visible {
+    outline: none;
+}
+
 code,
 kbd {
     font-family: var(--fb-font-mono);

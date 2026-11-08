@@ -504,6 +504,7 @@ export class Form extends LitElement {
 
             shown.hidden = false;
             shown.tabIndex = -1;
+            shown.dataset.fbReading = '';
             shown.focus();
         }
 
