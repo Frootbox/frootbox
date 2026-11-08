@@ -1,0 +1,145 @@
+{#- The fields of the website (decisions 0128 and 0348): state, values by language and earlier versions. -#}
+{% extends '@backend/layout.twig' %}
+{% import '@backend/ui.twig' as ui %}
+
+{% block title %}{{ t('Fields of the website') }}{% endblock %}
+
+{% block content %}
+{% set refresh = 'site-status site-values site-versions' %}
+{% set self = path('backend.site') %}
+{% set editable = can('site.update') %}
+<div class="fb-stack fb-stack--lg">
+    <header class="fb-page-header">
+        <div class="fb-page-header__text">
+            <h1 class="fb-heading-1">{{ t('Fields of the website') }}</h1>
+            <p class="fb-muted">{{ site.theme ? t('Texts and images that are the same on every page, e.g. the name and the address in the footer. The theme {theme} describes them.', {theme: site.theme}) : t('No theme is active.') }}</p>
+        </div>
+        {% if site.fields is not empty and can('site.update-field') %}
+        <div class="fb-cluster">
+            <form method="post" action="{{ path('backend.edit-mode') }}">
+                <input type="hidden" name="_csrf" value="{{ fb.csrf }}">
+                <input type="hidden" name="on" value="1">
+                <input type="hidden" name="next" value="{{ website }}">
+                {{ ui.button({label: t('Edit on the website'), type: 'submit', icon: 'pencil'}) }}
+            </form>
+        </div>
+        {% endif %}
+    </header>
+
+    <section class="fb-card" id="site-status" aria-labelledby="site-status-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="site-status-title" tabindex="-1" data-fb-focus>{{ t('Status') }}</h2>
+            {{ ui.status(site.draft ? (site.version ? 'changed' : 'draft') : 'published') }}
+        </div>
+        <div class="fb-card__body fb-stack">
+            <p>{{ site.draft ? t('There are changes visitors do not see yet.') : (site.version ? t('Visitors see version {number}.', {number: site.version}) : t('Nothing is published yet.')) }}</p>
+            {% if site.draft %}
+            <div class="fb-cluster">
+                {% if can('site.publish') %}
+                <fb-form action="site.publish" refresh="{{ refresh }}" done="{{ t('The changes are published.') }}">
+                    <form novalidate>{{ ui.button({label: t('Publish'), type: 'submit'}) }}</form>
+                </fb-form>
+                {% endif %}
+                {% if can('site.discard') %}
+                {{ ui.button({label: t('Discard the changes'), variant: 'danger', attrs: {commandfor: 'site-discard', command: 'show-modal'}}) }}
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="fb-card" id="site-values" aria-labelledby="site-values-title">
+        <div class="fb-card__header">
+            <h2 class="fb-heading-4" id="site-values-title">{{ site.draft ? t('Values in the draft') : t('Values') }}</h2>
+        </div>
+        {% if fields is empty %}
+            {{ ui.empty({icon: 'type', title: t('The theme has no fields for the website.'), text: t('A theme describes them in its frootbox.yaml under theme.fields.')}) }}
+        {% else %}
+        {% if languages|length > 1 %}
+        {{ ui.tabs(t('Languages'), languages|map(entry => {
+            label: entry.title,
+            href: self ~ '?language=' ~ entry.code,
+            current: entry.code == language.code,
+            attrs: {'hx-get': self ~ '?language=' ~ entry.code, 'hx-target': '#site-values', 'hx-select': '#site-values', 'hx-swap': 'outerHTML', 'hx-push-url': 'true', lang: entry.code},
+        })) }}
+        {% endif %}
+        <div class="fb-card__body">
+            <fb-form action="site.update" refresh="{{ refresh }}" done="{{ t('Saved') }}">
+                <form class="fb-stack" novalidate>
+                    <input type="hidden" name="language" value="{{ language.code }}">
+                    {% if language.code != first.code %}
+                    <p class="fb-muted">{{ t('An empty field shows the value in {language}.', {language: first.title}) }}</p>
+                    {% endif %}
+                    {% set text = {lang: language.code, dir: language.direction.value} %}
+                    {% for field in fields %}
+                        {% set at = 'site-field-' ~ field.name %}
+                        {% set inherited = language.code != first.code and field.value is null and field.fallback is not null %}
+                        {% set hint = field.description ?: null %}
+                        {% if field.type == 'list' %}
+                        <div class="fb-field">
+                            <span class="fb-label">{{ field.label }}</span>
+                            <p class="fb-hint">{{ t(['{count} entry', '{count} entries'], {count: field.entries}) }}{{ inherited ? ' · ' ~ t('like in {language}', {language: first.title}) : '' }}. {{ t('Lists are changed on the website.') }}</p>
+                        </div>
+                        {% else %}
+                        {% set placeholder = inherited ? field.fallbackText : null %}
+                        {% set hint = inherited and field.fallbackText is null ? [hint, t('Empty, so the value in {language} shows.', {language: first.title})]|filter(part => part)|join(' ') : hint %}
+                        {% include '@backend/fields/input.twig' with {field: field, language: language, name: 'fields.' ~ field.name, at: at, label: field.label, hint: hint, text: text, disabled: not editable, optional: field.optional or language.code != first.code, placeholder: placeholder} only %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if editable %}
+                    <div class="fb-form__actions">{{ ui.button({label: t('Save'), type: 'submit', saves: true}) }}<p class="fb-form__note">{{ t('Changes go into the draft. Visitors see them after publishing.') }}</p></div>
+                    {% endif %}
+                </form>
+            </fb-form>
+        </div>
+        {% endif %}
+    </section>
+
+    {% if versions is not null %}
+    <section class="fb-card" id="site-versions" aria-labelledby="site-versions-title">
+        <div class="fb-card__header"><h2 class="fb-heading-4" id="site-versions-title">{{ t('Versions') }}</h2></div>
+        {% if versions is empty %}
+        <div class="fb-card__body"><p class="fb-muted">{{ t('Not published yet.') }}</p></div>
+        {% else %}
+        <ul>
+            {%- for version in versions %}
+            <li class="fb-list__item">
+                <span class="fb-list__main">
+                    <span class="fb-list__title">{{ t('Version {number}', {number: version.version}) }}</span>
+                    <span class="fb-list__meta">{{ ui.time(version.publishedAt) }}</span>
+                </span>
+                {% if version.current %}
+                    {{ ui.badge('neutral', t('Online')) }}
+                {% elseif can('site.restore') %}
+                <fb-form action="site.restore" refresh="{{ refresh }}" done="{{ t('Version {number} is in the draft now.', {number: version.version}) }}">
+                    <form novalidate>
+                        <input type="hidden" name="version" value="{{ version.version }}" data-type="number">
+                        {{ ui.button({label: t('Restore'), type: 'submit', variant: 'ghost', small: true, icon: 'restore', attrs: {'aria-label': t('Restore version {number}', {number: version.version})}}) }}
+                    </form>
+                </fb-form>
+                {% endif %}
+            </li>
+            {%- endfor %}
+        </ul>
+        {% endif %}
+    </section>
+    {% endif %}
+</div>
+
+{% if can('site.discard') %}
+<dialog class="fb-dialog" id="site-discard" aria-labelledby="site-discard-title">
+    <fb-form action="site.discard" refresh="{{ refresh }}" done="{{ t('The changes are discarded.') }}">
+        <form novalidate>
+            <div class="fb-dialog__body">
+                <h2 class="fb-dialog__title" id="site-discard-title">{{ t('Discard all changes to the fields of the website?') }}</h2>
+                <p>{{ t('The website keeps the published values.') }}</p>
+            </div>
+            <div class="fb-dialog__actions">
+                {{ ui.button({label: t('Keep the changes'), variant: 'outline', attrs: {commandfor: 'site-discard', command: 'close', autofocus: true}}) }}
+                {{ ui.button({label: t('Discard'), variant: 'danger-solid', type: 'submit'}) }}
+            </div>
+        </form>
+    </fb-form>
+</dialog>
+{% endif %}
+{% endblock %}

@@ -1867,3 +1867,18 @@ Available: Vorhanden
 "All settings in the backend": "Alle Einstellungen im Backend"
 "Show in “Page”": "In „Seite“ zeigen"
 You: Du
+"Texts and images that are the same on every page, e.g. the name and the address in the footer. The theme {theme} describes them.": "Texte und Bilder, die auf jeder Seite gleich sind, etwa der Name und die Adresse im Fuß. Das Theme {theme} beschreibt sie."
+"Nothing is published yet.": "Noch nichts veröffentlicht."
+"The theme has no fields for the website.": "Das Theme hat keine Website-Felder."
+"A theme describes them in its frootbox.yaml under theme.fields.": "Ein Theme beschreibt sie in seiner frootbox.yaml unter theme.fields."
+"An empty field shows the value in {language}.": "Ein leeres Feld zeigt den Wert in {language}."
+"like in {language}": "wie in {language}"
+"Lists are changed on the website.": "Listen änderst Du auf der Website."
+"Empty, so the value in {language} shows.": "Leer, deshalb gilt der Wert in {language}."
+"The changes are discarded.": "Die Änderungen sind verworfen."
+"Discard all changes to the fields of the website?": "Alle Änderungen an den Website-Feldern verwerfen?"
+"The website keeps the published values.": "Die Website behält die veröffentlichten Werte."
+"The fields of the website have no version {version}.": "Die Website-Felder haben keine Version {version}."
+'{count} entry':
+  one: '{count} Eintrag'
+  other: '{count} Einträge'

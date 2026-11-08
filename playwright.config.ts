@@ -31,9 +31,11 @@ export default defineConfig({
         toHaveScreenshot: { animations: 'disabled', caret: 'hide', scale: 'css' },
     },
     projects: [
-        { name: 'e2e', testIgnore: [/\.visual\.ts$/, /protection\.spec\.ts$/], use: { ...devices['Desktop Chrome'] } },
+        { name: 'e2e', testIgnore: [/\.visual\.ts$/, /protection\.spec\.ts$/, /site-fields\.spec\.ts$/], use: { ...devices['Desktop Chrome'] } },
+        // Publishing and restoring the fields of the website changes every page, so after the others.
+        { name: 'site', testMatch: /site-fields\.spec\.ts$/, dependencies: ['e2e'], use: { ...devices['Desktop Chrome'] } },
         // The password protects the whole installation, so its tests run after all others.
-        { name: 'protection', testMatch: /protection\.spec\.ts$/, dependencies: ['e2e'], use: { ...devices['Desktop Chrome'] } },
+        { name: 'protection', testMatch: /protection\.spec\.ts$/, dependencies: ['site'], use: { ...devices['Desktop Chrome'] } },
         ...(process.platform === 'linux'
             ? [{ name: 'visual', testMatch: /\.visual\.ts$/, use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 800 } } }]
             : []),

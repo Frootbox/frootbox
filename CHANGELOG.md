@@ -20,6 +20,14 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core, Backend: the screen "Fields of the website" and their versions.
+  `site.versions` lists the published versions and `site.restore`
+  makes a draft from one, like the design. `site.show` tells the values
+  each language has itself (`own`) and the settings of each field;
+  `site.update` takes an empty value as none, so the first language
+  shows. The screen shows the state, the values by language with
+  publish and discard, and the versions to restore.
+
 - Backend: the panel "Page" in the editor bar. Title, address and the
   texts for search engines of the page go into its draft through
   `page.update`; a new address loads the page there, errors stand at
@@ -478,6 +486,10 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Fixed
 
+- Forms: the number of submissions has its own key `{count} submission`.
+  The shared key `{count} entry` read "Einsendungen" on other screens.
+- Backend: the panel "Page" keeps the focus on the select after changing
+  the visibility.
 - Core, Backend, Shop: a full sync of the catalog in the browser no
   longer stops with "Internal Server Error" when the queue syncs at the
   same time. A locked database (SQLite "database is locked") answers

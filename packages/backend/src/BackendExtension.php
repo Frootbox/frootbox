@@ -41,6 +41,7 @@ use Frootbox\Backend\Http\QueryHandler;
 use Frootbox\Backend\Http\Redirects\RedirectsHandler;
 use Frootbox\Backend\Http\Search\SearchHandler;
 use Frootbox\Backend\Http\Settings\SettingsHandler;
+use Frootbox\Backend\Http\Site\SiteHandler;
 use Frootbox\Backend\Http\Spaces\SpacesHandler;
 use Frootbox\Backend\Http\Tags\TagsHandler;
 use Frootbox\Backend\Http\Theme\ThemeHandler;
@@ -117,6 +118,7 @@ final class BackendExtension implements Extension
             ->get('/access', AccessHandler::class, 'backend.access')
             ->get('/comments', CommentsHandler::class, 'backend.comments')
             ->get('/theme', ThemeHandler::class, 'backend.theme')
+            ->get('/site', SiteHandler::class, 'backend.site')
             ->get('/users', UsersHandler::class, 'backend.users')
             ->get('/users/new', UserHandler::class, 'backend.users.new')
             ->get('/users/{id:\d+}', UserHandler::class, 'backend.users.show')
@@ -145,6 +147,7 @@ final class BackendExtension implements Extension
         $registry->add(Screen::class, new Screen('Categories', 'backend.categories', Screen::CONTENT, 'tag', CategoriesHandler::PERMISSION, order: 40));
         $registry->add(Screen::class, new Screen('Tags', 'backend.tags', Screen::CONTENT, 'hash', TagsHandler::PERMISSION, order: 41));
         $registry->add(Screen::class, new Screen('Design', 'backend.theme', Screen::WEBSITE, 'palette', ThemeHandler::PERMISSION, order: 10));
+        $registry->add(Screen::class, new Screen('Fields of the website', 'backend.site', Screen::WEBSITE, 'type', SiteHandler::PERMISSION, order: 15));
         $registry->add(Screen::class, new Screen('Navigations', 'backend.navigations', Screen::WEBSITE, 'navigation', NavigationsHandler::PERMISSION, order: 20));
         $registry->add(Screen::class, new Screen('Redirects', 'backend.redirects', Screen::WEBSITE, 'redirect', RedirectsHandler::PERMISSION, order: 30));
         $registry->add(Screen::class, new Screen('Spaces', 'backend.spaces', Screen::WEBSITE, 'list', SpacesHandler::PERMISSION, order: 35));

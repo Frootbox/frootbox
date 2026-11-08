@@ -81,7 +81,7 @@ test('an admin adds a field to the collection', async ({ page }) => {
     await signIn(page, '/cms/collections');
     // A retry starts without the field of the failed run.
     await action(page, 'frootbox/collections/field.delete', { space: 'default', name: 'flaeche' });
-    await page.getByRole('link', { name: 'Felder' }).click();
+    await page.getByRole('link', { name: 'Felder', exact: true }).click();
     await expect(page).toHaveURL(/\/cms\/collections\/fields\?space=default$/);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Felder');
     await expect(page.locator('.fb-list__item')).toHaveCount(4);

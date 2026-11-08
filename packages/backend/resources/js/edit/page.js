@@ -45,7 +45,7 @@ export class PagePanel {
         return Boolean(this.bar.config.editing && this.settings);
     }
 
-    async show(errors = {}) {
+    async show(errors = {}, focus = 'title') {
         this.bar.arranging?.closePanel?.();
         this.bar.design?.hide();
         this.bar.comments?.hide();
@@ -70,7 +70,7 @@ export class PagePanel {
         this.update({ loading: false, details, values: translation ? Object.fromEntries(FIELDS.map((key) => [key, translation[key] ?? ''])) : null });
         await this.bar.updateComplete;
         const first = Object.keys(this.state?.errors ?? {})[0];
-        const target = first ? this.bar.renderRoot.querySelector(`#fb-page-${first}`) : this.bar.renderRoot.querySelector('#fb-page-title');
+        const target = first ? this.bar.renderRoot.querySelector(`#fb-page-${first}`) : this.bar.renderRoot.querySelector(`#fb-page-${focus}`);
         target?.focus();
     }
 
@@ -171,10 +171,10 @@ export class PagePanel {
         await this.reopen();
     }
 
-    /** The page again without loading it, with the panel open on the new bar. */
-    async reopen() {
+    /** The page again without loading it, with the panel open on the new bar and the focus where it was. */
+    async reopen(focus = 'title') {
         const next = await this.bar.refresh();
-        next?.pagePanel?.show();
+        await next?.pagePanel?.show({}, focus);
     }
 
     /** Adds the version in a language with the title of the default language and goes there. */
@@ -198,7 +198,7 @@ export class PagePanel {
 
     async saveVisibility(key, value) {
         if (await this.save({ [key]: value })) {
-            await this.reopen();
+            await this.reopen(key);
         }
     }
 

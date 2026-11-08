@@ -1525,6 +1525,16 @@ Publishes the draft of the fields of the website; visitors see them right away
 
 Action · right `site.publish`
 
+### `site.restore`
+
+Makes a new draft of the fields of the website from an earlier version; site.publish puts it online
+
+Action · right `site.restore`
+
+| Input | Type | Description |
+|---|---|---|
+| `version` | integer |  |
+
 ### `site.show`
 
 Returns the fields of the website the theme describes, e.g. name and address, with their values per language
@@ -1546,7 +1556,7 @@ Action · right `site.update`
 | Input | Type | Description |
 |---|---|---|
 | `language` | string | Language of the values, e.g. "de" |
-| `fields` | object | Values by field name as site.show lists them, e.g. {"address": "Harbour Street 12"}; null removes a value, so the one of the first language shows |
+| `fields` | object | Values by field name as site.show lists them, e.g. {"address": "Harbour Street 12"}; null or an empty value (empty text, rich text without text, image without media) removes a value, so the one of the first language shows |
 
 ### `site.update-field`
 
@@ -1560,6 +1570,12 @@ Action · right `site.update-field`
 | `path` | string | Path of the field as site.show lists it, e.g. "address" or "links/0/text" for a field of the first entry of a list, the entry also by its id: "links/k3f9x2ab/text" |
 | `value` | mixed, optional | The new value as the type of the field stores it; null removes it, so the value of the first language shows |
 | `previous` | mixed, optional | The value as it was read; if the field holds something else now, nothing is saved |
+
+### `site.versions`
+
+Lists the published versions of the fields of the website, the newest first
+
+Query · right `site.versions`
 
 ### `space.all`
 

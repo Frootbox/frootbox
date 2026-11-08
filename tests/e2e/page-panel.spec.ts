@@ -86,9 +86,13 @@ test('changes title, address, versions and visibility in the panel "Page"', asyn
 
     // Searches leave the page out from the select on.
     saving = updated(page);
+    const shown = page.waitForResponse((response) => response.url().includes('/page.show?'));
     await panel.getByLabel('Suchmaschinen', { exact: true }).selectOption('page');
     expect((await saving).ok()).toBe(true);
+    // The panel opens again on the new bar, with the focus on the select.
+    await shown;
     await expect(panel.getByLabel('Suchmaschinen', { exact: true })).toHaveValue('page');
+    await expect(panel.getByLabel('Suchmaschinen', { exact: true })).toBeFocused();
 
     // The account and signing out at the end of "More".
     await panel.getByRole('button', { name: 'Schließen' }).click();

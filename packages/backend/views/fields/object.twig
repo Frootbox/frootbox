@@ -13,37 +13,7 @@
         {% set label = field.own ?? t(field.label) %}
         {% set hint = field.description ? t(field.description) : null %}
         {% set text = field.translatable ? {lang: language.code, dir: language.direction.value} : {} %}
-        {% if field.type in ['headline', 'text'] %}
-            {% set multiline = field.type == 'text' and field.settings.multiline ?? false %}
-            {{ ui.field({label: label, name: name, id: at, value: field.value ?? '', optional: true, hint: hint, disabled: disabled, multiline: multiline, attrs: text|merge({'data-empty': 'null', maxlength: field.settings.maxLength ?? null, rows: multiline ? 3 : null})}) }}
-        {% elseif field.type == 'richtext' %}
-            {{ ui.richtext({label: label, name: name, id: at, value: field.value, optional: true, hint: hint, disabled: disabled, lang: text.lang ?? null, dir: text.dir ?? null}) }}
-        {% elseif field.type == 'image' %}
-            {{ ui.image({label: label, name: name, id: at, value: field.value, preview: field.image.preview ?? null, file: field.image.file ?? null, optional: true, hint: hint, disabled: disabled}) }}
-        {% elseif field.type == 'file' %}
-            {{ ui.file({label: label, name: name, id: at, value: field.value, file: field.image.file ?? null, optional: true, hint: hint, disabled: disabled}) }}
-        {% elseif field.type == 'number' %}
-            {% set decimals = field.settings.decimals ?? 0 %}
-            {{ ui.field({label: label ~ (field.settings.unit ?? false ? ' (' ~ field.settings.unit ~ ')' : ''), name: name, id: at, type: 'number', value: field.value ?? '', optional: true, hint: hint, disabled: disabled, attrs: {min: field.settings.min ?? null, max: field.settings.max ?? null, step: decimals > 0 ? 10 ** (0 - decimals) : 1, inputmode: decimals > 0 ? 'decimal' : 'numeric'}}) }}
-        {% elseif field.type == 'date' %}
-            {{ ui.field({label: label, name: name, id: at, type: 'date', value: field.value ?? '', optional: true, hint: hint, disabled: disabled, attrs: {'data-empty': 'null'}}) }}
-        {% elseif field.type == 'choice' %}
-            {{ ui.select({label: label, name: name, id: at, value: field.value ?? '', hint: hint, disabled: disabled, attrs: {'data-empty': 'null'}, options: [{value: '', label: t('Not chosen')}]|merge(field.settings.options|map((option, key) => {value: key, label: option is iterable ? (option[language.code] ?? option|first) : option}))}) }}
-        {% elseif field.type == 'boolean' %}
-            {{ ui.check({label: label, name: name, id: at, checked: field.value is same as(true), hint: hint, disabled: disabled}) }}
-        {% elseif field.type == 'link' %}
-            <div class="fb-stack fb-stack--sm" role="group" aria-labelledby="{{ at }}-label">
-                <span class="fb-label" id="{{ at }}-label">{{ label }} <span class="fb-label__optional">({{ t('optional') }})</span></span>
-                {% if field.value.target ?? null %}<input type="hidden" name="{{ name }}.target" value="{{ field.value.target }}">{% endif %}
-                {{ ui.field({label: t('Address'), name: name ~ '.url', id: at ~ '-url', type: 'url', value: field.value.url ?? '', hint: hint, disabled: disabled, attrs: {dir: 'ltr', maxlength: 2000}}) }}
-                {{ ui.field({label: t('Text of the link'), name: name ~ '.text', id: at ~ '-text', value: field.value.text ?? '', optional: true, disabled: disabled, attrs: text|merge({maxlength: 200})}) }}
-            </div>
-        {% else %}
-            <div class="fb-field">
-                <span class="fb-label">{{ label }}</span>
-                <p class="fb-hint">{{ field.value is null ? t('Not filled in yet.') : t('Filled in.') }} {{ t('This kind of field cannot be edited here yet; the API takes it.') }}</p>
-            </div>
-        {% endif %}
+        {% include '@backend/fields/input.twig' with {field: field, language: language, name: name, at: at, label: label, hint: hint, text: text, disabled: disabled} only %}
     {% endfor %}
     {% if further.orphans is not empty %}
         {{ ui.alert({tone: 'info', text: t('Kept, but no view of the theme shows them: {names}', {names: further.orphans|join(', ')}), live: 'none'}) }}
