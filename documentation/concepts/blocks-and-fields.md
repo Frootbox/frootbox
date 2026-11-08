@@ -79,6 +79,14 @@ and `heading()` of its own. Visitors get only entries with a value:
 </ul>
 ```
 
+Every entry has an id that the core gives it on saving, e.g.
+`{"id": "k3f9x2ab", "title": "Fast"}`. It stays with the entry when
+entries move, so `item.id` serves as an anchor. A field of an entry
+therefore cannot be named `id`. Paths in actions name an entry by its
+position or by its id: `items/2/title` or `items/k3f9x2ab/title`. With
+the id, a change meets its entry even after someone else moved it, and
+an entry removed meanwhile is refused instead of changing another one.
+
 Print fields with `field()`, without a condition. An empty optional
 field disappears for visitors, with any element that held nothing else.
 While editing it keeps its place and shows its `placeholder`. Use

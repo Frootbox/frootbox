@@ -159,6 +159,8 @@ Rules for templates:
   the field nor an element that only held empty fields. Use `value()` for
   attributes and conditions. A list field gives its entries to loop
   over: `{% for item in field('items') %}{{ item.field('text') }}{% endfor %}`.
+  Each entry carries an id the core gives it (`item.id`), so no field of
+  an entry may be named `id`.
 - Values in seed files and actions follow the field types:
   `php bin/frootbox reference:build` writes the reference of this
   website to `documentation/reference/`, with every action, field type

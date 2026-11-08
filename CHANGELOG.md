@@ -20,6 +20,18 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core, Backend: ids for the entries of lists. The core gives every
+  entry an id of 8 characters on saving, e.g. `{"id": "k3f9x2ab", …}`,
+  in lists of lists too; old content gets them with its next change.
+  Paths of `page.update-field`, `page.add-list-entry`,
+  `page.move-list-entry`, `page.remove-list-entry`, `site.update-field`
+  and `ai.field-write` name an entry by position or by id
+  (`slides/k3f9x2ab/title`); an entry removed meanwhile is refused. In
+  edit mode every block carries `data-fb-entries`, and the editor bar
+  sends ids, so a change meets its entry after another tab moved it.
+  Templates get `item.id`. A field of an entry may no longer be named
+  `id`.
+
 - Core, Backend: everyone changes their own name with `account.update`
   and their email with `account.request-email-change {email, password}`
   under "Your account". After the current password, a link goes to the

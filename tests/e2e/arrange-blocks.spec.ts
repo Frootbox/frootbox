@@ -317,7 +317,10 @@ test('gives a new block its start entries with placeholders', async ({ page, bro
     await expect(features.locator('[data-fb-field="items/0/title"]')).toBeFocused();
     const first = bar.getByRole('toolbar', { name: 'Eintrag 1 von „Vorteile“' });
     await expect(first.getByRole('button', { name: 'Nach vorne' })).toBeDisabled();
+    // The bar names the entry by its id (decision 0344).
+    const removing = page.waitForRequest((request) => request.url().endsWith('/page.remove-list-entry'));
     await first.getByRole('button', { name: 'Eintrag entfernen' }).click();
+    expect(JSON.parse((await removing).postData() ?? '{}').path).toMatch(/^items\/[a-z0-9]{8}$/);
     await expect(features.locator('.base-features__item')).toHaveCount(3);
     await expect(features.locator('[data-fb-field="items/0/title"]')).toBeFocused();
     await expect(features.locator('[data-fb-field="items/0/title"]')).toHaveText('Frisch geröstet');

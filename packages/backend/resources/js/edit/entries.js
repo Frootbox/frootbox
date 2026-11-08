@@ -113,3 +113,45 @@ export function fieldsOf(entry) {
         .filter((field) => ownerOf(field) === entry.owner && field.dataset.fbField.startsWith(entry.path + '/'))
         .sort((a, b) => (a === b ? 0 : a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
 }
+
+/** Actions whose path may name entries by id (decision 0344). */
+const BY_ID = new Set(['page.update-field', 'page.add-list-entry', 'page.move-list-entry', 'page.remove-list-entry', 'ai.field-write']);
+
+/**
+ * The path with the ids of the entries instead of their positions, from
+ * data-fb-entries of the block (decision 0344): "items/1/title" becomes
+ * "items/k3f9x2ab/title". So a change still meets its entry when another
+ * one moved meanwhile. Entries without an id and fields of the layout
+ * keep their position.
+ */
+export function pathWithIds(path, block) {
+    const element = block ? document.querySelector(`${BLOCK}[data-fb-block="${CSS.escape(block)}"]`) : null;
+    let entries = null;
+
+    try {
+        entries = JSON.parse(element?.dataset.fbEntries ?? 'null');
+    } catch {
+        return path;
+    }
+
+    if (!entries || typeof path !== 'string') {
+        return path;
+    }
+
+    const segments = path.split('/');
+
+    return segments.map((segment, index) => {
+        if (index % 2 === 0 || !INDEX.test(segment)) {
+            return segment;
+        }
+
+        const id = entries[segments.slice(0, index).join('/')]?.[Number(segment)];
+
+        return typeof id === 'string' ? id : segment;
+    }).join('/');
+}
+
+/** The input of an action with ids in its path, where the action takes them. */
+export function inputWithIds(name, input) {
+    return BY_ID.has(name) && input && typeof input.path === 'string' ? { ...input, path: pathWithIds(input.path, input.block) } : input;
+}

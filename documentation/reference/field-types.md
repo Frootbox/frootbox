@@ -104,10 +104,10 @@ slides:
     title: { type: headline }
 ```
 
-The value is a list of entries, each with the values of its fields:
+The value is a list of entries, each with the values of its fields and an id the core gives it on saving:
 
 ```
-[{"title": "First slide"}, {"title": "Second slide"}]
+[{"id": "k3f9x2ab", "title": "First slide"}, {"id": "p0q7m1zc", "title": "Second slide"}]
 ```
 
 In the view field('slides') gives the entries to loop over, each with field(), value() and heading() of its own; visitors get only entries with a value:

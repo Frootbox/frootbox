@@ -1098,7 +1098,7 @@ Action · right `page.move-list-entry`
 |---|---|---|
 | `id` | string |  |
 | `language` | string | Language of the translation to change, e.g. "de" |
-| `path` | string | Path of the entry, e.g. "slides/2" |
+| `path` | string | Path of the entry by position or id, e.g. "slides/2" or "slides/k3f9x2ab" |
 | `to` | integer | The new position of the entry, counted from 0 |
 | `block` | string or null, optional | Id of the block; left out for a field of the layout |
 
@@ -1146,7 +1146,7 @@ Action · right `page.remove-list-entry`
 |---|---|---|
 | `id` | string |  |
 | `language` | string | Language of the translation to change, e.g. "de" |
-| `path` | string | Path of the entry, e.g. "slides/2" |
+| `path` | string | Path of the entry by position or id, e.g. "slides/2" or "slides/k3f9x2ab" |
 | `block` | string or null, optional | Id of the block; left out for a field of the layout |
 
 ### `page.restore`
@@ -1258,7 +1258,7 @@ Action · right `page.update-field`
 |---|---|---|
 | `id` | string |  |
 | `language` | string | Language of the translation to change, e.g. "de" |
-| `path` | string | Path of the field, e.g. "title" or "slides/0/title" for a field of the first entry of a list |
+| `path` | string | Path of the field, e.g. "title" or "slides/0/title" for a field of the first entry of a list, the entry also by its id: "slides/k3f9x2ab/title" |
 | `value` | mixed, optional | The new value as the type of the field stores it; null empties the field |
 | `previous` | mixed, optional | The value as it was read; if the field holds something else now, nothing is saved |
 | `block` | string or null, optional | Id of the block, e.g. "k3x9q2mf"; left out for a field of the layout |
@@ -1557,7 +1557,7 @@ Action · right `site.update-field`
 | Input | Type | Description |
 |---|---|---|
 | `language` | string | Language of the value, e.g. "de" |
-| `path` | string | Path of the field as site.show lists it, e.g. "address" or "links/0/text" for a field of the first entry of a list |
+| `path` | string | Path of the field as site.show lists it, e.g. "address" or "links/0/text" for a field of the first entry of a list, the entry also by its id: "links/k3f9x2ab/text" |
 | `value` | mixed, optional | The new value as the type of the field stores it; null removes it, so the value of the first language shows |
 | `previous` | mixed, optional | The value as it was read; if the field holds something else now, nothing is saved |
 

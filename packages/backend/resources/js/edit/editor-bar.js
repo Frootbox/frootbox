@@ -7,6 +7,7 @@ import { DesignPanel, designStyles } from './design.js';
 import { Editing } from './editing.js';
 import { follow, registerFieldTools, toolsOf } from './field-tools.js';
 import { fromStart } from './edges.js';
+import { inputWithIds } from './entries.js';
 import { icon } from './icons.js';
 import { IconPicker, iconPickerStyles } from './icon-picker.js';
 import { MediaPicker, mediaStyles } from './media.js';
@@ -1964,7 +1965,8 @@ export class EditorBar extends LitElement {
     }
 
     action(name, input) {
-        return this.send(this.config.actions + name, JSON.stringify(input), 'application/json');
+        // Entries by id, so a change meets its entry even after a move (decision 0344).
+        return this.send(this.config.actions + name, JSON.stringify(inputWithIds(name, input)), 'application/json');
     }
 
     async send(url, body, type = null) {
