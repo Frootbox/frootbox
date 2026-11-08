@@ -20,6 +20,12 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Migrate Frootbox 1: grids. A rule under `plugins:` names the area for
+  each column with `areas:`, the block of the grid takes the content of
+  the columns. Links behind the mail escape of the Pixel-Fabrik base
+  template become `mailto:` links.
+- Events: the block `CourseDates` has the optional fields `subtitle`
+  and `note`, dates have `shortDate` and `longDate` without the weekday.
 - Events: courses with booking from a provider. A module such as
   `avaro/events` implements `CourseProvider` and registers a
   `CourseProviderEntry`; the setting `provider` picks one of several.
@@ -509,6 +515,12 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Fixed
 
+- Migrate Frootbox 1: only content that visitors see (visibility 2)
+  is visible after the import; content only for signed-in editors stays
+  hidden. A number from a placeholder stays a number only for an option
+  of type `number`.
+- Core: an image clearly wider than the last step of sizes also gets its
+  own width, so a wide banner is no longer scaled up from 960 pixels.
 - Forms: the number of submissions has its own key `{count} submission`.
   The shared key `{count} entry` read "Einsendungen" on other screens.
 - Backend: the panel "Page" keeps the focus on the select after changing
