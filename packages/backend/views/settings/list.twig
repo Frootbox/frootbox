@@ -104,6 +104,28 @@
                     {% endif %}
                 </div>
             {% endfor %}
+
+            {% if extension.testable and can('settings.test') %}
+            <div class="fb-stack fb-stack--sm" role="group" aria-labelledby="{{ key }}-test-title">
+                <h3 class="fb-label" id="{{ key }}-test-title">{{ t('Connection test') }}</h3>
+                <p class="fb-hint">{{ t('Checks with the stored values whether the service answers. Save changes first.') }}</p>
+                <fb-form action="settings.test" show="{{ key }}-test-result">
+                    <form novalidate>
+                        <input type="hidden" name="package" value="{{ extension.package }}">
+                        <div class="fb-form__actions">{{ ui.button({label: t('Test the connection'), type: 'submit', variant: 'tonal'}) }}</div>
+                    </form>
+                </fb-form>
+                <div id="{{ key }}-test-result" hidden>
+                    <div class="fb-alert" data-tone="success" role="status" data-fb-if="ok">
+                        {{ icon('check') }}
+                        <div><p class="fb-alert__title">{{ t('The connection works') }}</p><p data-fb-value="message"></p></div>
+                    </div>
+                    <div class="fb-alert" data-tone="danger" role="alert" data-fb-unless="ok">
+                        {{ icon('alert') }}
+                        <div><p class="fb-alert__title">{{ t('The connection does not work') }}</p><p data-fb-value="message"></p></div>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </section>
     {% endfor %}

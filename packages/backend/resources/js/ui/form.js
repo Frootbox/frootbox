@@ -196,7 +196,9 @@ export function formInput(form) {
  * - reset: empty the form after success
  * - show: the id of a hidden element to show after success and after
  *   refresh, e.g. a new API token; elements in it with
- *   data-fb-value="token" get that value of the result, fields with
+ *   data-fb-value="token" get that value of the result, those with
+ *   data-fb-if="ok" or data-fb-unless="ok" show only while that value is
+ *   true or not (decision 0353), fields with
  *   data-fb-entry the id for action.undo (decision 0176); without one
  *   the <fb-form> around such a field is hidden
  * - refresh: ids of elements to load again after success, separated by
@@ -414,6 +416,13 @@ export class Form extends LitElement {
         this.clearErrors();
         this.setBusy(true);
 
+        // An old result must not stand next to a new error, e.g. of a test of the connection.
+        const previous = this.show ? document.getElementById(this.show) : null;
+
+        if (previous) {
+            previous.hidden = true;
+        }
+
         const prepared = new CustomEvent('fb-form-input', { detail: { input: formInput(form) }, bubbles: true });
         this.dispatchEvent(prepared);
         const result = this.until ? await this.repeat(prepared.detail.input, active) : await runAction(this.action, prepared.detail.input, this.failed);
@@ -476,6 +485,11 @@ export class Form extends LitElement {
         if (shown) {
             for (const element of shown.querySelectorAll('[data-fb-value]')) {
                 element.textContent = String(valueAt(data, element.dataset.fbValue) ?? '');
+            }
+
+            for (const element of shown.querySelectorAll('[data-fb-if], [data-fb-unless]')) {
+                const name = element.dataset.fbIf ?? element.dataset.fbUnless;
+                element.hidden = Boolean(valueAt(data, name)) === (element.dataset.fbIf === undefined);
             }
 
             for (const field of shown.querySelectorAll('[data-fb-entry]')) {

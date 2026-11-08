@@ -32,6 +32,34 @@ the container inject it anywhere. Its values come from
 stored encrypted with `APP_SECRET` and never shown again. A package can
 have more settings classes with a `section:`.
 
+Settings that reach another service can offer a test. Name a class with
+`test:` that implements `Settings\ConnectionTest`; the container makes
+it, so it gets the settings injected:
+
+```php
+#[AsSettings('Specials', 'How the specials are shown', test: TillConnection::class)]
+final readonly class SpecialsSettings { /* … */ }
+
+final readonly class TillConnection implements ConnectionTest
+{
+    public function __construct(private SpecialsSettings $settings, private Till $till) {}
+
+    public function run(): Message
+    {
+        if ('' === $this->settings->tillKey) {
+            throw new ConnectionFailed('Store the API key of the till first.');
+        }
+
+        return new Message('The till answers with {count} products.', ['count' => $this->till->count()]);
+    }
+}
+```
+
+The card of the settings then shows **Test the connection**, which runs
+the action `settings.test` with the stored values. The test only reads:
+it never books, sends or stores anything. Whatever it throws is its
+answer with `ok: false`, e.g. a certificate that is not trusted.
+
 ## Jobs
 
 Work that takes time, like sending mails or calling another service,

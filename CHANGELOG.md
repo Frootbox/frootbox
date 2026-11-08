@@ -20,6 +20,11 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core, Backend: settings can offer a test of the connection. A class
+  named with `#[AsSettings(test: …)]` implements `ConnectionTest`; the
+  action `settings.test` runs it with the stored values and answers with
+  `ok` and a sentence, the card of the settings shows "Test the
+  connection". `settings.list` says which settings are `testable`.
 - Migrate Frootbox 1: grids. A rule under `plugins:` names the area for
   each column with `areas:`, the block of the grid takes the content of
   the columns. Links behind the mail escape of the Pixel-Fabrik base

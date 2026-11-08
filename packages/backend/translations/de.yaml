@@ -1893,3 +1893,7 @@ You: Du
 "Move {item} below the item before": "„{item}“ unter den Punkt davor"
 "Remove {item}": "„{item}“ entfernen"
 "New item in {language}": "Neuer Punkt auf {language}"
+"Checks with the stored values whether the service answers. Save changes first.": "Prüft mit den gespeicherten Werten, ob der Dienst antwortet. Speichere Änderungen vorher."
+"The connection works": "Die Verbindung steht"
+"The connection does not work": "Die Verbindung steht nicht"
+"These settings offer no test.": "Diese Einstellungen bieten keinen Test."

@@ -65,6 +65,22 @@ final class SettingsScreenTest extends BackendTestCase
         self::assertSame(['log', 'default'], [$sent['transport'] ?? null, $sent['source'] ?? null]);
     }
 
+    public function testSettingsWithATestOfferIt(): void
+    {
+        $this->createUser('admin@example.org', ['admin']);
+        $session = $this->signIn('admin@example.org');
+        $this->action('settings.set-secret', ['package' => 'acme/notes', 'name' => 'apiKey', 'value' => 'sk-123'], $session);
+
+        $html = $this->html($this->request('GET', '/cms/settings', session: $session));
+        self::assertSame(1, substr_count($html, '<fb-form action="settings.test"'), 'Only the notes offer a test (decision 0353).');
+        self::assertStringContainsString('show="settings-acme-notes-test-result"', $html);
+        self::assertStringContainsString('<input type="hidden" name="package" value="acme/notes">', $html);
+
+        $result = $this->action('settings.test', ['package' => 'acme/notes'], $session)['data'] ?? null;
+        self::assertIsArray($result);
+        self::assertSame('Connected with 3 notes.', $result['message'] ?? null);
+    }
+
     public function testSuperusersSeeTheJobsAndTheWarningWithoutCron(): void
     {
         $this->createUser('root@example.org', ['superuser']);

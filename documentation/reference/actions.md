@@ -1476,6 +1476,16 @@ Query · right `settings.show`
 |---|---|---|
 | `package` | string | The Composer package of the extension, e.g. "acme/shop", with a section "acme/shop.mail" |
 
+### `settings.test`
+
+Tests the settings of an extension against the service they reach, e.g. an API, and says whether it answers (ok) and what it found or what is wrong; only for settings that offer a test (testable in settings.list)
+
+Action · right `settings.update` · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `package` | string | The Composer package of the extension, e.g. "acme/shop", with a section "acme/shop.mail" |
+
 ### `settings.update`
 
 Changes settings of an extension that are not secrets; a value equal to the default resets it
