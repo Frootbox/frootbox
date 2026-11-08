@@ -170,7 +170,7 @@ needs them, so a small website keeps a short backend:
 | `frootbox/forms` | forms with entries, mail and spam protection (in the skeleton) |
 | `frootbox/seo` | sitemap, robots.txt, Open Graph, structured data, page check (in the skeleton) |
 | `frootbox/news` | articles with categories, list, teasers and RSS |
-| `frootbox/events` | events with place, upcoming and past, calendar file |
+| `frootbox/events` | events with place, upcoming and past, calendar file; courses with free seats and booking from a provider |
 | `frootbox/people` | team, contact persons, locations with opening hours |
 | `frootbox/jobs` | open positions with application through a form |
 | `frootbox/collections` | references, projects and similar entries |

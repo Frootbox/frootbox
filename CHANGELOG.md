@@ -20,6 +20,20 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Events: courses with booking from a provider. A module such as
+  `avaro/events` implements `CourseProvider` and registers a
+  `CourseProviderEntry`; the setting `provider` picks one of several.
+  The blocks `CourseDates` (a course with price per attendee, the least
+  and most attendees and its coming dates with free seats),
+  `NextCourseDates` (the next dates that can be booked) and
+  `CourseBooking` (the form for `?date=`, posted to
+  `POST /_events/booking`, without JavaScript) read the provider live;
+  pages with free seats stay at most a minute in the page cache. New
+  queries `frootbox/events/course.list`, `course.choices`,
+  `date.list`, `date.show` and the action
+  `frootbox/events/booking.place`, which checks everything the provider
+  asks for at once and books only for a visitor in a browser.
+
 - Core, Backend, Base theme: navigations on the website. The Twig
   function `navigation_attributes()` marks a navigation in the editing
   mode; its tab opens the panel "Navigation" in the editor bar, also

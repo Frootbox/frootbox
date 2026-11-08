@@ -2249,6 +2249,58 @@ Query · right `frootbox/collections/entry.list`
 
 ## frootbox/events
 
+### `frootbox/events/booking.place`
+
+Books a date of a course for one or more attendees at the provider; the same key again gives the same booking
+
+Action · public · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `date` | string | The id of the date |
+| `booker` | object | The person who books and gets the invoice: firstName, lastName, email, salutation (mr, ms, diverse), company, street, houseNumber, addition, postalCode, city, country, phone |
+| `attendees` | object | The attendees, each with firstName, lastName and dateOfBirth (YYYY-MM-DD); without names the first is the person who books |
+| `expectedGross` | integer | The total gross in cents the person saw; if it changed meanwhile, nothing is booked |
+| `key` | string | A key of the form, so sending twice books once |
+| `fields` | object, optional | Answers to the fields of the date by key: true for a ticked box, else text |
+| `message` | string or null, optional |  |
+| `consents` | array, optional | Keys of the legal texts the person agreed to |
+
+### `frootbox/events/course.choices`
+
+The courses of the provider as choices for a block, "All" first; empty without a provider
+
+Query · right `frootbox/events/event.list`
+
+### `frootbox/events/course.list`
+
+The courses of the provider with price per attendee and the least and most attendees
+
+Query · public
+
+### `frootbox/events/date.list`
+
+The coming dates of the courses with free seats, earliest first
+
+Query · public
+
+| Input | Type | Description |
+|---|---|---|
+| `course` | string or null, optional | The id of a course; empty for all |
+| `from` | string or null (date-time), optional | From this moment on, else from now |
+| `available` | boolean, optional | Only dates that can be booked now |
+| `limit` | integer, optional |  |
+
+### `frootbox/events/date.show`
+
+A date of a course with its seats, whether it can be booked and the fields it asks for
+
+Query · public
+
+| Input | Type | Description |
+|---|---|---|
+| `id` | string |  |
+
 ### `frootbox/events/event.create`
 
 Creates an event as a draft; frootbox/events/event.publish puts it online
