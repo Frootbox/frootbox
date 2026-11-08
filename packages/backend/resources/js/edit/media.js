@@ -1,5 +1,7 @@
 import { css, html, nothing } from 'lit';
+import { styleMap } from 'lit/directives/style-map.js';
 import { DOCUMENT_TYPES, IMAGE_TYPES, VIDEO_TYPES, sendInParts } from '../ui/parts.js';
+import '../ui/focus.js';
 import { icon } from './icons.js';
 
 const PER_PAGE = 24;
@@ -43,8 +45,8 @@ export class MediaPicker {
     /**
      * kind: "image", "video" or "file"; value: the stored value {media, alt?,
      * caption?, copyright?}, {media, poster?}, {media, text?} or null; caption:
-     * whether the image field has one; focus: "caption" or "copyright" to
-     * start there; apply(value) and remove() save, done() gives the focus back.
+     * whether the image field has one; focus: "alt", "caption",
+     * "copyright" or "focus" (the focus point, decision 0346) to start there; apply(value) and remove() save, done() gives the focus back.
      */
     open({ kind = 'image', value, caption = false, focus = null, apply, remove, done }) {
         this.opened++;
@@ -65,6 +67,9 @@ export class MediaPicker {
             copyright: value?.copyright ?? '',
             // The AI label of the chosen medium, null while untouched (decision 0251).
             ai: null,
+            // The focus point {x, y} of the chosen medium, null while untouched (decision 0346).
+            point: null,
+            refresh: false,
             query: '',
             items: [],
             total: 0,
@@ -79,17 +84,27 @@ export class MediaPicker {
         };
         this.load(1);
 
-        for (const id of [value?.media, value?.poster]) {
-            if (id) {
-                this.show(id);
-            }
-        }
+        const shown = [value?.media, value?.poster].filter(Boolean).map((id) => this.show(id));
+        const opened = this.opened;
 
         this.bar.requestUpdate();
-        this.bar.updateComplete.then(() => {
+        this.bar.updateComplete.then(async () => {
             this.bar.renderRoot.querySelector('dialog.media')?.showModal();
-            const start = focus && this.state?.chosen ? `dialog.media [name="${focus}"]` : 'dialog.media input[type="search"]';
-            (this.bar.renderRoot.querySelector(start) ?? this.bar.renderRoot.querySelector('dialog.media input[type="search"]'))?.focus();
+
+            // The focus point needs the medium, which comes a moment later.
+            if (focus === 'focus' && this.state?.chosen) {
+                await Promise.all(shown);
+                await this.bar.updateComplete;
+            }
+
+            if (this.opened !== opened) {
+                return;
+            }
+
+            const start = !focus || !this.state?.chosen ? null
+                : focus === 'focus' ? 'dialog.media .fb-focus__marker'
+                : `dialog.media [name="${focus}"]`;
+            ((start && this.bar.renderRoot.querySelector(start)) ?? this.bar.renderRoot.querySelector('dialog.media input[type="search"]'))?.focus();
         });
     }
 
@@ -137,7 +152,7 @@ export class MediaPicker {
     pick(id) {
         const item = this.state.items.find((entry) => entry.id === id);
         const seen = item ? { ...this.state.seen, [id]: item } : this.state.seen;
-        this.update(this.state.tab === 'poster' ? { poster: id, seen } : { chosen: id, seen, ai: null });
+        this.update(this.state.tab === 'poster' ? { poster: id, seen } : { chosen: id, seen, ai: null, point: null });
     }
 
     tab(name) {
@@ -346,6 +361,13 @@ export class MediaPicker {
                 await this.saveMedium(medium, { ai: state.ai });
             }
 
+            // So does the focus point; the page shows the new cut once swapped (decision 0346).
+            if (state.point && this.focusable(medium) && !samePoint(state.point, medium.focus)) {
+                if (await this.saveMedium(medium, { focusX: round(state.point.x), focusY: round(state.point.y) }) && this.state) {
+                    this.update({ refresh: true });
+                }
+            }
+
             // Closed meanwhile.
             if (!this.state || this.opened !== opened) {
                 return;
@@ -353,6 +375,11 @@ export class MediaPicker {
         }
 
         this.close(() => state.apply(value));
+    }
+
+    /** Whether the focus point of a medium can be set here: an image other than SVG, and the right to change media. */
+    focusable(medium) {
+        return Boolean(medium && medium.kind === 'image' && medium.type !== 'image/svg+xml' && medium.focus && this.bar.config.mayUpdateMedia);
     }
 
     /** Whether a copyright typed here goes to the medium: it has none yet and the user may change it. */
@@ -391,8 +418,8 @@ export class MediaPicker {
         const saving = then?.();
         state?.done?.();
 
-        // A new file for every place: the page shows it once shown again, like after undo.
-        if (state?.replaced) {
+        // A new file or focus point for every place: the page shows it once shown again, like after undo.
+        if (state?.replaced || state?.refresh) {
             Promise.resolve(saving).finally(() => this.bar.refresh());
         }
     }
@@ -443,7 +470,18 @@ export class MediaPicker {
         const own = item?.copyright ?? '';
         const copyrightHint = own !== '' ? labels.copyrightHereHint : this.toMedium(item) ? labels.copyrightToMedium : labels.copyrightOnlyHere;
 
-        return html`${this.preview(item)}
+        const point = state.point ?? item?.focus;
+
+        return html`${this.focusable(item)
+                ? html`<figure class="media-chosen">
+                    <fb-focus class="fb-focus" .x=${point.x} .y=${point.y} label=${labels.focusPoint} position=${labels.focusPosition}
+                        style=${styleMap({ '--ratio': `${item.width} / ${item.height}` })}
+                        @fb-focus-change=${(event) => this.update({ point: { x: event.detail.x, y: event.detail.y } })}>
+                        <img src=${item.preview} alt="" width=${item.width} height=${item.height} decoding="async">
+                    </fb-focus>
+                    <figcaption>${item.fileName}</figcaption></figure>
+                    <p class="hint">${labels.focusPointHint}</p>`
+                : this.preview(item)}
             <label>${labels.altHere}
                 <input type="text" name="alt" .value=${state.alt} maxlength="500" placeholder=${item?.texts?.[this.bar.config.language]?.alt ?? ''} aria-describedby="fb-media-alt-hint"
                     @input=${(event) => this.update({ alt: event.target.value })}></label>
@@ -539,6 +577,15 @@ export class MediaPicker {
     }
 }
 
+/** Shares to three places, as media.update takes them. */
+function round(share) {
+    return Math.round(Math.min(1, Math.max(0, share)) * 1000) / 1000;
+}
+
+function samePoint(a, b) {
+    return Boolean(b) && round(a.x) === round(b.x) && round(a.y) === round(b.y);
+}
+
 export const mediaStyles = css`
     dialog.media { inline-size: min(100% - var(--fb-space-8), var(--fb-size-content)); }
 
@@ -567,6 +614,43 @@ export const mediaStyles = css`
         object-fit: contain;
         border-radius: var(--fb-radius-sm);
         background: var(--fb-surface);
+    }
+
+    /* The focus point on the chosen image (decision 0346): the box is the image itself. */
+    .media-chosen .fb-focus {
+        position: relative;
+        display: block;
+        inline-size: min(100%, calc(var(--fb-space-16) * 3 * var(--ratio, 1)));
+        justify-self: center;
+        cursor: crosshair;
+    }
+
+    /* Sized by its ratio before it loads, so the point sits right at once. */
+    .media-chosen .fb-focus img {
+        display: block;
+        inline-size: 100%;
+        block-size: auto;
+        max-block-size: none;
+        aspect-ratio: var(--ratio, auto);
+        object-fit: fill;
+    }
+
+    .fb-focus__marker {
+        position: absolute;
+        inline-size: var(--fb-size-control-sm);
+        block-size: var(--fb-size-control-sm);
+        padding: 0;
+        border: calc(var(--fb-size-focus) * 1.5) solid var(--fb-inverse-text);
+        border-radius: var(--fb-radius-full);
+        background: transparent;
+        box-shadow: 0 0 0 var(--fb-size-focus) var(--fb-inverse-bg), inset 0 0 0 var(--fb-size-focus) var(--fb-inverse-bg);
+        cursor: grab;
+        translate: -50% -50%;
+    }
+
+    .fb-focus__marker:focus-visible {
+        outline: var(--fb-size-focus) solid var(--fb-focus);
+        outline-offset: var(--fb-size-focus-offset);
     }
 
     .media-chosen figcaption {

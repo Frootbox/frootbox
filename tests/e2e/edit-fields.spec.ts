@@ -268,6 +268,29 @@ test('offers the buttons of a field on its label', async ({ page, context }) => 
     await removePage(page, id);
 });
 
+test('empties an optional text from its label', async ({ page }) => {
+    const slug = `leeren-${unique()}`;
+    const id = await openPage(page, slug, `Leeren ${Math.floor(Math.random() * 1000)}`);
+    const bar = page.locator('fb-editor-bar');
+
+    // The introduction is optional and has a value: its label offers to empty it (decision 0346).
+    const intro = page.locator('[data-fb-field="intro"]');
+    await intro.hover();
+    const tools = bar.getByRole('toolbar', { name: 'Feld Einleitung' });
+    const save = saved(page);
+    await tools.getByRole('button', { name: 'Feld leeren' }).click();
+    expect((await save).request().postDataJSON().value).toBeNull();
+    await expect(intro).toHaveText('');
+
+    // Without a value the button is gone; a required heading never has it.
+    await intro.hover();
+    await expect(tools.getByRole('button', { name: 'Feld leeren' })).toHaveCount(0);
+    await page.locator('h1[data-fb-field="title"]').hover();
+    await expect(bar.getByRole('button', { name: 'Feld leeren' })).toHaveCount(0);
+
+    await removePage(page, id);
+});
+
 test('shows the lines of a text with several lines once', async ({ page }) => {
     const slug = `zeilen-${unique()}`;
     const id = await openPage(page, slug, `Zeilen ${Math.floor(Math.random() * 1000)}`);

@@ -760,6 +760,9 @@ Counts only at this place.: Gilt nur an dieser Stelle.
 'Photographer or image agency, e.g. “Anna Muster / image agency”. The website shows it with the image where the theme provides for it.': 'Fotograf oder Bildagentur, z. B. „Anna Muster / Bildagentur“. Die Website zeigt es beim Bild, wo das Theme es vorsieht.'
 'Leave it empty to use the text from the media library.': 'Leer lassen, um den Text aus den Medien zu verwenden.'
 Remove the image: Bild entfernen
+Set the focus point: Fokuspunkt setzen
+'Click where the image stays in view when a place cuts it. Saved in the media library, it counts at every place that uses the image.': 'Klick dorthin, wo das Bild sichtbar bleiben soll, wenn eine Stelle es zuschneidet. Gespeichert in den Medien, gilt er überall, wo das Bild verwendet wird.'
+Empty the field: Feld leeren
 Change the image: Bild ändern
 No image: Kein Bild
 

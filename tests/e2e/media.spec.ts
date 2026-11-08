@@ -240,3 +240,80 @@ test('labels an image made with AI and shows a badge to visitors', async ({ page
     expect((await action(page, 'page.unpublish', { id: pageId })).status).toBe(200);
     expect((await action(page, 'page.delete', { id: pageId })).status).toBe(200);
 });
+
+test('sets the focus point and the alternative text from the buttons at the image', async ({ page }) => {
+    const name = `fokus-${unique()}`;
+    await signIn(page, '/cms/media');
+    await page.waitForFunction(() => customElements.get('fb-upload') !== undefined);
+    const chooser = page.waitForEvent('filechooser');
+    await page.getByRole('button', { name: 'Hochladen' }).click();
+    await (await chooser).setFiles(await photo(page, `${name}.jpg`));
+    await expect(page.getByText('Die Dateien sind hochgeladen.')).toBeVisible();
+    await page.getByRole('link', { name: `${name}.jpg` }).click();
+    await expect(page.getByRole('heading', { name: `${name}.jpg` })).toBeVisible();
+    const id = page.url().match(/\/cms\/media\/([0-9A-Z]{26})/)![1];
+
+    await page.goto('/cms/pages');
+    const start = await page.locator('#page-tree .fb-tree__item').first().getAttribute('data-id');
+    const slug = `fokus-${unique()}`;
+    const created = await action(page, 'page.create', {
+        layout: 'frootbox/theme-base/Page',
+        parentId: start,
+        translations: { de: { title: 'Fokus', slug, content: { fields: { title: 'Fokus' }, areas: { main: [
+            { block: 'frootbox/theme-base/Section', areas: { first: [{ block: 'frootbox/theme-base/Image', fields: { image: { media: id } } }] } },
+        ] } } } },
+    });
+    expect(created.status).toBe(200);
+    const pageId: string = created.body.data.id;
+
+    await page.goto(`/cms/pages/${pageId}`);
+    await page.getByRole('button', { name: 'Auf der Website bearbeiten' }).click();
+    await expect(page.locator('h1[data-fb-field="title"]')).toHaveAttribute('contenteditable', 'plaintext-only');
+    const bar = page.locator('fb-editor-bar');
+    const field = page.locator('main [data-fb-type="image"]:not([data-fb-part])');
+
+    // The label of the image has both as buttons (decision 0346); the image is required, so no remove.
+    await field.hover();
+    const tools = bar.getByRole('toolbar', { name: 'Feld Bild' });
+    await expect(tools.getByRole('button')).toHaveCount(3);
+    // A tall image near the top carries its label at its lower edge; the keyboard reaches it anyway.
+    await field.focus();
+    await page.keyboard.press('Alt+F10');
+    await expect(tools.getByRole('button', { name: 'Bild ändern' })).toBeFocused();
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await expect(tools.getByRole('button', { name: 'Fokuspunkt setzen' })).toBeFocused();
+    await page.keyboard.press('Enter');
+    const dialog = bar.getByRole('dialog', { name: 'Bild auswählen' });
+    const marker = dialog.getByRole('button', { name: /^Fokuspunkt: 50 % von links, 50 % von oben$/ });
+    await expect(marker).toBeFocused();
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowUp');
+    await expect(dialog.getByRole('button', { name: 'Fokuspunkt: 70 % von links, 45 % von oben' })).toBeFocused();
+
+    // It goes to the medium, and the page shows the new cut.
+    const updated = page.waitForResponse((response) => response.url().endsWith('/media.update') && response.ok());
+    await dialog.getByRole('button', { name: 'Übernehmen' }).click();
+    expect((await updated).request().postDataJSON()).toMatchObject({ id, focusX: 0.7, focusY: 0.45 });
+    await expect(dialog).toBeHidden();
+    await expect(page.locator('main .base-image img')).toHaveAttribute('style', /object-position: 70% 45%/);
+
+    // The other button starts at the alternative text.
+    await field.focus();
+    await page.keyboard.press('Alt+F10');
+    await page.keyboard.press('ArrowRight');
+    await expect(tools.getByRole('button', { name: 'Alternativtext' })).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(dialog.getByRole('textbox', { name: 'Alternativtext' })).toBeFocused();
+    await page.keyboard.type('Rösterei von innen');
+    const save = page.waitForResponse((response) => response.url().endsWith('/page.update-field') && response.ok());
+    await dialog.getByRole('button', { name: 'Übernehmen' }).click();
+    expect((await save).request().postDataJSON().value).toMatchObject({ media: id, alt: 'Rösterei von innen' });
+    await expect(page.locator('main .base-image img')).toHaveAttribute('alt', 'Rösterei von innen');
+
+    await page.goto(`/cms/pages/${pageId}`);
+    expect((await action(page, 'page.delete', { id: pageId })).status).toBe(200);
+});

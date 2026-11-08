@@ -413,6 +413,11 @@ export class Editing {
         return true;
     }
 
+    /** Empties a text, headline or rich text field from its button (decision 0346). */
+    clear(element) {
+        return this.save(element, null, true);
+    }
+
     /** A restored value in a text or rich text field. */
     show(element, data) {
         const editor = this.editors.get(element);
@@ -454,13 +459,14 @@ export class Editing {
     }
 
     /** Images, videos (decision 0177) and documents (decision 0179) all come from the media library. */
-    editImage(element) {
+    editImage(element, start = null) {
         this.bar.media.open({
             kind: ['video', 'file'].includes(element.dataset.fbType) ? element.dataset.fbType : 'image',
             value: this.savedValue(element),
             // Caption and copyright are parts of an image field (decision 0203).
             caption: (element.dataset.fbParts ?? '').split(' ').includes('caption'),
-            focus: element.dataset.fbPart ?? null,
+            // A part, or a button at the field: "alt" or "focus" (decision 0346).
+            focus: start ?? element.dataset.fbPart ?? null,
             apply: (value) => this.save(element, value),
             remove: () => this.save(element, null),
             done: () => element.focus(),

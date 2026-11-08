@@ -60,12 +60,25 @@ registerFieldTools('link', (field, bar) => {
 
 registerFieldTools('image', (field, bar) => {
     const labels = bar.labels;
+    const chosen = field.dataset.fbValue !== undefined;
+    // An SVG has no focus point, it is never cut (decision 0346).
+    const svg = field.querySelector('img')?.getAttribute('src')?.split('?')[0].endsWith('.svg') ?? false;
 
     return [
-        { icon: 'image', label: field.dataset.fbValue === undefined ? labels.chooseImage : labels.imageChosen, run: () => bar.editing?.editImage(field) },
+        { icon: 'image', label: chosen ? labels.imageChosen : labels.chooseImage, run: () => bar.editing?.editImage(field) },
+        // Shortcuts into the same dialog (decision 0346).
+        ...(chosen ? [{ icon: 'alt', label: labels.altHere, run: () => bar.editing?.editImage(field, 'alt') }] : []),
+        ...(chosen && !svg && bar.config.mayUpdateMedia ? [{ icon: 'focus', label: labels.setFocusPoint, run: () => bar.editing?.editImage(field, 'focus') }] : []),
         ...(removable(field) ? [{ icon: 'trash', label: labels.removeImage, run: () => bar.editing?.save(field, null), tone: 'danger' }] : []),
     ];
 });
+
+// Texts empty an optional field with a value (decision 0346); rich text has its toolbar besides.
+for (const type of ['headline', 'text', 'richtext']) {
+    registerFieldTools(type, (field, bar) => (removable(field)
+        ? [{ icon: 'eraser', label: bar.labels.clearField, run: () => bar.editing?.clear(field), tone: 'danger' }]
+        : []));
+}
 
 registerFieldTools('video', (field, bar) => {
     const labels = bar.labels;

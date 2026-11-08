@@ -1296,8 +1296,14 @@ data from the JSON block `#fb-edit-config` in the head.
   outline in `--fb-on-accent`, `aria-label` and tooltip. The label stays
   while the pointer moves onto it. `link`: "Edit the link", "Open the
   link", "Remove the link" (only optional fields with a value); `image`:
-  "Choose an image" or "Change the image", "Remove the image"
-  (likewise). Clicking the field still edits it. "Open the link"
+  "Choose an image" or "Change the image", with a chosen image
+  "Alternative text" and "Set the focus point" (only with the right to
+  change media, not for SVG), both opening the same dialog there,
+  "Remove the image" (likewise); `headline`, `text`, `richtext`: "Empty
+  the field" (only optional fields with a value). In the dialog the
+  chosen image becomes `<fb-focus>`, sized by its ratio before it
+  loads; the point goes to the medium on "Apply" and the page is
+  swapped. Clicking the field still edits it. "Open the link"
   follows a page of the website in the same tab (the mode goes on),
   another address in a new tab; Ctrl-click or Cmd-click on the field
   opens a new tab, the tooltip of the button says so. Alt+F10 in a field reaches its tools first, then

@@ -14,6 +14,12 @@ Beschreib im **Alternativtext**, was ein Bild zeigt, für Menschen, die es
 nicht sehen, und für Suchmaschinen. Der **Fokuspunkt** hält das Wichtige
 im Blick, wenn ein Bild beschnitten wird, etwa auf dem Handy.
 
+Beides setzt Du dort, wo Du das Bild siehst: Auf der Website hat der
+Reiter eines Bilds die Knöpfe „Alternativtext“ und „Fokuspunkt setzen“.
+Klick dorthin, wo das Bild sichtbar bleiben soll. Der Fokuspunkt gehört
+zum Bild und gilt überall, wo es verwendet wird; Besucher sehen ihn,
+sobald Du veröffentlichst.
+
 ## Mit KI erstellt
 
 Wähl unter **KI**, ob eine KI ein Bild erzeugt oder bearbeitet hat. Die

@@ -17,6 +17,12 @@ Describe what an image shows in its **alternative text**, for people
 who cannot see it and for search engines. The **focus point** keeps the
 important part in view when an image is cut, e.g. on a phone.
 
+You set both where you see the image: on the website, the label of an
+image has the buttons "Alternative text" and "Set the focus point".
+Click where the image should stay in view. The focus point belongs to
+the image and counts at every place that uses it; visitors see it once
+you publish.
+
 ## Made with AI
 
 Choose under **AI** whether an AI generated or edited an image. The

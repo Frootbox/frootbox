@@ -20,6 +20,13 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Backend: the focus point of an image on the website. The label of an
+  image field has "Alternative text" and "Set the focus point", which
+  open the image dialog there; the chosen image in the dialog takes the
+  focus point by click or arrow keys and saves it to the medium (into
+  its draft when it is public), then the page is swapped. Optional
+  headlines, texts and rich texts get "Empty the field" at their label.
+
 - Core, Backend: ids for the entries of lists. The core gives every
   entry an id of 8 characters on saving, e.g. `{"id": "k3f9x2ab", …}`,
   in lists of lists too; old content gets them with its next change.
