@@ -73,7 +73,8 @@ test('edits the website from the draft', async ({ page, request }) => {
     await expect(menu.getByRole('group', { name: 'Diese Seite' })).toBeVisible();
     await expect(menu.getByRole('menuitemcheckbox', { name: 'Alle Stellen zeigen' })).toBeFocused();
     await page.keyboard.press('End');
-    await expect(menu.getByRole('menuitem', { name: 'Zugang und Vorschaulinks' })).toBeFocused();
+    // Signing out is the last entry (decision 0347).
+    await expect(menu.getByRole('menuitem', { name: 'Abmelden' })).toBeFocused();
     await page.keyboard.press('Escape');
     await expect(menu).toHaveCount(0);
     await expect(more).toBeFocused();

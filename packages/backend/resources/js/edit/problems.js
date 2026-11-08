@@ -68,6 +68,13 @@ export function placesOf(errors, page, language) {
             return { ...inContent(content[3] ?? ''), message };
         }
 
+        // Title and address are in the panel "Page" (decision 0347).
+        const general = pointer.match(/^\/ids\/(\d+)\/translations\/([^/]+)\/(title|slug|seoTitle|description)$/);
+
+        if (general && page && page.publish[Number(general[1])] === page.id && general[2] === language) {
+            return { element: null, block: null, path: '', panel: general[3], message };
+        }
+
         const site = pointer.match(/^\/languages\/([^/]+)\/(.+)$/);
 
         if (site && site[1] === language) {

@@ -1857,3 +1857,13 @@ Cache: Cache
 "At least {min} characters. A few words in a row are easy to remember.": "Mindestens {min} Zeichen. Ein paar Wörter hintereinander kann man sich gut merken."
 "This invitation does not work any more. It is older than {days} days, or a password is set already.": "Diese Einladung gilt nicht mehr. Sie ist älter als {days} Tage, oder es ist schon ein Passwort gesetzt."
 "Ask the person who invited you for a new invitation, or ask for a link for a new password.": "Bitte die Person, die Dich eingeladen hat, um eine neue Einladung, oder fordere einen Link für ein neues Passwort an."
+"Settings of the page": "Einstellungen der Seite"
+General: Allgemein
+"You may only look at the settings of this page.": "Du darfst die Einstellungen dieser Seite nur ansehen."
+"This language": "Diese Sprache"
+Available: Vorhanden
+"No version yet": "Noch keine Fassung"
+"Open the version in {language}": "Fassung in {language} öffnen"
+"All settings in the backend": "Alle Einstellungen im Backend"
+"Show in “Page”": "In „Seite“ zeigen"
+You: Du

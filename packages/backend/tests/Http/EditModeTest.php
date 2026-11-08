@@ -124,6 +124,8 @@ final class EditModeTest extends BackendTestCase
         self::assertStringContainsString('.ProseMirror{', $editing);
         self::assertStringContainsString('[data-fb-field]:empty::before{content:attr(data-fb-label)', $editing, 'Empty fields show their label.');
         self::assertStringContainsString('[data-fb-field][data-fb-placeholder]:empty::before{content:attr(data-fb-placeholder)}', $editing, 'Or their placeholder (decision 0142).');
+        $page = $config['page'];
+        self::assertNotNull($page);
         self::assertSame([
             'id' => $this->about,
             'status' => 'changed',
@@ -139,7 +141,30 @@ final class EditModeTest extends BackendTestCase
             'backend' => '/cms/pages/' . $this->about,
             'draftUrl' => '/ueber-uns',
             'visitorUrl' => '/ueber-uns',
-        ], $config['page']);
+        ], array_diff_key($page, ['settings' => true]));
+
+        // The panel "Page" (decision 0347).
+        self::assertSame([
+            'start' => false,
+            'editable' => true,
+            'default' => 'de',
+            'site' => 'Frootbox',
+            'languages' => [[
+                'code' => 'de',
+                'title' => 'Deutsch',
+                'direction' => 'ltr',
+                'prefix' => 'example.org/',
+                'base' => '/',
+                'exists' => true,
+                'url' => '/ueber-uns',
+            ]],
+            'inherited' => ['searchEngines' => null, 'siteSearch' => null],
+        ], $page['settings'] ?? null);
+        self::assertSame('Seite', $config['labels']['page']);
+        self::assertSame('Fassung in {language} anlegen', $config['labels']['pageAddVersion']);
+        self::assertSame('/cms/account', $config['account'], 'Account and signing out in "More".');
+        self::assertSame('/cms/logout', $config['logout']);
+        self::assertSame('Du', $config['labels']['you']);
     }
 
     public function testShowsTheDraftOfTheDesignInTheMode(): void
@@ -276,7 +301,7 @@ final class EditModeTest extends BackendTestCase
     }
 
     /**
-     * @return array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, designPage: bool, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null, history: array{screen: string, names: array{actions: array<string, string>, channels: array<string, string>, statuses: array<string, string>, states: array<string, string>}}|null}
+     * @return array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, account: string, logout: string, designPage: bool, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null, history: array{screen: string, names: array{actions: array<string, string>, channels: array<string, string>, statuses: array<string, string>, states: array<string, string>}}|null}
      */
     private function bar(string $html): array
     {
@@ -284,7 +309,7 @@ final class EditModeTest extends BackendTestCase
         $config = json_decode($match[1], true, flags: \JSON_THROW_ON_ERROR);
         self::assertIsArray($config);
 
-        /** @var array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, designPage: bool, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null, history: array{screen: string, names: array{actions: array<string, string>, channels: array<string, string>, statuses: array<string, string>, states: array<string, string>}}|null} $config */
+        /** @var array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, account: string, logout: string, designPage: bool, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null, history: array{screen: string, names: array{actions: array<string, string>, channels: array<string, string>, statuses: array<string, string>, states: array<string, string>}}|null} $config */
         return $config;
     }
 

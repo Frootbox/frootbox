@@ -120,6 +120,7 @@ function swapBody(next) {
  * Fetches the page again and swaps its content; the bar starts again
  * with the new configuration, like after loading. Without an answer in
  * the editing mode (signed out, redirected) it loads the page instead.
+ * Resolves with the new bar, nothing after loading.
  */
 export async function refreshPage(bar) {
     let next = null;
@@ -150,6 +151,8 @@ export async function refreshPage(bar) {
     bar.remove();
     swapBody(next);
     scrollTo(x, y);
-    mountBar(JSON.parse(source.textContent ?? '{}'), pointer);
+    const fresh = mountBar(JSON.parse(source.textContent ?? '{}'), pointer);
     document.dispatchEvent(new CustomEvent('frootbox:refresh'));
+
+    return fresh;
 }

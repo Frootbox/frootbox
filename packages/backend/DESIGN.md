@@ -1215,7 +1215,8 @@ data from the JSON block `#fb-edit-config` in the head.
   height of the bar plus 2rem), so the footer can be reached.
 - Content: only commands for the page in view, in order
   of use. Switch "Edit" (`role="switch"`), "Undo", "Publish" (primary),
-  "More", collapse, and the status docked at the end. No logo: whoever
+  "Page" (icon and text), comments, search, help, "More", collapse, and
+  the status docked at the end. No logo: whoever
   sees the bar is signed in. Editing off leaves the switch, "More" and
   collapse.
 - The bar keeps its width while one works. "Undo" and
@@ -1245,13 +1246,15 @@ data from the JSON block `#fb-edit-config` in the head.
 - Below 30rem the bar stays one line: the status shows only its mark,
   "Edit" and "Undo" only their icon (text for screen readers and in the
   tooltip), the padding shrinks to `--fb-space-1`, and only "Publish"
-  may shorten its text with an ellipsis.
+  may shorten its text with an ellipsis. "Page" leaves the bar
+  and is an entry of "More" (`.narrow-only`).
 - "More" is a menu button (`aria-haspopup="menu"`) with an ellipsis. Its
   menu opens above it in `--fb-surface` with `--fb-radius-lg` and
   `--fb-shadow-lg`, in sections with a small heading in `--fb-text-muted`:
   "This page" ("Show all places" as `menuitemcheckbox`, "Outline",
-  "Open in the backend", "Discard the draft" in danger last) and "Website" ("Design"
-  with `design.update`). An entry shows only with its right; without
+  "Open in the backend", "Discard the draft" in danger last), "Website" ("Design"
+  with `design.update`) and "You" ("Your account", "Sign out" as a
+  button in a form with the CSRF token). An entry shows only with its right; without
   entries there is no menu. Arrow keys, Home and End move, Escape closes
   and returns to "More", Tab and a click outside close. "Discard the
   draft" asks in the bar with the focus on "Cancel"; closing the design
@@ -1418,6 +1421,20 @@ Arranging blocks, from `resources/js/edit/arranging.js`:
   "Mark as done" / "Open again" and "Delete thread" with a confirmation
   in place. Numbered pins mark the places; the one of the chosen thread
   has a focus ring.
+- **Page** (button "Page" in the bar): a side panel like "Design"
+  (`page.js`) that reads `page.show` when it opens. "General" with title,
+  address (the address of the parent as a muted prefix inside the field
+  border, `.prefixed`; the start page shows its address as text), title
+  and description for search engines (the title the head would have as
+  placeholder) and one "Save" for all, its note in `--fb-text-muted`
+  beside it. Errors stand below their field with a warning icon in
+  `--fb-danger-text`, the field gets `aria-invalid` and a
+  `--fb-danger` border, the focus goes to the first. Then "Languages":
+  a row per language with its name (semibold), its state in
+  `--fb-text-muted` and a link to the version or a button "Add the
+  version in …". Then "Visibility" with two selects that save on
+  change, and a link "All settings in the backend" at the end. Without
+  `page.update` the fields are disabled with a note on top.
 - **Outline** (menu "More", section This page): a side
   panel like the comments with the headings of the draft from
   `page.outline`, indented by level (`--fb-space-4` per level), each a

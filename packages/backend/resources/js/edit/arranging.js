@@ -1093,6 +1093,7 @@ export class Arranging {
     async openPanel(element) {
         const id = element.dataset.fbBlock;
         this.bar.design?.hide();
+        this.bar.pagePanel?.hide();
         this.bar.comments?.hide();
         this.bar.outline?.hide();
         this.panel = { id, title: element.dataset.fbTitle ?? '', loading: true, busy: false };
@@ -1117,6 +1118,7 @@ export class Arranging {
     async openHistory(element) {
         const id = element.dataset.fbBlock;
         this.bar.design?.hide();
+        this.bar.pagePanel?.hide();
         this.bar.comments?.hide();
         this.bar.outline?.hide();
         this.panel = { id, title: element.dataset.fbTitle ?? '', mode: 'history', loading: true, busy: false };

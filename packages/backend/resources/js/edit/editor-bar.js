@@ -12,6 +12,7 @@ import { icon } from './icons.js';
 import { IconPicker, iconPickerStyles } from './icon-picker.js';
 import { MediaPicker, mediaStyles } from './media.js';
 import { OutlinePanel, outlineStyles } from './outline.js';
+import { PAGE_HASH, PagePanel, pageStyles } from './page.js';
 import { placesOf } from './problems.js';
 import { refreshPage, unmoved } from './refresh.js';
 import { SharePreview, shareStyles } from './share.js';
@@ -502,7 +503,7 @@ export class EditorBar extends LitElement {
             box-shadow: var(--fb-shadow-lg);
         }
 
-        .menu [role="group"] { display: grid; gap: var(--fb-space-0); }
+        .menu [role="group"], .menu form { display: grid; gap: var(--fb-space-0); margin: 0; }
 
         .menu [role="group"] + [role="group"] {
             margin-block-start: var(--fb-space-1);
@@ -523,6 +524,8 @@ export class EditorBar extends LitElement {
             font-weight: var(--fb-weight-regular);
             white-space: nowrap;
         }
+
+        .menu .narrow-only { display: none; }
 
         .menu [role="menuitemcheckbox"][aria-checked="true"] { background: var(--fb-accent-soft); color: var(--fb-accent-text); }
 
@@ -649,6 +652,8 @@ export class EditorBar extends LitElement {
         @media (max-width: 30rem) {
             .bar { --pad: var(--fb-space-1); flex-wrap: nowrap; gap: var(--fb-space-1); }
             .bar > * { flex-shrink: 0; }
+            .bar > [data-fb-page] { display: none; }
+            .menu .narrow-only { display: flex; }
             .bar > button, .bar > fb-search > button, .bar > fb-help > button { padding-inline: var(--fb-space-2); }
             .state { padding-inline: var(--fb-space-1); }
 
@@ -675,7 +680,7 @@ export class EditorBar extends LitElement {
         @media (prefers-reduced-motion: reduce) {
             * { transition: none !important; animation: none !important; }
         }
-    `, arrangingStyles, mediaStyles, iconPickerStyles, designStyles, shareStyles, commentStyles, outlineStyles];
+    `, arrangingStyles, mediaStyles, iconPickerStyles, designStyles, shareStyles, commentStyles, outlineStyles, pageStyles];
 
     constructor() {
         super();
@@ -720,6 +725,7 @@ export class EditorBar extends LitElement {
         this.share = new SharePreview(this);
         this.comments = new CommentsPanel(this);
         this.outline = new OutlinePanel(this);
+        this.pagePanel = new PagePanel(this);
         this.frame = 0;
         this.redraw = () => {
             if (this.frame === 0 && (this.current || this.showAll || this.toolbar || this.arranging?.block || this.problems.length > 0 || this.comments.threads.length > 0)) {
@@ -790,6 +796,12 @@ export class EditorBar extends LitElement {
         if (location.hash === '#fb-design' && this.config?.design && this.config.editing) {
             history.replaceState(null, '', location.pathname + location.search);
             this.updateComplete.then(() => this.design.show());
+        }
+
+        // A new address or a new version opens the panel "Page" again there (decision 0347).
+        if (location.hash === PAGE_HASH && this.pagePanel.available) {
+            history.replaceState(null, '', location.pathname + location.search);
+            this.updateComplete.then(() => this.pagePanel.show());
         }
     }
 
@@ -880,7 +892,7 @@ export class EditorBar extends LitElement {
 
         const arranging = this.arranging;
 
-        return html`${this.outlines()}${this.config.editing ? this.comments.pins() : nothing}${this.comments.pickHint()}${arranging?.tools() ?? nothing}${arranging?.entryTools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.design.view()}${this.comments.view()}${this.outline.view()}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}${this.media.dialog()}${this.icons.dialog()}${this.share.dialog()}`;
+        return html`${this.outlines()}${this.config.editing ? this.comments.pins() : nothing}${this.comments.pickHint()}${arranging?.tools() ?? nothing}${arranging?.entryTools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.design.view()}${this.pagePanel.view()}${this.comments.view()}${this.outline.view()}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}${this.media.dialog()}${this.icons.dialog()}${this.share.dialog()}`;
     }
 
     round() {
@@ -898,6 +910,7 @@ export class EditorBar extends LitElement {
                 <span class="switch-track" aria-hidden="true"></span><span class="button-text">${labels.edit}</span>
             </button>
             ${editing ? this.pageControls(page) : nothing}
+            ${editing && !this.confirming && !this.confirmingPublish ? this.pagePanel.button() : nothing}
             ${editing ? this.comments.button() : nothing}
             ${this.search()}
             ${this.help()}
@@ -995,12 +1008,20 @@ export class EditorBar extends LitElement {
         const count = this.problems.length;
         const shown = this.problems.filter((problem) => problem.element?.isConnected);
         const hidden = this.problems.filter((problem) => !problem.element?.isConnected);
+        const inPanel = this.problems.filter((problem) => problem.panel);
         const where = (problem) => [problem.block?.dataset.fbTitle, problem.path].filter(Boolean).join(' · ');
 
         return html`<p>${this.problemsText}</p>
             <p>${count === 1 ? labels.oneProblem : labels.problems.replace('{count}', count)}</p>
             ${hidden.length > 0 ? html`<ul>${hidden.map((problem) => html`<li>${where(problem) ? `${where(problem)}: ` : ''}${problem.message}</li>`)}</ul>` : nothing}
-            ${shown.length > 0 ? html`<button type="button" data-fb-first-problem @click=${() => this.showProblem(shown[0].element)}>${labels.firstProblem}</button>` : nothing}`;
+            ${shown.length > 0 ? html`<button type="button" data-fb-first-problem @click=${() => this.showProblem(shown[0].element)}>${labels.firstProblem}</button>` : nothing}
+            ${inPanel.length > 0 && this.pagePanel.available ? html`<button type="button" data-fb-page-problem @click=${() => this.showPageProblems(inPanel)}>${labels.pageShowProblem}</button>` : nothing}`;
+    }
+
+    /** Opens the panel "Page" with the fields that publishing named (decision 0347). */
+    showPageProblems(problems) {
+        this.details = false;
+        this.pagePanel.show(Object.fromEntries(problems.map((problem) => [problem.panel, problem.message])));
     }
 
     /**
@@ -1137,6 +1158,9 @@ export class EditorBar extends LitElement {
                 @click=${() => this.choose(() => { this.showAll = !this.showAll; })}>${icon('places')}${labels.showAll}</button>` : nothing,
             editing && page ? html`<button type="button" role="menuitem"
                 @click=${() => this.choose(() => this.outline.show())}>${icon('outline')}${labels.outline}</button>` : nothing,
+            // On a phone the panel "Page" is here instead of in the bar (decision 0347).
+            this.pagePanel.available ? html`<button type="button" role="menuitem" class="narrow-only"
+                @click=${() => this.choose(() => this.pagePanel.show())}>${icon('file')}${labels.pageTitle}</button>` : nothing,
             page ? html`<a role="menuitem" href=${page.backend}>${icon('external')}${labels.backend}</a>` : nothing,
             canDiscard ? html`<button type="button" role="menuitem" class="danger" ?disabled=${this.busy}
                 @click=${() => this.choose(() => this.confirm())}>${icon('trash')}${labels.discard}</button>` : nothing,
@@ -1148,8 +1172,14 @@ export class EditorBar extends LitElement {
                 @click=${() => this.choose(() => this.share.show(() => this.renderRoot.querySelector('[data-fb-more]')?.focus()))}>${icon('link')}${labels.share}</button>` : nothing,
             this.config.access ? html`<a role="menuitem" href=${this.config.access}>${icon('lock')}${labels.access}</a>` : nothing,
         ].filter((item) => item !== nothing);
+        // Account and signing out at the end (decision 0347).
+        const forYou = [
+            this.config.account ? html`<a role="menuitem" href=${this.config.account}>${icon('user')}${labels.account}</a>` : nothing,
+            this.config.logout ? html`<form method="post" action=${this.config.logout}><input type="hidden" name="_csrf" .value=${this.config.csrf ?? ''}>
+                <button type="submit" role="menuitem">${icon('signOut')}${labels.signOut}</button></form>` : nothing,
+        ].filter((item) => item !== nothing);
 
-        if (forPage.length === 0 && forSite.length === 0) {
+        if (forPage.length === 0 && forSite.length === 0 && forYou.length === 0) {
             return nothing;
         }
 
@@ -1163,13 +1193,14 @@ export class EditorBar extends LitElement {
                 aria-label=${labels.more} title=${labels.more} @click=${() => (this.menu ? this.closeMenu() : this.openMenu(true))}
                 @keydown=${(event) => this.moreKey(event)}>${icon('more')}</button>
             ${this.menu ? html`<div class="menu" id="fb-more-menu" role="menu" aria-label=${labels.more} @keydown=${(event) => this.menuKey(event)}>
-                ${group('fb-more-page', labels.thisPage, forPage)}${group('fb-more-site', labels.website, forSite)}
+                ${group('fb-more-page', labels.thisPage, forPage)}${group('fb-more-site', labels.website, forSite)}${group('fb-more-you', labels.you, forYou)}
             </div>` : nothing}
         </div>`;
     }
 
     get menuItems() {
-        return [...this.renderRoot.querySelectorAll('.menu [role^="menuitem"]')];
+        // Only the shown ones: some are there for small screens only.
+        return [...this.renderRoot.querySelectorAll('.menu [role^="menuitem"]')].filter((item) => item.getClientRects().length > 0);
     }
 
     async openMenu(open, last = false) {

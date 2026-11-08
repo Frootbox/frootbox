@@ -31,6 +31,17 @@ Wähl eine Überschrift groß oder klein. Die Ebene auf der Seite (H2, H3,
 Leiste sagt, ob Besucher sehen, was Du siehst; **Veröffentlichen**
 stellt die Seite online.
 
+## Titel, Adresse und Sprachen
+
+**Seite** in der Leiste öffnet die Einstellungen der Seite: Titel,
+Adresse und die Texte für Suchmaschinen, mit **Speichern** im Entwurf.
+Ändert sich die Adresse, lädt die Seite unter der neuen, die alte leitet
+nach dem Veröffentlichen weiter. Unter **Sprachen** öffnest Du die
+Fassung in einer anderen Sprache oder legst sie an, unter
+**Sichtbarkeit** nimmst Du die Seite aus Suchmaschinen oder der Suche
+der Website. Alles Weitere, etwa Zeiten oder Sperren, steht im Backend.
+Auf dem Smartphone steht **Seite** unter **Mehr**.
+
 ## Verlauf eines Blocks
 
 Die Uhr an einem Block öffnet seinen Verlauf: wer welches Feld wann

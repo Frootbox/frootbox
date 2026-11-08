@@ -16,6 +16,7 @@ use Frootbox\Backend\Security\Csrf;
 use Frootbox\Core\Action\AccessDeniedException;
 use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Asset\PublicAssets;
+use Frootbox\Core\Config\Config;
 use Frootbox\Core\Design\DesignPage;
 use Frootbox\Core\I18n\Translator;
 use Frootbox\Core\Language\Direction;
@@ -25,6 +26,7 @@ use Frootbox\Core\Media\ListMediumUsages;
 use Frootbox\Core\Media\UploadReceiver;
 use Frootbox\Core\ObjectField\MarkedObjects;
 use Frootbox\Core\Page\EditMode;
+use Frootbox\Core\Page\PageDetails;
 use Frootbox\Core\Page\PageStatus;
 use Frootbox\Core\Page\ShowPage;
 use Frootbox\Core\Page\ShowPageTree;
@@ -76,6 +78,7 @@ final readonly class EditorBar
         private Languages $languages,
         private PublicAssets $public,
         private MarkedObjects $marked,
+        private Config $config,
     ) {}
 
     public function __invoke(BuildingHead $event): void
@@ -85,7 +88,7 @@ final readonly class EditorBar
         }
 
         $id = null !== $event->target && $event->target->isPage() ? $event->target->id : null;
-        $page = null === $id ? null : $this->page($id, $event->head->language);
+        $page = null === $id ? null : $this->page($id, $event->head->language, $event->request->getUri()->getHost() . (null === $event->request->getUri()->getPort() ? '' : ':' . $event->request->getUri()->getPort()));
         $config = [
             'editing' => $this->mode->active(),
             'marking' => $this->mode->marking(),
@@ -98,6 +101,9 @@ final readonly class EditorBar
             // The bar follows the language of the backend, not of the page (decision 0133).
             'ui' => ['language' => $this->translator->language(), 'direction' => Direction::of($this->translator->language())->value],
             'toggle' => $this->router->path('backend.edit-mode'),
+            // "You" at the end of the menu "More" (decision 0347).
+            'account' => $this->router->path('backend.account'),
+            'logout' => $this->router->path('backend.logout'),
             'pages' => $this->router->path('backend.pages'),
             // The search of the backend (decision 0217).
             'search' => ['src' => $this->router->path('backend.search'), 'labels' => $this->searchLabels()],
@@ -162,7 +168,7 @@ final readonly class EditorBar
      *
      * @return array<string, mixed>|null
      */
-    private function page(string $id, string $language): ?array
+    private function page(string $id, string $language, string $host): ?array
     {
         try {
             $details = $this->runner->ask(new ShowPage($id));
@@ -201,6 +207,52 @@ final readonly class EditorBar
             'backend' => $this->router->path('backend.pages.show', ['id' => $id]),
             'draftUrl' => $draftUrl,
             'visitorUrl' => $details->urls[$language] ?? null,
+            // The panel "Page" (decision 0347).
+            'settings' => $tree->has($id) ? $this->settings($id, $details, $tree, $host) : null,
+        ];
+    }
+
+    /**
+     * What the panel "Page" needs beyond page.show (decision 0347): the
+     * languages with the address of the parent in front, the address of
+     * each version in the editing mode and what the user may change.
+     *
+     * @return array<string, mixed>
+     */
+    private function settings(string $id, PageDetails $details, PageTree $tree, string $host): array
+    {
+        $data = $details->draft ?? $details->published;
+        $parentId = $tree->parentId($id);
+        $languages = [];
+
+        foreach ($this->languages->all() as $language) {
+            $parent = null === $parentId ? '' : $tree->path($parentId, $language->code);
+            // The editing mode works on the host of the backend only, like the backend's link.
+            $base = null === $language->domain ? rtrim($language->path($parent), '/') . '/' : null;
+
+            $languages[] = [
+                'code' => $language->code,
+                'title' => $language->title,
+                'direction' => $language->direction->value,
+                'prefix' => (null === $language->domain ? $host : $language->domain) . rtrim($language->path($parent), '/') . '/',
+                'base' => $base,
+                'exists' => isset($data?->translations[$language->code]),
+                'url' => isset($data?->translations[$language->code]) && null === $language->domain ? $language->path($tree->path($id, $language->code)) : null,
+            ];
+        }
+
+        $visibility = $details->visibility;
+        $above = static fn(?string $by): ?string => null === $by || $by === $id || !$tree->has($by) ? null : $tree->row($by)['title'];
+
+        return [
+            'start' => $tree->row($id)['start'],
+            'editable' => $this->permissions->can('page.update', ['id' => $id]),
+            'default' => $this->languages->default()->code,
+            // As the head of the page has it, for the placeholder of the title for search engines.
+            'site' => $this->config->string('app.name', 'Frootbox'),
+            'languages' => $languages,
+            // Exclusions that come from a page above, by its title (decision 0117).
+            'inherited' => ['searchEngines' => $above($visibility->excludedFromSearchEnginesBy), 'siteSearch' => $above($visibility->excludedFromSiteSearchBy)],
         ];
     }
 
@@ -451,6 +503,41 @@ final readonly class EditorBar
             'openLink' => $t('Open the link'),
             'openLinkHint' => $t('Open the link, also with Ctrl-click or Cmd-click on it'),
             'fieldTools' => $t('Field {field}'),
+            // The panel "Page" (decision 0347).
+            'page' => $t('Page'),
+            'pageTitle' => $t('Settings of the page'),
+            'pageGeneral' => $t('General'),
+            'pageName' => $t('Title'),
+            'pageAddress' => $t('Address'),
+            'pageStartAddress' => $t('The start page has no address of its own.'),
+            'pageAddressHint' => $t('If the address changes, the old one redirects to the new one.'),
+            'pageSeoTitle' => $t('Title for search engines'),
+            'pageSeoTitleHint' => $t('Replaces the whole title in search results and when sharing, the name of the website is not added. About 60 characters fit.'),
+            'pageDescription' => $t('Description for search engines'),
+            'pageDescriptionHint' => $t('Search engines often show it below the title. 50 to 160 characters fit best.'),
+            'pageSave' => $t('Save'),
+            'pageDraftNote' => $t('Changes go into the draft. Visitors see them after publishing.'),
+            'pageReadOnly' => $t('You may only look at the settings of this page.'),
+            'pageLanguages' => $t('Languages'),
+            'pageThisLanguage' => $t('This language'),
+            'pageAvailable' => $t('Available'),
+            'pageNoVersion' => $t('No version yet'),
+            'pageOpenVersion' => $t('Open the version in {language}'),
+            'pageAddVersion' => $t('Add the version in {language}'),
+            'pageVisibility' => $t('Visibility'),
+            'pageSearchEngines' => $t('Search engines'),
+            'pageSiteSearch' => $t('Search on the website'),
+            'pageInclude' => $t('Include'),
+            'pageLeaveOut' => $t('Leave out this page'),
+            'pageLeaveOutBranch' => $t('Leave out this page and its subpages'),
+            'pageInherited' => $t('Left out anyway through {page} above.'),
+            'pageSearchEnginesHint' => $t('Left out pages tell search engines not to list them.'),
+            'pageSiteSearchHint' => $t('Applies as soon as a search module is installed.'),
+            'pageAllSettings' => $t('All settings in the backend'),
+            'pageShowProblem' => $t('Show in “Page”'),
+            'you' => $t('You'),
+            'account' => $t('Your account'),
+            'signOut' => $t('Sign out'),
             'design' => $t('Design'),
             'designTitle' => $t('Design of the website'),
             'designDraft' => $t('Only you see the changes until you publish them.'),

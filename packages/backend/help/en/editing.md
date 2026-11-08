@@ -32,6 +32,17 @@ in the bar shows the headings of the page.
 **Undo** takes back the last change. The state in the bar tells
 whether visitors see what you see; **Publish** puts the page online.
 
+## Title, address and languages
+
+**Page** in the bar opens the settings of the page: title, address and
+the texts for search engines, with **Save** into the draft. If the
+address changes, the page loads at the new one; the old one redirects
+once it is published. Under **Languages** you open the version in
+another language or add it, under **Visibility** you leave the page out
+of search engines or the search of the website. Everything else, such
+as times or locks, is in the backend. On a phone **Page** is under
+**More**.
+
 ## History of a block
 
 The clock at a block opens its history: who changed which field when,

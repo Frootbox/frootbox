@@ -20,6 +20,14 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Backend: the panel "Page" in the editor bar. Title, address and the
+  texts for search engines of the page go into its draft through
+  `page.update`; a new address loads the page there, errors stand at
+  their fields. It opens the versions in other languages or adds one,
+  and leaves the page out of searches. Errors of publishing in title or
+  address open it. "More" ends with "Your account" and "Sign out"; on
+  a phone "Page" is in "More".
+
 - Backend: the focus point of an image on the website. The label of an
   image field has "Alternative text" and "Set the focus point", which
   open the image dialog there; the chosen image in the dialog takes the
