@@ -3,7 +3,8 @@
   second level opens with <details>, without a script. An entry of the
   main navigation with the option "button" stands out as a button
   (decision 0188). Phone numbers keep their order in right-to-left
-  languages. The footer uses the macro "link" for its columns.
+  languages. The footer uses the macro "link" for its columns. In the
+  editing mode the navigation is marked to change it there (decision 0349).
 
     {% include '@theme/navigation.twig' with { items: navigation('main'), name: 'main', label: t('Main navigation') } %}
 #}
@@ -16,7 +17,7 @@
   {%- endif -%}
 {% endmacro %}
 {% if items %}
-  <nav class="base-nav base-nav--{{ name }}" aria-label="{{ label }}">
+  <nav class="base-nav base-nav--{{ name }}" aria-label="{{ label }}"{{ navigation_attributes(name)|attributes }}>
     <ul class="base-nav__list">
       {% for item in items %}
         <li>

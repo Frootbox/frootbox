@@ -21,7 +21,7 @@
     </div>
     {% if columns %}
       {% set links = items|filter(item => not item.children) %}
-      <nav class="base-nav base-nav--footer base-footer__nav" aria-label="{{ t('Footer navigation') }}">
+      <nav class="base-nav base-nav--footer base-footer__nav" aria-label="{{ t('Footer navigation') }}"{{ navigation_attributes('footer')|attributes }}>
         <div class="base-footer__columns">
           {% for column in columns %}
             <div class="base-footer__column">

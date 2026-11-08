@@ -20,6 +20,15 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core, Backend, Base theme: navigations on the website. The Twig
+  function `navigation_attributes()` marks a navigation in the editing
+  mode; its tab opens the panel "Navigation" in the editor bar, also
+  under "More". Items move up and down, indent and outdent from the
+  keyboard, a form adds and changes them with the options of the theme,
+  and a language without items of its own gets a copy. Every change goes
+  into the draft and swaps the page; "Publish" and "Discard" in the bar
+  take the navigations along. The base theme marks its main and footer
+  navigation.
 - Core, Backend: the screen "Fields of the website" and their versions.
   `site.versions` lists the published versions and `site.restore`
   makes a draft from one, like the design. `site.show` tells the values

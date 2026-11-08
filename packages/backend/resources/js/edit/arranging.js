@@ -567,7 +567,8 @@ export class Arranging {
 
         // Alt+F10 reaches the buttons of the field, then of the entry and the block; in rich text its toolbar.
         if (event.key === 'F10' && event.altKey && !target.closest('[data-fb-type="richtext"], [data-fb-type="table"]')) {
-            const field = target.closest('[data-fb-field]');
+            // A navigation has its button on the tab as well (decision 0349).
+            const field = target.closest('[data-fb-field]') ?? target.closest('[data-fb-navigation]');
 
             if (field && this.bar.hasFieldTools(field)) {
                 event.preventDefault();
@@ -1094,6 +1095,7 @@ export class Arranging {
         const id = element.dataset.fbBlock;
         this.bar.design?.hide();
         this.bar.pagePanel?.hide();
+        this.bar.navigationPanel?.hide();
         this.bar.comments?.hide();
         this.bar.outline?.hide();
         this.panel = { id, title: element.dataset.fbTitle ?? '', loading: true, busy: false };
@@ -1119,6 +1121,7 @@ export class Arranging {
         const id = element.dataset.fbBlock;
         this.bar.design?.hide();
         this.bar.pagePanel?.hide();
+        this.bar.navigationPanel?.hide();
         this.bar.comments?.hide();
         this.bar.outline?.hide();
         this.panel = { id, title: element.dataset.fbTitle ?? '', mode: 'history', loading: true, busy: false };

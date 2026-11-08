@@ -16,6 +16,7 @@ use Frootbox\Backend\Security\Csrf;
 use Frootbox\Core\Action\AccessDeniedException;
 use Frootbox\Core\Action\Runner;
 use Frootbox\Core\Asset\PublicAssets;
+use Frootbox\Core\Component\Option;
 use Frootbox\Core\Config\Config;
 use Frootbox\Core\Design\DesignPage;
 use Frootbox\Core\I18n\Translator;
@@ -24,6 +25,8 @@ use Frootbox\Core\Language\Languages;
 use Frootbox\Core\Media\ListMedia;
 use Frootbox\Core\Media\ListMediumUsages;
 use Frootbox\Core\Media\UploadReceiver;
+use Frootbox\Core\Navigation\Definitions;
+use Frootbox\Core\Navigation\ListNavigations;
 use Frootbox\Core\ObjectField\MarkedObjects;
 use Frootbox\Core\Page\EditMode;
 use Frootbox\Core\Page\PageDetails;
@@ -33,6 +36,8 @@ use Frootbox\Core\Page\ShowPageTree;
 use Frootbox\Core\Routing\Router;
 use Frootbox\Core\Site\ShowProtection;
 use Frootbox\Core\Site\ShowSite;
+use Frootbox\Core\Theme\Theme;
+use Frootbox\Core\Theme\ThemeChain;
 use Frootbox\Core\View\BuildingHead;
 use Frootbox\RichText\Html;
 
@@ -79,6 +84,8 @@ final readonly class EditorBar
         private PublicAssets $public,
         private MarkedObjects $marked,
         private Config $config,
+        private Definitions $definitions,
+        private ThemeChain $themes,
     ) {}
 
     public function __invoke(BuildingHead $event): void
@@ -116,6 +123,8 @@ final readonly class EditorBar
             'mayReplace' => $this->permissions->can('media.replace'),
             'mayUpdateMedia' => $this->permissions->can('media.update'),
             'site' => $this->site(),
+            // The navigations of the theme, changed on the website (decision 0349).
+            'navigations' => $this->navigations($event->head->language),
             'design' => $this->permissions->can('design.update') ? ['publish' => $this->permissions->can('design.publish'), 'discard' => $this->permissions->can('design.discard')] : null,
             'tokens' => $this->design->hostCss(),
             // Preview links and password protection (decisions 0152 and 0153).
@@ -335,6 +344,55 @@ final readonly class EditorBar
     }
 
     /**
+     * The navigations of the theme with their drafts and options, the
+     * languages whose items the page shows and what the user may do; null
+     * without the right to change them (decision 0349).
+     *
+     * @return array{list: list<array{name: string, title: string, depth: int, draft: bool, options: list<array{name: string, type: string, label: string, choices: list<array{value: string, label: string}>}>}>, chain: list<string>, languages: array<string, string>, publish: bool, discard: bool, screen: string}|null
+     */
+    private function navigations(string $language): ?array
+    {
+        if (!$this->permissions->can('navigation.update')) {
+            return null;
+        }
+
+        $list = [];
+        $themes = array_map(static fn(Theme $theme): string => $theme->name, $this->themes->themes);
+
+        foreach ($this->runner->ask(new ListNavigations()) as $details) {
+            $definition = $this->definitions->get($details->name);
+            $list[] = [
+                'name' => $details->name,
+                'title' => $details->title,
+                'depth' => $details->depth,
+                'draft' => null !== $details->draft,
+                'options' => null === $definition ? [] : array_values(array_map(fn(Option $option): array => [
+                    'name' => $option->name,
+                    'type' => $option->type,
+                    // Labels from the manifest of a theme, so its texts count (decision 0172).
+                    'label' => $this->translator->label($option->label, $themes),
+                    'choices' => array_map(fn(int|string $value, string $label): array => ['value' => (string) $value, 'label' => $this->translator->label($label, $themes)], array_keys($option->choices), $option->choices),
+                ], $definition->options)),
+            ];
+        }
+
+        $languages = [];
+
+        foreach ($this->languages->all() as $entry) {
+            $languages[$entry->code] = $entry->title;
+        }
+
+        return [
+            'list' => $list,
+            'chain' => $this->languages->has($language) ? $this->languages->contentLanguages($language) : [$language],
+            'languages' => $languages,
+            'publish' => $this->permissions->can('navigation.publish'),
+            'discard' => $this->permissions->can('navigation.discard'),
+            'screen' => $this->router->path('backend.navigations'),
+        ];
+    }
+
+    /**
      * How long a new preview link works, 14 days chosen.
      *
      * @return list<array{value: string, label: string, selected: bool}>
@@ -535,6 +593,41 @@ final readonly class EditorBar
             'pageSiteSearchHint' => $t('Applies as soon as a search module is installed.'),
             'pageAllSettings' => $t('All settings in the backend'),
             'pageShowProblem' => $t('Show in “Page”'),
+            // The panel "Navigation" (decision 0349).
+            'navigations' => $t('Navigations'),
+            'navEdit' => $t('Edit {navigation}'),
+            'navItems' => $t('Items'),
+            'navEmpty' => $t('No items yet'),
+            'navAdd' => $t('Add an item'),
+            'navFallback' => $t('{language} has no items of its own and shows those in {source}.'),
+            'navCopy' => $t('Own items for {language}'),
+            'navDraftNote' => $t('Changes go into the draft. Visitors see them after publishing.'),
+            'navBackend' => $t('Edit in the backend'),
+            'navEditItem' => $t('Edit {item}'),
+            'navUp' => $t('Move {item} up'),
+            'navDown' => $t('Move {item} down'),
+            'navOutdent' => $t('Move {item} one level up'),
+            'navIndent' => $t('Move {item} below the item before'),
+            'navRemove' => $t('Remove {item}'),
+            'navItemIn' => $t('Item in {language}'),
+            'navNewItemIn' => $t('New item in {language}'),
+            'navKind' => $t('Kind'),
+            'navKinds' => ['target' => $t('Page'), 'url' => $t('Link'), 'anchor' => $t('Anchor'), 'phone' => $t('Phone'), 'email' => $t('E-mail'), 'heading' => $t('Heading'), 'pages' => $t('Subpages')],
+            'navKindChoices' => ['target' => $t('Page'), 'url' => $t('Link to an address'), 'anchor' => $t('Anchor on a page'), 'phone' => $t('Phone number'), 'email' => $t('E-mail address'), 'heading' => $t('Heading without a link'), 'pages' => $t('Subpages of a page')],
+            'navPage' => $t('Page'),
+            'navThisPage' => $t('This page'),
+            'navMissingPage' => $t('Missing page'),
+            'navSubpagesOf' => $t('Subpages of {page}'),
+            'navAddress' => $t('Address'),
+            'navAnchor' => $t('Anchor'),
+            'navAnchorHint' => $t('The id of an element on the page, without #.'),
+            'navPhone' => $t('Phone number'),
+            'navEmail' => $t('E-mail address'),
+            'navLevels' => $t('Levels'),
+            'navLevelsHint' => $t('How many levels of subpages are shown.'),
+            'navText' => $t('Text'),
+            'navTextHint' => $t('Needed for links, anchors and headings. Otherwise the title of the page or the number shows.'),
+            'navDefault' => $t('Default'),
             'you' => $t('You'),
             'account' => $t('Your account'),
             'signOut' => $t('Sign out'),

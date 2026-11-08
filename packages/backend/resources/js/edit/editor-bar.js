@@ -12,6 +12,7 @@ import { icon } from './icons.js';
 import { IconPicker, iconPickerStyles } from './icon-picker.js';
 import { MediaPicker, mediaStyles } from './media.js';
 import { OutlinePanel, outlineStyles } from './outline.js';
+import { NavigationPanel, navigationStyles } from './navigation.js';
 import { PAGE_HASH, PagePanel, pageStyles } from './page.js';
 import { placesOf } from './problems.js';
 import { refreshPage, unmoved } from './refresh.js';
@@ -136,6 +137,10 @@ function kindOf(element) {
 
     if (element.hasAttribute('data-fb-block')) {
         return 'block';
+    }
+
+    if (element.hasAttribute('data-fb-navigation')) {
+        return 'navigation';
     }
 
     return element.hasAttribute('data-fb-entry') ? 'entry' : 'area';
@@ -680,7 +685,7 @@ export class EditorBar extends LitElement {
         @media (prefers-reduced-motion: reduce) {
             * { transition: none !important; animation: none !important; }
         }
-    `, arrangingStyles, mediaStyles, iconPickerStyles, designStyles, shareStyles, commentStyles, outlineStyles, pageStyles];
+    `, arrangingStyles, mediaStyles, iconPickerStyles, designStyles, shareStyles, commentStyles, outlineStyles, pageStyles, navigationStyles];
 
     constructor() {
         super();
@@ -726,6 +731,7 @@ export class EditorBar extends LitElement {
         this.comments = new CommentsPanel(this);
         this.outline = new OutlinePanel(this);
         this.pagePanel = new PagePanel(this);
+        this.navigationPanel = new NavigationPanel(this);
         this.frame = 0;
         this.redraw = () => {
             if (this.frame === 0 && (this.current || this.showAll || this.toolbar || this.arranging?.block || this.problems.length > 0 || this.comments.threads.length > 0)) {
@@ -892,7 +898,7 @@ export class EditorBar extends LitElement {
 
         const arranging = this.arranging;
 
-        return html`${this.outlines()}${this.config.editing ? this.comments.pins() : nothing}${this.comments.pickHint()}${arranging?.tools() ?? nothing}${arranging?.entryTools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.design.view()}${this.pagePanel.view()}${this.comments.view()}${this.outline.view()}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}${this.media.dialog()}${this.icons.dialog()}${this.share.dialog()}`;
+        return html`${this.outlines()}${this.config.editing ? this.comments.pins() : nothing}${this.comments.pickHint()}${arranging?.tools() ?? nothing}${arranging?.entryTools() ?? nothing}${this.toolbarView()}${arranging?.panelView() ?? nothing}${this.design.view()}${this.pagePanel.view()}${this.navigationPanel.view()}${this.comments.view()}${this.outline.view()}${this.collapsed ? this.round() : this.bar()}${arranging?.pickerDialog() ?? nothing}${this.linkDialog()}${this.media.dialog()}${this.icons.dialog()}${this.share.dialog()}`;
     }
 
     round() {
@@ -1117,11 +1123,13 @@ export class EditorBar extends LitElement {
         const mediaOpen = media && this.config.media.publish;
         // So do the drafts of objects whose fields the page shows (decision 0241).
         const objectsOpen = this.objectDrafts.some((object) => object.publish);
+        // And the drafts of the navigations of the theme (decision 0349).
+        const navigations = this.navigationDrafts.length > 0;
 
         return {
-            status: page.status === 'published' && (site || mediaOpen || objectsOpen) ? 'changed' : page.status,
-            canPublish: page.canPublish || (site && this.config.site.publish) || mediaOpen || objectsOpen,
-            canDiscard: page.canDiscard || (site && this.config.site.discard) || (media && this.config.media.discard) || this.objectDrafts.some((object) => object.discard),
+            status: page.status === 'published' && (site || mediaOpen || objectsOpen || navigations) ? 'changed' : page.status,
+            canPublish: page.canPublish || (site && this.config.site.publish) || mediaOpen || objectsOpen || (navigations && this.config.navigations.publish),
+            canDiscard: page.canDiscard || (site && this.config.site.discard) || (media && this.config.media.discard) || this.objectDrafts.some((object) => object.discard) || (navigations && this.config.navigations.discard),
         };
     }
 
@@ -1168,6 +1176,7 @@ export class EditorBar extends LitElement {
         const forSite = [
             this.config.design && editing ? html`<button type="button" role="menuitem"
                 @click=${() => this.choose(() => this.design.show())}>${icon('palette')}${labels.design}</button>` : nothing,
+            this.navigationPanel.menuEntry(),
             this.config.preview ? html`<button type="button" role="menuitem"
                 @click=${() => this.choose(() => this.share.show(() => this.renderRoot.querySelector('[data-fb-more]')?.focus()))}>${icon('link')}${labels.share}</button>` : nothing,
             this.config.access ? html`<a role="menuitem" href=${this.config.access}>${icon('lock')}${labels.access}</a>` : nothing,
@@ -1317,7 +1326,7 @@ export class EditorBar extends LitElement {
         const selected = this.arranging?.block;
         const entry = this.arranging?.entry?.element;
         const elements = this.showAll
-            ? [...document.querySelectorAll(`${MARKED}, [data-fb-entry]`)]
+            ? [...document.querySelectorAll(`${this.markedSelector}, [data-fb-entry]`)]
             : [...new Set([selected, entry, this.current].filter((element) => element?.isConnected))];
 
         // A field with a problem has its own outline.
@@ -1341,7 +1350,7 @@ export class EditorBar extends LitElement {
 
             return html`<div class="outline ${below ? 'below' : ''}" data-kind=${kind}
                 dir=${directionOf(element)} style="top: ${rect.top}px; left: ${rect.left}px; width: ${rect.width}px; height: ${rect.height}px">
-                ${this.fieldTab(element, labelOf(element))}
+                ${this.fieldTab(element, this.labelAt(element))}
             </div>`;
         })}`;
     }
@@ -1361,7 +1370,7 @@ export class EditorBar extends LitElement {
 
             return html`<div class="outline ${rect.top < 24 ? 'below' : ''}" data-kind="problem"
                 dir=${directionOf(element)} style="top: ${rect.top}px; left: ${rect.left}px; width: ${rect.width}px; height: ${rect.height}px">
-                ${this.fieldTab(element, element === this.current ? `${labelOf(element)}: ${message}` : labelOf(element))}
+                ${this.fieldTab(element, element === this.current ? `${this.labelAt(element)}: ${message}` : this.labelAt(element))}
             </div>`;
         });
     }
@@ -1371,13 +1380,13 @@ export class EditorBar extends LitElement {
      * is a toolbar (decision 0150).
      */
     fieldTab(element, text) {
-        const tools = element === this.current && element.hasAttribute('data-fb-field') && this.editing ? toolsOf(element, this) : [];
+        const tools = element === this.current ? this.toolsAt(element) : [];
 
         if (tools.length === 0) {
             return html`<span class="label">${text}</span>`;
         }
 
-        return html`<div class="label tools" role="toolbar" aria-label=${this.labels.fieldTools.replace('{field}', labelOf(element))}
+        return html`<div class="label tools" role="toolbar" aria-label=${this.labels.fieldTools.replace('{field}', this.labelAt(element))}
             @keydown=${(event) => this.fieldToolsKey(event, element)}>
             <span>${text}</span>
             ${tools.map((tool) => html`<button type="button" class=${tool.tone ?? ''} aria-label=${tool.label} title=${tool.title ?? tool.label}
@@ -1385,9 +1394,34 @@ export class EditorBar extends LitElement {
         </div>`;
     }
 
-    /** Whether a field has buttons on its tab, for Alt+F10. */
+    /** What the bar marks on the page; navigations only for those who may change them (decision 0349). */
+    get markedSelector() {
+        return this.navigationPanel?.available ? `${MARKED}, [data-fb-navigation]` : MARKED;
+    }
+
+    /** The name on the tab of a marked place. */
+    labelAt(element) {
+        return element.dataset.fbNavigation ? this.navigationPanel.title(element.dataset.fbNavigation) : labelOf(element);
+    }
+
+    /** The buttons on the tab of a field (decision 0150) or a navigation (decision 0349). */
+    toolsAt(element) {
+        if (element.hasAttribute('data-fb-field')) {
+            return this.editing ? toolsOf(element, this) : [];
+        }
+
+        if (element.dataset.fbNavigation && this.navigationPanel.available) {
+            const name = element.dataset.fbNavigation;
+
+            return [{ icon: 'pencil', label: this.labels.navEdit.replace('{navigation}', this.navigationPanel.title(name)), run: () => this.navigationPanel.show(name) }];
+        }
+
+        return [];
+    }
+
+    /** Whether a field or navigation has buttons on its tab, for Alt+F10. */
     hasFieldTools(field) {
-        return toolsOf(field, this).length > 0;
+        return this.toolsAt(field).length > 0;
     }
 
     focusFieldTools(field) {
@@ -1402,7 +1436,8 @@ export class EditorBar extends LitElement {
 
         if (event.key === 'Escape') {
             event.preventDefault();
-            field.focus();
+            // A navigation itself takes no focus, its first link does.
+            (field.dataset.fbNavigation ? field.querySelector('a[href], summary') : field)?.focus();
         } else if (event.key === 'F10' && event.altKey) {
             // On to the buttons of the entry and the block.
             event.preventDefault();
@@ -1421,7 +1456,7 @@ export class EditorBar extends LitElement {
         }
 
         this.arranging?.select(target);
-        const element = target instanceof Element ? target.closest(MARKED) : null;
+        const element = target instanceof Element ? target.closest(this.markedSelector) : null;
 
         if (element !== this.current) {
             this.current = element;
@@ -1465,6 +1500,11 @@ export class EditorBar extends LitElement {
     /** Whether the fields of the website have a draft (decision 0128). */
     get siteDraft() {
         return Boolean(this.config?.site?.draft);
+    }
+
+    /** The navigations of the theme that have a draft (decision 0349). */
+    get navigationDrafts() {
+        return (this.config?.navigations?.list ?? []).filter((navigation) => navigation.draft);
     }
 
     /** The objects whose fields the page shows that have a draft: [{ target, type, id, name, publish, discard }] (decision 0241). */
@@ -1548,6 +1588,20 @@ export class EditorBar extends LitElement {
             this.config = { ...this.config, site: { ...this.config.site, draft: false } };
         }
 
+        if (this.navigationDrafts.length > 0 && this.config.navigations.publish) {
+            const response = await this.action('navigation.publish', { names: this.navigationDrafts.map((navigation) => navigation.name) });
+
+            if (!response?.ok) {
+                this.busy = false;
+                this.fail(response, true);
+
+                return;
+            }
+
+            const navigations = this.config.navigations;
+            this.config = { ...this.config, navigations: { ...navigations, list: navigations.list.map((navigation) => ({ ...navigation, draft: false })) } };
+        }
+
         if (publishMedia) {
             const response = await this.action('media.publish', { ids: this.mediaDrafts.map((draft) => draft.id) });
 
@@ -1598,6 +1652,7 @@ export class EditorBar extends LitElement {
         const steps = [
             ...(page.canDiscard ? [['page.discard', { id: page.id }]] : []),
             ...(this.siteDraft && this.config.site.discard ? [['site.discard', {}]] : []),
+            ...(this.config.navigations?.discard ? this.navigationDrafts.map((navigation) => ['navigation.discard', { name: navigation.name }]) : []),
             ...(this.config.media?.discard ? this.mediaDrafts.map((draft) => ['media.discard', { id: draft.id }]) : []),
             ...this.objectDrafts.filter((object) => object.discard).map((object) => [`${object.type}.discard`, { id: object.id }]),
         ];

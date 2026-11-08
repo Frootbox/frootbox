@@ -1882,3 +1882,14 @@ You: Du
 '{count} entry':
   one: '{count} Eintrag'
   other: '{count} Einträge'
+"Edit {navigation}": "„{navigation}“ bearbeiten"
+"{language} has no items of its own and shows those in {source}.": "{language} hat keine eigenen Punkte und zeigt die auf {source}."
+"Own items for {language}": "Eigene Punkte für {language}"
+"Edit in the backend": "Im Backend bearbeiten"
+"Edit {item}": "„{item}“ bearbeiten"
+"Move {item} up": "„{item}“ nach oben"
+"Move {item} down": "„{item}“ nach unten"
+"Move {item} one level up": "„{item}“ eine Ebene höher"
+"Move {item} below the item before": "„{item}“ unter den Punkt davor"
+"Remove {item}": "„{item}“ entfernen"
+"New item in {language}": "Neuer Punkt auf {language}"

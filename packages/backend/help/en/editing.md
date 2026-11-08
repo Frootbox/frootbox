@@ -43,6 +43,17 @@ of search engines or the search of the website. Everything else, such
 as times or locks, is in the backend. On a phone **Page** is under
 **More**.
 
+## Navigations
+
+Pointing at a menu of the website, like the main navigation, shows its
+tab with the pencil (from the keyboard **Alt+F10** at a link). It opens
+the panel **Navigation**: every item can be edited, moved up or down,
+indented below the item before or removed, and **Add an item** adds a
+new one. Every change goes into the draft at once and shows on the
+page; **Publish** puts it online with the page. A language without
+items of its own shows those of another one until you add **Own
+items**. All navigations are under **More** as well.
+
 ## History of a block
 
 The clock at a block opens its history: who changed which field when,

@@ -23,6 +23,7 @@ use Frootbox\Core\Extension\Extensions;
 use Frootbox\Core\Media\CreateMedium;
 use Frootbox\Core\Media\UpdateMedium;
 use Frootbox\Core\Media\Uploads;
+use Frootbox\Core\Navigation\UpdateNavigation;
 use Frootbox\Core\Page\CreatePage;
 use Frootbox\Core\Page\EditMode;
 use Frootbox\Core\Page\PublishPages;
@@ -192,6 +193,26 @@ final class EditModeTest extends BackendTestCase
         self::assertStringContainsString('data-fb-field="brand" data-fb-type="headline" data-fb-label="Name" data-fb-site', $html);
     }
 
+    public function testTellsTheBarAboutTheNavigations(): void
+    {
+        $navigations = $this->bar($this->html($this->page('/ueber-uns')))['navigations'];
+        self::assertNotNull($navigations);
+        self::assertSame(['main', 'footer'], array_column($navigations['list'], 'name'));
+        self::assertSame(['name' => 'main', 'title' => 'Hauptmenü', 'depth' => 2, 'draft' => false, 'options' => [['name' => 'highlight', 'type' => 'boolean', 'label' => 'As button', 'choices' => []]]], $navigations['list'][0]);
+        self::assertSame(['de'], $navigations['chain']);
+        self::assertSame(['de' => 'Deutsch'], $navigations['languages']);
+        self::assertTrue($navigations['publish']);
+        self::assertSame('/cms/navigations', $navigations['screen']);
+
+        $this->runner()->run(new UpdateNavigation('footer', ['de' => [['type' => 'email', 'email' => 'hallo@example.org']]]), Context::system());
+        $navigations = $this->bar($this->html($this->page('/ueber-uns')))['navigations'];
+        self::assertSame([false, true], array_column($navigations['list'] ?? [], 'draft'), 'A draft counts for publishing in the bar.');
+
+        $this->runner()->run(new AssignRole($this->createUser('ann@example.org', []), 'editor', 'page:' . $this->about), Context::system());
+        $this->session = $this->signIn('ann@example.org');
+        self::assertNull($this->bar($this->html($this->page('/ueber-uns')))['navigations'], 'A branch is not enough for a navigation of the website.');
+    }
+
     public function testTellsTheBarAboutTheMediaDraftsOfThePage(): void
     {
         $medium = $this->medium();
@@ -301,7 +322,7 @@ final class EditModeTest extends BackendTestCase
     }
 
     /**
-     * @return array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, account: string, logout: string, designPage: bool, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null, history: array{screen: string, names: array{actions: array<string, string>, channels: array<string, string>, statuses: array<string, string>, states: array<string, string>}}|null}
+     * @return array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, account: string, logout: string, designPage: bool, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null, history: array{screen: string, names: array{actions: array<string, string>, channels: array<string, string>, statuses: array<string, string>, states: array<string, string>}}|null, navigations: array{list: list<array{name: string, title: string, depth: int, draft: bool, options: list<array<string, mixed>>}>, chain: list<string>, languages: array<string, string>, publish: bool, discard: bool, screen: string}|null}
      */
     private function bar(string $html): array
     {
@@ -309,7 +330,7 @@ final class EditModeTest extends BackendTestCase
         $config = json_decode($match[1], true, flags: \JSON_THROW_ON_ERROR);
         self::assertIsArray($config);
 
-        /** @var array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, account: string, logout: string, designPage: bool, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null, history: array{screen: string, names: array{actions: array<string, string>, channels: array<string, string>, statuses: array<string, string>, states: array<string, string>}}|null} $config */
+        /** @var array{editing: bool, marking: bool, csrf: ?string, actions: string, queries: string, language: string, toggle: string, account: string, logout: string, designPage: bool, tokens: string, labels: array<string, string|array<string, string>>, page: array<string, mixed>|null, design: array{publish: bool, discard: bool}|null, site: array{draft: bool, publish: bool, discard: bool}|null, media: array{drafts: list<array{id: string, name: string, elsewhere: int}>, publish: bool, discard: bool}|null, history: array{screen: string, names: array{actions: array<string, string>, channels: array<string, string>, statuses: array<string, string>, states: array<string, string>}}|null, navigations: array{list: list<array{name: string, title: string, depth: int, draft: bool, options: list<array<string, mixed>>}>, chain: list<string>, languages: array<string, string>, publish: bool, discard: bool, screen: string}|null} $config */
         return $config;
     }
 

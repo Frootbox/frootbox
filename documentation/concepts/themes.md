@@ -63,6 +63,26 @@ theme:
 
 The fields of the parent stay, a child adds its own.
 
+## Navigations
+
+A theme declares its navigations and writes their markup itself.
+`navigation()` gives the items in the language of the visitor, and
+`navigation_attributes()` on the element around them lets editors change
+them right there on the website. Without it, they can still reach the
+navigation under "More" in the editor bar.
+
+```yaml
+theme:
+  navigations:
+    main: { title: Main navigation, depth: 2, options: { button: { type: boolean, label: As a button } } }
+```
+
+```twig
+<nav aria-label="{{ t('Main navigation') }}"{{ navigation_attributes('main')|attributes }}>
+  {% for item in navigation('main') %}<a href="{{ item.url }}">{{ item.label }}</a>{% endfor %}
+</nav>
+```
+
 ## The icon
 
 One square PNG, best 512 pixels, in the `assets` folder of the theme is

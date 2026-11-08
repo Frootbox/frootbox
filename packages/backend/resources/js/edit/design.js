@@ -69,6 +69,7 @@ export class DesignPanel {
         this.bar.comments?.hide();
         this.bar.outline?.hide();
         this.bar.pagePanel?.hide();
+        this.bar.navigationPanel?.hide();
         this.state = { loading: true, design: null, busy: false, confirming: false };
         this.bar.requestUpdate();
         let body = null;

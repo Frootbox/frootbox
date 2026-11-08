@@ -50,6 +50,7 @@ export class PagePanel {
         this.bar.design?.hide();
         this.bar.comments?.hide();
         this.bar.outline?.hide();
+        this.bar.navigationPanel?.hide();
         this.state = { loading: true, details: null, values: null, errors, busy: false };
         this.bar.requestUpdate();
         let body = null;

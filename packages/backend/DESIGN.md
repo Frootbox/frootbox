@@ -1445,6 +1445,20 @@ Arranging blocks, from `resources/js/edit/arranging.js`:
   `--fb-warning-bg` on top. With "Show all places" every heading on the
   page carries a small badge with its level at its top end
   (`--fb-text` on `--fb-surface`, `--fb-text-2xs`).
+- **Navigation** (tab of a navigation the theme marks with
+  `navigation_attributes()`, or menu "More", section Website): a side
+  panel like "Page" (`navigation.js`) with a select of the navigations
+  if the theme has several. Items as a nested list, children indented by
+  `--fb-space-5` with a `--fb-border` line at the start; each row shows
+  the text as a semibold button (opens the form) with the kind below in
+  `--fb-text-xs` muted, and icon buttons for up, down, one level up,
+  below the item before and remove, disabled ones at reduced opacity.
+  "Add an item" below. The form replaces the list: kind, page as a
+  select, the field of the kind, text with the page title as
+  placeholder, "Open in a new window" and the options of the theme,
+  then "Cancel" and "Apply". A language without items of its own shows
+  those of the other one read-only with a note and "Own items for …".
+  The marked navigation gets an outline with a tab like a field.
 
 ### Preview note
 

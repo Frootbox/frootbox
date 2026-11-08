@@ -56,6 +56,7 @@ const ICONS = {
     table: svg`<path d="M12 3v18"/><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/>`,
     headerRow: svg`<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 10h18"/><path d="M5 7h14" stroke-width="3"/><path d="M10 10v10"/>`,
     headerColumn: svg`<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M10 4v16"/><path d="M6.5 6v12" stroke-width="3"/><path d="M10 12h11"/>`,
+    navigation: svg`<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 8h10"/><path d="M7 12h10"/><path d="M7 16h10"/>`,
     places: svg`<rect x="3" y="4" width="18" height="6" rx="1.5" stroke-dasharray="3 2"/><rect x="3" y="14" width="18" height="6" rx="1.5" stroke-dasharray="3 2"/>`,
 };
 

@@ -42,6 +42,18 @@ Fassung in einer anderen Sprache oder legst sie an, unter
 der Website. Alles Weitere, etwa Zeiten oder Sperren, steht im Backend.
 Auf dem Smartphone steht **Seite** unter **Mehr**.
 
+## Navigationen
+
+Zeigst Du auf ein Menü der Website, etwa die Hauptnavigation, erscheint
+sein Reiter mit dem Stift (per Tastatur **Alt+F10** an einem Link).
+Er öffnet das Panel **Navigation**: Jeder Punkt lässt sich bearbeiten,
+nach oben oder unten schieben, unter den Punkt davor einrücken oder
+entfernen, **Punkt hinzufügen** legt einen neuen an. Jede Änderung
+landet sofort im Entwurf und ist auf der Seite zu sehen,
+**Veröffentlichen** stellt sie mit der Seite online. Hat eine Sprache
+keine eigenen Punkte, zeigt sie die einer anderen, bis Du **Eigene
+Punkte** anlegst. Alle Navigationen findest Du auch unter **Mehr**.
+
 ## Verlauf eines Blocks
 
 Die Uhr an einem Block öffnet seinen Verlauf: wer welches Feld wann

@@ -73,6 +73,7 @@ export class CommentsPanel {
     async show(current = null) {
         this.bar.design?.hide();
         this.bar.pagePanel?.hide();
+        this.bar.navigationPanel?.hide();
         this.bar.outline?.hide();
         this.bar.arranging?.panel && this.bar.arranging.closePanel();
         this.state = { current, composing: null, confirming: null, error: null, busy: false };

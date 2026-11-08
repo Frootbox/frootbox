@@ -24,6 +24,7 @@ export class OutlinePanel {
     async show() {
         this.bar.design?.hide();
         this.bar.pagePanel?.hide();
+        this.bar.navigationPanel?.hide();
         this.bar.comments?.hide();
         this.bar.arranging?.panel && this.bar.arranging.closePanel();
         this.state = { loading: true, headings: [], error: false };

@@ -29,6 +29,7 @@ the level from the place of the block.
 | `{{ site_field('address') }}` | a field of the website, the same on every page |
 | `<p{{ site_attributes('address')\|attributes }}>` | lang and dir of a field of the website from the first language |
 | `{{ site_value('brand') }}` | its stored value |
+| `<nav{{ navigation_attributes('main')\|attributes }}>` | marks a navigation for editing on the website |
 | `{% for item in alternates() %}` | the page in all languages, for a language switcher |
 | `{{ t('Skip to content') }}` | a text of the theme in the language of the page |
 | `<section{{ {id: jump_mark()}\|attributes }}>` | the id of the block's jump mark, null without one |

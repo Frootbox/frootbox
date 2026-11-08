@@ -166,8 +166,9 @@ Rules for templates:
   website to `documentation/reference/`, with every action, field type
   and Twig function, e.g. an image is `{media: <id>, alt: …}`, and
   every key of a block schema.
-- Links with `url()`, navigations with `navigation()`, the language with
-  `language()` and `alternates()`.
+- Links with `url()`, navigations with `navigation()` and
+  `navigation_attributes()` on the element around them (editors change
+  them there), the language with `language()` and `alternates()`.
 - Content of another server (video, map, script) only through
   `external()`, `video_embed()` or `map_embed()`: nothing loads before
   the visitor agrees.
