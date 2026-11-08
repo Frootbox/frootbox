@@ -446,6 +446,9 @@ import{a as e,i as t,n,o as r,r as i}from"./chunks/edit-place-Xsl8f87D.js";var a
     .panel label.check, .panel label.choice { display: flex; align-items: flex-start; gap: var(--fb-space-2); }
     .panel label.choice span { display: grid; gap: var(--fb-space-0); }
     .panel label.choice small { color: var(--fb-text-muted); font-weight: var(--fb-weight-regular); }
+    .panel .choices { display: grid; gap: var(--fb-space-1); }
+    .panel .choices > span { font-weight: var(--fb-weight-semibold); }
+    .panel .choices label.check { font-weight: var(--fb-weight-regular); }
 
     .panel input[type="text"], .panel input[type="number"], .panel select, .panel textarea {
         min-block-size: var(--fb-size-control);
@@ -626,7 +629,7 @@ import{a as e,i as t,n,o as r,r as i}from"./chunks/edit-place-Xsl8f87D.js";var a
                 ${o.map(t=>this.fieldInput(e,t,t.name,e.fields?.[t.name]??null))}
             </fieldset>`:M}
             ${s.map(t=>this.listView(e,t))}`}optionInput(e,t){let n=e.options?.[t.name]??t.default,r=n=>this.setOption(e,t.name,n),i=t.description?k`<small class="hint">${t.description}</small>`:M,a=this.labels;switch(t.type){case`boolean`:return k`<label class="check"><input type="checkbox" .checked=${n===!0}
-                    @change=${e=>r(e.target.checked)}>${t.label}</label>`;case`choice`:return k`<label>${t.label}
+                    @change=${e=>r(e.target.checked)}>${t.label}</label>`;case`choice`:return t.multiple?this.choicesInput(t,n,r,i):k`<label>${t.label}
                     <select @change=${e=>r(e.target.value)}>
                         ${t.default===``?k`<option value="" ?selected=${n===``}>${a.noChoice}</option>`:M}
                         ${t.choices.map(e=>k`<option .value=${String(e.value)} ?selected=${String(e.value)===String(n)}>${e.label}</option>`)}
@@ -634,7 +637,14 @@ import{a as e,i as t,n,o as r,r as i}from"./chunks/edit-place-Xsl8f87D.js";var a
                     <input type="number" .value=${String(n??``)} min=${t.min??M} max=${t.max??M}
                         @change=${e=>r(e.target.value===``?t.default:Number(e.target.value))}>${i}</label>`;default:return k`<label>${t.label}
                     <input type="text" .value=${String(n??``)}
-                        @change=${e=>r(e.target.value)}>${i}</label>`}}fieldInput(e,t,n,r){if(t.type===`link`){let i=r?r.text||r.target||r.url:this.labels.noLink;return k`<div><span class="hint">${t.label}</span>
+                        @change=${e=>r(e.target.value)}>${i}</label>`}}choicesInput(e,t,n,r){let i=(Array.isArray(t)?t:[]).map(String),a=e.choices.find(e=>String(e.value)===``),o=e.choices.filter(e=>String(e.value)!==``),s=(e,t)=>{let r=t?[...i,String(e.value)]:i.filter(t=>t!==String(e.value));n(o.filter(e=>r.includes(String(e.value))).map(e=>String(e.value)))};return k`<div class="choices" role="group" aria-label=${e.label}>
+            <span>${e.label}</span>
+            ${a?k`<label class="check"><input type="checkbox" .checked=${i.length===0}
+                @change=${e=>e.target.checked?n([]):e.target.checked=!0}>${a.label}</label>`:M}
+            ${o.map(e=>k`<label class="check"><input type="checkbox" .checked=${i.includes(String(e.value))}
+                @change=${t=>s(e,t.target.checked)}>${e.label}</label>`)}
+            ${r}
+        </div>`}fieldInput(e,t,n,r){if(t.type===`link`){let i=r?r.text||r.target||r.url:this.labels.noLink;return k`<div><span class="hint">${t.label}</span>
                 <button type="button" class="link-field" @click=${()=>this.editLink(e,n,r)}>
                     <span>${i}</span>${R(`link`)}</button></div>`}if(t.type===`image`)return k`<div><span class="hint">${t.label}</span>
                 <button type="button" class="link-field" @click=${()=>this.editImage(e,n,r,`image`,t.caption===!0)}>

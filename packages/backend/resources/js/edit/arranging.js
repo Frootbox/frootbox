@@ -317,6 +317,9 @@ export const arrangingStyles = css`
     .panel label.check, .panel label.choice { display: flex; align-items: flex-start; gap: var(--fb-space-2); }
     .panel label.choice span { display: grid; gap: var(--fb-space-0); }
     .panel label.choice small { color: var(--fb-text-muted); font-weight: var(--fb-weight-regular); }
+    .panel .choices { display: grid; gap: var(--fb-space-1); }
+    .panel .choices > span { font-weight: var(--fb-weight-semibold); }
+    .panel .choices label.check { font-weight: var(--fb-weight-regular); }
 
     .panel input[type="text"], .panel input[type="number"], .panel select, .panel textarea {
         min-block-size: var(--fb-size-control);
@@ -1271,6 +1274,10 @@ export class Arranging {
                 return html`<label class="check"><input type="checkbox" .checked=${value === true}
                     @change=${(event) => set(event.target.checked)}>${option.label}</label>`;
             case 'choice':
+                if (option.multiple) {
+                    return this.choicesInput(option, value, set, description);
+                }
+
                 return html`<label>${option.label}
                     <select @change=${(event) => set(event.target.value)}>
                         ${option.default === '' ? html`<option value="" ?selected=${value === ''}>${labels.noChoice}</option>` : nothing}
@@ -1285,6 +1292,31 @@ export class Arranging {
                     <input type="text" .value=${String(value ?? '')}
                         @change=${(event) => set(event.target.value)}>${description}</label>`;
         }
+    }
+
+    /**
+     * Checkboxes for an option with any number of choices (decision 0355). A
+     * choice with the value "" such as "All" stands for none ticked.
+     */
+    choicesInput(option, value, set, description) {
+        const chosen = (Array.isArray(value) ? value : []).map(String);
+        const empty = option.choices.find((choice) => String(choice.value) === '');
+        const choices = option.choices.filter((choice) => String(choice.value) !== '');
+        const toggle = (choice, on) => {
+            const next = on ? [...chosen, String(choice.value)] : chosen.filter((item) => item !== String(choice.value));
+
+            // As text like a select: values from a query are text, fixed keys such as 400 come back as numbers
+            set(choices.filter((item) => next.includes(String(item.value))).map((item) => String(item.value)));
+        };
+
+        return html`<div class="choices" role="group" aria-label=${option.label}>
+            <span>${option.label}</span>
+            ${empty ? html`<label class="check"><input type="checkbox" .checked=${chosen.length === 0}
+                @change=${(event) => event.target.checked ? set([]) : (event.target.checked = true)}>${empty.label}</label>` : nothing}
+            ${choices.map((choice) => html`<label class="check"><input type="checkbox" .checked=${chosen.includes(String(choice.value))}
+                @change=${(event) => toggle(choice, event.target.checked)}>${choice.label}</label>`)}
+            ${description}
+        </div>`;
     }
 
     fieldInput(data, field, path, value) {

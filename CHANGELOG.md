@@ -20,6 +20,12 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core, Backend: options of blocks with any number of choices. A
+  `choice` with `multiple: true` holds a list, by default empty; the
+  settings of a block show checkboxes, and a choice with the value `''`
+  such as “All” is ticked while nothing else is. Events: “Courses soon”
+  (`NextCourseDates`) shows the ticked courses (`courses`, before
+  `course`), none ticked means all.
 - Core, Backend: settings can offer a test of the connection. A class
   named with `#[AsSettings(test: …)]` implements `ConnectionTest`; the
   action `settings.test` runs it with the stored values and answers with

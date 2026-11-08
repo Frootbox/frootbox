@@ -92,8 +92,9 @@ options:
 | `type` | `choice`, `boolean`, `number`, `text` | What the editor chooses. |
 | `label` | text | The label in the backend. Without one it comes from the name: `imageHeight` becomes “Image height”. |
 | `description` | text | A hint below the option. |
-| `default` | text, number or `true`/`false` | The value of a new block. Without one: the first choice, `false`, `min` or `0`, or an empty text. |
+| `default` | text, number, `true`/`false` or a list | The value of a new block. Without one: the first choice, `false`, `min` or `0`, an empty text, or an empty list with `multiple`. |
 | `choices` | map by name | For `choice`: the values with their labels, e.g. `{ 400: Standard, 550: High }`. |
+| `multiple` | `true` or `false` | For `choice`: `true` lets editors tick any number of choices; the value is a list, by default empty. A choice with the value `''`, such as “All”, is ticked while the list is empty. |
 | `source` | text | For `choice`: a query that gives the choices instead, e.g. `frootbox/forms/form.choices`. It returns a list of `{value, label}`. |
 | `min` | number | For `number`: the smallest value. |
 | `max` | number | For `number`: the largest value. |

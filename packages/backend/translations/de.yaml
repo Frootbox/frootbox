@@ -88,6 +88,8 @@ is invalid.: ist ungültig.
 "may have at most {decimals} decimal places.": "darf höchstens {decimals} Nachkommastellen haben."
 "must be a valid {type}.": "muss ein gültiger Wert vom Typ {type} sein."
 "must be one of {choices}.": "muss eins von {choices} sein."
+"must be a list of different values.": "muss eine Liste verschiedener Werte sein."
+"must be a list of different values from {choices}.": "muss eine Liste verschiedener Werte aus {choices} sein."
 "there is no block \"{block}\".": "den Block „{block}“ gibt es nicht."
 "{block} is a widget and only goes into areas that allow it by name, e.g. the columns of a section.": "{block} ist ein Widget und passt nur in Bereiche, die es ausdrücklich erlauben, z. B. die Spalten eines Abschnitts."
 "{block} is not allowed in the area \"{area}\". Allowed: {allowed}.": "{block} ist im Bereich „{area}“ nicht erlaubt. Erlaubt: {allowed}."
