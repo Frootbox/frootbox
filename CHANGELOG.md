@@ -526,6 +526,12 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Fixed
 
+- Migrate Frootbox 1: a page gets the address it had live. When
+  `pages.alias` ends in a counter such as `impressum-1` and the address
+  without it still leads to the same page, the import takes that one;
+  Frootbox 1 writes such counters when a page with an old address
+  without UID is saved again. The other addresses become redirects, and
+  no redirect gets the path of a page of the new website.
 - Events: after a booking that came back with an error, the form keeps
   its key, so sending again books once. Before, a provider that booked
   but answered too late, e.g. while it sent its mail, led to a second
