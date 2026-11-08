@@ -381,7 +381,7 @@ import{a as e,i as t,n,o as r,r as i}from"./chunks/edit-place-Xsl8f87D.js";var a
 
     .preview.none .icon { inline-size: var(--fb-space-8); block-size: var(--fb-space-8); }
 
-    .panel label.choice .preview { inline-size: calc(var(--fb-space-16) * 1.5); margin: 0; }
+    .panel label.choice .preview { inline-size: 100%; margin: 0; }
 
     .panel {
         position: absolute;
@@ -443,7 +443,16 @@ import{a as e,i as t,n,o as r,r as i}from"./chunks/edit-place-Xsl8f87D.js";var a
     }
 
     .panel label { display: grid; gap: var(--fb-space-1); font-weight: var(--fb-weight-semibold); }
-    .panel label.check, .panel label.choice { display: flex; align-items: flex-start; gap: var(--fb-space-2); }
+    .panel label.check { display: flex; align-items: flex-start; gap: var(--fb-space-2); }
+
+    /* Radio, preview and text each in a column of their own, so they line up from one variant to the next. */
+    .panel label.choice {
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: start;
+        gap: var(--fb-space-2);
+    }
+
+    .panel label.choice:has(.preview) { grid-template-columns: auto calc(var(--fb-space-16) * 1.5) minmax(0, 1fr); }
     .panel label.choice span { display: grid; gap: var(--fb-space-0); }
     .panel label.choice small { color: var(--fb-text-muted); font-weight: var(--fb-weight-regular); }
     .panel .choices { display: grid; gap: var(--fb-space-1); }
