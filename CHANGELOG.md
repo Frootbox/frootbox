@@ -526,6 +526,10 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Fixed
 
+- Core: a view that a theme or another module adds to a block shows its
+  title, description and options in the language of the backend with
+  the translations of that package, and keeps the further fields of
+  its objects.
 - Migrate Frootbox 1: only content that visitors see (visibility 2)
   is visible after the import; content only for signed-in editors stays
   hidden. A number from a placeholder stays a number only for an option
