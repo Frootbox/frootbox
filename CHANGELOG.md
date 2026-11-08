@@ -526,6 +526,10 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Fixed
 
+- Events: after a booking that came back with an error, the form keeps
+  its key, so sending again books once. Before, a provider that booked
+  but answered too late, e.g. while it sent its mail, led to a second
+  booking when the visitor tried again.
 - Core: a view that a theme or another module adds to a block shows its
   title, description and options in the language of the backend with
   the translations of that package, and keeps the further fields of
