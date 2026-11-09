@@ -130,6 +130,8 @@ final readonly class PagesHandler implements RequestHandlerInterface
                 'locked' => $above($visibility->lockedBy),
                 'searchEngines' => $above($visibility->excludedFromSearchEnginesBy),
                 'siteSearch' => $above($visibility->excludedFromSiteSearchBy),
+                // The password of a page above (decision 0358).
+                'protected' => $above($visibility->protectedBy),
             ],
             'versions' => $this->versions($id),
             'history' => $this->history($id),

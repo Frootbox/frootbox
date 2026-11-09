@@ -1035,6 +1035,17 @@ Action · right `page.discard`
 |---|---|---|
 | `id` | string |  |
 
+### `page.enter`
+
+Checks the password of a protected page and lets the visitor in
+
+Action · public · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `id` | string |  |
+| `password` | string |  |
+
 ### `page.history`
 
 Returns who changed a page when, through which channel and on which device, newest first, with each change by language, block and field and its old and new value. Filters by block, path and language; before pages through older entries
@@ -1113,6 +1124,18 @@ Query · right `page.show`
 | `id` | string |  |
 | `language` | string or null, optional |  |
 | `draft` | boolean, optional |  |
+
+### `page.protect`
+
+Protects a page, maybe with its subpages, with a password right away, or sets a new one; visitors then need it, signed-in users and preview links do not
+
+Action · right `page.protect` · cannot be undone
+
+| Input | Type | Description |
+|---|---|---|
+| `id` | string |  |
+| `password` | string | The password visitors enter, at least 8 characters |
+| `branch` | boolean, optional | Also protect all pages below it with this password |
 
 ### `page.publish`
 
@@ -1204,6 +1227,16 @@ Query · right `page.tree`
 Lifts the lock of a page set with page.lock; a lock of a page above stays
 
 Action · right `page.unlock`
+
+| Input | Type | Description |
+|---|---|---|
+| `id` | string |  |
+
+### `page.unprotect`
+
+Switches the password of a page set with page.protect off; a password of a page above stays
+
+Action · right `page.unprotect` · cannot be undone
 
 | Input | Type | Description |
 |---|---|---|

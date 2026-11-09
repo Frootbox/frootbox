@@ -14,6 +14,7 @@ use Frootbox\Core\Auth\TooManyAttemptsException;
 use Frootbox\Core\Error\ErrorPage;
 use Frootbox\Core\Http\Exception\HttpException;
 use Frootbox\Core\I18n\Translator;
+use Frootbox\Core\Page\PagePasswords;
 use Frootbox\Core\Routing\Route;
 use Frootbox\Core\Routing\Router;
 use Frootbox\Core\Site\SiteAccessMiddleware;
@@ -28,7 +29,7 @@ use Throwable;
 final readonly class BackendErrorPage implements ErrorPage
 {
     /** Reasons of HttpException that get a page of their own on the website. */
-    private const array SITE_ACCESS = ['site-protected', 'site-protected-closed', 'preview-expired'];
+    private const array SITE_ACCESS = ['site-protected', 'site-protected-closed', 'preview-expired', 'page-protected'];
 
     public function __construct(
         private BackendView $view,
@@ -42,7 +43,7 @@ final readonly class BackendErrorPage implements ErrorPage
         $path = $request->getUri()->getPath();
         $reason = $throwable instanceof HttpException ? $throwable->reason : null;
 
-        // The password of the website and ended preview links on its pages (decisions 0152, 0153).
+        // The password of the website or a page and ended preview links on its pages (decisions 0152, 0153, 0358).
         if (\in_array($reason, self::SITE_ACCESS, true)) {
             return $this->siteAccess($request, $reason, $throwable);
         }
@@ -91,8 +92,8 @@ final readonly class BackendErrorPage implements ErrorPage
     }
 
     /**
-     * The password form of a protected website, or that a preview link
-     * ended, like the sign-in of the backend.
+     * The password form of a protected website or page, or that a
+     * preview link ended, like the sign-in of the backend.
      */
     private function siteAccess(ServerRequestInterface $request, string $reason, Throwable $throwable): string
     {
@@ -101,7 +102,7 @@ final readonly class BackendErrorPage implements ErrorPage
         return $this->view->html($request, '@backend/site-access.twig', [
             'reason' => $reason,
             'expired' => 'preview-expired' === $reason,
-            'field' => SiteAccessMiddleware::FIELD,
+            'field' => 'page-protected' === $reason ? PagePasswords::FIELD : SiteAccessMiddleware::FIELD,
             'error' => match (true) {
                 $previous instanceof TooManyAttemptsException => $this->translator->get('Too many attempts. Wait a moment and try again.'),
                 $previous instanceof AuthenticationException => $this->translator->get('The password is not right.'),

@@ -233,6 +233,8 @@ final readonly class PageTree
                 'online' => PageStatus::Draft !== $node->status,
                 // Locked by itself or a page above (decision 0117).
                 'locked' => null !== $node->visibility->lockedBy,
+                // With a password of its own or from above (decision 0358).
+                'protected' => null !== $node->visibility->protectedBy,
                 'outside' => $node->outside,
                 // What plugin the page shows (decision 0242).
                 'plugin' => $node->plugin,

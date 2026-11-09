@@ -148,6 +148,31 @@ final class ContentScreensTest extends BackendTestCase
         self::assertSame(2, substr_count($html, 'data-status="danger"'), 'Tree and details mark the page; the draft below was never published.');
     }
 
+    public function testShowsAPasswordInTheTreeAndTheDetails(): void
+    {
+        $about = $this->html($this->request('GET', '/cms/pages/' . $this->about, session: $this->session));
+        self::assertStringContainsString('<fb-form action="page.protect"', $about);
+        self::assertStringContainsString('name="branch" value="1">', $about, 'With subpages, the password can reach them.');
+        self::assertStringNotContainsString('<fb-form action="page.unprotect"', $about);
+
+        $result = $this->action('page.protect', ['id' => $this->about, 'password' => 'kaffeebohne', 'branch' => true], $this->session);
+        $data = $result['data'] ?? null;
+        self::assertIsArray($data);
+        self::assertSame('branch', $data['protected'] ?? null);
+        self::assertStringNotContainsString('kaffeebohne', (string) json_encode($result), 'The password never comes back.');
+
+        $html = $this->html($this->request('GET', '/cms/pages/' . $this->about, session: $this->session));
+        self::assertStringContainsString('<fb-form action="page.unprotect"', $html);
+        self::assertStringContainsString('Besucher brauchen das Passwort für diese Seite und ihre Unterseiten.', $html);
+        self::assertStringContainsString('Neues Passwort setzen', $html);
+        self::assertSame(2, substr_count($html, '<span class="fb-tree__flag" data-status="scheduled" aria-hidden="true">'), 'The page and the draft below are marked in the tree.');
+        self::assertStringContainsString('<span class="fb-badge" data-status="info">Passwort</span>', $html);
+
+        $team = $this->html($this->request('GET', '/cms/pages/' . $this->team, session: $this->session));
+        self::assertStringContainsString('Das Passwort kommt von Über uns darüber.', $team);
+        self::assertStringNotContainsString('<fb-form action="page.unprotect"', $team);
+    }
+
     public function testShowsOnlyTheBranchOfAnEditor(): void
     {
         $editor = $this->createUser('jane@example.org', []);

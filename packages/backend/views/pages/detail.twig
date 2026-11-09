@@ -15,6 +15,7 @@
         </div>
         <div class="fb-cluster">
             {% if row.locked %}{{ ui.badge('danger', t('Locked')) }}{% endif %}
+            {% if row.protected %}{{ ui.badge('info', t('Password')) }}{% endif %}
             {{ ui.status(row.status) }}
         </div>
     </div>
@@ -177,6 +178,33 @@
                 <div class="fb-cluster">{{ ui.button({label: t('Lock for visitors'), variant: 'outline', icon: 'lock', attrs: {commandfor: 'page-lock', command: 'show-modal'}}) }}</div>
             {% elseif not published and can('page.lock', {id: page.id}) %}
                 <p class="fb-muted">{{ t('Only a published page can be locked.') }}</p>
+            {% endif %}
+
+            {#- A password for visitors, right away and also before publishing (decision 0358). -#}
+            {% set protected = details.protected.value %}
+            {% if protected != 'none' %}
+                {{ ui.alert({tone: 'info', title: t('Password protected'), text: (protected == 'branch' ? t('Visitors need the password for this page and its subpages. Signed-in users and preview links do not.') : t('Visitors need the password for this page. Signed-in users and preview links do not.')) ~ (details.protectedSince ? ' ' ~ t('Since {date}.', {date: details.protectedSince|date(t('Y-m-d H:i'))}) : ''), live: 'none'}) }}
+            {% elseif page.inherited.protected %}
+                {{ ui.alert({tone: 'info', title: t('Password protected'), text: t('The password comes from {page} above. A password of its own applies here instead.', {page: page.inherited.protected}), live: 'none'}) }}
+            {% endif %}
+            {#- The password is required input, a placeholder lets the targets count. -#}
+            {% if can('page.protect', {id: page.id, password: '********'}) %}
+            <fb-form action="page.protect" refresh="{{ refresh }}" done="{{ protected != 'none' ? t('The new password applies.') : t('The page is password protected.') }}">
+                <form class="fb-stack" novalidate>
+                    <input type="hidden" name="id" value="{{ page.id }}">
+                    {{ ui.field({label: protected != 'none' ? t('New password') : t('Password for visitors'), name: 'password', id: 'page-password', type: 'password', autocomplete: 'new-password', required: true, hint: protected != 'none' ? t('Browsers let in with the old password need the new one.') : t('At least 8 characters. Only visitors who know it see the page. It works right away, also before publishing.')}) }}
+                    {% if page.has_children %}{{ ui.check({label: t('Also for the subpages'), name: 'branch', id: 'page-password-branch', checked: protected == 'branch'}) }}{% endif %}
+                    <div class="fb-cluster">{{ ui.button({label: protected != 'none' ? t('Set new password') : t('Protect with password'), type: 'submit', variant: 'outline', icon: 'shield'}) }}</div>
+                </form>
+            </fb-form>
+            {% endif %}
+            {% if protected != 'none' and can('page.unprotect', {id: page.id}) %}
+            <fb-form action="page.unprotect" refresh="{{ refresh }}" done="{{ t('The password is switched off.') }}">
+                <form novalidate>
+                    <input type="hidden" name="id" value="{{ page.id }}">
+                    {{ ui.button({label: t('Switch password off'), type: 'submit', variant: 'outline'}) }}
+                </form>
+            </fb-form>
             {% endif %}
 
             {% set exclusions = details.draft ?? details.published %}

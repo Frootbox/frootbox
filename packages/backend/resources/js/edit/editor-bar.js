@@ -1002,6 +1002,7 @@ export class EditorBar extends LitElement {
         return html`<p>${labels[`explain${state[0].toUpperCase()}${state.slice(1)}`]}</p>
             ${saved}
             ${locked ? html`<p>${labels.locked}.</p>` : nothing}
+            ${this.config.editing && this.config.page?.protected ? html`<p>${labels.protectedPage}</p>` : nothing}
             ${this.config.protection ? html`<p>${labels.protectedSite}</p>` : nothing}`;
     }
 

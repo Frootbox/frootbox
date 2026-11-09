@@ -37,6 +37,8 @@ final class HistoryNames
         'page.move' => 'Moved in the sitemap',
         'page.lock' => 'Locked for visitors',
         'page.unlock' => 'Unlocked',
+        'page.protect' => 'Password set',
+        'page.unprotect' => 'Password switched off',
         'page.delete' => 'Page deleted',
         'action.undo' => 'Undone',
         'system.migrate' => 'Update of the database',

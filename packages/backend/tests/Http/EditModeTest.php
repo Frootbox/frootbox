@@ -131,6 +131,7 @@ final class EditModeTest extends BackendTestCase
             'id' => $this->about,
             'status' => 'changed',
             'locked' => false,
+            'protected' => false,
             'layout' => 'acme/base/Page',
             'publish' => [$this->about],
             'offlineParents' => [],

@@ -1,8 +1,9 @@
-{#- On the website: the password of a protected website, or that a preview link ended (decisions 0152 to 0154), like the sign-in. -#}
+{#- On the website: the password of a protected website or page, or that a preview link ended (decisions 0152 to 0154, 0358), like the sign-in. -#}
 {% extends '@backend/frame.twig' %}
 {% import '@backend/ui.twig' as ui %}
 
-{% block title %}{{ expired ? t('Preview link ended') : t('Not public yet') }}{% endblock %}
+{% set heading = expired ? t('Preview link ended') : (reason == 'page-protected' ? t('Protected page') : t('Not public yet')) %}
+{% block title %}{{ heading }}{% endblock %}
 
 {% block body %}
 <main class="fb-login">
@@ -10,17 +11,17 @@
         <div class="fb-login__brand">{{ ui.brand(fb) }}</div>
         <div class="fb-card fb-login__card">
             <div class="fb-login__header">
-                <h1 class="fb-heading-2">{{ expired ? t('Preview link ended') : t('Not public yet') }}</h1>
+                <h1 class="fb-heading-2">{{ heading }}</h1>
                 {% if fb.site %}<p class="fb-muted">{{ fb.site }}</p>{% endif %}
             </div>
             {% if expired %}
                 <p>{{ t('This preview link has expired or was revoked. Ask for a new one.') }}</p>
                 {{ ui.button({label: t('Go to the website'), href: '/', block: true, variant: 'outline'}) }}
-            {% elseif reason == 'site-protected' %}
-                <p>{{ t('Enter the password you got to see the website.') }}</p>
+            {% elseif reason == 'site-protected' or reason == 'page-protected' %}
+                <p>{{ reason == 'page-protected' ? t('This page needs a password.') : t('Enter the password you got to see the website.') }}</p>
                 {% if error %}{{ ui.alert({tone: 'danger', text: error}) }}{% endif %}
                 <form class="fb-stack" method="post">
-                    {{ ui.field({label: t('Password'), name: field, id: 'fb-site-password', type: 'password', autocomplete: 'current-password', required: true, autofocus: true}) }}
+                    {{ ui.field({label: t('Password'), name: field, id: field, type: 'password', autocomplete: 'current-password', required: true, autofocus: true}) }}
                     {{ ui.button({label: t('Continue'), type: 'submit', block: true}) }}
                 </form>
             {% else %}

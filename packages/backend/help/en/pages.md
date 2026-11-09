@@ -31,6 +31,17 @@ keeps the published version.
 A locked page stays online for editors but visitors get a 404, e.g.
 for a page that is not ready yet.
 
+## Protect a page with a password
+
+Under **Visibility** a page gets a password, if you like also for its
+subpages. Visitors then only see a password field; whoever knows the
+password gets in for 14 days. Signed-in users and preview links do not
+need it. The protection works right away, also before publishing.
+Search engines, the sitemap and the search of the website leave the
+page out; it stays in navigations. A **new password** locks out
+everyone who got in with the old one. The password does not protect
+the images and files of the page.
+
 ## History
 
 **History** shows who changed the page when, through which channel and

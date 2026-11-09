@@ -46,6 +46,20 @@ cache, marked `private, no-store`. Requests with an access token (REST
 API, MCP) have no session. Encrypt secrets yourself with
 `Security\Secrets` before you store them.
 
+## Pages with a password
+
+A page can need a password (`page.protect`, for one page or a branch).
+Such a page never goes into the cache; visitors who entered the
+password get it marked `private, no-store` and `noindex`. It is not in
+the sitemap and not in the results of the site search. A module that
+lists pages for visitors leaves them out the same way:
+
+```php
+if (null !== $outline->protectedBy($pageId)) {
+    // Visitors need a password for this page.
+}
+```
+
 ## Live for editors
 
 Signed-in users with the right to edit get the page without the cache,

@@ -28,6 +28,17 @@ wirft den Entwurf weg und behält die veröffentlichte Fassung.
 Eine gesperrte Seite bleibt für die Redaktion sichtbar, Besucher
 bekommen einen 404, etwa für eine Seite, die noch nicht fertig ist.
 
+## Seite mit Passwort schützen
+
+Unter **Sichtbarkeit** bekommt eine Seite ein Passwort, auf Wunsch auch
+für ihre Unterseiten. Besucher sehen dann nur ein Passwortfeld, wer das
+Passwort kennt, kommt 14 Tage lang hinein. Angemeldete und Vorschaulinks
+brauchen es nicht. Der Schutz gilt sofort, auch vor dem Veröffentlichen.
+Suchmaschinen, Sitemap und die Suche der Website lassen die Seite aus,
+in Navigationen bleibt sie. Ein **neues Passwort** sperrt alle aus, die
+mit dem alten hineingekommen sind. Bilder und Dateien der Seite schützt
+das Passwort nicht.
+
 ## Verlauf
 
 **Verlauf** zeigt, wer die Seite wann, über welchen Kanal und auf

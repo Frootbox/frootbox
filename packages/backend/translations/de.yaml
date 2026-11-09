@@ -424,6 +424,24 @@ Subpages: Unterseiten
 Locked: Gesperrt
 Visibility: Sichtbarkeit
 "Locked for visitors": "Für Besucher gesperrt"
+"Password protected": "Mit Passwort geschützt"
+"Visitors need the password for this page and its subpages. Signed-in users and preview links do not.": "Besucher brauchen das Passwort für diese Seite und ihre Unterseiten. Angemeldete und Inhaber eines Vorschaulinks brauchen es nicht."
+"Visitors need the password for this page. Signed-in users and preview links do not.": "Besucher brauchen das Passwort für diese Seite. Angemeldete und Inhaber eines Vorschaulinks brauchen es nicht."
+"Since {date}.": "Seit {date}."
+"The password comes from {page} above. A password of its own applies here instead.": "Das Passwort kommt von {page} darüber. Ein eigenes Passwort gilt hier stattdessen."
+"The new password applies.": "Das neue Passwort gilt."
+"The page is password protected.": "Die Seite ist mit Passwort geschützt."
+"Password for visitors": "Passwort für Besucher"
+"Browsers let in with the old password need the new one.": "Wer mit dem alten Passwort hineingekommen ist, braucht das neue."
+"At least 8 characters. Only visitors who know it see the page. It works right away, also before publishing.": "Mindestens 8 Zeichen. Nur Besucher, die es kennen, sehen die Seite. Gilt sofort, auch vor dem Veröffentlichen."
+"Also for the subpages": "Auch für die Unterseiten"
+"Set new password": "Neues Passwort setzen"
+"Protect with password": "Mit Passwort schützen"
+"The password is switched off.": "Das Passwort ist ausgeschaltet."
+"Switch password off": "Passwort ausschalten"
+"Password set": "Passwort gesetzt"
+"Password switched off": "Passwort ausgeschaltet"
+"Visitors need a password for this page.": "Besucher brauchen für diese Seite ein Passwort."
 "Visitors get a notice instead of this page and its subpages.": "Besucher sehen statt dieser Seite und ihrer Unterseiten einen Hinweis."
 "Visitors get a notice instead of this page.": "Besucher sehen statt dieser Seite einen Hinweis."
 "The page is unlocked.": "Die Seite ist entsperrt."
@@ -924,6 +942,8 @@ The fields of the website have no changes to discard.: Die Inhalte der Website h
 'End the preview': 'Vorschau beenden'
 'Preview link ended': 'Vorschaulink abgelaufen'
 'Not public yet': 'Noch nicht öffentlich'
+'Protected page': 'Geschützte Seite'
+'This page needs a password.': 'Diese Seite ist nur mit Passwort zugänglich.'
 'This preview link has expired or was revoked. Ask for a new one.': 'Dieser Vorschaulink ist abgelaufen oder wurde zurückgezogen. Frag nach einem neuen Link.'
 'Enter the password you got to see the website.': 'Gib das Passwort ein, das Du bekommen hast, um die Website zu sehen.'
 'This website is not public yet. Only signed-in users and holders of a preview link see it.': 'Diese Website ist noch nicht öffentlich. Nur Angemeldete und Inhaber eines Vorschaulinks sehen sie.'

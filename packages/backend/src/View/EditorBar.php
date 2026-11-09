@@ -203,6 +203,8 @@ final readonly class EditorBar
             'id' => $id,
             'status' => $details->status->value,
             'locked' => null !== $details->visibility->lockedBy,
+            // Visitors need a password (decision 0358).
+            'protected' => null !== $details->visibility->protectedBy,
             // For the bounds of its lists (decision 0145).
             'layout' => ($details->draft ?? $details->published)?->layout,
             'publish' => $publish,
@@ -455,6 +457,7 @@ final readonly class EditorBar
             'draft' => $t('Draft'),
             'changed' => $t('Pending changes'),
             'locked' => $t('Locked for visitors'),
+            'protectedPage' => $t('Visitors need a password for this page.'),
             'readOnly' => $t('You may not change this page.'),
             'designPage' => $t('Every element of the website, in the draft.'),
             'publish' => $t('Publish'),

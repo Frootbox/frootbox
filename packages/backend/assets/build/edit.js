@@ -2208,6 +2208,7 @@ import{a as e,i as t,n,o as r,r as i}from"./chunks/edit-place-Xsl8f87D.js";var a
                 ${this.message.reload?k`<button type="button" @click=${()=>location.reload()}>${n.reload}</button>`:M}`;let r=e===`published`?M:k`<p>${this.saving>0?n.saving:n.allSaved}</p>`;return k`<p>${n[`explain${e[0].toUpperCase()}${e.slice(1)}`]}</p>
             ${r}
             ${t?k`<p>${n.locked}.</p>`:M}
+            ${this.config.editing&&this.config.page?.protected?k`<p>${n.protectedPage}</p>`:M}
             ${this.config.protection?k`<p>${n.protectedSite}</p>`:M}`}problemsView(){let e=this.labels,t=this.problems.length,n=this.problems.filter(e=>e.element?.isConnected),r=this.problems.filter(e=>!e.element?.isConnected),i=this.problems.filter(e=>e.panel),a=e=>[e.block?.dataset.fbTitle,e.path].filter(Boolean).join(` · `);return k`<p>${this.problemsText}</p>
             <p>${t===1?e.oneProblem:e.problems.replace(`{count}`,t)}</p>
             ${r.length>0?k`<ul>${r.map(e=>k`<li>${a(e)?`${a(e)}: `:``}${e.message}</li>`)}</ul>`:M}

@@ -20,6 +20,16 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Core, Backend: a password for a page. `page.protect` (`id`,
+  `password`, `branch`) and `page.unprotect` work right away, also
+  before publishing; `page.enter` checks a visitor's password,
+  throttled like the password of the website. Visitors without it get
+  401 with a password field, those who entered it a cookie for 14 days.
+  Signed-in users and preview links get in. Such a page never goes into
+  the page cache, carries `noindex` and stays out of the sitemap and
+  the site search (`PageOutline::protectedBy()`). `page.show` reports
+  `protected` and `protectedSince`, the backend sets it under
+  “Visibility”. Migrate Frootbox 1 takes over the password of a page.
 - Core, Backend: options of blocks with any number of choices. A
   `choice` with `multiple: true` holds a list, by default empty; the
   settings of a block show checkboxes, and a choice with the value `''`
