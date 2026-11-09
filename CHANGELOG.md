@@ -495,6 +495,11 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Changed
 
+- Events: "Courses soon" shows the next published dates, also sold-out
+  ones and ones not bookable online. Instead of the button such a date
+  says why: sold out, booking opens soon, or booking by phone or in
+  person (new for the state `offline`, also in "Course with dates").
+
 - Core: messages of the content check and of field types are templates
   with placeholders, so the backend shows them translated, e.g. when
   publishing finds an option a variant does not have.
