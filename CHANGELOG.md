@@ -557,6 +557,9 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Fixed
 
+- Events: a ticked course that the provider's channel no longer shows,
+  e.g. after its category was taken out, no longer breaks the page.
+  "Courses soon" leaves it out, the dates of the course show none.
 - Migrate Frootbox 1: a page gets the address it had live. When
   `pages.alias` ends in a counter such as `impressum-1` and the address
   without it still leads to the same page, the import takes that one;
