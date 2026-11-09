@@ -2292,6 +2292,17 @@ Query · right `frootbox/collections/entry.list`
 
 ## frootbox/events
 
+### `frootbox/events/attendee.list`
+
+First and last name and time of booking of who is booked for dates of the provider of courses, by date
+
+Query · right `frootbox/events/attendee.list`
+
+| Input | Type | Description |
+|---|---|---|
+| `dates` | array | The ids of the dates, at most 50 |
+| `channel` | string, optional | A further channel of the provider, empty for its own |
+
 ### `frootbox/events/booking.place`
 
 Books a date of a course for one or more attendees at the provider; the same key again gives the same booking
@@ -2308,6 +2319,14 @@ Action · public · cannot be undone
 | `fields` | object, optional | Answers to the fields of the date by key: true for a ticked box, else text |
 | `message` | string or null, optional |  |
 | `consents` | array, optional | Keys of the legal texts the person agreed to |
+| `channel` | string, optional | A further channel of the provider, empty for its own |
+| `access` | string or null, optional | The access a page with a password hands out for a restricted channel |
+
+### `frootbox/events/channel.choices`
+
+The channels of the provider of courses as choices for a block, its own first; empty with only its own
+
+Query · right `frootbox/events/event.list`
 
 ### `frootbox/events/course.choices`
 
@@ -2321,6 +2340,11 @@ The courses of the provider with price per attendee and the least and most atten
 
 Query · public
 
+| Input | Type | Description |
+|---|---|---|
+| `channel` | string, optional | A further channel of the provider, empty for its own |
+| `access` | string or null, optional | The access a page with a password hands out for a restricted channel |
+
 ### `frootbox/events/date.list`
 
 The coming dates of the courses with free seats, earliest first
@@ -2333,6 +2357,8 @@ Query · public
 | `from` | string or null (date-time), optional | From this moment on, else from now |
 | `available` | boolean, optional | Only dates that can be booked now |
 | `limit` | integer, optional |  |
+| `channel` | string, optional | A further channel of the provider, empty for its own |
+| `access` | string or null, optional | The access a page with a password hands out for a restricted channel |
 
 ### `frootbox/events/date.show`
 
@@ -2343,6 +2369,8 @@ Query · public
 | Input | Type | Description |
 |---|---|---|
 | `id` | string |  |
+| `channel` | string, optional | A further channel of the provider, empty for its own |
+| `access` | string or null, optional | The access a page with a password hands out for a restricted channel |
 
 ### `frootbox/events/event.create`
 

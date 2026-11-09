@@ -20,6 +20,22 @@ backend's own templates, styles and scripts are not part of it.
 
 ### Added
 
+- Events: further channels of a provider of courses. A provider may
+  implement `ChannelSource` (`channels()`, `in()`); `CourseDates`,
+  `NextCourseDates` and `CourseBooking` then get the option `channel`
+  (choices from `frootbox/events/channel.choices`), and a date links
+  to the booking page of the same channel. A restricted channel shows
+  only on a page with a password; `course.list`, `date.list`,
+  `date.show` and `booking.place` take it only with the signed
+  `access` such a page hands out (bound to channel, page and the
+  password, valid a day) or for a user with
+  `frootbox/events/attendee.list`. Core: `BasePages::of()` takes a
+  callback to match a block.
+- Events: the names of who is booked. A provider may implement
+  `AttendeeSource`; the query `frootbox/events/attendee.list` (not
+  public) gives first and last name and time of booking for up to 50
+  dates, and `CourseDates` shows them below each date with the option
+  `attendees`, only on a page with a password.
 - Core, Backend: a password for a page. `page.protect` (`id`,
   `password`, `branch`) and `page.unprotect` work right away, also
   before publishing; `page.enter` checks a visitor's password,
